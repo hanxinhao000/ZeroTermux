@@ -1,0 +1,13 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/session_title"
+    android:layout_width="fill_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/session_background_selected"
+    android:ellipsize="marquee"
+    android:gravity="start|center_vertical"
+    android:padding="6dip"
+    android:textColor="@color/color_ffffff"
+    android:textSize="14sp" />

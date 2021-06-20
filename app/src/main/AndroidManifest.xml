@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.termux"
+    android:installLocation="internalOnly"
+    android:sharedUserId="${TERMUX_PACKAGE_NAME}"
+    android:sharedUserLabel="@string/shared_user_label">
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
+    <permission
+        android:name="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND"
+        android:description="@string/permission_run_command_description"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/permission_run_command_label"
+        android:protectionLevel="dangerous" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.DUMP" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application
+        android:name=".app.TermuxApplication"
+        android:allowBackup="false"
+        android:banner="@drawable/banner"
+        android:extractNativeLibs="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/application_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.Termux">
+
+        <!--
+         This (or rather, value 2.1 or higher) is needed to make the Samsung Galaxy S8
+             mark the app with "This app is optimized to run in full screen."
+        -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="10.0" />
+
+        <activity
+            android:name=".app.TermuxActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
+            android:label="@string/application_name"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <activity-alias
+            android:name=".HomeActivity"
+            android:targetActivity=".app.TermuxActivity">
+
+            <!-- Launch activity automatically on boot on Android Things devices -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.IOT_LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity
+            android:name=".app.activities.HelpActivity"
+            android:exported="false"
+            android:label="@string/application_name"
+            android:parentActivityName=".app.TermuxActivity"
+            android:resizeableActivity="true"
+            android:theme="@android:style/Theme.Material.Light.DarkActionBar" />
+
+        <activity
+            android:name=".app.activities.SettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_termux_settings"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
+        <activity
+            android:name=".app.activities.ReportActivity"
+            android:theme="@style/Theme.AppCompat.TermuxReportActivity"
+            android:documentLaunchMode="intoExisting"
+            />
+
+        <activity
+            android:name=".filepicker.TermuxFileReceiverActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/application_name"
+            android:noHistory="true"
+            android:resizeableActivity="true"
+            android:taskAffinity="${TERMUX_PACKAGE_NAME}.filereceiver">
+
+            <!-- Accept multiple file types when sending. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/*" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="message/*" />
+                <data android:mimeType="multipart/*" />
+                <data android:mimeType="text/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <!-- Accept multiple file types to let Termux be usable as generic file viewer. -->
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/*" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="text/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".filepicker.TermuxDocumentsProvider"
+            android:authorities="${TERMUX_PACKAGE_NAME}.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
+        <service
+            android:name=".app.TermuxService"
+            android:exported="false" />
+        <service
+            android:name=".app.RunCommandService"
+            android:exported="true"
+            android:permission="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND">
+            <intent-filter>
+                <action android:name="${TERMUX_PACKAGE_NAME}.RUN_COMMAND" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".app.TermuxOpenReceiver" />
+
+        <provider
+            android:name=".app.TermuxOpenReceiver$ContentProvider"
+            android:authorities="${TERMUX_PACKAGE_NAME}.files"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:readPermission="android.permission.permRead" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+        <meta-data
+            android:name="com.samsung.android.multidisplay.keep_process_alive"
+            android:value="true" />
+    </application>
+
+</manifest>
