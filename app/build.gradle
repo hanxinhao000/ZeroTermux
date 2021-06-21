@@ -100,6 +100,7 @@ android {
 
 dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation project(path: ':xh_lib')
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
 }

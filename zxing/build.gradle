@@ -1,0 +1,24 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 29
+    }
+}
+
+dependencies {
+    compile 'com.google.zxing:core:3.3.3'
+    if(hasProperty("publishAar")) {
+        compile "cn.bingoogolapple:bga-qrcode-core:2.1.0"
+    } else {
+        api project(':qrcodecore')
+    }
+}
+
+// ./gradlew :zxing:clean :zxing:build :zxing:bintrayUpload -PpublishAar
+if (hasProperty("publishAar")) {
+    apply from: 'https://raw.githubusercontent.com/bingoogolapple/PublishAar/master/jcenter-release.gradle'
+}

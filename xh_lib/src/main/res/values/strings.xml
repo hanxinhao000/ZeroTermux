@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">BiometricLib</string>
+    <string name="biometric_dialog_cancel">返回</string>
+    <string name="biometric_dialog_title">验证</string>
+    <string name="biometric_dialog_subtitle">验证指纹</string>
+    <string name="biometric_dialog_state_normal">指纹传感器</string>
+    <string name="biometric_dialog_state_failed">识别失败，请重试</string>
+    <string name="biometric_dialog_state_error">验证错误，请重试</string>
+    <string name="biometric_dialog_state_error_enable_process">验证错误，安装失败</string>
+    <string name="biometric_dialog_state_succeeded">验证成功</string>
+    <string name="biometric_dialog_use_password">使用密码</string>
+    <string name="error">必须至少注册一个生物特征识别系统，以创建每次使用都需要用户身份验证的密钥</string>
+    <string name="server_error">服务器繁忙</string>
+    <string name="cancel">取消</string>
+    <string name="baocun">保存成功</string>
+    <string name="fuzhichenggong">复制成功</string>
+    <string name="fuzhichenggongshibai">复制失败</string>
+    <string name="saoyisao">扫一扫</string>
+    <string name="xiangce">相册</string>
+    <string name="取消">取消</string>
+    <string name="请选择国家或地区">请选择国家或地区</string>
+    <string name="服务器繁忙">服务器繁忙</string>
+    <string name="标题">标题</string>
+    <string name="确认">确认</string>
+</resources>

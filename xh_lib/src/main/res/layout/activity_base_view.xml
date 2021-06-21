@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/color_ffffff"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/title_base_rl"
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+
+        <ImageView
+            android:id="@+id/left_img"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@mipmap/close" />
+
+
+        <ImageView
+            android:id="@+id/left_img_"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="12dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/close"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/title_base"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="@color/color_061623"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+
+
+            <TextView
+                android:id="@+id/right_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="36dp"
+                android:text="注册"
+                android:textColor="@color/color_2E84E6"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/right_tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="12dp"
+                android:text="注册"
+                android:textColor="@color/color_2E84E6"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+
+            <LinearLayout
+                android:id="@+id/right_ll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="12dp"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/right_img_1"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp" />
+
+                <ImageView
+                    android:id="@+id/right_img_2"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="12dp" />
+
+
+                <ImageView
+                    android:id="@+id/right_img_3"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="12dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_f2f2f2">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_toLeftOf="@+id/cancel"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="12dp"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_dialog_back_all"
+            android:layout_height="40dp">
+
+
+            <ImageView
+                android:layout_width="18dp"
+                android:src="@mipmap/sousuo"
+                android:layout_marginLeft="12dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="18dp"/>
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:background="@null"
+                android:textSize="15sp"
+                android:id="@+id/search"
+                android:hint="@string/请选择国家或地区"
+                android:layout_marginLeft="12dp"
+                android:textColorHint="@color/color_6B8199"
+                android:textColor="@color/color_10202F"
+                android:layout_height="40dp"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="@string/取消"
+            android:id="@+id/cancel"
+            android:textColor="@color/color_2e84e6"
+            android:layout_marginRight="12dp"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"/>
+
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:id="@+id/list_view"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_ffffff"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--自定义BaseDialog样式-->
+    <style name="BaseDialog" parent="@android:style/Theme.Dialog">
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景缓存颜色 -->
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <!--白天主题，此处直接和AppTheme一样-->
+    <style name="DayTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/color_fafafa</item>
+        <item name="colorPrimaryDark">@color/color_fafafa</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="clockBackground">@color/color_fafafa</item>
+        <item name="clockTextColor">@android:color/black</item>
+    </style>
+
+    <!--夜间主题-->
+    <style name="NightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/color3F3F3F</item>
+        <item name="colorPrimaryDark">@color/color3A3A3A</item>
+        <item name="colorAccent">@color/color868686</item>
+        <item name="clockBackground">@color/color3F3F3F</item>
+        <item name="clockTextColor">@color/color8A9599</item>
+    </style>
+
+
+
+</resources>

@@ -1,1 +1,4 @@
 include ':app', ':termux-shared', ':terminal-emulator', ':terminal-view'
+include ':qrcodecore'
+include ':zxing'
+include ':xh_lib'
