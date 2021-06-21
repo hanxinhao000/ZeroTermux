@@ -18,8 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.draggable.library.extension.ImageViewerHelper;
-import com.example.xh_lib.R;
+
 import com.example.xh_lib.statusBar.StatusBarCompat;
 
 import java.io.ByteArrayInputStream;
@@ -37,7 +36,7 @@ import java.util.zip.GZIPInputStream;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
-import okio.ByteString;
+
 
 /**
  * @author ZEL
@@ -335,26 +334,7 @@ public class UUtils {
     }
 
 
-    //gzip 解压
-    public static String uncompressGzip(Object message) {
-        ByteString msg = (ByteString) message;
-        byte[] b = Base64.decode(msg.toByteArray(), Base64.DEFAULT);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayInputStream in = new ByteArrayInputStream(b);
-        try {
-            GZIPInputStream ungzip = new GZIPInputStream(in);
-            byte[] buffer = new byte[256];
-            int n;
-            while ((n = ungzip.read(buffer)) >= 0) {
-                out.write(buffer, 0, n);
-            }
-            Log.i("wxx", out.toString("UTF-8"));
-            return out.toString("UTF-8");
-        } catch (IOException e) {
-            Log.e("gzip compress error.", e.getMessage());
-        }
-        return null;
-    }
+
 
 
     /**
@@ -626,14 +606,14 @@ public class UUtils {
      *
      * @return  手机IMEI
      */
-    public static String getIMEI(Context ctx) {
+  /*  public static String getIMEI(Context ctx) {
         TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Activity.TELEPHONY_SERVICE);
         if (tm != null) {
             return tm.getDeviceId();
         }
         return null;
     }
-
+*/
     /***
      *
      *

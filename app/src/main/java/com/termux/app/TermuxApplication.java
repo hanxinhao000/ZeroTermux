@@ -2,12 +2,13 @@ package com.termux.app;
 
 import android.app.Application;
 
+import com.example.xh_lib.application.XHApplication;
 import com.termux.shared.crash.CrashHandler;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.logger.Logger;
 
 
-public class TermuxApplication extends Application {
+public class TermuxApplication extends XHApplication {
     public void onCreate() {
         super.onCreate();
 

@@ -1,6 +1,7 @@
 plugins {
   id "com.android.application"
 }
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion project.properties.compileSdkVersion.toInteger()
@@ -103,6 +104,8 @@ dependencies {
     implementation project(path: ':xh_lib')
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 task versionName {
@@ -174,4 +177,7 @@ afterEvaluate {
   android.applicationVariants.all { variant ->
     variant.javaCompileProvider.get().dependsOn(downloadBootstraps)
   }
+}
+repositories {
+    mavenCentral()
 }
