@@ -193,5 +193,11 @@
     <string name="开机启动">开机启动</string>
     <string name="MOE">MOE</string>
     <string name="MOE全能">MOE全能</string>
+    <string name="清华源">清华源</string>
+    <string name="北京源">北京源</string>
+    <string name="官方源">官方源</string>
+    <string name="警告">警告</string>
+    <string name="该操作会覆盖您的文件记录">该操作会覆盖您的文件记录,是否继续?</string>
+    <string name="确定">确定</string>
 
 </resources>

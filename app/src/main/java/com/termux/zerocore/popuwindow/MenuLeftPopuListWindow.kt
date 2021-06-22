@@ -33,12 +33,9 @@ public class MenuLeftPopuListWindow :BasePuPuWindow{
 
     public fun setListData(mList:ArrayList<MenuLeftPopuListData>){
 
-        recycler_view?.layoutManager = GridLayoutManager(UUtils.getContext(),3)
+        recycler_view?.layoutManager = GridLayoutManager(UUtils.getContext(),2)
 
-
-
-
-
+        recycler_view?.adapter = MenuLeftPopuListWindowAdapter(mList,mItemClickPopuListener,this)
 
     }
 
@@ -46,8 +43,12 @@ public class MenuLeftPopuListWindow :BasePuPuWindow{
     class MenuLeftPopuListWindowAdapter:RecyclerView.Adapter<MenuLeftPopuListWindowViewHolder>{
 
         private lateinit var mList:ArrayList<MenuLeftPopuListData>
-        constructor(mList:ArrayList<MenuLeftPopuListData>) : super(){
+        private var mItemClickPopuListener:ItemClickPopuListener? = null
+        private var mMenuLeftPopuListWindow:MenuLeftPopuListWindow? = null
+        constructor(mList:ArrayList<MenuLeftPopuListData>,mItemClickPopuListener:ItemClickPopuListener?,mMenuLeftPopuListWindow:MenuLeftPopuListWindow) : super(){
             this.mList = mList
+            this.mItemClickPopuListener = mItemClickPopuListener
+            this.mMenuLeftPopuListWindow = mMenuLeftPopuListWindow
 
         }
 
@@ -63,6 +64,11 @@ public class MenuLeftPopuListWindow :BasePuPuWindow{
             holder.img.setImageResource(menuLeftPopuListData.imgId)
             holder.title.text = menuLeftPopuListData.titleString
 
+            holder.itemView.setOnClickListener {
+
+                mItemClickPopuListener?.itemClick(menuLeftPopuListData.id,position,mMenuLeftPopuListWindow)
+
+            }
 
 
         }
@@ -75,11 +81,18 @@ public class MenuLeftPopuListWindow :BasePuPuWindow{
 
 
 
+    private var mItemClickPopuListener:ItemClickPopuListener? = null
+
+    public fun setItemClickPopuListener(mItemClickPopuListener:ItemClickPopuListener){
+
+        this.mItemClickPopuListener = mItemClickPopuListener
+
+    }
 
     public interface ItemClickPopuListener{
 
 
-        fun itemClick(id:Int,index:Int)
+        fun itemClick(id:Int,index:Int,mMenuLeftPopuListWindow:MenuLeftPopuListWindow?)
 
 
 

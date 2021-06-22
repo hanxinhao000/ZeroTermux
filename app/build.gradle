@@ -7,6 +7,10 @@ android {
     compileSdkVersion project.properties.compileSdkVersion.toInteger()
     ndkVersion project.properties.ndkVersion
 
+    buildFeatures {
+        viewBinding true
+    }
+
     dependencies {
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.5.0-rc01"

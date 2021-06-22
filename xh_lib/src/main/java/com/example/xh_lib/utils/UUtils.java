@@ -24,7 +24,9 @@ import com.example.xh_lib.statusBar.StatusBarCompat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -600,6 +602,36 @@ public class UUtils {
     public static String getDeviceBrand() {
         return android.os.Build.BRAND;
     }
+
+
+
+    //写出文件
+    public static void writerFile(String name, File mFile) {
+
+        try {
+            InputStream open = getContext().getAssets().open(name);
+
+            int len = 0;
+
+            if (!mFile.exists()) {
+                mFile.createNewFile();
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(mFile);
+
+            while ((len = open.read()) != -1) {
+                fileOutputStream.write(len);
+            }
+
+            fileOutputStream.flush();
+            open.close();
+            fileOutputStream.close();
+        } catch (Exception e) {
+
+        }
+
+    }
+
 
     /**
      * 获取手机IMEI(需要“android.permission.READ_PHONE_STATE”权限)

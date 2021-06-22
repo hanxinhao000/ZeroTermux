@@ -26,9 +26,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.autofill.AutofillManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.shared.termux.TermuxConstants;
@@ -50,12 +52,19 @@ import com.termux.terminal.TerminalSessionClient;
 import com.termux.app.utils.CrashUtils;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
+import com.termux.zerocore.code.CodeString;
+import com.termux.zerocore.dialog.SwitchDialog;
+import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
+import com.termux.zerocore.url.FileUrl;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * A terminal emulator activity.
@@ -67,7 +76,7 @@ import androidx.viewpager.widget.ViewPager;
  * </ul>
  * about memory leaks.
  */
-public final class TermuxActivity extends Activity implements ServiceConnection {
+public final class TermuxActivity extends Activity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener {
 
     /**
      * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
@@ -154,6 +163,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
     private int mTerminalToolbarDefaultHeight;
 
 
+
     private static final int CONTEXT_MENU_SELECT_URL_ID = 0;
     private static final int CONTEXT_MENU_SHARE_TRANSCRIPT_ID = 1;
     private static final int CONTEXT_MENU_AUTOFILL_ID = 2;
@@ -237,6 +247,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
         // app has been opened.
         TermuxUtils.sendTermuxOpenedBroadcast(this);
+
+
+        initZeroView();
     }
 
     @Override
@@ -805,6 +818,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         }
     }
 
+
+
+
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -869,5 +885,179 @@ public final class TermuxActivity extends Activity implements ServiceConnection 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
+
+
+    /**
+     *
+     *
+     * ZeroView
+     *
+     *
+     */
+    private LinearLayout code_ll;
+
+    /**
+     *
+     *
+     * ZeroTermux
+     *
+     */
+
+    private void initZeroView(){
+
+
+        code_ll = findViewById(R.id.code_ll);
+
+        code_ll.setOnClickListener(this);
+
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+
+            case R.id.code_ll:
+                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuLeftPopuListData = new ArrayList<>();
+
+                //清华
+                MenuLeftPopuListWindow.MenuLeftPopuListData qinghua = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.qinghua_ico, UUtils.getString(R.string.清华源), 1);
+                menuLeftPopuListData.add(qinghua);
+                //北京
+                MenuLeftPopuListWindow.MenuLeftPopuListData beijing = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.beijing, UUtils.getString(R.string.北京源), 2);
+                menuLeftPopuListData.add(beijing);
+                //官方
+                MenuLeftPopuListWindow.MenuLeftPopuListData guanfang = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.guanfang, UUtils.getString(R.string.官方源), 3);
+                menuLeftPopuListData.add(guanfang);
+
+                showMenuDialog(menuLeftPopuListData,code_ll);
+
+                break;
+
+
+
+        }
+
+    }
+
+
+    private void showMenuDialog(ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> arrayList,View showView){
+
+        MenuLeftPopuListWindow menuLeftPopuListWindow = new MenuLeftPopuListWindow(this);
+        menuLeftPopuListWindow.setItemClickPopuListener(this);
+        menuLeftPopuListWindow.setListData(arrayList);
+        menuLeftPopuListWindow.showAsDropDown(showView,250,-200);
+
+
+
+    }
+
+    /**
+     *
+     * 菜单点击事件
+     *
+     * @param id
+     * @param index
+     */
+
+    @Override
+    public void itemClick(int id, int index,MenuLeftPopuListWindow mMenuLeftPopuListWindow) {
+        mMenuLeftPopuListWindow.dismiss();
+        switch(id){
+            //清华
+            case 1:
+
+                SwitchDialog switchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作会覆盖您的文件记录));
+
+                switchDialog.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog.dismiss();
+
+                    }
+                });
+                switchDialog.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog.dismiss();
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getQH());
+                    }
+                });
+
+
+                break;
+            //北京
+            case 2:
+
+                SwitchDialog switchDialog1 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作会覆盖您的文件记录));
+
+                switchDialog1.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog1.dismiss();
+
+                    }
+                });
+                switchDialog1.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog1.dismiss();
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getBJ());
+                    }
+                });
+                break;
+            //官方
+            case 3:
+
+                SwitchDialog switchDialog2 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作会覆盖您的文件记录));
+
+                switchDialog2.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog2.dismiss();
+
+                    }
+                });
+                switchDialog2.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog2.dismiss();
+                        UUtils.writerFile("code/sources.list", new File(FileUrl.INSTANCE.getSourcesUrl()));
+                        UUtils.writerFile("code/science.list", new File(FileUrl.INSTANCE.getScienceUrl()));
+                        UUtils.writerFile("code/game.list", new File(FileUrl.INSTANCE.getGameUrl()));
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getUpDate());
+                    }
+                });
+
+                break;
+        }
+
+    }
+
+
+    private SwitchDialog switchDialogShow(String title,String msg){
+
+        getDrawer().closeDrawer(Gravity.LEFT);
+        SwitchDialog switchDialog = new SwitchDialog(this);
+
+        switchDialog.getTitle().setText(title);
+        switchDialog.getMsg().setText(msg);
+        switchDialog.getOther().setVisibility(View.GONE);
+        switchDialog.getOk().setText(UUtils.getString(R.string.确定));
+        switchDialog.getCancel().setText(UUtils.getString(R.string.取消));
+
+        switchDialog.show();
+
+
+        return switchDialog;
+
+    }
+
+
+
+
+
 
 }
