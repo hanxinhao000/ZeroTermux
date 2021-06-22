@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/shape_r_3dp_10202f"
+    android:layout_height="80dp"
+    android:padding="10dp"
+   >
+
+    <ImageView
+        android:layout_width="40dp"
+        android:src="@mipmap/rongqi_item"
+        android:id="@+id/img"
+        android:layout_centerVertical="true"
+        android:layout_height="40dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="12dp"
+        android:layout_toRightOf="@+id/img"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:id="@+id/title"
+            android:text="标题1"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textColor="#fff"
+            android:text="123456"
+            android:id="@+id/msg"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

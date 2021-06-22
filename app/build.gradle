@@ -18,7 +18,7 @@ android {
         implementation "androidx.preference:preference:1.1.1"
         implementation "androidx.viewpager:viewpager:1.0.0"
         implementation "com.google.guava:guava:24.1-jre"
-
+        implementation 'com.google.code.gson:gson:2.8.6'
 
 
 

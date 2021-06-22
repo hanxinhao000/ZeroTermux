@@ -58,4 +58,17 @@
         <item name="android:colorAccent">#212121</item>
     </style>
 
+    <!--自定义BaseDialog样式-->
+    <style name="BaseDialog222" parent="@android:style/Theme.Dialog">
+        <!-- 无标题 -->
+        <!--自定义BaseDialog样式-->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景缓存颜色 -->
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+    </style>
 </resources>

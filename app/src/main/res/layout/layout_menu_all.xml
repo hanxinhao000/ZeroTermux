@@ -129,6 +129,7 @@
                             android:layout_width="match_parent"
                             android:orientation="vertical"
                             android:layout_gravity="center"
+                            android:id="@+id/rongqi"
                             android:gravity="center"
                             android:layout_height="match_parent">
 

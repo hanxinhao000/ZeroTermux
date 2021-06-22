@@ -199,5 +199,9 @@
     <string name="警告">警告</string>
     <string name="该操作会覆盖您的文件记录">该操作会覆盖您的文件记录,是否继续?</string>
     <string name="确定">确定</string>
+    <string name="无名称系统">无名称容器</string>
+    <string name="删除">删除</string>
+    <string name="切换">切换</string>
+    <string name="删除完成_需要重进才能刷新">删除完成_需要重进才能刷新</string>
 
 </resources>

@@ -52,6 +52,7 @@ import com.termux.terminal.TerminalSessionClient;
 import com.termux.app.utils.CrashUtils;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
+import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
@@ -88,7 +89,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     /**
      * The {@link TerminalView} shown in  {@link TermuxActivity} that displays the terminal.
      */
-    TerminalView mTerminalView;
+    public static TerminalView mTerminalView;
 
     /**
      *  The {@link TerminalViewClient} interface implementation to allow for communication between
@@ -895,6 +896,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      *
      */
     private LinearLayout code_ll;
+    private LinearLayout rongqi;
 
     /**
      *
@@ -907,8 +909,10 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
         code_ll = findViewById(R.id.code_ll);
+        rongqi = findViewById(R.id.rongqi);
 
         code_ll.setOnClickListener(this);
+        rongqi.setOnClickListener(this);
 
 
     }
@@ -919,6 +923,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         switch (v.getId()){
 
+            /**
+             * 源切换功能
+             *
+             *
+             */
             case R.id.code_ll:
                 ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuLeftPopuListData = new ArrayList<>();
 
@@ -936,6 +945,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 break;
 
+            /**
+             *
+             * 容器
+             *
+             */
+            case R.id.rongqi:
+                startActivity(new Intent(this, SwitchActivity.class));
+                break;
 
 
         }

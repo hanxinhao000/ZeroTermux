@@ -95,6 +95,8 @@
             android:resizeableActivity="true"
             android:theme="@android:style/Theme.Material.Light.DarkActionBar" />
 
+        <activity android:name=".zerocore.activity.UncaughtExceptionHandlerActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".zerocore.activity.SwitchActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".app.activities.SettingsActivity"
             android:exported="true"
