@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:text="@string/保存文件"
+        android:layout_marginTop="10dp"
+        android:id="@+id/title"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:background="@drawable/windows_line"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:hint="@string/请输入保存的文件名"
+        android:layout_margin="10dp"
+        android:textColor="#fff"
+        android:textColorHint="#5e5e5e"
+        android:id="@+id/edit_text"
+        android:padding="10dp"
+        android:layout_above="@+id/boom_rl"
+        android:gravity="left|center"
+        android:layout_marginBottom="10dp"
+        android:layout_height="50dp"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:id="@+id/boom_rl"
+      android:layout_marginBottom="10dp"
+      android:layout_height="wrap_content">
+
+
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
+          android:orientation="vertical"
+          android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:text="@string/恢复默认命令"
+              android:textColor="#fff"
+              android:visibility="invisible"
+              android:gravity="center"
+              android:textSize="16sp"
+              android:layout_height="wrap_content"/>
+
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
+          android:orientation="vertical"
+          android:layout_height="wrap_content">
+
+
+          <RelativeLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+
+              <TextView
+                  android:layout_width="match_parent"
+                  android:text="@string/确定"
+                  android:textColor="#fff"
+                  android:id="@+id/commit"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_height="wrap_content"/>
+              <TextView
+                  android:layout_width="match_parent"
+                  android:text="@string/保存当前配置"
+                  android:textColor="#fff"
+                  android:visibility="gone"
+                  android:id="@+id/commit_file"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_height="wrap_content"/>
+
+          </RelativeLayout>
+
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
+          android:orientation="vertical"
+          android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:text="@string/取消"
+              android:textColor="#fff"
+              android:gravity="center"
+              android:id="@+id/cancel"
+              android:textSize="16sp"
+              android:layout_height="wrap_content"/>
+
+
+      </LinearLayout>
+
+  </LinearLayout>
+
+
+
+
+
+</LinearLayout>

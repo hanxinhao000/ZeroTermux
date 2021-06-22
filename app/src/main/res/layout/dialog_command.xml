@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823"
+    android:layout_height="500dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/boom"
+        android:orientation="vertical"
+        android:layout_height="500dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="15dp"
+        android:id="@+id/search"
+        android:orientation="vertical"
+        android:layout_height="500dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:textSize="13sp"
+            android:background="@drawable/shape_line_new_liang"
+            android:textColorHint="@color/md_grey_700"
+
+            android:id="@+id/text_input"
+            android:padding="5dp"
+            android:hint="@string/请输入您要查找的命令"
+            android:textColor="@color/color_FFFFFF"
+            android:layout_height="35dp"/>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:id="@+id/recyclerView"
+            android:layout_height="400dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="2dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:id="@+id/web_show"
+        android:layout_height="500dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <WebView
+                android:visibility="visible"
+                android:id="@+id/web_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:layout_width="23dp"
+        android:layout_margin="10dp"
+        android:id="@+id/fanhui"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/close_img"
+        android:src="@mipmap/fanhui"
+        android:visibility="gone"
+        android:layout_height="25dp"/>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:src="@mipmap/close"
+        android:id="@+id/close_img"
+        android:layout_alignBottom="@+id/boom"
+        android:background="@drawable/shape_line_8cff5a"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:layout_height="20dp"/>
+
+
+</RelativeLayout>

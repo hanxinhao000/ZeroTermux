@@ -290,6 +290,7 @@
                             android:orientation="vertical"
                             android:layout_gravity="center"
                             android:gravity="center"
+                            android:id="@+id/linux_online"
                             android:layout_height="match_parent">
 
                             <ImageView
@@ -369,6 +370,7 @@
                             android:orientation="vertical"
                             android:layout_gravity="center"
                             android:gravity="center"
+                            android:id="@+id/qemu"
                             android:layout_height="match_parent">
 
                             <ImageView
@@ -449,6 +451,7 @@
                             android:layout_width="match_parent"
                             android:orientation="vertical"
                             android:layout_gravity="center"
+                            android:id="@+id/cmd_command"
                             android:gravity="center"
                             android:layout_height="match_parent">
 

@@ -505,11 +505,30 @@ public final class TerminalView extends View {
         }
         return false;
     }
-
+    private long doubleClick = 0;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     @TargetApi(23)
     public boolean onTouchEvent(MotionEvent event) {
+
+
+        //判断双击
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if((System.currentTimeMillis() - doubleClick) < 260){
+                if(mDoubleClickListener != null){
+                    mDoubleClickListener.doubleClicke();
+
+
+
+                }
+
+            }
+
+
+            doubleClick = System.currentTimeMillis();
+        }
+
+
         if (mEmulator == null) return true;
         final int action = event.getAction();
 
@@ -1189,6 +1208,24 @@ public final class TerminalView extends View {
             inputCodePoint(codePoint, ctrlHeld, false);
         }
     }
+
+
+    /**
+     *
+     *
+     * ZeroTermux
+     *
+     */
+
+    private  DoubleClickListener mDoubleClickListener;
+    public void setDoubleClickListener(DoubleClickListener mDoubleClickListener){
+        this.mDoubleClickListener = mDoubleClickListener;
+    }
+    public interface DoubleClickListener{
+        void doubleClicke();
+
+    }
+
 
 
 }

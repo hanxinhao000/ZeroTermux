@@ -21,12 +21,18 @@ import android.widget.Toast;
 
 import com.example.xh_lib.statusBar.StatusBarCompat;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -689,4 +695,62 @@ public class UUtils {
      *
      */
 
+
+
+    public static String getFileString(File file){
+        UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
+        String txt = "";
+
+        String temp = "";
+
+        if (!file.exists()) {
+            try {
+
+
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
+
+            while ((temp = bufferedReader.readLine()) != null) {
+                txt = txt + temp + "\n";
+            }
+            bufferedReader.close();
+
+            Log.e("XINHAO_HAN", "onCreate: " + txt);
+
+
+            return txt;
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "文件加载失败!" + e.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "文件加载失败!" + e.toString();
+        }
+
+
+    }
+
+    public static void setFileString(File fileString,String msg){
+
+
+        try {
+            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileString)));
+            printWriter.print(msg);
+            printWriter.flush();
+            printWriter.close();
+            //  Toast.makeText(getContext(), "OK", Toast.LENGTH_SHORT).show();
+        } catch (FileNotFoundException e) {
+            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+    }
 }

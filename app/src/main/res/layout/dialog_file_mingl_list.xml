@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/shape_r_3dp_161823"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+
+        android:layout_height="450dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:text="@string/请选择一个配置文件"
+            android:layout_marginTop="10dp"
+            android:id="@+id/title"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:layout_height="wrap_content"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:visibility="visible"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/daoru_daochu"
+            app:cardBackgroundColor="@color/color_553E3E3E"
+            app:cardCornerRadius="5dp"
+            android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="5dp"
+                android:padding="10dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:id="@+id/list_view"
+                        android:layout_height="match_parent"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:gravity="center"
+                        android:textColor="#fff"
+                        android:textSize="16sp"
+                        android:visibility="gone"
+                        android:id="@+id/tv_empty"
+                        android:text="@string/当前目录下没有镜像文件"
+                        android:layout_height="match_parent"/>
+
+
+                </RelativeLayout>
+
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+
+
+    </LinearLayout>
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:orientation="vertical"
+       android:id="@+id/def_ll"
+       android:visibility="gone"
+       android:layout_height="wrap_content">
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:text="@string/使用默认命令"
+               android:textColor="#fff"
+               android:paddingLeft="10dp"
+               android:paddingBottom="3dp"
+               android:id="@+id/def_txt"
+               android:paddingRight="10dp"
+               android:layout_marginTop="10dp"
+               android:layout_alignParentRight="true"
+               android:layout_marginRight="10dp"
+               android:layout_marginLeft="10dp"
+               android:paddingTop="3dp"
+               android:background="@drawable/shape_btn_50b297"
+               android:textStyle="bold"
+               android:textSize="14sp"
+               android:layout_height="wrap_content"/>
+
+
+
+       </RelativeLayout>
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="20dp"/>
+
+
+
+   </LinearLayout>
+</LinearLayout>

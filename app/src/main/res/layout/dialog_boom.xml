@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:layout_width="80dp"
+                android:background="@drawable/shape_line_2e84e6"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_height="30dp">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:id="@+id/qie_huan_string"
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:text="@string/当前为自动"
+
+                    android:textColor="@color/color_FFFFFF"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:id="@+id/qiehuan_mingl_zidong_ll"
+                    android:layout_alignParentRight="true"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:background="@drawable/shape_line_2e84e6"
+                        android:gravity="center"
+                        android:id="@+id/popu_windows_jianpan"
+                        android:layout_marginRight="10dp"
+                        android:layout_height="30dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            app:cardElevation="1dp"
+                            android:layout_gravity="center"
+                            app:cardBackgroundColor="@color/color_553E3E3E"
+                            app:cardCornerRadius="3dp"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:paddingLeft="6dp"
+                                android:paddingRight="6dp"
+                                android:gravity="center"
+                                android:layout_height="match_parent"
+                                android:text="@string/键盘"
+                                android:textColor="@color/color_FFFFFF"
+                                android:textSize="12sp" />
+
+
+
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:background="@drawable/shape_line_2e84e6"
+                        android:gravity="center"
+                        android:id="@+id/popu_windows_huihua"
+                        android:layout_marginRight="10dp"
+                        android:layout_height="30dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            app:cardElevation="1dp"
+                            android:layout_gravity="center"
+                            app:cardBackgroundColor="@color/color_553E3E3E"
+                            app:cardCornerRadius="3dp"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:paddingLeft="6dp"
+                                android:paddingRight="6dp"
+                                android:gravity="center"
+                                android:layout_height="match_parent"
+                                android:text="@string/会话"
+                                android:textColor="@color/color_FFFFFF"
+                                android:textSize="12sp" />
+
+
+
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:background="@drawable/shape_line_2e84e6"
+                        android:gravity="center"
+                        android:layout_marginRight="10dp"
+                        android:layout_height="30dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:id="@+id/qiehuan_command_zidong"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            app:cardElevation="1dp"
+                            android:layout_gravity="center"
+                            app:cardBackgroundColor="@color/color_553E3E3E"
+                            app:cardCornerRadius="3dp"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:paddingLeft="6dp"
+                                android:paddingRight="6dp"
+                                android:gravity="center"
+                                android:layout_height="match_parent"
+                                android:text="@string/自动命令"
+                                android:textColor="@color/color_FFFFFF"
+                                android:textSize="12sp" />
+
+
+
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:background="@drawable/shape_line_2e84e6"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:layout_marginRight="10dp"
+                        android:layout_height="30dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:id="@+id/qiehuan_mingl_zidong"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            app:cardElevation="1dp"
+                            android:layout_gravity="center"
+                            app:cardBackgroundColor="@color/color_553E3E3E"
+                            app:cardCornerRadius="3dp"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:paddingLeft="6dp"
+                                android:paddingRight="6dp"
+                                android:gravity="center"
+                                android:layout_height="match_parent"
+                                android:text="@string/自动命令"
+                                android:textColor="@color/color_FFFFFF"
+                                android:textSize="12sp" />
+
+
+
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
+
+
+
+
+
+                </LinearLayout>
+
+
+
+            </HorizontalScrollView>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                android:orientation="horizontal"
+
+                android:layout_marginRight="10dp"
+                android:layout_height="30dp">
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:background="@drawable/shape_line_2e84e6"
+                   android:layout_toLeftOf="@+id/search123456"
+                   android:layout_marginRight="10dp"
+                   android:layout_height="match_parent">
+
+                   <androidx.cardview.widget.CardView
+                       android:layout_width="match_parent"
+                       android:layout_alignParentRight="true"
+                       android:layout_centerVertical="true"
+                       app:cardElevation="1dp"
+
+                       android:layout_gravity="center"
+                       app:cardBackgroundColor="@color/color_553E3E3E"
+                       app:cardCornerRadius="3dp"
+                       android:layout_height="match_parent">
+
+                       <LinearLayout
+                           android:layout_width="match_parent"
+                           android:orientation="horizontal"
+                           android:gravity="center_vertical"
+                           android:layout_height="match_parent">
+
+
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:paddingLeft="6dp"
+                               android:paddingRight="6dp"
+                               android:visibility="gone"
+                               android:gravity="center"
+                               android:layout_height="match_parent"
+                               android:text="@string/搜索文件"
+                               android:textColor="@color/color_FFFFFF"
+                               android:textSize="12sp" />
+
+
+                           <EditText
+                               android:layout_width="match_parent"
+                               android:background="@null"
+                               android:textSize="12sp"
+                               android:id="@+id/file_name"
+                               android:textColor="@color/color_FFFFFF"
+                               android:textColorHint="#f2f2f2"
+                               android:layout_marginLeft="10dp"
+                               android:hint="@string/再次输入您要搜索的文件"
+                               android:layout_height="match_parent"/>
+
+                       </LinearLayout>
+
+
+
+
+                   </androidx.cardview.widget.CardView>
+
+               </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="80dp"
+                    android:background="@drawable/shape_line_2e84e6"
+                    android:gravity="center"
+                    android:id="@+id/search123456"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_height="30dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        app:cardElevation="1dp"
+                        android:layout_gravity="center"
+                        app:cardBackgroundColor="@color/color_553E3E3E"
+                        app:cardCornerRadius="3dp"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:gravity="center"
+                            android:layout_height="match_parent"
+                            android:text="@string/搜索文件"
+                            android:textColor="@color/color_FFFFFF"
+                            android:textSize="12sp" />
+
+
+
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@drawable/shape_line_2e84e6"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:id="@+id/title"
+            android:text="@string/自动出错"
+            android:textColor="@color/color_FFFFFF"
+            android:textSize="12sp" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/recyclerView"
+            android:layout_height="wrap_content"/>
+
+
+
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="5dp"/>
+</LinearLayout>

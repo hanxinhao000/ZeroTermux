@@ -4,12 +4,35 @@
     <color name="color_d3d7d4">#d3d7d4</color>
     <color name="color_3d3d4f">#3d3d4f</color>
     <color name="color_161823">#161823</color>
+    <color name="color_55161823">#55161823</color>
+    <color name="color_aa161823">#dd161823</color>
     <color name="color_312520">#312520</color>
     <color name="color_2b2b2b">#2b2b2b</color>
     <color name="color_10202f">#10202f</color>
     <color name="color_5510202f">#5510202f</color>
     <color name="color_ffffff">#ffffff</color>
+    <color name="color_FFFFFF">#ffffff</color>
     <color name="color_000000">#000000</color>
     <color name="color_55000000">#55000000</color>
+    <color name="color_553E3E3E">#553E3E3E</color>
+    <color name="color_1B3650">#1B3650</color>
+    <color name="color_8CFF5A">#8CFF5A</color>
+    <color name="color_48baf3">#48baf3</color>
+    <color name="color_BABABA">#BABABA</color>
+
+    <color name="black_overlay">#66000000</color>
+    <!--grey-->
+    <color name="md_grey_50">#FAFAFA</color>
+    <color name="md_grey_100">#F5F5F5</color>
+    <color name="md_grey_200">#EEEEEE</color>
+    <color name="md_grey_300">#E0E0E0</color>
+    <color name="md_grey_400">#BDBDBD</color>
+    <color name="md_grey_500">#9E9E9E</color>
+    <color name="md_grey_600">#757575</color>
+    <color name="md_grey_700">#616161</color>
+    <color name="md_grey_800">#424242</color>
+    <color name="md_grey_900">#212121</color>
+    <color name="md_black_1000">#000000</color>
+    <color name="md_white_1000">#ffffff</color>
 
 </resources>

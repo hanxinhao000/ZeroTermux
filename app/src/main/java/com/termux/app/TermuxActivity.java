@@ -25,9 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.autofill.AutofillManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.example.xh_lib.utils.UUtils;
@@ -54,10 +56,13 @@ import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
 import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.SwitchActivity;
+import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.code.CodeString;
+import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
+import com.termux.zerocore.view.BoomWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,7 +83,7 @@ import java.util.ArrayList;
  * </ul>
  * about memory leaks.
  */
-public final class TermuxActivity extends Activity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener {
+public final class TermuxActivity extends Activity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener, TerminalView.DoubleClickListener {
 
     /**
      * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
@@ -899,6 +904,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout code_ll;
     private LinearLayout rongqi;
     private LinearLayout back_res;
+    private LinearLayout linux_online;
+    private LinearLayout qemu;
+    private LinearLayout cmd_command;
 
     /**
      *
@@ -913,10 +921,18 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         code_ll = findViewById(R.id.code_ll);
         rongqi = findViewById(R.id.rongqi);
         back_res = findViewById(R.id.back_res);
+        linux_online = findViewById(R.id.linux_online);
+        qemu = findViewById(R.id.qemu);
+        cmd_command = findViewById(R.id.cmd_command);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
         back_res.setOnClickListener(this);
+        linux_online.setOnClickListener(this);
+        qemu.setOnClickListener(this);
+        cmd_command.setOnClickListener(this);
+
+        mTerminalView.setDoubleClickListener(this);
 
 
     }
@@ -955,6 +971,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
              *
              */
             case R.id.rongqi:
+                getDrawer().closeDrawer(Gravity.LEFT);
                 startActivity(new Intent(this, SwitchActivity.class));
                 break;
 
@@ -964,7 +981,31 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
              *
              */
             case R.id.back_res:
+                getDrawer().closeDrawer(Gravity.LEFT);
                 startActivity(new Intent(this, BackNewActivity.class));
+                break;
+            case R.id.linux_online:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                UUtils.writerFile("linux/termux_toolx.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/linux.sh"));
+                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunLinuxSh());
+                break;
+            case R.id.qemu:
+
+                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuLeftPopuListData1 = new ArrayList<>();
+                //官方
+                MenuLeftPopuListWindow.MenuLeftPopuListData qemuData = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.qemu_ico_hai, UUtils.getString(R.string.海的QEMU), 5);
+                menuLeftPopuListData1.add(qemuData);
+
+                showMenuDialog(menuLeftPopuListData1,qemu);
+
+                break;
+            case R.id.cmd_command:
+
+
+                BoomCommandDialog boomCommandDialog = new BoomCommandDialog(TermuxActivity.this);
+                boomCommandDialog.show();
+                boomCommandDialog.setCancelable(true);
+
                 break;
 
 
@@ -1061,6 +1102,13 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     }
                 });
 
+
+                break;
+            //qemu
+            case 5:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                UUtils.writerFile("linux/termux_toolx.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
+                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
                 break;
         }
 
@@ -1087,6 +1135,62 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
 
+
+    @Override
+    public void doubleClicke() {
+
+
+
+        PopupWindow popupWindow = new PopupWindow();
+        final BoomWindow[] boomWindow = {new BoomWindow()};
+
+
+
+        popupWindow.setContentView(boomWindow[0].getView(new BoomMinLAdapter.CloseLiftListener() {
+            @Override
+            public void close() {
+                popupWindow.dismiss();
+            }
+        },TermuxActivity.this,popupWindow));
+
+
+        popupWindow.setOutsideTouchable(true);
+        //  popupWindow.setAnimationStyle(R.style.Animation);
+        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.showAsDropDown(mTerminalView,0,- boomWindow[0].getHigh());
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                boomWindow[0] = null;
+            }
+        });
+
+
+        boomWindow[0].popu_windows_huihua.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mTermuxTerminalSessionClient.addNewSession(false, null);
+                popupWindow.dismiss();
+
+            }
+        });
+        boomWindow[0].popu_windows_jianpan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                getDrawer().closeDrawers();
+
+                popupWindow.dismiss();
+
+
+            }
+        });
+
+    }
 
 
 

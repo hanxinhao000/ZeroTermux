@@ -13,6 +13,7 @@ object FileUrl {
 
     //主目录
     public val mainFilesUrl = TermuxConstants.TERMUX_FILES_DIR_PATH
+    public val mainHomeUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home"
 
 
     //官方 sources 路径[源路径]
