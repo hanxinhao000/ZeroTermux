@@ -52,6 +52,7 @@ import com.termux.terminal.TerminalSessionClient;
 import com.termux.app.utils.CrashUtils;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
+import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.SwitchDialog;
@@ -773,7 +774,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
     @Nullable
-    public TerminalSession getCurrentSession() {
+    public static TerminalSession getCurrentSession() {
         if (mTerminalView != null)
             return mTerminalView.getCurrentSession();
         else
@@ -897,6 +898,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      */
     private LinearLayout code_ll;
     private LinearLayout rongqi;
+    private LinearLayout back_res;
 
     /**
      *
@@ -910,9 +912,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         code_ll = findViewById(R.id.code_ll);
         rongqi = findViewById(R.id.rongqi);
+        back_res = findViewById(R.id.back_res);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
+        back_res.setOnClickListener(this);
 
 
     }
@@ -952,6 +956,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
              */
             case R.id.rongqi:
                 startActivity(new Intent(this, SwitchActivity.class));
+                break;
+
+            /**
+             *
+             * 备份恢复
+             *
+             */
+            case R.id.back_res:
+                startActivity(new Intent(this, BackNewActivity.class));
                 break;
 
 

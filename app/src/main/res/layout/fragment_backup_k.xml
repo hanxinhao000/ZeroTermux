@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2b2b2b"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_above="@+id/boom"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="top|left"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:id="@+id/title"
+                android:textSize="14sp"
+                android:text="@string/按钮一开始启动您的备份" />
+
+
+        </ScrollView>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/boom"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_height="60dp">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_height="wrap_content">
+
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:src="@mipmap/run_icooo"
+                    android:layout_height="40dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@string/开始备份"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:id="@+id/start_backup"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>
