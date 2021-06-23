@@ -1483,6 +1483,18 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void createFiles(){
 
+        File file = new File(FileUrl.INSTANCE.getMainConfigUrl());
+        File fileProperties = new File(FileUrl.INSTANCE.getMainConfigUrl(), "/termux.properties");
+
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        if(!fileProperties.exists()){
+
+            UUtils.writerFile("properties/termux.properties",fileProperties);
+            reloadActivityStyling();
+        }
+
         if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
 
             SwitchDialog switchDialog2 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.需要在您的手机));
