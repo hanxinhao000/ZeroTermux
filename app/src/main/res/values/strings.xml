@@ -336,5 +336,6 @@
 
     </string>
     <string name="版本">版本</string>
+    <string name="会话窗口在右侧">提示:会话窗口在右侧</string>
 
 </resources>

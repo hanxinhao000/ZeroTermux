@@ -382,6 +382,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         if (mTermuxService.isTermuxSessionsEmpty()) {
             if (mIsVisible) {
                 TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
+                    getDrawer().openDrawer(Gravity.LEFT);
+                  //  getDrawer().openDrawer(Gravity.RIGHT);
                     if (mTermuxService == null) return; // Activity might have been destroyed.
                     try {
                         Bundle bundle = getIntent().getExtras();
@@ -927,7 +929,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout msg;
     private LinearLayout files_mulu;
     private TextView version;
-    private CardView title_mb;
+    private LinearLayout title_mb;
 
     /**
      *
@@ -971,23 +973,36 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             public void onDrawerSlide(@NonNull @NotNull View drawerView, float slideOffset) {
 
 
-                int i = (int) (slideOffset * 100);
-                if(i < 50){
-                    title_mb.setVisibility(View.GONE);
-                }else{
-                    title_mb.setVisibility(View.VISIBLE);
+
+
+                    int i = (int) (slideOffset * 100);
+                  /*  UUtils.showLog("状态变换[isDrawerVisible]:" + getDrawer().isDrawerVisible(Gravity.LEFT));
+                    UUtils.showLog("状态变换[isDrawerOpen]:" + getDrawer().isDrawerOpen(Gravity.LEFT));*/
+                if(getDrawer().isDrawerVisible(Gravity.LEFT)){
+                    if(i < 50){
+                        title_mb.setVisibility(View.GONE);
+                    }else{
+                        title_mb.setVisibility(View.VISIBLE);
+
+                    }
+
                 }
+
+
+
+
+                UUtils.showLog("状态变换:" + slideOffset);
 
             }
 
             @Override
             public void onDrawerOpened(@NonNull @NotNull View drawerView) {
-                title_mb.setVisibility(View.VISIBLE);
+              //  title_mb.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onDrawerClosed(@NonNull @NotNull View drawerView) {
-                title_mb.setVisibility(View.GONE);
+              //  title_mb.setVisibility(View.GONE);
             }
 
             @Override
