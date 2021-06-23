@@ -20,7 +20,7 @@ android {
         implementation "com.google.guava:guava:24.1-jre"
         implementation 'com.google.code.gson:gson:2.8.6'
 
-
+        implementation 'com.github.getActivity:XXPermissions:11.5'
 
 
         implementation "io.noties.markwon:core:$markwonVersion"
@@ -37,7 +37,7 @@ android {
         minSdkVersion project.properties.minSdkVersion.toInteger()
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 114
-        versionName "0.114"
+        versionName "0.114.01"
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"

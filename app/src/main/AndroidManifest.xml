@@ -32,6 +32,9 @@
     <uses-permission android:name="android.permission.DUMP" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
         android:name=".app.TermuxApplication"
@@ -103,6 +106,16 @@
             android:exported="true"
             android:label="@string/title_activity_termux_settings"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".app.activities.ReportActivity"
@@ -185,5 +198,7 @@
             android:name="com.samsung.android.multidisplay.keep_process_alive"
             android:value="true" />
     </application>
+
+
 
 </manifest>

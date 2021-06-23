@@ -532,6 +532,7 @@
                             android:orientation="vertical"
                             android:layout_gravity="center"
                             android:gravity="center"
+                            android:id="@+id/moe"
                             android:layout_height="match_parent">
 
                             <ImageView
@@ -610,6 +611,7 @@
                             android:orientation="vertical"
                             android:layout_gravity="center"
                             android:gravity="center"
+                            android:id="@+id/msg"
                             android:layout_height="match_parent">
 
                             <ImageView
@@ -690,6 +692,7 @@
                             android:orientation="vertical"
                             android:layout_gravity="center"
                             android:gravity="center"
+                            android:id="@+id/files_mulu"
                             android:layout_height="match_parent">
 
                             <ImageView
@@ -746,6 +749,7 @@
                 android:layout_marginTop="10dp"
                 android:paddingBottom="5dp"
                 android:layout_marginRight="5dp"
+                android:visibility="gone"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
@@ -757,6 +761,7 @@
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
+
                     android:layout_height="match_parent">
 
 

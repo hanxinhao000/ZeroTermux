@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,9 +31,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xh_lib.utils.UUtils;
+import com.example.xh_lib.utils.UUtils2;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.shared.termux.TermuxConstants;
@@ -62,16 +68,24 @@ import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
+import com.termux.zerocore.utils.IsInstallCommand;
+import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.view.BoomWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A terminal emulator activity.
@@ -256,6 +270,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         TermuxUtils.sendTermuxOpenedBroadcast(this);
 
 
+        createFiles();
         initZeroView();
     }
 
@@ -823,6 +838,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             intent.removeExtra(TERMUX_ACTIVITY.EXTRA_RELOAD_STYLE);
             intent.setAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
         }
+        resBroadcastReceiever(extraReloadStyle);
     }
 
 
@@ -907,6 +923,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout linux_online;
     private LinearLayout qemu;
     private LinearLayout cmd_command;
+    private LinearLayout moe;
+    private LinearLayout msg;
+    private LinearLayout files_mulu;
+    private TextView version;
+    private CardView title_mb;
 
     /**
      *
@@ -924,6 +945,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         linux_online = findViewById(R.id.linux_online);
         qemu = findViewById(R.id.qemu);
         cmd_command = findViewById(R.id.cmd_command);
+        moe = findViewById(R.id.moe);
+        msg = findViewById(R.id.msg);
+        files_mulu = findViewById(R.id.files_mulu);
+        version = findViewById(R.id.version);
+        title_mb = findViewById(R.id.title_mb);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -931,10 +957,44 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         linux_online.setOnClickListener(this);
         qemu.setOnClickListener(this);
         cmd_command.setOnClickListener(this);
+        moe.setOnClickListener(this);
+        msg.setOnClickListener(this);
+        files_mulu.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
+        title_mb.setVisibility(View.GONE);
+        version.setText(UUtils.getString(R.string.版本) + ":" + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
 
 
+        getDrawer().addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull @NotNull View drawerView, float slideOffset) {
+
+
+                int i = (int) (slideOffset * 100);
+                if(i < 50){
+                    title_mb.setVisibility(View.GONE);
+                }else{
+                    title_mb.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull @NotNull View drawerView) {
+                title_mb.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull @NotNull View drawerView) {
+                title_mb.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
 
@@ -1005,6 +1065,42 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 BoomCommandDialog boomCommandDialog = new BoomCommandDialog(TermuxActivity.this);
                 boomCommandDialog.show();
                 boomCommandDialog.setCancelable(true);
+
+                break;
+            case R.id.moe:
+
+                getDrawer().closeDrawer(Gravity.LEFT);
+                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunMoeSh());
+
+                break;
+
+            case R.id.msg:
+                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuphoneMsg = new ArrayList<>();
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_phone = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.install_msg_phone, UUtils.getString(R.string.安装短信读取工具), 6);
+                menuphoneMsg.add(msg_phone);
+
+                showMenuDialog(menuphoneMsg,msg);
+                break;
+
+            case R.id.files_mulu:
+
+
+                try {
+                    Intent intent = new Intent();
+                    intent.setAction("com.utermux.files.action");
+                    startActivity(intent);
+                }catch (Exception e){
+                    e.printStackTrace();
+
+                    try {
+                        installApk(getAssets().open("apk/utermux_file_plug.ip"));
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+
 
                 break;
 
@@ -1110,6 +1206,44 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 UUtils.writerFile("linux/termux_toolx.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
                 break;
+            case 6:
+                getDrawer().closeDrawer(Gravity.LEFT);
+
+                SwitchDialog msg = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作有风险));
+
+                msg.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        msg.dismiss();
+
+                    }
+                });
+                msg.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        msg.dismiss();
+                        File file = new File(FileUrl.INSTANCE.getSmsUrl());
+                        if(file.exists()){
+
+                            UUtils.showMsg(UUtils.getString(R.string.您已安装工具));
+
+                        }else{
+
+
+                            UUtils.writerFile("runcommand/smsread",new File(FileUrl.INSTANCE.getSmsUrl()));
+
+
+                            TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunsmsChomdSh());
+
+                            UUtils.showMsg(UUtils.getString(R.string.安装完成));
+
+
+                        }
+
+                    }
+                });
+
+                break;
         }
 
     }
@@ -1193,5 +1327,232 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
 
+    private void resBroadcastReceiever(String msg){
+
+        if(msg == null){
+            return;
+        }
+
+        if(msg.equals("readsms")){
+
+            boolean vim = IsInstallCommand.INSTANCE.isInstall(this, "vim", CodeString.INSTANCE.getRunsmsInstallSh());
+
+            if(vim){
+
+                XXPermissions.with(this)
+                    .permission(Permission.READ_SMS)
+                    .request(new OnPermissionCallback() {
+
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+                               // UUtils.showMsg("获取录音和日历权限成功");
+
+                                String smsInPhone = SmsUtils.getSmsInPhone();
+                                UUtils.setFileString(new File(FileUrl.INSTANCE.getSmsUrlFile()),smsInPhone);
+                                UUtils.sleepSetRunMm(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim sms.txt \n");
+                                    }
+                                },100);
+
+                            } else {
+                               // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                            } else {
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                            }
+                        }
+                    });
+
+            }
+
+        }
+
+
+
+    }
+
+
+    private void installApk(InputStream inputStream){
+
+
+        SwitchDialog switchDialog1 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.您未安装该插件));
+
+        switchDialog1.getCancel().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchDialog1.dismiss();
+
+            }
+        });
+        switchDialog1.getOk().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchDialog1.dismiss();
+
+
+                XXPermissions.with(TermuxActivity.this)
+                    .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                    .permission(Permission.READ_EXTERNAL_STORAGE)
+                    .permission(Permission.REQUEST_INSTALL_PACKAGES)
+                    .request(new OnPermissionCallback() {
+
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+                                if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
+                                    FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
+                                }
+                                File file1 = new File(Environment.getExternalStorageDirectory(), "/xinhao/apk/files.apk");
+                                UUtils.writerFileRawInput(file1,inputStream);
+                                UUtils.installApk(UUtils.getContext(),file1.getAbsolutePath());
+                            } else {
+
+                                UUtils.showMsg("无权限");
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                UUtils.showMsg("无权限");
+                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                            } else {
+                                UUtils.showMsg("无权限");
+                            }
+                        }
+                    });
+
+
+            }
+        });
+
+
+
+    }
+
+
+
+    //创建目录
+
+    private void createFiles(){
+
+        if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
+
+            SwitchDialog switchDialog2 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.需要在您的手机));
+
+            switchDialog2.getCancel().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchDialog2.dismiss();
+
+                    finish();
+                }
+            });
+            switchDialog2.setCancelable(false);
+            switchDialog2.getOk().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchDialog2.dismiss();
+
+                    XXPermissions.with(TermuxActivity.this)
+                        .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                        .permission(Permission.READ_EXTERNAL_STORAGE)
+                        .request(new OnPermissionCallback() {
+
+                            @Override
+                            public void onGranted(List<String> permissions, boolean all) {
+                                if (all) {
+
+                                    if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxHome().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxData().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxData().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxWindows().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxWindows().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxCommand().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxCommand().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxFont().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxFont().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxIso().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxIso().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxMysql().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxMysql().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxOnlineSystem().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxOnlineSystem().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxQemu().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxQemu().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxServer().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxServer().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxShare().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxShare().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxSystem().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxSystem().mkdirs();
+                                    }
+                                    if(!FileUrl.INSTANCE.getZeroTermuxWebConfig().exists()){
+                                        FileUrl.INSTANCE.getZeroTermuxWebConfig().mkdirs();
+                                    }
+                                    UUtils.showMsg("ok");
+                                } else {
+
+                                    UUtils.showMsg("无权限");
+                                }
+                            }
+
+                            @Override
+                            public void onDenied(List<String> permissions, boolean never) {
+                                if (never) {
+                                    UUtils.showMsg("无权限");
+                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                    XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                                } else {
+                                    UUtils.showMsg("无权限");
+                                }
+                            }
+                        });
+
+
+                }
+            });
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+    }
 
 }

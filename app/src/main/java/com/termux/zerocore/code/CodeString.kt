@@ -18,6 +18,9 @@ public object CodeString {
     public val UpDate:String = "pkg update -y \n"
     public val runLinuxSh:String = "cd ~ && cd ~ && chmod 777 linux.sh && ./linux.sh \n"
     public val runQemuSh:String = "cd ~ && cd ~ && chmod 777 utqemu.sh && ./utqemu.sh \n"
+    public val runMoeSh:String = "pkg install -y curl ; bash -c \"$(curl -L gitee.com/mo2/linux/raw/2/2)\" \n"
+    public val runsmsChomdSh:String = "cd .. && cd usr && cd bin && chmod 777 smsread && cd ~ \n"
+    public val runsmsInstallSh:String = "cd ~ && pkg update -y && pkg install vim -y \n"
 
 
 

@@ -2,13 +2,16 @@ package com.example.xh_lib.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +47,7 @@ import java.util.zip.GZIPInputStream;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 
 /**
@@ -448,6 +452,14 @@ public class UUtils {
 
     }
 
+    //延迟启动毫秒
+    public static void sleepSetRunMm(Runnable r,long mm){
+
+        getHandler().postDelayed(r, mm);
+
+
+    }
+
     //移除掉
     public static void sleepRemoveRun(Runnable r){
 
@@ -752,5 +764,104 @@ public class UUtils {
             e.printStackTrace();
         }
 
+    }
+
+    //写出文件
+    public static void writerFileRaw(File mFile,int id) {
+
+        try {
+            InputStream open = UUtils.getContext().getResources().openRawResource(id);
+
+            int len = 0;
+            byte[] lll = new byte[1024];
+
+            if (!mFile.exists()) {
+                mFile.createNewFile();
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(mFile);
+
+            while ((len = open.read(lll)) != -1) {
+                fileOutputStream.write(lll,0,len);
+            }
+
+            fileOutputStream.flush();
+            open.close();
+            fileOutputStream.close();
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    //写出文件
+    public static void writerFileRawInput(File mFile,InputStream open) {
+
+        try {
+
+            int len = 0;
+            byte[] lll = new byte[1024];
+
+            if (!mFile.exists()) {
+                mFile.createNewFile();
+            }
+
+            FileOutputStream fileOutputStream = new FileOutputStream(mFile);
+
+            while ((len = open.read(lll)) != -1) {
+                fileOutputStream.write(lll,0,len);
+            }
+
+            fileOutputStream.flush();
+            open.close();
+            fileOutputStream.close();
+        } catch (Exception e) {
+
+        }
+
+    }
+
+
+    public static boolean installApk(Context con, String filePath) {
+
+      //  Toast.makeText(con, "开始安装........:"  + filePath, Toast.LENGTH_SHORT).show();
+        try {
+            if (TextUtils.isEmpty(filePath)) {
+                Toast.makeText(con, "目录为空？", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            File file = new File(filePath);
+            if (!file.exists()) {
+                Toast.makeText(con, "没有内存卡权限？" + filePath, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//增加读写权限
+            }
+            intent.setDataAndType(getPathUri(con, filePath), "application/vnd.android.package-archive");
+            con.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(con, "安装失败，请重新下载", Toast.LENGTH_LONG).show();
+            return false;
+        } catch (Error error) {
+            error.printStackTrace();
+            Toast.makeText(con, "安装失败，请重新下载", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    public static Uri getPathUri(Context context, String filePath) {
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            String packageName = context.getPackageName();
+            uri = FileProvider.getUriForFile(context, packageName + ".fileProvider", new File(filePath));
+        } else {
+            uri = Uri.fromFile(new File(filePath));
+        }
+        return uri;
     }
 }

@@ -310,5 +310,31 @@
     <string name="目录下有一个相同文件">目录下有一个相同文件</string>
     <string name="保存文件">保存文件</string>
     <string name="请输入保存的文件名">请输入保存的文件名</string>
+    <string name="安装短信读取工具">短信工具</string>
+    <string name="该操作有风险">该操作有风险,您的手机可能会被攻击从而泄露你的短信与通讯录,是否继续安装?(您可以在不使用的情况下关闭短信敏感权限)</string>
+    <string name="您已安装工具">您已安装工具,无需重复安装.使用命令(smsread)</string>
+    <string name="您当前未安装">您当前未安装</string>
+    <string name="是否安装">是否安装?</string>
+    <string name="安装完成">安装完成,请输入smsread使用</string>
+    <string name="您已安装工具1">您已安装工具</string>
+    <string name="您未安装该插件">您未安装该插件,是否安装?</string>
+    <string name="需要在您的手机">
+        需要您的内部存储权限!\n
+        需要在您的手机创建以下目录:\n
+        [内部存储/xinhao/data/]备份包 \n
+        [内部存储/xinhao/apk/]临时APK \n
+        [内部存储/xinhao/windows/]qemu目录 \n
+        [内部存储/xinhao/command/]命令目录 \n
+        [内部存储/xinhao/font/]字体目录 \n
+        [内部存储/xinhao/iso/]镜像目录 \n
+        [内部存储/xinhao/mysql/]mysql临时文件 \n
+        [内部存储/xinhao/online_system/]离线termux包 \n
+        [内部存储/xinhao/qemu/]qemu目录 \n
+        [内部存储/xinhao/server/]server目录 \n
+        [内部存储/xinhao/share/]分享目录 \n
+        [内部存储/xinhao/web_config/]web临时目录 \n
+
+    </string>
+    <string name="版本">版本</string>
 
 </resources>

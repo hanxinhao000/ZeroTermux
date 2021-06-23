@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
@@ -46,6 +47,20 @@ object UUtils2 {
 
         ImageViewerHelper.showImages(UUtils.getContext(), imgs, 0, true)
 
+    }
+
+
+    //获取版本号
+    fun getVersionName(context: Context): String? {
+        var versionName = ""
+        try {
+            val packageInfo = context.applicationContext
+                .packageManager.getPackageInfo(context.packageName, 0)
+            versionName = packageInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return versionName
     }
 
 
