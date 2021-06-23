@@ -52,7 +52,7 @@ public final class TermuxInstaller {
     private static final String LOG_TAG = "TermuxInstaller";
 
     /** Performs bootstrap setup if necessary. */
-    static void setupBootstrapIfNeeded(final Activity activity, final Runnable whenDone) {
+    static void setupBootstrapIfNeeded(final Activity activity, final Runnable whenDone,final Runnable onOne) {
         // Termux can only be run as the primary user (device owner) since only that
         // account has the expected file system paths. Verify that:
         UserManager um = (UserManager) activity.getSystemService(Context.USER_SERVICE);
@@ -165,6 +165,7 @@ public final class TermuxInstaller {
 
                     Logger.logInfo(LOG_TAG, "Bootstrap packages installed successfully.");
                     activity.runOnUiThread(whenDone);
+                    activity.runOnUiThread(onOne);
                 } catch (final Exception e) {
                     Logger.logStackTraceWithMessage(LOG_TAG, "Bootstrap error", e);
                     activity.runOnUiThread(() -> {
@@ -176,7 +177,7 @@ public final class TermuxInstaller {
                                 }).setPositiveButton(R.string.bootstrap_error_try_again, (dialog, which) -> {
                                 dialog.dismiss();
                                 FileUtils.deleteFile(activity, "prefix directory", PREFIX_FILE_PATH, true);
-                                TermuxInstaller.setupBootstrapIfNeeded(activity, whenDone);
+                                TermuxInstaller.setupBootstrapIfNeeded(activity, whenDone,onOne);
                             }).show();
                         } catch (WindowManager.BadTokenException e1) {
                             // Activity already dismissed - ignore.

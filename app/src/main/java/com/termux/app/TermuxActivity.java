@@ -382,8 +382,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         if (mTermuxService.isTermuxSessionsEmpty()) {
             if (mIsVisible) {
                 TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
-                    getDrawer().openDrawer(Gravity.LEFT);
-                  //  getDrawer().openDrawer(Gravity.RIGHT);
+
+                    //  getDrawer().openDrawer(Gravity.RIGHT);
                     if (mTermuxService == null) return; // Activity might have been destroyed.
                     try {
                         Bundle bundle = getIntent().getExtras();
@@ -394,6 +394,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                         mTermuxTerminalSessionClient.addNewSession(launchFailsafe, null);
                     } catch (WindowManager.BadTokenException e) {
                         // Activity finished - ignore.
+                    }
+
+
+
+                }, new Runnable() {
+                    @Override
+                    public void run() {
+                        getDrawer().openDrawer(Gravity.LEFT);
                     }
                 });
             } else {
@@ -930,6 +938,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout files_mulu;
     private TextView version;
     private LinearLayout title_mb;
+    private LinearLayout github;
 
     /**
      *
@@ -952,6 +961,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         files_mulu = findViewById(R.id.files_mulu);
         version = findViewById(R.id.version);
         title_mb = findViewById(R.id.title_mb);
+        github = findViewById(R.id.github);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -962,6 +972,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         moe.setOnClickListener(this);
         msg.setOnClickListener(this);
         files_mulu.setOnClickListener(this);
+        github.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
@@ -1010,6 +1021,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
             }
         });
+
+
     }
 
 
@@ -1117,6 +1130,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 }
 
 
+                break;
+            case R.id.github:
+                Intent intent = new Intent();
+                intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux"));//Url 就是你要打开的网址
+                intent.setAction(Intent.ACTION_VIEW);
+                startActivity(intent); //启动浏览器
                 break;
 
 
