@@ -349,4 +349,13 @@
     <string name="notification_message_visible">触摸隐藏窗口。</string>
     <string name="notification_message_hidden">触摸隐藏窗口。</string>
     <string name="正在载入中">正在载入中,请稍后。</string>
+    <string name="字体选择">字体选择</string>
+    <string name="您一切选择的字体来源于互联网">您一切选择的字体来源于互联网</string>
+    <string name="没有在内部存储">没有在[内部存储/xinhao/font]找到任何字体文件</string>
+    <string name="Utermux默认字体">Utermux默认字体</string>
+    <string name="Utermux中文字体">Utermux中文字体</string>
+    <string name="创建文件错误">创建文件错误</string>
+    <string name="字体设置成功">字体设置成功</string>
+    <string name="如果进入终端没有任何显示">如果进入终端没有任何显示代表您的字体文件损坏,请重新设置字体</string>
+    <string name="字体设置">字体设置</string>
 </resources>

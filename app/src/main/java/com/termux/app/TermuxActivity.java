@@ -61,6 +61,7 @@ import com.termux.app.utils.CrashUtils;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
 import com.termux.zerocore.activity.BackNewActivity;
+import com.termux.zerocore.activity.FontActivity;
 import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.code.CodeString;
@@ -948,6 +949,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout github;
     private LinearLayout start_command;
     private LinearLayout xuanfu;
+    private LinearLayout ziti;
 
     /**
      *
@@ -974,6 +976,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         start_command = findViewById(R.id.start_command);
         text_start = findViewById(R.id.text_start);
         xuanfu = findViewById(R.id.xuanfu);
+        ziti = findViewById(R.id.ziti);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -987,6 +990,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         github.setOnClickListener(this);
         start_command.setOnClickListener(this);
         xuanfu.setOnClickListener(this);
+        ziti.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
@@ -1186,6 +1190,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 break;
 
+            case R.id.ziti:
+                getDrawer().close();
+                title_mb.setVisibility(View.GONE);
+                startActivity(new Intent(this, FontActivity.class));
+                break;
+
 
         }
 
@@ -1228,6 +1238,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+
+        title_mb.setVisibility(View.GONE);
+        getDrawer().close();
+
+    }
 
     /**
      *
@@ -1581,7 +1600,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void createFiles(){
 
-        File file = new File(FileUrl.INSTANCE.getMainConfigUrl());
+     /*   File file = new File(FileUrl.INSTANCE.getMainConfigUrl());
         File fileProperties = new File(FileUrl.INSTANCE.getMainConfigUrl(), "/termux.properties");
 
         if(!file.exists()){
@@ -1591,7 +1610,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
             UUtils.writerFile("properties/termux.properties",fileProperties);
             reloadActivityStyling();
-        }
+        }*/
 
         if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
 
