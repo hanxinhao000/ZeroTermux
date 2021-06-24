@@ -311,6 +311,10 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             mTermuxTerminalViewClient.onResume();
 
         isOnResumeAfterOnCreate = false;
+
+
+        isShow();
+
     }
 
     @Override
@@ -1199,6 +1203,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     }
 
+
+
     /**
      *
      * 菜单点击事件
@@ -1644,5 +1650,27 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
     }
+
+    /**
+     *
+     * 判断面板是否显示
+     *
+     *
+     */
+
+
+    private void isShow(){
+
+        if(getDrawer().isOpen()){
+            title_mb.setVisibility(View.VISIBLE);
+        }else{
+            title_mb.setVisibility(View.GONE);
+
+        }
+
+
+
+    }
+
 
 }
