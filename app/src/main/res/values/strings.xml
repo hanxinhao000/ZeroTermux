@@ -341,5 +341,12 @@
     <string name="开源地址">开源地址</string>
     <string name="已打开开机启动命令">已打开开机启动命令,重启APP生效</string>
     <string name="已关闭开机启动命令">已关闭开机启动命令,重启后生效</string>
-
+    <string name="悬浮窗口">悬浮窗口</string>
+    <string name="draw_overlay_permission_explanation">这个应用程序需要权限来绘制覆盖。</string>
+    <string name="grant_permission">获取</string>
+    <string name="initial_instruction_toast">长按在窗口上移动\n\n长按在窗口上缩放手势,缩放窗口大小</string>
+    <string name="notification_title">Termux:悬浮</string>
+    <string name="notification_message_visible">触摸隐藏窗口。</string>
+    <string name="notification_message_hidden">触摸隐藏窗口。</string>
+    <string name="正在载入中">正在载入中,请稍后。</string>
 </resources>

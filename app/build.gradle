@@ -11,6 +11,21 @@ android {
         viewBinding true
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'phone1'
+            keyPassword '654321'
+            storeFile file('E:/BaiduNetdiskDownload/termux-app-master/签名文件/phone.jks')
+            storePassword '123456'
+        }
+        debug {
+            keyAlias 'phone1'
+            keyPassword '654321'
+            storeFile file('E:/BaiduNetdiskDownload/termux-app-master/签名文件/phone.jks')
+            storePassword '123456'
+        }
+    }
+
     dependencies {
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.5.0-rc01"
@@ -60,14 +75,7 @@ android {
 
     }
 
-    signingConfigs {
-        debug {
-            storeFile file('dev_keystore.jks')
-            keyAlias 'alias'
-            storePassword 'xrj45yWGLbsO7W0v'
-            keyPassword 'xrj45yWGLbsO7W0v'
-        }
-    }
+
 
     buildTypes {
         release {

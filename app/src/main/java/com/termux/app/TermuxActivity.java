@@ -65,6 +65,7 @@ import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.BoomCommandDialog;
+import com.termux.zerocore.dialog.LoadingDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
@@ -946,6 +947,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout title_mb;
     private LinearLayout github;
     private LinearLayout start_command;
+    private LinearLayout xuanfu;
 
     /**
      *
@@ -971,6 +973,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         github = findViewById(R.id.github);
         start_command = findViewById(R.id.start_command);
         text_start = findViewById(R.id.text_start);
+        xuanfu = findViewById(R.id.xuanfu);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -983,6 +986,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         files_mulu.setOnClickListener(this);
         github.setOnClickListener(this);
         start_command.setOnClickListener(this);
+        xuanfu.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
@@ -1132,7 +1136,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     e.printStackTrace();
 
                     try {
-                        installApk(getAssets().open("apk/utermux_file_plug.ip"));
+                        installApk(getAssets().open("apk/utermux_file_plug.ip"),"files");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -1159,6 +1163,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 }
 
                 refStartCommandStat();
+
+                break;
+            case R.id.xuanfu:
+
+
+                try {
+                    Intent intent1 = new Intent();
+                    intent1.setAction("com.zero_float.action.ENTER");
+                    startActivity(intent1);
+                }catch (Exception e){
+                    e.printStackTrace();
+
+                    try {
+                        installApk(getAssets().open("apk/zero_float.ip"),"zeroFloat");
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+
 
                 break;
 
@@ -1468,7 +1492,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
 
-    private void installApk(InputStream inputStream){
+    private void installApk(InputStream inputStream,String fileName){
 
 
         SwitchDialog switchDialog1 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.您未安装该插件));
@@ -1498,9 +1522,33 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                                 if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
                                     FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
                                 }
-                                File file1 = new File(Environment.getExternalStorageDirectory(), "/xinhao/apk/files.apk");
+                                File file1 = new File(Environment.getExternalStorageDirectory(), "/xinhao/apk/"+ fileName +".apk");
+                                LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+                                loadingDialog.show();
                                 UUtils.writerFileRawInput(file1,inputStream);
-                                UUtils.installApk(UUtils.getContext(),file1.getAbsolutePath());
+
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        try {
+                                            Thread.sleep(2000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                loadingDialog.dismiss();
+                                                UUtils.installApk(UUtils.getContext(),file1.getAbsolutePath());
+                                            }
+                                        });
+
+                                    }
+                                }).start();
+
+
                             } else {
 
                                 UUtils.showMsg("无权限");
