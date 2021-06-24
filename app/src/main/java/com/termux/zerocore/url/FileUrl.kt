@@ -59,6 +59,13 @@ object FileUrl {
     public val smsUrl = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/bin/smsread"
     //获取短信的目录
     public val smsUrlFile = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/home/sms.txt"
+    //系统启动脚本目录
+    ///data/data/com.termux/files/usr/etc/bash.bashrc  .xinhao_history
+    public val smsBashrcFile = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/etc/bash.bashrc"
+    //Zero系统脚本目录
+    public val smsZeroBashrcFileD = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/home/.xinhao_history"
+    //Zero系统脚本
+    public val smsZeroBashrcFile = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/home/.xinhao_history/start_command.sh"
 
 
 

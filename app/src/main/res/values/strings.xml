@@ -190,7 +190,8 @@
     <string name="命令定义">命令定义</string>
     <string name="短信通话">短信/通话</string>
     <string name="打开目录">打开目录</string>
-    <string name="开机启动">开机启动</string>
+    <string name="开机启动">开机启动(关)</string>
+    <string name="开机启动开">开机启动(开)</string>
     <string name="MOE">MOE</string>
     <string name="MOE全能">MOE全能</string>
     <string name="清华源">清华源</string>
@@ -338,5 +339,7 @@
     <string name="版本">版本</string>
     <string name="会话窗口在右侧">提示:会话窗口在右侧</string>
     <string name="开源地址">开源地址</string>
+    <string name="已打开开机启动命令">已打开开机启动命令,重启APP生效</string>
+    <string name="已关闭开机启动命令">已关闭开机启动命令,重启后生效</string>
 
 </resources>

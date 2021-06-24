@@ -70,6 +70,7 @@ import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.SmsUtils;
+import com.termux.zerocore.utils.StartRunCommandUtils;
 import com.termux.zerocore.view.BoomWindow;
 
 import androidx.annotation.NonNull;
@@ -937,8 +938,10 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout msg;
     private LinearLayout files_mulu;
     private TextView version;
+    private TextView text_start;
     private LinearLayout title_mb;
     private LinearLayout github;
+    private LinearLayout start_command;
 
     /**
      *
@@ -962,6 +965,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         version = findViewById(R.id.version);
         title_mb = findViewById(R.id.title_mb);
         github = findViewById(R.id.github);
+        start_command = findViewById(R.id.start_command);
+        text_start = findViewById(R.id.text_start);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -973,6 +978,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         msg.setOnClickListener(this);
         files_mulu.setOnClickListener(this);
         github.setOnClickListener(this);
+        start_command.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
@@ -1022,7 +1028,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             }
         });
 
-
+        refStartCommandStat();
     }
 
 
@@ -1137,6 +1143,20 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 intent.setAction(Intent.ACTION_VIEW);
                 startActivity(intent); //启动浏览器
                 break;
+            case R.id.start_command:
+
+
+                //refStartCommandStat()
+                if(StartRunCommandUtils.INSTANCE.isRun()){
+
+                    StartRunCommandUtils.INSTANCE.endRun();
+                }else{
+                    StartRunCommandUtils.INSTANCE.startRun();
+                }
+
+                refStartCommandStat();
+
+                break;
 
 
         }
@@ -1150,6 +1170,30 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         menuLeftPopuListWindow.setItemClickPopuListener(this);
         menuLeftPopuListWindow.setListData(arrayList);
         menuLeftPopuListWindow.showAsDropDown(showView,250,-200);
+
+
+
+    }
+
+    /**
+     *
+     * 刷新状态
+     *
+     *
+     */
+
+    private void refStartCommandStat(){
+
+
+        if(StartRunCommandUtils.INSTANCE.isRun()){
+
+            text_start.setText(UUtils.getString(R.string.开机启动开));
+
+        }else{
+
+            text_start.setText(UUtils.getString(R.string.开机启动));
+
+        }
 
 
 
