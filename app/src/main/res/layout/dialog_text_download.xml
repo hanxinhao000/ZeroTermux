@@ -5,7 +5,7 @@
     android:background="@drawable/shape_r_3dp_161823_left"
     android:orientation="vertical"
     android:padding="12dp"
-    android:layout_height="390dp">
+    android:layout_height="wrap_content">
 
 
 
@@ -13,16 +13,32 @@
         android:layout_width="wrap_content"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:id="@+id/service_name"
         android:textColor="@color/color_ffffff"
         android:text="@string/服务器"
         android:layout_height="wrap_content"/>
 
 
-    <androidx.recyclerview.widget.RecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
-        android:id="@+id/recycler_view"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:id="@+id/recycler_view"
+            android:layout_height="390dp"/>
+
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/pro"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
 
 
 </LinearLayout>

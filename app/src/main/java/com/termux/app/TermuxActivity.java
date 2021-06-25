@@ -72,6 +72,7 @@ import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.BoomCommandDialog;
+import com.termux.zerocore.dialog.DownLoadDialogBoom;
 import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
@@ -1820,6 +1821,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 try{
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
+
+                    DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
+                    downLoadDialogBoom.setIP(ip + "/repository/main.json");
+                    downLoadDialogBoom.show();
+                    downLoadDialogBoom.setCancelable(true);
                 }catch (Exception e){
                     e.printStackTrace();
                     UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));

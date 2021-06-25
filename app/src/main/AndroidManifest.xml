@@ -49,6 +49,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/application_name"
         android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup, android:supportsRtl"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.Termux">

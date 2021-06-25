@@ -2,7 +2,7 @@ package com.termux.zerocore.bean
 
 data class ZDYDataBean(
     val code: Int,
-    val `data`: List<Data>,
+    val `data`: ArrayList<Data>,
     val home: String,
     val ip: String,
     val versionName: String,
@@ -12,5 +12,6 @@ data class ZDYDataBean(
 data class Data(
     val download: String,
     val name: String,
-    val size: String
+    val size: String,
+    val note: String
 )
