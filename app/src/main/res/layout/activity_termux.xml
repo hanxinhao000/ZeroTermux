@@ -245,6 +245,68 @@
                             android:layout_width="wrap_content"
                             android:textColor="@color/color_ffffff"
                             android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_marginTop="5dp"
+                            android:layout_alignParentRight="true"
+                            android:text="@string/局域服务器"
+                            android:layout_height="wrap_content"/>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textColor="@color/color_ffffff"
+                                android:textStyle="bold"
+                                android:textSize="15sp"
+                                android:id="@+id/service_status"
+                                android:layout_marginTop="15dp"
+                                android:layout_alignParentRight="true"
+                                android:text="@string/未连接"
+                                android:layout_height="wrap_content"/>
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+
+
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="200dp"
+                    android:layout_marginLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:layout_marginTop="10dp"
+                    android:paddingBottom="5dp"
+
+                    android:layout_marginRight="10dp"
+                    android:visibility="visible"
+
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/color_161823"
+                    app:cardCornerRadius="3dp"
+                    android:layout_height="80dp">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:layout_height="match_parent">
+
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
                             android:textSize="12sp"
                             android:layout_marginTop="5dp"
                             android:layout_alignParentRight="true"

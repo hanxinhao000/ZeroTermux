@@ -30,6 +30,7 @@
                 android:layout_width="wrap_content"
                 android:text="@string/正在载入中"
                 android:layout_marginTop="5dp"
+                android:id="@+id/msg"
                 android:textSize="15sp"
                 android:layout_gravity="center"
                 android:textColor="@color/color_ffffff"

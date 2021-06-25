@@ -228,7 +228,7 @@
     <string name="没有找到storage目录">没有找到storage目录</string>
     <string name="已检测到软连接">已检测到软连接</string>
     <string name="秒后开始备份">秒后开始备份</string>
-    <string name="没有SD卡权限">没有SD卡权限</string>
+    <string name="没有SD卡权限">没有可恢复文件!</string>
     <string name="恢复方式">恢复方式</string>
     <string name="默认恢复">默认恢复</string>
     <string name="强制恢复">强制恢复</string>
@@ -337,7 +337,7 @@
 
     </string>
     <string name="版本">版本</string>
-    <string name="会话窗口在右侧">提示:会话窗口在右侧</string>
+    <string name="会话窗口在右侧">提示:会话窗口在右侧\n双击命令窗口打开快捷命令\n使用许可:学习交流</string>
     <string name="开源地址">开源地址</string>
     <string name="已打开开机启动命令">已打开开机启动命令,重启APP生效</string>
     <string name="已关闭开机启动命令">已关闭开机启动命令,重启后生效</string>
@@ -352,10 +352,23 @@
     <string name="字体选择">字体选择</string>
     <string name="您一切选择的字体来源于互联网">您一切选择的字体来源于互联网</string>
     <string name="没有在内部存储">没有在[内部存储/xinhao/font]找到任何字体文件</string>
-    <string name="Utermux默认字体">Utermux默认字体</string>
-    <string name="Utermux中文字体">Utermux中文字体</string>
+    <string name="Utermux默认字体">ZeroTermux默认字体</string>
+    <string name="Utermux中文字体">ZeroTermux中文字体</string>
     <string name="创建文件错误">创建文件错误</string>
     <string name="字体设置成功">字体设置成功</string>
     <string name="如果进入终端没有任何显示">如果进入终端没有任何显示代表您的字体文件损坏,请重新设置字体</string>
     <string name="字体设置">字体设置</string>
+    <string name="局域服务器">局域服务器</string>
+    <string name="未连接">未连接</string>
+    <string name="公共仓库">公共仓库</string>
+    <string name="正在连接到自定义服务器">正在连接到自定义服务器</string>
+    <string name="请输入自定义服务器IP">请输入自定义服务器IP</string>
+    <string name="默认地址">http://10.242.164.19</string>
+    <string name="无法连接到自定义服务器">无法连接到自定义服务器!</string>
+    <string name="连接">连接</string>
+    <string name="如何创建服务器">如何创建服务器</string>
+    <string name="服务器数据格式不正确">服务器数据格式不正确</string>
+    <string name="服务器">服务器</string>
+    <string name="地址">地址</string>
+    <string name="大小">大小</string>
 </resources>

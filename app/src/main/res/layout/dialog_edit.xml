@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/提示"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:textColor="@color/color_ffffff"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/请输入自定义服务器IP"
+                android:layout_marginTop="5dp"
+                android:id="@+id/msg"
+                android:textSize="15sp"
+                android:layout_gravity="center"
+                android:textColor="@color/color_ffffff"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="12dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:id="@+id/edit_text"
+                android:hint="@string/默认地址"
+                android:textColor="@color/color_ffffff"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textColorHint="@color/color_55ffffff"
+                android:layout_marginRight="12dp"
+                android:background="@drawable/shape_r_3dp_161823_2e"
+                android:layout_height="35dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"/>
+
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="20dp"
+            android:src="@mipmap/waring"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_height="20dp"/>
+
+
+    </RelativeLayout>
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_marginLeft="12dp"
+       android:layout_marginRight="12dp"
+       android:orientation="horizontal"
+       android:layout_height="wrap_content">
+       <TextView
+           android:layout_width="0dp"
+           android:layout_weight="1"
+           android:id="@+id/ok"
+           android:layout_height="35dp"
+           android:background="@drawable/shape_r_3dp_553d_all"
+           android:gravity="center"
+           android:text="@string/连接"
+           android:textColor="@color/color_ffffff"
+           android:textSize="14sp" />
+
+       <TextView
+           android:layout_width="0dp"
+           android:layout_weight="1"
+           android:id="@+id/cancel"
+           android:layout_marginLeft="10dp"
+           android:layout_height="35dp"
+           android:background="@drawable/shape_r_3dp_553d_all"
+           android:gravity="center"
+           android:text="@string/取消"
+           android:textColor="@color/color_ffffff"
+           android:textSize="14sp" />
+
+
+   </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"/>
+</LinearLayout>

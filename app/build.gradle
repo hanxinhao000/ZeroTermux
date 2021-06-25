@@ -27,6 +27,7 @@ android {
     }
 
     dependencies {
+
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.5.0-rc01"
         implementation "androidx.drawerlayout:drawerlayout:1.1.1"
@@ -34,9 +35,14 @@ android {
         implementation "androidx.viewpager:viewpager:1.0.0"
         implementation "com.google.guava:guava:24.1-jre"
         implementation 'com.google.code.gson:gson:2.8.6'
+        //网络框架
+        implementation 'com.lzy.net:okgo:3.0.4'
 
         implementation 'com.github.getActivity:XXPermissions:11.5'
+        implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
 
+        implementation 'me.laoyuyu.aria:core:3.8.16'
+        annotationProcessor 'me.laoyuyu.aria:compiler:3.8.16'
 
         implementation "io.noties.markwon:core:$markwonVersion"
         implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"

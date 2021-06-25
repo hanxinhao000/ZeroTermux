@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -34,11 +35,15 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blockchain.ub.utils.httputils.BaseHttpUtils;
+import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
 import com.example.xh_lib.utils.UUtils;
 import com.example.xh_lib.utils.UUtils2;
+import com.google.gson.Gson;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.lzy.okgo.model.Response;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.shared.termux.TermuxConstants;
@@ -64,13 +69,16 @@ import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.FontActivity;
 import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
+import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.BoomCommandDialog;
+import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.IsInstallCommand;
+import com.termux.zerocore.utils.SendJoinUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.StartRunCommandUtils;
 import com.termux.zerocore.view.BoomWindow;
@@ -88,6 +96,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -950,6 +959,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout start_command;
     private LinearLayout xuanfu;
     private LinearLayout ziti;
+    private LinearLayout zero_tier;
+    private TextView service_status;
 
     /**
      *
@@ -977,6 +988,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         text_start = findViewById(R.id.text_start);
         xuanfu = findViewById(R.id.xuanfu);
         ziti = findViewById(R.id.ziti);
+        service_status = findViewById(R.id.service_status);
+        zero_tier = findViewById(R.id.zero_tier);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -991,6 +1004,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         start_command.setOnClickListener(this);
         xuanfu.setOnClickListener(this);
         ziti.setOnClickListener(this);
+        zero_tier.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
@@ -1150,10 +1164,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 break;
             case R.id.github:
-                Intent intent = new Intent();
+                SendJoinUtils.INSTANCE.sendJoin(this);
+
+             /*   Intent intent = new Intent();
                 intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux"));//Url 就是你要打开的网址
                 intent.setAction(Intent.ACTION_VIEW);
-                startActivity(intent); //启动浏览器
+                startActivity(intent); //启动浏览器*/
                 break;
             case R.id.start_command:
 
@@ -1194,6 +1210,46 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 getDrawer().close();
                 title_mb.setVisibility(View.GONE);
                 startActivity(new Intent(this, FontActivity.class));
+                break;
+
+            case R.id.zero_tier:
+
+
+                EditDialog editDialog = new EditDialog(this);
+
+                EditText edit_text = editDialog.getEdit_text();
+
+                editDialog.getCancel().setText(UUtils.getString(R.string.如何创建服务器));
+
+                editDialog.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                String s = edit_text.getText().toString();
+
+                if(s == null || s.isEmpty()){
+
+                    s = "http://10.242.164.19";
+
+                }
+                String finalS = s;
+                editDialog.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editDialog.dismiss();
+                        startHttp(finalS);
+
+
+                    }
+                });
+
+
+                editDialog.show();
+
+
                 break;
 
 
@@ -1735,6 +1791,48 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         }
 
+
+
+    }
+
+    /**
+     *
+     *
+     *
+     * 连接到服务器
+     *
+     *
+     */
+
+    private void startHttp(String ip){
+
+        LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+
+        loadingDialog.getMsg().setText(UUtils.getString(R.string.正在连接到自定义服务器));
+
+        loadingDialog.show();
+
+        new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
+            @Override
+            public void onSuccessful(@NotNull Message msg, int mWhat) {
+                loadingDialog.dismiss();
+                UUtils.showLog("连接成功:" + msg.obj);
+
+                try{
+                    ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
+                }
+
+            }
+
+            @Override
+            public void onFailure(@org.jetbrains.annotations.Nullable Response<String> response, @NotNull String msg, int mWhat) {
+                loadingDialog.dismiss();
+                UUtils.showMsg(UUtils.getString(R.string.无法连接到自定义服务器));
+            }
+        },new HashMap<>(),5555);
 
 
     }
