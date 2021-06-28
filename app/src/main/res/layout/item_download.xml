@@ -18,6 +18,7 @@
      <ImageView
          android:layout_width="35dp"
          android:src="@mipmap/zip"
+         android:id="@+id/show_img"
          android:layout_height="35dp"/>
 
 

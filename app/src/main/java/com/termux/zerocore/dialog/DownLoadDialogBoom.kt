@@ -3,7 +3,9 @@ package com.termux.zerocore.dialog
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
 import android.os.Message
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -22,14 +24,20 @@ import com.daimajia.numberprogressbar.NumberProgressBar
 import com.example.xh_lib.utils.SaveData
 import com.example.xh_lib.utils.UUtils
 import com.google.gson.Gson
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.lzy.okgo.model.Response
 import com.termux.R
 import com.termux.zerocore.activity.BackNewActivity
 import com.termux.zerocore.bean.Data
 import com.termux.zerocore.bean.ZDYDataBean
 import com.termux.zerocore.url.FileUrl
+import com.termux.zerocore.url.FileUrl.zeroTermuxApk
 import com.termux.zerocore.utils.DownLoadMuTILS
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -94,7 +102,15 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
             val data = mList!![position]
             holder.name?.text = data.name
-            val file = File("${FileUrl.zeroTermuxData}/${data.fileName}")
+
+            var file:File = File("${FileUrl.zeroTermuxData}/${data.fileName}")
+            if(data.type == "apk"){
+                file = File("${FileUrl.zeroTermuxApk}/${data.fileName}")
+            }else{
+                 file = File("${FileUrl.zeroTermuxData}/${data.fileName}")
+            }
+
+
             if(file.exists()){
                 holder.size?.text = "${UUtils.getString(R.string.大小)}:${data.size}"
             }else{
@@ -107,11 +123,29 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             }
 
 
+            if(data.type == "apk"){
+                holder?.show_img?.setImageResource(R.mipmap.apk_img)
+            }else{
+                holder?.show_img?.setImageResource(R.mipmap.zip)
+            }
+
             holder.note?.text = data.note
 
             if(file.exists()){
-                holder.number_progress_bar?.visibility = View.GONE
-                holder.download?.setImageResource(R.mipmap.huifu_download)
+
+                if(data.type == "apk"){
+
+                    holder.number_progress_bar?.visibility = View.GONE
+                    holder.download?.setImageResource(R.mipmap.install_apk)
+
+                }else{
+
+                    holder.number_progress_bar?.visibility = View.GONE
+                    holder.download?.setImageResource(R.mipmap.huifu_download)
+
+                }
+
+
             }else{
                 if(data.isRun){
                     holder.download?.setImageResource(R.mipmap.jixu_download)
@@ -144,8 +178,14 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                 if(file.exists()){
                     val activity = mDownLoadDialogBoom!!.mContext as Activity
 
-                    activity.startActivity(Intent(activity,BackNewActivity::class.java))
-                    mDownLoadDialogBoom!!.dismiss()
+                    if(data.type == "apk"){
+                        mDownLoadDialogBoom?.installApk(file)
+                    }else{
+                        activity.startActivity(Intent(activity,BackNewActivity::class.java))
+                        mDownLoadDialogBoom!!.dismiss()
+                    }
+
+
                 }else{
 
                     if(data.isFail){
@@ -155,7 +195,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                         data.isFail = false
 
 
-                        val stringOther = SaveData.getStringOther("${FileUrl.zeroTermuxData}/${data.fileName}")
+                        val stringOther = SaveData.getStringOther("$ip${data.download}")
 
 
 
@@ -174,11 +214,19 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                             } catch (e: Exception) {
                                 e.printStackTrace()
 
-                                data.id = Aria.download(mDownLoadDialogBoom)
-                                    .load("$ip${data.download}") //读取下载地址
-                                    .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
-                                    .create()
-                                SaveData.saveStringOther("${FileUrl.zeroTermuxData}/${data.fileName}", "${data.id}")
+                                if(data.type == "apk"){
+                                    data.id = Aria.download(mDownLoadDialogBoom)
+                                        .load("$ip${data.download}") //读取下载地址
+                                        .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                        .create()
+                                }else{
+                                    data.id = Aria.download(mDownLoadDialogBoom)
+                                        .load("$ip${data.download}") //读取下载地址
+                                        .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                        .create()
+                                }
+
+                                SaveData.saveStringOther("$ip${data.download}", "${data.id}")
                             }
                         }
 
@@ -199,7 +247,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                         data.isRun = true
 
 
-                        val stringOther = SaveData.getStringOther("${FileUrl.zeroTermuxData}/${data.fileName}")
+                        val stringOther = SaveData.getStringOther("$ip${data.download}")
 
 
 
@@ -218,22 +266,36 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                             }catch (e:Exception){
                                 e.printStackTrace()
 
-                                data.id = Aria.download(mDownLoadDialogBoom)
-                                    .load("$ip${data.download}") //读取下载地址
-                                    .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
-                                    .create()
-                                SaveData.saveStringOther("${FileUrl.zeroTermuxData}/${data.fileName}","${data.id}")
+                                if(data.type == "apk"){
+                                    data.id = Aria.download(mDownLoadDialogBoom)
+                                        .load("$ip${data.download}") //读取下载地址
+                                        .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                        .create()
+                                }else{
+                                    data.id = Aria.download(mDownLoadDialogBoom)
+                                        .load("$ip${data.download}") //读取下载地址
+                                        .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                        .create()
+                                }
+                                SaveData.saveStringOther("$ip${data.download}","${data.id}")
                             }
 
 
                         }else{
 
 
-                            data.id = Aria.download(mDownLoadDialogBoom)
-                                .load("$ip${data.download}") //读取下载地址
-                                .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
-                                .create()
-                            SaveData.saveStringOther("${FileUrl.zeroTermuxData}/${data.fileName}","${data.id}")
+                            if(data.type == "apk"){
+                                data.id = Aria.download(mDownLoadDialogBoom)
+                                    .load("$ip${data.download}") //读取下载地址
+                                    .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                    .create()
+                            }else{
+                                data.id = Aria.download(mDownLoadDialogBoom)
+                                    .load("$ip${data.download}") //读取下载地址
+                                    .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                    .create()
+                            }
+                            SaveData.saveStringOther("$ip${data.download}","${data.id}")
                             UUtils.showLog("任务状态------------创建的ID:${data.id}")
                         }
 
@@ -285,6 +347,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
         public var size:TextView? = null
         public var note:TextView? = null
         public var download:ImageView? = null
+        public var show_img:ImageView? = null
         public var number_progress_bar: NumberProgressBar? = null
 
         constructor(itemView: View) : super(itemView){
@@ -292,6 +355,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             name = itemView.findViewById(R.id.name)
             size = itemView.findViewById(R.id.size)
             note = itemView.findViewById(R.id.note)
+            show_img = itemView.findViewById(R.id.show_img)
             download = itemView.findViewById(R.id.download)
             number_progress_bar = itemView.findViewById(R.id.number_progress_bar)
 
@@ -501,5 +565,48 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
     }
 
+
+    private fun installApk(mFile:File) {
+        val switchDialog1: SwitchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.第三方服务器上的可执行文件))
+        switchDialog1.cancel!!.setOnClickListener { switchDialog1.dismiss() }
+        switchDialog1.ok!!.setOnClickListener {
+            switchDialog1.dismiss()
+            XXPermissions.with(mContext)
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .permission(Permission.READ_EXTERNAL_STORAGE)
+                .permission(Permission.REQUEST_INSTALL_PACKAGES)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: List<String>, all: Boolean) {
+                        if (all) {
+                            UUtils.installApk(UUtils.getContext(), mFile.absolutePath)
+                        } else {
+                            UUtils.showMsg("无权限")
+                        }
+                    }
+
+                    override fun onDenied(permissions: List<String>, never: Boolean) {
+                        if (never) {
+                            UUtils.showMsg("无权限")
+                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                            XXPermissions.startPermissionActivity(mContext, permissions)
+                        } else {
+                            UUtils.showMsg("无权限")
+                        }
+                    }
+                })
+        }
+    }
+
+
+    private fun switchDialogShow(title: String, msg: String): SwitchDialog {
+        val switchDialog = SwitchDialog(mContext)
+        switchDialog.title!!.text = title
+        switchDialog.msg!!.text = msg
+        switchDialog.other!!.visibility = View.GONE
+        switchDialog.ok!!.text = UUtils.getString(R.string.确定)
+        switchDialog.cancel!!.text = UUtils.getString(R.string.取消)
+        switchDialog.show()
+        return switchDialog
+    }
 
 }

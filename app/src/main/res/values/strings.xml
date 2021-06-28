@@ -358,7 +358,7 @@
     <string name="字体设置成功">字体设置成功</string>
     <string name="如果进入终端没有任何显示">如果进入终端没有任何显示代表您的字体文件损坏,请重新设置字体</string>
     <string name="字体设置">字体设置</string>
-    <string name="局域服务器">局域服务器</string>
+    <string name="局域服务器">服务器版本</string>
     <string name="未连接">未连接</string>
     <string name="公共仓库">公共仓库</string>
     <string name="正在连接到自定义服务器">正在连接到自定义服务器</string>
@@ -373,4 +373,5 @@
     <string name="大小">大小</string>
     <string name="简介">简介</string>
     <string name="剩余">剩余</string>
+    <string name="第三方服务器上的可执行文件">第三方服务器上的可执行文件可能不安全,确定是否安装?</string>
 </resources>

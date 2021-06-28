@@ -17,6 +17,7 @@ data class Data(
     val name: String,
     val size: String,
     val fileName: String,
+    val type: String,
     val note: String,
     var progress: Int,
     var isRun: Boolean = false,
