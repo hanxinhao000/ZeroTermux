@@ -4,17 +4,14 @@ cd $(dirname $0)
 
 INFO() {
 	clear
-	UPDATE="2021/06/15"
+	UPDATE="2021/06/27"
 	printf "${YELLOW}更新日期$UPDATE 更新内容${RES}
+	修改IDE磁盘接口参数，使其速度更快，但缺点是容易丢失数据
 	新增termux最新版本下载选项
+	加入我另一个脚本termux-toolx，可安装体验linux(debian)系统
 	针对部分用户出现脚本下载错误，换了个服务器
 	容器内新增aspice与xsdl下载地址
 	修复termux环境无法安装qemu的bug
-	qemu5.0以下版本增加virtio磁盘接口安装选项
-	启动qemu-system-x86_64模拟器中的virtio磁盘安装选项移至virtio驱动相关选项中	
-	新增本脚本容器下脚本自动检测更新选项
-	新增启动失败，给出常见错误提示
-	新增镜像目录自定义，该功能暂不支持共享目录
 	增加了一些未经完全测试通过的参数配置
 	修改了一些细节\n"
 }
@@ -80,6 +77,7 @@ PINK="\e[35m"
 WHITE="\e[37m"
 RES="\e[0m"
 ####################
+: <<\eof
 	`ip a | grep 192 | cut -d " " -f 6 | cut -d "/" -f 1` 2>/dev/null
 if [ $? != 0 ]; then
 	IP=$(ip a | grep 192 | cut -d " " -f 6 | cut -d "/" -f 1)
@@ -91,6 +89,8 @@ else
 		IP=$(ip a | grep inet | grep wlan | cut -d "/" -f 1 | cut -d " " -f 6)
 	fi
 fi
+eof
+IP=`ip -4 -br a | awk '{print $3}' | cut -d '/' -f 1 | sed -n 2p`
 ####################
 sudo_() {
 	date_t=`date +"%D"`
@@ -409,7 +409,7 @@ WEB_SERVER() {
 	if [ ! $(command -v python) ]; then
 	echo -e "\n检测到你未安装所需要的包python,将先为你安装上"
 	sudo_
-	$sudo apt install python -y
+	apt install python -y
 	fi
 	else
 	if [ ! $(command -v python3) ]; then
@@ -683,19 +683,20 @@ QEMU_SYSTEM() {
 	QEMU_VERSION
 	NOTE
 echo -e "
-1) 安装qemu-system-x86_64，并联动更新模拟器所需应用\n\e[33m(由于qemu的依赖问题，安装过程可能会失败，请尝试重新安装)${RES}
-2) 创建windows镜像目录
-3) 启动qemu-system-x86_64模拟器
-4) 让termux成为网页服务器\n(使模拟系统可以通过浏览器访问本机内容)
-5) virtio驱动相关"
+1)  安装qemu-system-x86_64，并联动更新模拟器所需应用\n\e[33m(由于qemu的依赖问题，安装过程可能会失败，请尝试重新安装)${RES}
+2)  创建windows镜像目录
+3)  启动qemu-system-x86_64模拟器
+4)  让termux成为网页服务器\n(使模拟系统可以通过浏览器访问本机内容)
+5)  virtio驱动相关"
 	case $SYS in
 	ANDROID) ;;
-	*) echo -e "6) 应用维护" ;;
+	*) echo -e "6)  应用维护" ;;
 	esac
-echo -e "7) 查看日志
-8) 更新内容
-9) 关于utqemu
-0) 退出\n"
+echo -e "7)  查看日志
+8)  更新内容
+9)  关于utqemu
+10) 在线termux-toolx脚本安装体验linux系统(debian)
+0)  退出\n"
 	read -r -p "请选择: " input
 	case $input in
 	1)  echo -e "${YELLOW}安装过程中，如遇到询问选择，请输(y)，安装过程容易出错，请重试安装${RES}"
@@ -740,7 +741,7 @@ else
 	7) if [ -e ${HOME}/.utqemu_log ]; then
 	echo -e "\n${GREEN}日志已忽略不重要的信息${RES}\n按空格下一页，退出请按q\n"
 	CONFIRM
-	more ${HOME}/.utqemu_log | egrep "qemu-system-x86_64|qemu-system-i386" | egrep -v "stronger memory|Connection reset by peer|requested feature"
+	more ${HOME}/.utqemu_log | egrep "qemu-system-x86_64|qemu-system-i386|initialization" | egrep -v "stronger memory|Connection reset by peer|requested feature"
 echo -e "\n${YELLOW}常见错误提示：${RES}
 ${BLUE}开机蓝屏; 通常为机算机类型(pc q35)，磁盘接口(IDE SATA VIRTIO)，运行内存配置过大等原因造成，请尝试修改配置${RES}
 No such file or directory; ${YELLOW}(没有匹配的目录或文件名)${RES}
@@ -761,6 +762,7 @@ Failed to find an available port: Address already in use; ${YELLOW}(视频输出
 	CONFIRM
 	QEMU_SYSTEM     ;;
 	9) ABOUT_UTQEMU ;;
+	10) bash -c "$(curl https://cdn.jsdelivr.net/gh/chungyuhoi/script/termux-toolx.sh)" ;;
 	0) exit 1 ;;
 	*) INVALID_INPUT && QEMU_SYSTEM ;;
 	esac                                            }
@@ -1462,9 +1464,9 @@ EOF
 ##################
 #IDE			
 		1)
-		set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$hda_name,if=ide,index=0,media=disk,aio=threads,cache=none"
+		set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$hda_name,if=ide,index=0,media=disk,aio=threads,cache=writeback"
 	if [ -n "$hdb_name" ]; then
-		set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$hdb_name,if=ide,index=1,media=disk,aio=threads,cache=none"
+		set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$hdb_name,if=ide,index=1,media=disk,aio=threads,cache=writeback"
 	fi
 	if [ -n "$iso1_name" ]; then
 #		set -- "${@}" "-cdrom" "${DIRECT}${STORAGE}$iso1_name"
@@ -1472,13 +1474,9 @@ EOF
 	if [ -n "$iso_name" ]; then 
 	       set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso_name,if=ide,media=cdrom,index=1"
 	fi
-	else
-	if [ -n "$iso_name" ]; then
-		set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso_name,if=ide,index=2,media=cdrom"
-	fi
 	fi
 	case $SHARE in
-		true) set -- "${@}" "-drive" "file=fat:rw:${DIRECT}/xinhao/share,if=ide,index=3,media=disk,aio=threads,cache=none" ;;
+		true) set -- "${@}" "-drive" "file=fat:rw:${DIRECT}/xinhao/share,if=ide,index=3,media=disk,aio=threads,cache=writeback" ;;
 		*) ;;
 	esac ;;
 	2)
@@ -1500,12 +1498,6 @@ EOF
 	if [ -n "$iso_name" ]; then
 	set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso_name,if=ide,media=cdrom,index=1"
 	fi
-: <<\eof
-	if [ -n "$iso_name" ]; then
-	set -- "${@}" "-drive" "id=cdrom,file=${DIRECT}${STORAGE}$iso_name,if=none"     
-	set -- "${@}" "-device" "ide-cd,drive=cdrom,bus=ahci.2"
-	fi
-eof
 	case $SHARE in
 		true)
 		set -- "${@}" "-usb" "-drive" "if=none,format=raw,id=disk1,file=fat:rw:${DIRECT}/xinhao/share/"
@@ -1572,7 +1564,7 @@ eof
 ########################
 	if [ -n "$display" ]; then
 	case $display in
-		wlan_vnc) set -- "${@}" "-display" "vnc=$IP:0,lossy=on,non-adaptive=off" ;;
+		wlan_vnc) set -- "${@}" "-display" "vnc=$IP:0" ;;
 		vnc) 
 		set -- "${@}" "-display" "vnc=127.0.0.1:0,lossy=on,non-adaptive=off"
 		export PULSE_SERVER=tcp:127.0.0.1:4713 ;;
@@ -1763,6 +1755,30 @@ echo -e "2) 为磁盘接口添加virtio驱动（维基指导模式，需另外�
 	esac
 }
 ###################
+SOURCE() {
+echo -e "1) 换源
+9) 返回"
+	read -r -p "请选择: " input
+	case $input in
+		1) read -r -p "1)北外源 2)腾讯源 3)清华源 9)返回 " input
+	case $input in
+	1) sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list
+sed -i 's@^\(deb.*games stable\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/game-packages-24 games stable@' $PREFIX/etc/apt/sources.list.d/game.list
+sed -i 's@^\(deb.*science stable\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/science-packages-24 science stable@' $PREFIX/etc/apt/sources.list.d/science.list ;;
+	2) sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.cloud.tencent.com/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list
+	sed -i 's@^\(deb.*games stable\)$@#\1\ndeb https://mirrors.cloud.tencent.com/termux/game-packages-24 games stable@' $PREFIX/etc/apt/sources.list.d/game.list
+	sed -i 's@^\(deb.*science stable\)$@#\1\ndeb https://mirrors.cloud.tencent.com/termux/science-packages-24 science stable@' $PREFIX/etc/apt/sources.list.d/science.list ;;
+	3) sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list
+	sed -i 's@^\(deb.*games stable\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/game-packages-24 games stable@' $PREFIX/etc/apt/sources.list.d/game.list
+	sed -i 's@^\(deb.*science stable\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/science-packages-24 science stable@' $PREFIX/etc/apt/sources.list.d/science.list ;;
+	*) MAIN ;;
+	esac
+	pkg update ;;
+	*) ;;
+        esac
+	MAIN
+}
+###################
 LOGIN_() {
 	uname -a | grep 'Android' -q
 	if [ $? == 0 ]; then
@@ -1770,7 +1786,8 @@ LOGIN_() {
 	1) 直接运行，termux(utermux)目前版本为5.0以上，由于termux源的qemu编译的功能不全，强烈建议在容器上使用qemu，\e[33m其他系统的版本各不一样，一些功能参数可能没被编译进去${RES}
 	2) 支持qemu5.0以下版本容器(选项内容比较简单，模拟xp建议此版本)
 	3）支持qemu5.0以上版本容器(选项内容丰富)
-	4) 换源
+	4) 换源(如果无法安装或登录请尝试此操作)
+	5) 在线termux-toolx脚本安装体验linux系统(debian)
 
 	9) 设置打开termux(utermux)自动启动本脚本
 	0) 退出\n"
@@ -1799,27 +1816,8 @@ LOGIN_() {
 		fi
 		LOGIN
 		fi ;;
-	4) echo -e "1) 换源
-9) 返回"
-	read -r -p "请选择: " input
-	case $input in
-		1) read -r -p "1)北外源 2)腾讯源 3)清华源 9)返回 " input
-		case $input in
-	1) sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list
-	sed -i 's@^\(deb.*games stable\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/game-packages-24 games stable@' $PREFIX/etc/apt/sources.list.d/game.list
-	sed -i 's@^\(deb.*science stable\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/science-packages-24 science stable@' $PREFIX/etc/apt/sources.list.d/science.list ;;
-	2) sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.cloud.tencent.com/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list
-        sed -i 's@^\(deb.*games stable\)$@#\1\ndeb https://mirrors.cloud.tencent.com/termux/game-packages-24 games stable@' $PREFIX/etc/apt/sources.list.d/game.list
-        sed -i 's@^\(deb.*science stable\)$@#\1\ndeb https://mirrors.cloud.tencent.com/termux/science-packages-24 science stable@' $PREFIX/etc/apt/sources.list.d/science.list ;;
-	3) sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list
-	sed -i 's@^\(deb.*games stable\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/game-packages-24 games stable@' $PREFIX/etc/apt/sources.list.d/game.list
-	sed -i 's@^\(deb.*science stable\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/science-packages-24 science stable@' $PREFIX/etc/apt/sources.list.d/science.list ;;
-	*) MAIN ;;
-		esac
-	pkg update ;;
-	*) ;;
-	esac
-	MAIN ;;
+	4) SOURCE ;;
+	5) bash -c "$(curl https://cdn.jsdelivr.net/gh/chungyuhoi/script/termux-toolx.sh)" ;;
 	9) read -r -p "1)开机启动脚本 2)取消开机启动脚本 " input
 	case $input in
 	1) curl https://cdn.jsdelivr.net/gh/chungyuhoi/script/utqemu.sh -o ${HOME}/utqemu.sh
@@ -1836,7 +1834,7 @@ LOGIN_() {
 	fi
 }
 ####################
-MAIN(){ 
+MAIN(){
 ARCH_CHECK
 MEM
 QEMU_VERSION

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.arialyy.aria.core.Aria;
 import com.example.xh_lib.application.XHApplication;
 import com.hjq.permissions.XXPermissions;
 import com.termux.shared.crash.CrashHandler;
@@ -22,7 +23,8 @@ public class TermuxApplication extends XHApplication {
 
         // Set crash handler for the app
         CrashHandler.setCrashHandler(this);
-
+        Aria.init(this);
+        Aria.get(this).getDownloadConfig().setMaxSpeed(0);
         // Set log level for the app
         setLogLevel();
 

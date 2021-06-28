@@ -1,7 +1,9 @@
 plugins {
   id "com.android.application"
+
 }
 apply plugin: 'kotlin-android'
+
 
 android {
     compileSdkVersion project.properties.compileSdkVersion.toInteger()
@@ -10,7 +12,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-
     signingConfigs {
         release {
             keyAlias 'phone1'
@@ -26,8 +27,9 @@ android {
         }
     }
 
-    dependencies {
 
+
+    dependencies {
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.5.0-rc01"
         implementation "androidx.drawerlayout:drawerlayout:1.1.1"
@@ -44,6 +46,8 @@ android {
         implementation 'me.laoyuyu.aria:core:3.8.16'
         annotationProcessor 'me.laoyuyu.aria:compiler:3.8.16'
 
+
+
         implementation "io.noties.markwon:core:$markwonVersion"
         implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
         implementation "io.noties.markwon:linkify:$markwonVersion"
@@ -58,7 +62,7 @@ android {
         minSdkVersion project.properties.minSdkVersion.toInteger()
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 114
-        versionName "0.114.02"
+        versionName "0.114.03"
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"
@@ -77,6 +81,13 @@ android {
 
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
+
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath true
+            }
         }
 
     }
@@ -115,6 +126,7 @@ android {
             includeAndroidResources = true
         }
     }
+
 }
 
 dependencies {

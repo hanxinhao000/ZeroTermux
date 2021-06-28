@@ -1813,6 +1813,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         loadingDialog.show();
 
+
+
         new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
             @Override
             public void onSuccessful(@NotNull Message msg, int mWhat) {

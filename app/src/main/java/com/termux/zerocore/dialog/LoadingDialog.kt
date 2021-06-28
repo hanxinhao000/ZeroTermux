@@ -15,6 +15,7 @@ class LoadingDialog : BaseDialogCentre {
     override fun initViewDialog(mView: View?) {
         msg = mView?.findViewById(R.id.msg)
         setAnim()
+
     }
 
     override fun getContentView(): Int {
@@ -22,6 +23,11 @@ class LoadingDialog : BaseDialogCentre {
         return R.layout.dialog_loading
     }
 
+
+    override fun show() {
+        super.show()
+        setCancelable(false)
+    }
 
     //动画
     private fun setAnim() {

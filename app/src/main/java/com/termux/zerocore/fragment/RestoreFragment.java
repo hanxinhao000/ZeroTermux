@@ -76,13 +76,20 @@ public class RestoreFragment extends BaseFragment {
 
         for (int i = 0; i < files1.length; i++) {
 
-            files.add(files1[i]);
+            if(files1[i].getAbsolutePath().endsWith("tar.gz")){
+                files.add(files1[i]);
+            }
+
+
 
         }
 
         if (files.size() == 0) {
             mStartRe.setText(UUtils.getString(R.string.没有SD卡权限));
         }
+
+
+
 
         mListView.setAdapter(new RestoreAdapter(files));
 
