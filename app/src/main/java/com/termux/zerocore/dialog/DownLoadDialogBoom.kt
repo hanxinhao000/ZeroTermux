@@ -143,8 +143,9 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
                 if(file.exists()){
                     val activity = mDownLoadDialogBoom!!.mContext as Activity
-                    activity.startActivity(Intent(activity,BackNewActivity::class.java))
 
+                    activity.startActivity(Intent(activity,BackNewActivity::class.java))
+                    mDownLoadDialogBoom!!.dismiss()
                 }else{
 
                     if(data.isFail){

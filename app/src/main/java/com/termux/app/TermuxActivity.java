@@ -1226,22 +1226,29 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     @Override
                     public void onClick(View v) {
 
+
+
                     }
                 });
 
-                String s = edit_text.getText().toString();
 
-                if(s == null || s.isEmpty()){
-
-                    s = "http://10.242.164.19";
-
-                }
-                String finalS = s;
                 editDialog.getOk().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+
+                        String s = edit_text.getText().toString();
+
+
+
+                        if(s == null || s.isEmpty()){
+
+                            s = "http://10.242.164.19";
+
+                        }
+
                         editDialog.dismiss();
-                        startHttp(finalS);
+                        startHttp(s);
 
 
                     }
