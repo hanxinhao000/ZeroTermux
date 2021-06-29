@@ -374,4 +374,84 @@
     <string name="简介">简介</string>
     <string name="剩余">剩余</string>
     <string name="第三方服务器上的可执行文件">第三方服务器上的可执行文件可能不安全,确定是否安装?</string>
+    <string name="下载站">下载站</string>
+    <string name="正在连接到下载站服务器">正在连接到下载站服务器</string>
+    <string name="无法连接到下载站服务器">无法连接到下载站服务器</string>
+    <string name="正在连接">正在连接</string>
+    <string name="VNC">VNC</string>
+    <string name="快速VNC">快速VNC</string>
+    <string name="自定VNC">自定VNC</string>
+    <string name="高级VNC">高级VNC</string>
+    <string name="请下载插件">请下载插件</string>
+    <string name="请输入地址">请输入地址</string>
+    <string name="请输入端口">请输入端口</string>
+    <string name="请输入密码">请输入密码</string>
+    <string name="连接到自定VNC">连接到自定VNC</string>
+    <string name="协议">协议</string>
+
+
+    <string name="许可证">法律声明:\n
+
+
+
+
+        ZeroTermux 是根据 Termux 二次开发的一个非盈利性的软件\n\n部分版权归ZeroTermux所属\n\n对任何法律问题及风险不承担任何责任，没有任何商业目的\n\n\n
+        切勿使用到违法用途！\n
+        \n
+        请遵纪守法，做一个良好公民,\n
+        \n
+        ZeroTermux 的初心是让你更快的走进linux世界,为以后建设社会贡献一份精神,出一份力\n
+        \n
+
+        在使用一定程度之后,极力建议你过渡到官方termux[入门之后开始使用](推荐),\n
+        \n
+
+        毕竟ZT能帮你一时，却帮不了你一世!\n
+        \n
+
+
+        注意:【切换系统】功能当中的【删除功能可能会清空您的SD卡】\n
+        \n
+        请关闭sd卡授权在执行该【删除】功能\n
+        \n
+        如果由你的操作(不局限于【切换系统】的【删除功能】,这里说明的是ZeroTermux的所有功能)失误导致你的SD卡包括:\n
+        \n
+        照片\n
+        视频\n
+        音频\n
+        以及其它所有数据,由你(ZeroTermux(简称ZT)的个人使用用户)自己承担\n
+        \n
+
+
+        公共仓库下载来源不可控,不属于ZeroTermux所能控制的,全部来源于第三方仓库,ZeroTermux以及作者不会对第三方仓库来源的所有东西负责!\n
+\n
+        \n
+        如果第三方仓库有属于一切违法的活动/文件,由提供第三方仓库的作者承担任何法律责任!ZeroTermux以及作者不承担任何法律/其它责任!
+
+        \n
+        \n
+        授权许可:\n
+        \n
+
+        ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!\n
+        \n
+        ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!\n\n
+        ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!\n\n
+
+        1.本软件(ZeroTermux)为开源软件,你可以自由分发、复制、更改,但请遵循GPL协议!\n\n
+        2.软件遵循GPL协议(http://www.opensource.org/licenses/gpl-2.0.php)\n\n
+        3.本软件(ZeroTermux)的所有功能均为学习交流使用,切勿商用,如用户(使用ZeroTermux用户)的意外操作、有意操作、无意操作等由用户承担!\n
+        4.本软件(ZeroTermux)由第一条例一样为免费学习交流使用，软件内涉及的图标以及字体均来源于互联网。\n
+         4.1.字体为Android默认字体,如使用其他字体请用户(使用ZeroTermux用户)承担所有风险以及法律责任。\n
+         4.2.图标使用为阿里巴巴ICO公用图库，使用该图标的原则是学习与交流,并非商用,如有侵权立即删除。\n
+        5.在本软件(ZeroTermux)内使用的的恢复包、数据包、zip包等都有使用风险，切全部都来源于互联网，请用户酌情使用,如有造成无法挽回的损失,请用户承担风险。\n
+        6.所有恢复包、数据包、zip包ZeroTermux不能控制其内容,如有包内侵权本软件作者不承担任何责任，均由恢复包、数据包、zip包制作者承担(tar.gz备份功能法律声明)。\n
+        7.感谢所有该项目所应用到功能的作者。\n
+        8.使用ZeroTermux会有直接或间接的损害你的设备,如有造成无法挽回的损失由用户(ZeroTermux)承担,本软件以及作者不承担任何法律等责任\n
+
+
+    </string>
+    <string name="不同意">不同意</string>
+    <string name="同意">同意</string>
+    <string name="请认真阅读许可协议">请认真阅读许可协议以及责任划分</string>
 </resources>

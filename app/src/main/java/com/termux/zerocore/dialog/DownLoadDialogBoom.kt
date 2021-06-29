@@ -110,6 +110,8 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                  file = File("${FileUrl.zeroTermuxData}/${data.fileName}")
             }
 
+            UUtils.showLog("文件查看--------------------------------------------------")
+            UUtils.showLog("文件查看$position:${file.absolutePath}")
 
             if(file.exists()){
                 holder.size?.text = "${UUtils.getString(R.string.大小)}:${data.size}"
@@ -130,25 +132,23 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             }
 
             holder.note?.text = data.note
-
+            UUtils.showLog("文件查看(存在)$position:${file.exists()}")
             if(file.exists()){
-
+                holder.number_progress_bar?.visibility = View.GONE
                 if(data.type == "apk"){
-
-                    holder.number_progress_bar?.visibility = View.GONE
                     holder.download?.setImageResource(R.mipmap.install_apk)
-
                 }else{
 
-                    holder.number_progress_bar?.visibility = View.GONE
                     holder.download?.setImageResource(R.mipmap.huifu_download)
 
                 }
 
 
             }else{
+                holder.number_progress_bar?.visibility = View.VISIBLE
                 if(data.isRun){
                     holder.download?.setImageResource(R.mipmap.jixu_download)
+                   // holder.number_progress_bar?.visibility = View.VISIBLE
                 }else{
                     holder.download?.setImageResource(R.mipmap.download)
                 }
@@ -513,9 +513,25 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             if(htttIp == task.key){
 
                 mArray!![i].progress = task.percent
-                mArray!![i].speed = task.convertSpeed
-                mArray!![i].timeLeft = task.convertTimeLeft
-                mArray!![i].convertCurrentProgress = task.convertCurrentProgress
+
+                if( task.convertSpeed != null){
+                    mArray!![i].speed = task.convertSpeed
+                }else{
+                    mArray!![i].speed = "--"
+                }
+
+                if(task.convertTimeLeft != null){
+                    mArray!![i].timeLeft = task.convertTimeLeft
+                }else{
+                    mArray!![i].timeLeft ="--"
+                }
+
+                if(task.convertCurrentProgress != null){
+                    mArray!![i].convertCurrentProgress = task.convertCurrentProgress
+                }else{
+                    mArray!![i].convertCurrentProgress = "--"
+                }
+
                 mArray!![i].isRun = true
 
                 mDownLoadAdapter!!.notifyDataSetChanged()

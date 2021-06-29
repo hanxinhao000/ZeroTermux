@@ -29,6 +29,7 @@ public class TermuxApplication extends XHApplication {
         CrashHandler.setCrashHandler(this);
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxSpeed(0);
+        Aria.get(this).getDownloadConfig().setConvertSpeed(true);
         // Set log level for the app
         setLogLevel();
 

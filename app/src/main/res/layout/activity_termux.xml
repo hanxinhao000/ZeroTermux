@@ -264,7 +264,7 @@
                                 android:id="@+id/service_status"
                                 android:layout_marginTop="15dp"
                                 android:layout_alignParentRight="true"
-                                android:text="@string/未连接"
+                                android:text="@string/正在连接"
                                 android:layout_height="wrap_content"/>
 
                         </RelativeLayout>

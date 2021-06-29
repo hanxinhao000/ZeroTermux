@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823_left"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="@string/协议"
+        android:textSize="15sp"
+        android:textColor="@color/color_ffffff"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"/>
+
+
+
+    <com.termux.zerocore.view.CustomScrollView
+        android:layout_width="match_parent"
+        android:background="@drawable/shape_r_3dp_161823_2e"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="5dp"
+        android:id="@+id/custom_scroll"
+        android:paddingRight="5dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_height="300dp">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:padding="5dp"
+            android:id="@+id/edit_text"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="match_parent"/>
+
+    </com.termux.zerocore.view.CustomScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/ok"
+            android:layout_height="35dp"
+            android:background="@drawable/shape_r_3dp_553d_all"
+            android:gravity="center"
+            android:text="@string/同意"
+            android:textColor="@color/color_ffffff"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/cancel"
+            android:layout_marginLeft="10dp"
+            android:layout_height="35dp"
+            android:background="@drawable/shape_r_3dp_553d_all"
+            android:gravity="center"
+            android:text="@string/不同意"
+            android:textColor="@color/color_ffffff"
+            android:textSize="14sp" />
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"/>
+
+</LinearLayout>

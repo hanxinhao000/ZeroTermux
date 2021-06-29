@@ -4,8 +4,9 @@ cd $(dirname $0)
 
 INFO() {
 	clear
-	UPDATE="2021/06/27"
+	UPDATE="2021/06/29"
 	printf "${YELLOW}更新日期$UPDATE 更新内容${RES}
+	修复IDE接口无法加载光驱
 	修改IDE磁盘接口参数，使其速度更快，但缺点是容易丢失数据
 	新增termux最新版本下载选项
 	加入我另一个脚本termux-toolx，可安装体验linux(debian)系统
@@ -1470,10 +1471,10 @@ EOF
 	fi
 	if [ -n "$iso1_name" ]; then
 #		set -- "${@}" "-cdrom" "${DIRECT}${STORAGE}$iso1_name"
-	set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso1_name,if=ide,media=cdrom,index=2"
-	if [ -n "$iso_name" ]; then 
-	       set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso_name,if=ide,media=cdrom,index=1"
+	set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso1_name,if=ide,media=cdrom,index=1"
 	fi
+	if [ -n "$iso_name" ]; then 
+	       set -- "${@}" "-drive" "file=${DIRECT}${STORAGE}$iso_name,if=ide,media=cdrom,index=2"
 	fi
 	case $SHARE in
 		true) set -- "${@}" "-drive" "file=fat:rw:${DIRECT}/xinhao/share,if=ide,index=3,media=disk,aio=threads,cache=writeback" ;;

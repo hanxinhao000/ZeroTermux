@@ -58,9 +58,14 @@ class EditPromptWindow :BasePuPuWindow {
                 }
 
                 override fun onFailure(response: Response<String>?, msg: String, mWhat: Int) {
-                    UUtils.showLog("连接测试:失败")
-                    mList!![i].connection = 2
-                    mEditPromptAdapter!!.notifyDataSetChanged()
+                    try {
+                        UUtils.showLog("连接测试:失败")
+                        mList!![i].connection = 2
+                        mEditPromptAdapter!!.notifyDataSetChanged()
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }
+
 
                 }
             }, HashMap(),555)
@@ -107,9 +112,13 @@ class EditPromptWindow :BasePuPuWindow {
                 }
 
                 override fun onFailure(response: Response<String>?, msg: String, mWhat: Int) {
-                    UUtils.showLog("连接测试:失败")
-                    mList!![i].connection = 2
-                    mEditPromptAdapter!!.notifyDataSetChanged()
+                    try {
+                        UUtils.showLog("连接测试:失败")
+                        mList!![i].connection = 2
+                        mEditPromptAdapter!!.notifyDataSetChanged()
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }
 
                 }
             }, HashMap(),555)

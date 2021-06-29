@@ -78,7 +78,10 @@ import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
 import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
+import com.termux.zerocore.dialog.ProtocolDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
+import com.termux.zerocore.dialog.VNCConnectionDialog;
+import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.IsInstallCommand;
@@ -965,6 +968,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout xuanfu;
     private LinearLayout ziti;
     private LinearLayout zero_tier;
+    private LinearLayout download_http;
+    private LinearLayout vnc_start;
     private TextView service_status;
 
     /**
@@ -995,6 +1000,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         ziti = findViewById(R.id.ziti);
         service_status = findViewById(R.id.service_status);
         zero_tier = findViewById(R.id.zero_tier);
+        download_http = findViewById(R.id.download_http);
+        vnc_start = findViewById(R.id.vnc_start);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1010,12 +1017,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         xuanfu.setOnClickListener(this);
         ziti.setOnClickListener(this);
         zero_tier.setOnClickListener(this);
+        download_http.setOnClickListener(this);
+        vnc_start.setOnClickListener(this);
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
         version.setText(UUtils.getString(R.string.版本) + ":" + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
 
+        String xieyi = SaveData.INSTANCE.getStringOther("xieyi");
 
+
+        if(xieyi == null || xieyi.isEmpty() || xieyi == "def"){
+            ProtocolDialog protocolDialog = new ProtocolDialog(this);
+
+            protocolDialog.show();
+        }
+
+
+
+
+        getServiceVs();
         getDrawer().addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull @NotNull View drawerView, float slideOffset) {
@@ -1087,6 +1108,23 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 menuLeftPopuListData.add(guanfang);
 
                 showMenuDialog(menuLeftPopuListData,code_ll);
+
+                break;
+
+            case R.id.vnc_start:
+                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuLeftPopuListDatavnc = new ArrayList<>();
+                //快速vnc
+                MenuLeftPopuListWindow.MenuLeftPopuListData ksvnc = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.dsk, UUtils.getString(R.string.快速VNC), 10);
+                menuLeftPopuListDatavnc.add(ksvnc);
+                //自定vnc
+                MenuLeftPopuListWindow.MenuLeftPopuListData zdvnc = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.dsk, UUtils.getString(R.string.自定VNC), 11);
+                menuLeftPopuListDatavnc.add(zdvnc);
+
+                //高级vnc
+                MenuLeftPopuListWindow.MenuLeftPopuListData gjvnc = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.dsk, UUtils.getString(R.string.高级VNC), 12);
+                menuLeftPopuListDatavnc.add(gjvnc);
+
+                showMenuDialog(menuLeftPopuListDatavnc,vnc_start);
 
                 break;
 
@@ -1265,6 +1303,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 break;
 
+            case R.id.download_http:
+
+
+                startHttp1(HTTPIP.IP);
+
+
+                break;
+
 
         }
 
@@ -1438,6 +1484,88 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                     }
                 });
+
+                break;
+
+                //快速
+            case 10:
+                UUtils.showLog("插件:快速" );
+                getDrawer().closeDrawer(Gravity.LEFT);
+                try{
+
+                    Intent intent = new Intent();
+                    intent.setAction("com.utermux.action.vnc");
+                    intent.putExtra("utermux_as", "false");
+                    intent.putExtra("address", "127.0.0.1");
+                    intent.putExtra("port", "5901");
+                    intent.putExtra("password", "123456");
+
+                    startActivity(intent);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    UUtils.showLog("插件:" + e.toString());
+                    UUtils.showMsg(UUtils.getString(R.string.请下载插件));
+                    startHttp1(HTTPIP.IP);
+                }
+
+
+                break;
+                //自定
+            case 11:
+                getDrawer().closeDrawer(Gravity.LEFT);
+
+
+                VNCConnectionDialog vncConnectionDialog = new VNCConnectionDialog(this);
+
+                vncConnectionDialog.show();
+
+                vncConnectionDialog.setCancelable(false);
+
+
+                vncConnectionDialog.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        try{
+                            Intent intent = new Intent();
+                            intent.setAction("com.utermux.action.vnc");
+                            intent.putExtra("utermux_as", "false");
+                            intent.putExtra("address", vncConnectionDialog.getAddress().getText().toString());
+                            intent.putExtra("port", vncConnectionDialog.getPort().getText().toString());
+                            intent.putExtra("password", vncConnectionDialog.getPassword().getText().toString());
+                            startActivity(intent);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            UUtils.showLog("插件:" + e.toString());
+                            UUtils.showMsg(UUtils.getString(R.string.请下载插件));
+                            startHttp1(HTTPIP.IP);
+                        }
+
+
+                    }
+                });
+
+
+
+                break;
+                //高级
+            case 12:
+                getDrawer().closeDrawer(Gravity.LEFT);
+
+                try{
+                    Intent intent = new Intent();
+                    intent.setAction("com.utermux.action.vnc");
+                    intent.putExtra("utermux_as", "true");
+                    startActivity(intent);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    UUtils.showLog("插件:" + e.toString());
+                    UUtils.showMsg(UUtils.getString(R.string.请下载插件));
+                    startHttp1(HTTPIP.IP);
+                }
 
                 break;
         }
@@ -1822,6 +1950,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void startHttp(String ip){
 
+
         String ip_save = SaveData.INSTANCE.getStringOther("ip_save");
 
         if(ip_save == null || ip_save.isEmpty() || ip_save.equals("def")){
@@ -1870,15 +1999,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
             }catch (Exception e){
                 e.printStackTrace();
-              //  SaveData.INSTANCE.saveStringOther("ip_save","def");
+                  SaveData.INSTANCE.saveStringOther("ip_save","def");
             }
 
 
 
         }
-
-
-
 
 
 
@@ -1921,5 +2047,96 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     }
 
+
+    /**
+     *
+     *
+     *
+     * 连接到服务器
+     *
+     *
+     */
+
+    private void startHttp1(String ip){
+
+        LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+
+        loadingDialog.getMsg().setText(UUtils.getString(R.string.正在连接到下载站服务器));
+
+        loadingDialog.show();
+
+
+
+        new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
+            @Override
+            public void onSuccessful(@NotNull Message msg, int mWhat) {
+                loadingDialog.dismiss();
+                UUtils.showLog("连接成功:" + msg.obj);
+
+                try{
+                    ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
+
+                    DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
+                    downLoadDialogBoom.setIP(ip + "/repository/main.json");
+                    downLoadDialogBoom.show();
+                    downLoadDialogBoom.setCancelable(true);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
+                }
+
+            }
+
+            @Override
+            public void onFailure(@org.jetbrains.annotations.Nullable Response<String> response, @NotNull String msg, int mWhat) {
+                loadingDialog.dismiss();
+                UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
+            }
+        },new HashMap<>(),5555);
+
+
+    }
+
+
+    /**
+     *
+     *
+     * 连接服务器获取版本
+     *
+     */
+
+    private void getServiceVs(){
+
+
+        new BaseHttpUtils().getUrl(HTTPIP.IP + "/repository/main.json", new HttpResponseListenerBase() {
+            @Override
+            public void onSuccessful(@NotNull Message msg, int mWhat) {
+
+                UUtils.showLog("连接成功:" + msg.obj);
+
+                try{
+                    ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
+
+                    service_status.setText(zdyDataBean.getVersionName());
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                   // UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
+                    service_status.setText(UUtils.getString(R.string.未连接));
+                }
+
+            }
+
+            @Override
+            public void onFailure(@org.jetbrains.annotations.Nullable Response<String> response, @NotNull String msg, int mWhat) {
+
+               // UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
+                service_status.setText(UUtils.getString(R.string.未连接));
+            }
+        },new HashMap<>(),5555);
+
+
+
+    }
 
 }
