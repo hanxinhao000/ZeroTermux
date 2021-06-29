@@ -9,7 +9,8 @@ data class ZDYDataBean(
     val home: String,
     val ip: String,
     val versionName: String,
-    val serviceName: String
+    val serviceName: String,
+    val msg: String
 )
 
 data class Data(

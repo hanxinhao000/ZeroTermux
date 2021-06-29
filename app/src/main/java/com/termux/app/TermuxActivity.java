@@ -971,6 +971,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout download_http;
     private LinearLayout vnc_start;
     private TextView service_status;
+    private TextView msg_tv;
 
     /**
      *
@@ -1002,6 +1003,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         zero_tier = findViewById(R.id.zero_tier);
         download_http = findViewById(R.id.download_http);
         vnc_start = findViewById(R.id.vnc_start);
+        msg_tv = findViewById(R.id.msg_tv);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -2118,6 +2120,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
 
                     service_status.setText(zdyDataBean.getVersionName());
+
+                    if(zdyDataBean.getMsg() == null || zdyDataBean.getMsg().isEmpty()){
+
+                    }else{
+                        msg_tv.setText(zdyDataBean.getMsg());
+                    }
+
+
 
                 }catch (Exception e){
                     e.printStackTrace();
