@@ -567,6 +567,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
 
     private fun installApk(mFile:File) {
+        dismiss()
         val switchDialog1: SwitchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.第三方服务器上的可执行文件))
         switchDialog1.cancel!!.setOnClickListener { switchDialog1.dismiss() }
         switchDialog1.ok!!.setOnClickListener {

@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.arialyy.aria.core.Aria;
 import com.example.xh_lib.application.XHApplication;
 import com.hjq.permissions.XXPermissions;
+import com.lzy.okgo.OkGo;
 import com.termux.shared.crash.CrashHandler;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.logger.Logger;
@@ -15,6 +16,9 @@ import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 
 public class TermuxApplication extends XHApplication {
@@ -27,6 +31,13 @@ public class TermuxApplication extends XHApplication {
         Aria.get(this).getDownloadConfig().setMaxSpeed(0);
         // Set log level for the app
         setLogLevel();
+
+        OkGo.getInstance().init(this);
+        OkHttpClient okHttpClient = OkGo.getInstance().getOkHttpClient();
+
+        okHttpClient.newBuilder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS)
+            .build();
+        OkGo.getInstance().setOkHttpClient(okHttpClient);
 
         XXPermissions.setScopedStorage(true);
 /*

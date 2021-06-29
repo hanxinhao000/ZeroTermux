@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.view.ContextMenu;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 
 import com.blockchain.ub.utils.httputils.BaseHttpUtils;
 import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
+import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
 import com.example.xh_lib.utils.UUtils2;
 import com.google.gson.Gson;
@@ -69,6 +71,7 @@ import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.FontActivity;
 import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
+import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.BoomCommandDialog;
@@ -82,6 +85,7 @@ import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.SendJoinUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.StartRunCommandUtils;
+import com.termux.zerocore.utils.UUUtils;
 import com.termux.zerocore.view.BoomWindow;
 
 import androidx.annotation.NonNull;
@@ -1221,6 +1225,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 EditText edit_text = editDialog.getEdit_text();
 
                 editDialog.getCancel().setText(UUtils.getString(R.string.如何创建服务器));
+                editDialog.getCancel().setVisibility(View.GONE);
 
                 editDialog.getCancel().setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1782,6 +1787,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     }
 
+
+
+
     /**
      *
      * 判断面板是否显示
@@ -1813,6 +1821,67 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      */
 
     private void startHttp(String ip){
+
+        String ip_save = SaveData.INSTANCE.getStringOther("ip_save");
+
+        if(ip_save == null || ip_save.isEmpty() || ip_save.equals("def")){
+
+            ArrayList<EditPromptBean.EditPromptData> arrayList = new ArrayList<>();
+            EditPromptBean.EditPromptData editPromptData = new EditPromptBean.EditPromptData();
+            editPromptData.setIp(ip);
+            editPromptData.setConnection(0);
+            arrayList.add(editPromptData);
+            EditPromptBean editPromptBean = new EditPromptBean();
+            editPromptBean.setArrayList(arrayList);
+
+
+            String s = new Gson().toJson(editPromptBean);
+
+            UUtils.showLog("编辑框存入[第一次]:" + s);
+
+            SaveData.INSTANCE.saveStringOther("ip_save",s);
+
+
+        }else{
+
+
+            try{
+
+                EditPromptBean editPromptBean = new Gson().fromJson(ip_save, EditPromptBean.class);
+
+                ArrayList<EditPromptBean.EditPromptData> arrayList = editPromptBean.getArrayList();
+
+                EditPromptBean.EditPromptData editPromptData = new EditPromptBean.EditPromptData();
+                editPromptData.setIp(ip);
+                editPromptData.setConnection(0);
+                arrayList.add(editPromptData);
+
+                ArrayList<EditPromptBean.EditPromptData> arrayList1 = UUUtils.removeDuplicate_2(arrayList);
+
+                editPromptBean.setArrayList(arrayList1);
+
+                String s = new Gson().toJson(editPromptBean);
+
+                UUtils.showLog("编辑框存入[多次]:" + s);
+
+                SaveData.INSTANCE.saveStringOther("ip_save",s);
+
+
+
+            }catch (Exception e){
+                e.printStackTrace();
+              //  SaveData.INSTANCE.saveStringOther("ip_save","def");
+            }
+
+
+
+        }
+
+
+
+
+
+
 
         LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
 
