@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.view.autofill.AutofillManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -90,6 +91,7 @@ import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.StartRunCommandUtils;
 import com.termux.zerocore.utils.UUUtils;
 import com.termux.zerocore.view.BoomWindow;
+import com.termux.zerocore.view.xuehua.SnowView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -292,6 +294,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         createFiles();
         initZeroView();
+        initStatue();
     }
 
     @Override
@@ -971,8 +974,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout download_http;
     private LinearLayout zt_title;
     private LinearLayout vnc_start;
+    private LinearLayout xue_hua;
     private TextView service_status;
     private TextView msg_tv;
+    private TextView xue_hua_start;
+    private FrameLayout xue_fragment;
 
     /**
      *
@@ -1006,6 +1012,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         vnc_start = findViewById(R.id.vnc_start);
         zt_title = findViewById(R.id.zt_title);
         msg_tv = findViewById(R.id.msg_tv);
+        xue_fragment = findViewById(R.id.xue_fragment);
+        xue_hua = findViewById(R.id.xue_hua);
+        xue_hua_start = findViewById(R.id.xue_hua_start);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1023,6 +1032,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         zero_tier.setOnClickListener(this);
         download_http.setOnClickListener(this);
         vnc_start.setOnClickListener(this);
+        xue_hua.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1095,6 +1105,30 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         });
 
         refStartCommandStat();
+    }
+
+    /**
+     *
+     * 刷新状态
+     *
+     *
+     */
+
+    private void initStatue(){
+
+        String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
+
+                if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
+                    xue_hua_start.setText(UUtils.getString(R.string.雪花关));
+                    xue_fragment.removeAllViews();
+                }else{
+                    xue_hua_start.setText(UUtils.getString(R.string.雪花开));
+                    SnowView snowView = new SnowView(TermuxActivity.this);
+                    xue_fragment.removeAllViews();
+                    xue_fragment.addView(snowView);
+                }
+
+
     }
 
 
@@ -1321,6 +1355,25 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
                 startHttp1(HTTPIP.IP);
+
+
+                break;
+
+            case R.id.xue_hua:
+
+                String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
+
+                if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
+                    xue_hua_start.setText(UUtils.getString(R.string.雪花开));
+                    SnowView snowView = new SnowView(TermuxActivity.this);
+                    xue_fragment.removeAllViews();
+                    xue_fragment.addView(snowView);
+                    SaveData.INSTANCE.saveStringOther("xue_statues","true");
+                }else{
+                    xue_hua_start.setText(UUtils.getString(R.string.雪花关));
+                    xue_fragment.removeAllViews();
+                    SaveData.INSTANCE.saveStringOther("xue_statues","def");
+                }
 
 
                 break;

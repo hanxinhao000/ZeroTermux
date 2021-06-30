@@ -458,4 +458,6 @@
     <string name="无法创建1">无法创建(内部存储/xinhao/apk)文件夹,请手动创建!</string>
     <string name="已开始打印APP实时delog">已开始打印APP实时log</string>
     <string name="暂未开放下载">暂未开放下载</string>
+    <string name="雪花关">雪花(关)</string>
+    <string name="雪花开">雪花(开)</string>
 </resources>
