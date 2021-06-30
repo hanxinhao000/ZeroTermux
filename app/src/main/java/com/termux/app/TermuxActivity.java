@@ -90,6 +90,7 @@ import com.termux.zerocore.utils.SendJoinUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.StartRunCommandUtils;
 import com.termux.zerocore.utils.UUUtils;
+import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
 import com.termux.zerocore.view.xuehua.SnowView;
 
@@ -521,17 +522,23 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         final ViewPager terminalToolbarViewPager = findViewById(R.id.terminal_toolbar_view_pager);
         if (mPreferences.shouldShowTerminalToolbar()) terminalToolbarViewPager.setVisibility(View.VISIBLE);
 
+        UUtils.showLog("配置文件载入:1");
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
         mTerminalToolbarDefaultHeight = layoutParams.height;
-
+        UUtils.showLog("配置文件载入:2");
         setTerminalToolbarHeight();
 
         String savedTextInput = null;
         if (savedInstanceState != null)
             savedTextInput = savedInstanceState.getString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT);
-
-        terminalToolbarViewPager.setAdapter(new TerminalToolbarViewPager.PageAdapter(this, savedTextInput));
+        UUtils.showLog("配置文件载入:3");
+        TerminalToolbarViewPager.PageAdapter pageAdapter = new TerminalToolbarViewPager.PageAdapter(this, savedTextInput);
+        terminalToolbarViewPager.setAdapter(pageAdapter);
         terminalToolbarViewPager.addOnPageChangeListener(new TerminalToolbarViewPager.OnPageChangeListener(this, terminalToolbarViewPager));
+
+        terminalToolbarViewPager.setCurrentItem(0);
+
+        UUtils.showLog("配置文件载入:4");
     }
 
     private void setTerminalToolbarHeight() {
@@ -976,6 +983,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout vnc_start;
     private LinearLayout xue_hua;
     private LinearLayout termux_pl;
+    private LinearLayout quanping;
     private TextView service_status;
     private TextView msg_tv;
     private TextView xue_hua_start;
@@ -1017,6 +1025,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         xue_hua = findViewById(R.id.xue_hua);
         xue_hua_start = findViewById(R.id.xue_hua_start);
         termux_pl = findViewById(R.id.termux_pl);
+        quanping = findViewById(R.id.quanping);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1036,6 +1045,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         vnc_start.setOnClickListener(this);
         xue_hua.setOnClickListener(this);
         termux_pl.setOnClickListener(this);
+        quanping.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1396,6 +1406,31 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 menuphoneGfCj.add(msg_styling);
 
                 showMenuDialog(menuphoneGfCj,termux_pl);
+
+                break;
+
+                //全屏 WindowUtils
+            case R.id.quanping:
+
+
+                if(quanping.getTag() == null){
+
+                    WindowUtils.setFullScreen(this);
+                    quanping.setTag("fff");
+                    //mExtraKeysView.setVisibility(View.GONE);
+                    getExtraKeysView().setVisibility(View.GONE);
+
+
+                }else{
+
+                    WindowUtils.exitFullScreen(this);
+                    quanping.setTag(null);
+                    //mExtraKeysView.setVisibility(View.VISIBLE);
+                    getExtraKeysView().setVisibility(View.VISIBLE);
+                }
+
+
+
 
                 break;
 
