@@ -146,11 +146,15 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             }
 
 
+
+
             if(data.type == "apk"){
                 holder?.show_img?.setImageResource(R.mipmap.apk_img)
             }else{
                 holder?.show_img?.setImageResource(R.mipmap.zip)
             }
+
+
 
             holder.note?.text = data.note
             UUtils.showLog("文件查看(存在)$position:${file.exists()}")
@@ -187,6 +191,16 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             holder.download?.setOnClickListener {
 
                 mDownLoadDialogBoom?.createWJ()
+
+                if(data.isDownload == "1"){
+
+                    UUtils.showMsg(UUtils.getString(R.string.暂未开放下载))
+                    return@setOnClickListener
+
+                }
+
+
+
 
                 if(file.exists()){
                     val activity = mDownLoadDialogBoom!!.mContext as Activity
@@ -418,6 +432,13 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             }
 
 
+            UUtils.showLog("是否禁止:${data.isDownload }")
+            if(data.isDownload == "1"){
+                holder!!.show_img_jz?.visibility = View.VISIBLE
+            }else{
+                holder!!.show_img_jz?.visibility = View.GONE
+            }
+
 
 
 
@@ -446,12 +467,14 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
         public var note:TextView? = null
         public var download:ImageView? = null
         public var show_img:ImageView? = null
+        public var show_img_jz:ImageView? = null
         public var number_progress_bar: NumberProgressBar? = null
 
         constructor(itemView: View) : super(itemView){
 
             name = itemView.findViewById(R.id.name)
             size = itemView.findViewById(R.id.size)
+            show_img_jz = itemView.findViewById(R.id.show_img_jz)
             note = itemView.findViewById(R.id.note)
             show_img = itemView.findViewById(R.id.show_img)
             download = itemView.findViewById(R.id.download)

@@ -20,6 +20,7 @@ data class Data(
     val fileName: String,
     val type: String,
     val note: String,
+    val isDownload: String,
     var progress: Int,
     var isRun: Boolean = false,
     var isFail: Boolean = false,

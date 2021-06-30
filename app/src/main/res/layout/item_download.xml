@@ -15,11 +15,26 @@
      android:layout_height="wrap_content">
 
 
-     <ImageView
+     <RelativeLayout
          android:layout_width="35dp"
-         android:src="@mipmap/zip"
-         android:id="@+id/show_img"
-         android:layout_height="35dp"/>
+         android:layout_height="35dp">
+
+
+         <ImageView
+             android:layout_width="35dp"
+             android:src="@mipmap/zip"
+             android:id="@+id/show_img"
+             android:layout_height="35dp"/>
+
+         <ImageView
+             android:layout_width="35dp"
+             android:src="@mipmap/jinzhi_termux"
+             android:visibility="gone"
+             android:id="@+id/show_img_jz"
+             android:layout_height="35dp"/>
+
+
+     </RelativeLayout>
 
 
     <RelativeLayout
