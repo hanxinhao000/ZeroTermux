@@ -975,6 +975,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout zt_title;
     private LinearLayout vnc_start;
     private LinearLayout xue_hua;
+    private LinearLayout termux_pl;
     private TextView service_status;
     private TextView msg_tv;
     private TextView xue_hua_start;
@@ -1015,6 +1016,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         xue_fragment = findViewById(R.id.xue_fragment);
         xue_hua = findViewById(R.id.xue_hua);
         xue_hua_start = findViewById(R.id.xue_hua_start);
+        termux_pl = findViewById(R.id.termux_pl);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1033,6 +1035,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         download_http.setOnClickListener(this);
         vnc_start.setOnClickListener(this);
         xue_hua.setOnClickListener(this);
+        termux_pl.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1115,7 +1118,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      */
 
     private void initStatue(){
-
         String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
 
                 if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
@@ -1127,8 +1129,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     xue_fragment.removeAllViews();
                     xue_fragment.addView(snowView);
                 }
-
-
     }
 
 
@@ -1375,6 +1375,27 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     SaveData.INSTANCE.saveStringOther("xue_statues","def");
                 }
 
+
+                break;
+                //官方插件
+            case R.id.termux_pl:
+
+
+                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuphoneGfCj = new ArrayList<>();
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_api = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxApi), 20);
+                menuphoneGfCj.add(msg_api);
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_tasker = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxTasker), 21);
+                menuphoneGfCj.add(msg_tasker);
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_boot = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxBoot), 22);
+                menuphoneGfCj.add(msg_boot);
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_styling = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxStyling), 23);
+                menuphoneGfCj.add(msg_styling);
+
+                showMenuDialog(menuphoneGfCj,termux_pl);
 
                 break;
 
@@ -1634,6 +1655,43 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     startHttp1(HTTPIP.IP);
                 }
 
+                break;
+                //API
+            case 20:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                try {
+                    installApk(getAssets().open("apk/termux_api.ip"),"termux_api");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+                //Tasker
+            case 21:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                try {
+                    installApk(getAssets().open("apk/termux_tasker.ip"),"termux_tasker");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+                //BOOT
+            case 22:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                try {
+                    installApk(getAssets().open("apk/termux_boot.ip"),"termux_boot");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            //styling
+            case 23:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                try {
+                    installApk(getAssets().open("apk/termux_styling.ip"),"termux_styling");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
 

@@ -318,7 +318,7 @@
     <string name="是否安装">是否安装?</string>
     <string name="安装完成">安装完成,请输入smsread使用</string>
     <string name="您已安装工具1">您已安装工具</string>
-    <string name="您未安装该插件">您未安装该插件,是否安装?</string>
+    <string name="您未安装该插件">即将开始安装插件,是否继续?</string>
     <string name="需要在您的手机">
         需要您的内部存储权限!\n
         需要在您的手机创建以下目录:\n
@@ -460,4 +460,9 @@
     <string name="暂未开放下载">暂未开放下载</string>
     <string name="雪花关">雪花(关)</string>
     <string name="雪花开">雪花(开)</string>
+    <string name="官方插件">官方插件</string>
+    <string name="TermuxApi">T…x:Api</string>
+    <string name="TermuxTasker">T…x:Tasker</string>
+    <string name="TermuxBoot">T…x:Boot</string>
+    <string name="TermuxStyling">T…x:Styling</string>
 </resources>
