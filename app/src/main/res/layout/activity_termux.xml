@@ -145,6 +145,7 @@
                         android:orientation="vertical"
                         android:paddingLeft="6dp"
                         android:paddingRight="6dp"
+                        android:id="@+id/zt_title"
                         android:paddingTop="6dp"
                         android:paddingBottom="6dp"
                         android:layout_height="match_parent">

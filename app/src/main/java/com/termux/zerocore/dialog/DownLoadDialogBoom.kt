@@ -3,9 +3,7 @@ package com.termux.zerocore.dialog
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Environment
 import android.os.Message
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -34,10 +32,9 @@ import com.termux.zerocore.bean.Data
 import com.termux.zerocore.bean.ZDYDataBean
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.url.FileUrl.zeroTermuxApk
+import com.termux.zerocore.url.FileUrl.zeroTermuxData
 import com.termux.zerocore.utils.DownLoadMuTILS
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -63,7 +60,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
         mDownLoadMuTILS?.register()
         mDownLoadMuTILS?.setDownLoadMuTILSListener(this)
         initAdapter()
-
+        createWJ()
     }
 
     override fun getContentView(): Int {
@@ -71,6 +68,27 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
         return R.layout.dialog_text_download
     }
 
+
+    public fun createWJ(){
+
+
+        if (!zeroTermuxData.exists()) {
+            val mkdirs = zeroTermuxData.mkdirs()
+            if(!mkdirs){
+                UUtils.showMsg(UUtils.getString(R.string.无法创建))
+                dismiss()
+            }
+        }
+        if (!zeroTermuxApk.exists()) {
+            val mkdirs = zeroTermuxApk.mkdirs()
+            if(!mkdirs){
+                UUtils.showMsg(UUtils.getString(R.string.无法创建1))
+                dismiss()
+            }
+        }
+
+
+    }
 
     class DownLoadAdapter : RecyclerView.Adapter<DownLoadViewHolder>{
 
@@ -104,10 +122,13 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
             holder.name?.text = data.name
 
             var file:File = File("${FileUrl.zeroTermuxData}/${data.fileName}")
+            var tempFile:File = File("${FileUrl.zeroTermuxData}/${data.fileName}.0.part")
             if(data.type == "apk"){
                 file = File("${FileUrl.zeroTermuxApk}/${data.fileName}")
+                tempFile = File("${FileUrl.zeroTermuxApk}/${data.fileName}.0.part")
             }else{
                  file = File("${FileUrl.zeroTermuxData}/${data.fileName}")
+                tempFile = File("${FileUrl.zeroTermuxData}/${data.fileName}.0.part")
             }
 
             UUtils.showLog("文件查看--------------------------------------------------")
@@ -148,24 +169,14 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                 holder.number_progress_bar?.visibility = View.VISIBLE
                 if(data.isRun){
                     holder.download?.setImageResource(R.mipmap.jixu_download)
-                   // holder.number_progress_bar?.visibility = View.VISIBLE
+                    // holder.number_progress_bar?.visibility = View.VISIBLE
                 }else{
                     holder.download?.setImageResource(R.mipmap.download)
                 }
             }
 
 
-            /**
-             *
-             * 下载失败
-             *
-             */
 
-            if(data.isFail){
-
-                holder.download?.setImageResource(R.mipmap.restart)
-
-            }
 
 
 
@@ -174,6 +185,8 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
             holder.number_progress_bar?.progress = data.progress
             holder.download?.setOnClickListener {
+
+                mDownLoadDialogBoom?.createWJ()
 
                 if(file.exists()){
                     val activity = mDownLoadDialogBoom!!.mContext as Activity
@@ -201,7 +214,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
 
 
-                        if(stringOther != null && stringOther.isNotEmpty() && stringOther != "def" ) {
+                        if(stringOther != null && stringOther.isNotEmpty() && stringOther != "def") {
 
                             try {
 
@@ -210,11 +223,12 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                 data.id = toLong
 
                                 Aria.download(mDownLoadDialogBoom).load(data.id).resume()
-
+                                holder.download?.setImageResource(R.mipmap.jiazai)
                             } catch (e: Exception) {
                                 e.printStackTrace()
 
                                 if(data.type == "apk"){
+
                                     data.id = Aria.download(mDownLoadDialogBoom)
                                         .load("$ip${data.download}") //读取下载地址
                                         .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
@@ -226,8 +240,31 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                         .create()
                                 }
 
+
+                                holder.download?.setImageResource(R.mipmap.jiazai)
+
                                 SaveData.saveStringOther("$ip${data.download}", "${data.id}")
                             }
+                        }else{
+
+
+                            if(data.type == "apk"){
+
+                                data.id = Aria.download(mDownLoadDialogBoom)
+                                    .load("$ip${data.download}") //读取下载地址
+                                    .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                    .create()
+                            }else{
+                                data.id = Aria.download(mDownLoadDialogBoom)
+                                    .load("$ip${data.download}") //读取下载地址
+                                    .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                    .create()
+                            }
+
+                            holder.download?.setImageResource(R.mipmap.jiazai)
+                            SaveData.saveStringOther("$ip${data.download}", "${data.id}")
+
+
                         }
 
 
@@ -241,7 +278,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                         holder.download?.setImageResource(R.mipmap.download)
                         Aria.download(this).load(data.id).stop()
 
-                        UUtils.showLog("任务状态-----------恢复的ID:${data.id}")
+                        UUtils.showLog("任务状态-----------恢复的ID(暂停):${data.id}")
                     }else{
                         holder.download?.setImageResource(R.mipmap.jixu_download)
                         data.isRun = true
@@ -260,9 +297,9 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                 val toLong = stringOther.toLong()
 
                                 data.id = toLong
-
+                                UUtils.showLog("任务状态-----------恢复的ID(恢复):${data.id}")
                                 Aria.download(mDownLoadDialogBoom).load(data.id).resume()
-
+                                holder.download?.setImageResource(R.mipmap.jiazai)
                             }catch (e:Exception){
                                 e.printStackTrace()
 
@@ -277,6 +314,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                         .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
                                         .create()
                                 }
+                                holder.download?.setImageResource(R.mipmap.jiazai)
                                 SaveData.saveStringOther("$ip${data.download}","${data.id}")
                             }
 
@@ -295,6 +333,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                     .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
                                     .create()
                             }
+                            holder.download?.setImageResource(R.mipmap.jiazai)
                             SaveData.saveStringOther("$ip${data.download}","${data.id}")
                             UUtils.showLog("任务状态------------创建的ID:${data.id}")
                         }
@@ -320,6 +359,65 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                 holder.number_progress_bar?.progress = data.mDownloadEntity.percent
                 holder.size?.text = "${UUtils.getString(R.string.大小)}:(${formatFileSizeProgress}/${data.size})"
             }
+
+
+
+
+            val stringOther = SaveData.getStringOther("$ip${data.download}")
+
+            if(stringOther != null && stringOther.isNotEmpty() && stringOther != "def") {
+
+                if(!tempFile.exists()){
+
+                    val taskState = Aria.download(this).load(data.id).taskState
+
+                    if(taskState == 4) {
+                        UUtils.showLog("当前状态:$taskState")
+
+                        Aria.download(this).load(data.id).stop()
+                        Aria.download(this).load(data.id).cancel(true);
+
+                        data.isFail = true
+
+                        SaveData.saveStringOther("$ip${data.download}", "def")
+                    }
+
+
+                }
+
+
+
+
+
+            }
+
+
+
+            if (!zeroTermuxData.exists()) {
+                Aria.download(this).stopAllTask();
+                data.isRun = false
+                holder.download?.setImageResource(R.mipmap.download)
+            }
+            if (!zeroTermuxApk.exists()) {
+                data.isRun = false
+                Aria.download(this).stopAllTask();
+                holder.download?.setImageResource(R.mipmap.download)
+            }
+
+
+            /**
+             *
+             * 下载失败
+             *
+             */
+
+            if(data.isFail){
+
+                holder.download?.setImageResource(R.mipmap.restart)
+
+            }
+
+
 
 
 

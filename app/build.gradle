@@ -47,6 +47,8 @@ android {
         annotationProcessor 'me.laoyuyu.aria:compiler:3.8.16'
 
 
+        debugImplementation 'com.github.getActivity:Logcat:9.6'
+
 
 
         implementation "io.noties.markwon:core:$markwonVersion"

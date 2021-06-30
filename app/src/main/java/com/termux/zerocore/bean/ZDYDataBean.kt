@@ -26,6 +26,6 @@ data class Data(
     var speed: String,
     var timeLeft: String,
     var convertCurrentProgress: String,
-    var id: Long = 0,
+    var id: Long = -999,
     var mDownloadEntity: AbsEntity
 )

@@ -969,6 +969,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout ziti;
     private LinearLayout zero_tier;
     private LinearLayout download_http;
+    private LinearLayout zt_title;
     private LinearLayout vnc_start;
     private TextView service_status;
     private TextView msg_tv;
@@ -1003,6 +1004,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         zero_tier = findViewById(R.id.zero_tier);
         download_http = findViewById(R.id.download_http);
         vnc_start = findViewById(R.id.vnc_start);
+        zt_title = findViewById(R.id.zt_title);
         msg_tv = findViewById(R.id.msg_tv);
 
         code_ll.setOnClickListener(this);
@@ -1021,6 +1023,16 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         zero_tier.setOnClickListener(this);
         download_http.setOnClickListener(this);
         vnc_start.setOnClickListener(this);
+        zt_title.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                UUtils.showMsg(UUtils.getString(R.string.已开始打印APP实时delog));
+
+                mTerminalView.sendTextToTerminal("adb logcat * | find \"trace\" \n");
+              //  mTerminalView.sendTextToTerminal("adb shell \n");
+                return true;
+            }
+        });
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);

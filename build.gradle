@@ -8,6 +8,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
         maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+
     }
     dependencies {
 

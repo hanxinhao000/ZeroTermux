@@ -454,4 +454,7 @@
     <string name="不同意">不同意</string>
     <string name="同意">同意</string>
     <string name="请认真阅读许可协议">请认真阅读许可协议以及责任划分</string>
+    <string name="无法创建">无法创建(内部存储/xinhao/data)文件夹,请手动创建!</string>
+    <string name="无法创建1">无法创建(内部存储/xinhao/apk)文件夹,请手动创建!</string>
+    <string name="已开始打印APP实时delog">已开始打印APP实时log</string>
 </resources>
