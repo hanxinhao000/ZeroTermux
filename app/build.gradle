@@ -50,7 +50,7 @@ android {
         debugImplementation 'com.github.getActivity:Logcat:9.6'
 
 
-
+        implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"
         implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
         implementation "io.noties.markwon:linkify:$markwonVersion"

@@ -28,7 +28,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -70,7 +70,7 @@
                               android:text="@string/切换源"
                               android:layout_alignParentRight="true"
                               android:textColor="@color/color_ffffff"
-                              android:textSize="12sp" />
+                              android:textSize="10sp" />
 
 
                       </LinearLayout>
@@ -109,7 +109,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -151,7 +151,7 @@
                                 android:text="@string/容器切换"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -189,7 +189,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -231,7 +231,7 @@
                                 android:text="@string/备份恢复"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -269,7 +269,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -311,7 +311,7 @@
                                 android:text="@string/发行版本"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -349,7 +349,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -391,7 +391,7 @@
                                 android:text="@string/VNC"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -429,7 +429,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -471,7 +471,7 @@
                                 android:text="@string/官方插件"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -510,7 +510,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -552,7 +552,7 @@
                                 android:text="@string/QEMU"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -591,7 +591,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -634,7 +634,7 @@
                                 android:text="@string/下载站"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -673,7 +673,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -715,7 +715,7 @@
                                 android:text="@string/公共仓库"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -755,7 +755,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -797,7 +797,7 @@
                                 android:text="@string/命令定义"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -835,7 +835,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -877,7 +877,7 @@
                                 android:text="@string/MOE全能"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -914,7 +914,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -956,7 +956,7 @@
                                 android:text="@string/短信通话"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -995,7 +995,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -1037,7 +1037,7 @@
                                 android:text="@string/打开目录"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -1077,7 +1077,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -1160,7 +1160,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -1202,7 +1202,7 @@
                                 android:text="@string/悬浮窗口"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -1240,7 +1240,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -1282,7 +1282,7 @@
                                 android:text="@string/字体设置"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -1319,7 +1319,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -1361,7 +1361,7 @@
                                 android:text="@string/全屏模式"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                         </LinearLayout>
@@ -1400,7 +1400,7 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
 
 
 
@@ -1481,7 +1481,87 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="3dp"
-                android:layout_height="80dp">
+                android:layout_height="90dp">
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="match_parent">
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:id="@+id/yuyan"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:src="@mipmap/yuyan_ico"
+                                android:layout_height="40dp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="2dp"
+                                android:paddingLeft="10dp"
+                                android:textStyle="bold"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp"
+                                android:text="@string/语言切换"
+                                android:layout_alignParentRight="true"
+                                android:textColor="@color/color_ffffff"
+                           android:textSize="10sp" />
+
+
+                        </LinearLayout>
+
+
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/jiantou_top"
+                            android:layout_marginRight="2dp"
+                            android:layout_marginTop="2dp"
+                            android:visibility="visible"
+                            android:rotation="90"
+                            android:layout_alignParentRight="true"
+                            android:layout_height="15dp"/>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_marginLeft="5dp"
+                android:paddingTop="5dp"
+                android:layout_marginTop="10dp"
+                android:paddingBottom="5dp"
+                android:layout_marginRight="5dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="3dp"
+                android:layout_height="90dp">
 
 
 
@@ -1523,7 +1603,7 @@
                                 android:text="@string/开源地址"
                                 android:layout_alignParentRight="true"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="12sp" />
+                                android:textSize="10sp" />
 
 
                         </LinearLayout>

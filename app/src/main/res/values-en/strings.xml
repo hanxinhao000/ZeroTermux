@@ -470,4 +470,8 @@ error</string>
     <string name="TermuxBoot">T…x:Boot</string>
     <string name="TermuxStyling">T…x:Styling</string>
     <string name="全屏模式">Full screen mode</string>
+
+    <string name="语言切换">Language switch</string>
+    <string name="中文">中文</string>
+    <string name="English">English</string>
 </resources>

@@ -47,6 +47,9 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.model.Response;
+import com.mallotec.reb.localeplugin.LocaleConstant;
+import com.mallotec.reb.localeplugin.LocalePlugin;
+import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.shared.termux.TermuxConstants;
@@ -109,6 +112,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A terminal emulator activity.
@@ -984,6 +988,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout xue_hua;
     private LinearLayout termux_pl;
     private LinearLayout quanping;
+    private LinearLayout yuyan;
     private TextView service_status;
     private TextView msg_tv;
     private TextView xue_hua_start;
@@ -1026,6 +1031,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         xue_hua_start = findViewById(R.id.xue_hua_start);
         termux_pl = findViewById(R.id.termux_pl);
         quanping = findViewById(R.id.quanping);
+        yuyan = findViewById(R.id.yuyan);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1046,6 +1052,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         xue_hua.setOnClickListener(this);
         termux_pl.setOnClickListener(this);
         quanping.setOnClickListener(this);
+        yuyan.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1434,6 +1441,20 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 break;
 
+            case R.id.yuyan:
+
+                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> yuyan_list = new ArrayList<>();
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_zh = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.zhongwen, UUtils.getString(R.string.中文), 30);
+                yuyan_list.add(msg_zh);
+
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_en = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.yingwen_ico, UUtils.getString(R.string.English), 31);
+                yuyan_list.add(msg_en);
+
+                showMenuDialog(yuyan_list,yuyan);
+
+                break;
+
 
         }
 
@@ -1727,6 +1748,21 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                break;
+
+                //中文
+            case 30:
+              //  Intent intent = new Intent(this, TermuxActivity.class);
+                LocaleHelper.Companion.getInstance()
+                    .language(getLocale("2")).apply(this);
+               // startActivity(intent);
+
+
+                break;
+                //英文
+            case 31:
+                LocaleHelper.Companion.getInstance()
+                    .language(getLocale("1")).apply(this);
                 break;
         }
 
@@ -2306,5 +2342,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
     }
+
+    private Locale getLocale(String which) {
+
+
+        switch (which){
+
+
+            case "0":
+                return Locale.ROOT;
+            case "1":
+                return Locale.ENGLISH;
+            case "2":
+            default:
+                return Locale.SIMPLIFIED_CHINESE;
+
+
+        }
+
+
+    }
+
 
 }

@@ -16,7 +16,7 @@
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/color_55000000"
         app:cardCornerRadius="3dp"
-        android:layout_height="80dp">
+        android:layout_height="90dp">
 
 
 
@@ -59,7 +59,7 @@
                         android:text="@string/切换源"
                         android:layout_alignParentRight="true"
                         android:textColor="@color/color_ffffff"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
 
                 </LinearLayout>
