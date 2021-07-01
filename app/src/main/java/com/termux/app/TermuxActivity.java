@@ -1425,6 +1425,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 MenuLeftPopuListWindow.MenuLeftPopuListData msg_styling = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxStyling), 23);
                 menuphoneGfCj.add(msg_styling);
 
+                MenuLeftPopuListWindow.MenuLeftPopuListData msg_x11 = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.termux_x11, UUtils.getString(R.string.termux_x11), 24);
+                menuphoneGfCj.add(msg_x11);
+
                 showMenuDialog(menuphoneGfCj,termux_pl);
 
                 break;
@@ -1762,6 +1765,16 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 getDrawer().closeDrawer(Gravity.LEFT);
                 try {
                     installApk(getAssets().open("apk/termux_styling.ip"),"termux_styling");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            //x11
+            case 24:
+                getDrawer().closeDrawer(Gravity.LEFT);
+                try {
+                    installApk(getAssets().open("apk/termux_x11.ip"),"termux_x11");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

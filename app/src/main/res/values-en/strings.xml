@@ -475,4 +475,6 @@ error</string>
     <string name="中文">中文</string>
     <string name="English">English</string>
     <string name="取消">Cancel</string>
+    <string name="termux_x11">termux-x11</string>
+
 </resources>

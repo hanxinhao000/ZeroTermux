@@ -466,4 +466,5 @@
     <string name="TermuxBoot">T…x:Boot</string>
     <string name="TermuxStyling">T…x:Styling</string>
     <string name="全屏模式">全屏模式</string>
+    <string name="termux_x11">termux-x11</string>
 </resources>
