@@ -44,7 +44,6 @@ public class TermuxApplication extends XHApplication {
         OkGo.getInstance().setOkHttpClient(okHttpClient);
 
         XXPermissions.setScopedStorage(true);
-/*
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable e) {
@@ -57,7 +56,8 @@ public class TermuxApplication extends XHApplication {
                 System.exit(1);//关闭已奔溃的app进程
 
             }
-        });*/
+        });
+
     }
 
     private void setLogLevel() {

@@ -100,6 +100,7 @@ public class NotificationUtils {
         builder.setStyle(new Notification.BigTextStyle().bigText(notificationBigText));
         builder.setContentIntent(pendingIntent);
 
+
         builder.setPriority(priority);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)

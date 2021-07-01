@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.markdown.MarkdownUtils;
@@ -169,6 +170,7 @@ public class ReportActivity extends AppCompatActivity {
         bundle.putSerializable(EXTRA_REPORT_INFO, reportInfo);
         intent.putExtras(bundle);
 
+        UUtils.showLog("点击跳跃了");
         // Note that ReportActivity task has documentLaunchMode="intoExisting" set in AndroidManifest.xml
         // which has equivalent behaviour to the following. The following dynamic way doesn't seem to
         // work for notification pending intent, i.e separate task isn't created and activity is

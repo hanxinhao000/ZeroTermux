@@ -235,6 +235,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         Logger.logDebug(LOG_TAG, "onCreate");
         isOnResumeAfterOnCreate = true;
 
+
+
         // Check if a crash happened on last run of the app and show a
         // notification with the crash details if it did
         CrashUtils.notifyAppCrashOnLastRun(this, LOG_TAG);
@@ -300,6 +302,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         createFiles();
         initZeroView();
         initStatue();
+
     }
 
     @Override
@@ -1531,7 +1534,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     }
                 });
 
-
+               if(true){
+                   throw new RuntimeException("测试");
+               }
                 break;
             //北京
             case 2:
@@ -1647,6 +1652,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
                 break;
+
+
                 //自定
             case 11:
                 getDrawer().closeDrawer(Gravity.LEFT);
