@@ -45,6 +45,8 @@ public class TermuxShellUtils {
         }
 
         environment.add("TERM=xterm-256color");
+        environment.add("ZeroTermux=true");
+        environment.add("zerotermux=true");
         environment.add("COLORTERM=truecolor");
         environment.add("HOME=" + TermuxConstants.TERMUX_HOME_DIR_PATH);
         environment.add("PREFIX=" + TermuxConstants.TERMUX_PREFIX_DIR_PATH);
