@@ -11,6 +11,7 @@ import com.lzy.okgo.OkGo;
 import com.mallotec.reb.localeplugin.LocaleConstant;
 import com.mallotec.reb.localeplugin.LocalePlugin;
 import com.termux.shared.crash.CrashHandler;
+import com.termux.shared.crash.TermuxCrashUtils;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.logger.Logger;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
@@ -28,7 +29,7 @@ public class TermuxApplication extends XHApplication {
         super.onCreate();
 
         // Set crash handler for the app
-        CrashHandler.setCrashHandler(this);
+        TermuxCrashUtils.setCrashHandler(this);
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxSpeed(0);
         Aria.get(this).getDownloadConfig().setConvertSpeed(true);

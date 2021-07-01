@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 
 import com.termux.shared.R;
 import com.termux.shared.models.ExecutionCommand;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.models.ResultData;
+import com.termux.shared.models.errors.Errno;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.models.ExecutionCommand.ExecutionState;
 
@@ -28,9 +29,6 @@ public final class TermuxTask {
     private final Process mProcess;
     private final ExecutionCommand mExecutionCommand;
     private final TermuxTaskClient mTermuxTaskClient;
-
-    private final StringBuilder mStdout = new StringBuilder();
-    private final StringBuilder mStderr = new StringBuilder();
 
     private static final String LOG_TAG = "TermuxTask";
 
@@ -55,6 +53,7 @@ public final class TermuxTask {
      *                           be called regardless of {@code isSynchronous} value but not if
      *                           {@code null} is returned by this method. This can
      *                           optionally be {@code null}.
+     * @param shellEnvironmentClient The {@link ShellEnvironmentClient} interface implementation.
      * @param isSynchronous If set to {@code true}, then the command will be executed in the
      *                      caller thread and results returned synchronously in the {@link ExecutionCommand}
      *                      sub object of the {@link TermuxTask} returned.
@@ -63,15 +62,23 @@ public final class TermuxTask {
      * @return Returns the {@link TermuxTask}. This will be {@code null} if failed to start the execution command.
      */
     public static TermuxTask execute(@NonNull final Context context, @NonNull ExecutionCommand executionCommand,
-                                     final TermuxTaskClient termuxTaskClient, final boolean isSynchronous) {
-        if (executionCommand.workingDirectory == null || executionCommand.workingDirectory.isEmpty()) executionCommand.workingDirectory = TermuxConstants.TERMUX_HOME_DIR_PATH;
+                                     final TermuxTaskClient termuxTaskClient,
+                                     @NonNull final ShellEnvironmentClient shellEnvironmentClient,
+                                     final boolean isSynchronous) {
+        if (executionCommand.workingDirectory == null || executionCommand.workingDirectory.isEmpty())
+            executionCommand.workingDirectory = shellEnvironmentClient.getDefaultWorkingDirectoryPath();
+        if (executionCommand.workingDirectory.isEmpty())
+            executionCommand.workingDirectory = "/";
 
-        String[] env = ShellUtils.buildEnvironment(context, false, executionCommand.workingDirectory);
+        String[] env = shellEnvironmentClient.buildEnvironment(context, false, executionCommand.workingDirectory);
 
-        final String[] commandArray = ShellUtils.setupProcessArgs(executionCommand.executable, executionCommand.arguments);
+        final String[] commandArray = shellEnvironmentClient.setupProcessArgs(executionCommand.executable, executionCommand.arguments);
 
-        if (!executionCommand.setState(ExecutionState.EXECUTING))
+        if (!executionCommand.setState(ExecutionState.EXECUTING)) {
+            executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_failed_to_execute_termux_task_command, executionCommand.getCommandIdAndLabelLogString()));
+            TermuxTask.processTermuxTaskResult(null, executionCommand);
             return null;
+        }
 
         Logger.logDebug(LOG_TAG, executionCommand.toString());
 
@@ -85,7 +92,7 @@ public final class TermuxTask {
         try {
             process = Runtime.getRuntime().exec(commandArray, env, new File(executionCommand.workingDirectory));
         } catch (IOException e) {
-            executionCommand.setStateFailed(ExecutionCommand.RESULT_CODE_FAILED, context.getString(R.string.error_failed_to_execute_termux_task_command, executionCommand.getCommandIdAndLabelLogString()), e);
+            executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_failed_to_execute_termux_task_command, executionCommand.getCommandIdAndLabelLogString()), e);
             TermuxTask.processTermuxTaskResult(null, executionCommand);
             return null;
         }
@@ -117,8 +124,8 @@ public final class TermuxTask {
     /**
      * Sets up stdout and stderr readers for the {@link #mProcess} and waits for the process to end.
      *
-     * If the processes finishes, then sets {@link ExecutionCommand#stdout}, {@link ExecutionCommand#stderr}
-     * and {@link ExecutionCommand#exitCode} for the {@link #mExecutionCommand} of the {@code termuxTask}
+     * If the processes finishes, then sets {@link ResultData#stdout}, {@link ResultData#stderr}
+     * and {@link ResultData#exitCode} for the {@link #mExecutionCommand} of the {@code termuxTask}
      * and then calls {@link #processTermuxTaskResult(TermuxTask, ExecutionCommand) to process the result}.
      *
      * @param context The {@link Context} for operations.
@@ -128,15 +135,12 @@ public final class TermuxTask {
 
         Logger.logDebug(LOG_TAG, "Running \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxTask with pid " + pid);
 
-        mExecutionCommand.stdout = null;
-        mExecutionCommand.stderr = null;
-        mExecutionCommand.exitCode = null;
-
+        mExecutionCommand.resultData.exitCode = null;
 
         // setup stdin, and stdout and stderr gobblers
         DataOutputStream STDIN = new DataOutputStream(mProcess.getOutputStream());
-        StreamGobbler STDOUT = new StreamGobbler(pid + "-stdout", mProcess.getInputStream(), mStdout);
-        StreamGobbler STDERR = new StreamGobbler(pid + "-stderr", mProcess.getErrorStream(), mStderr);
+        StreamGobbler STDOUT = new StreamGobbler(pid + "-stdout", mProcess.getInputStream(), mExecutionCommand.resultData.stdout);
+        StreamGobbler STDERR = new StreamGobbler(pid + "-stderr", mProcess.getErrorStream(), mExecutionCommand.resultData.stderr);
 
         // start gobbling
         STDOUT.start();
@@ -150,7 +154,7 @@ public final class TermuxTask {
                 //STDIN.write("exit\n".getBytes(StandardCharsets.UTF_8));
                 //STDIN.flush();
             } catch(IOException e) {
-                if (e.getMessage().contains("EPIPE") || e.getMessage().contains("Stream closed")) {
+                if (e.getMessage() != null && (e.getMessage().contains("EPIPE") || e.getMessage().contains("Stream closed"))) {
                     // Method most horrid to catch broken pipe, in which case we
                     // do nothing. The command is not a shell, the shell closed
                     // STDIN, the script already contained the exit command, etc.
@@ -158,10 +162,8 @@ public final class TermuxTask {
                 } else {
                     // other issues we don't know how to handle, leads to
                     // returning null
-                    mExecutionCommand.setStateFailed(ExecutionCommand.RESULT_CODE_FAILED, context.getString(R.string.error_exception_received_while_executing_termux_task_command, mExecutionCommand.getCommandIdAndLabelLogString(), e.getMessage()), e);
-                    mExecutionCommand.stdout = mStdout.toString();
-                    mExecutionCommand.stderr = mStderr.toString();
-                    mExecutionCommand.exitCode = -1;
+                    mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_exception_received_while_executing_termux_task_command, mExecutionCommand.getCommandIdAndLabelLogString(), e.getMessage()), e);
+                    mExecutionCommand.resultData.exitCode = 1;
                     TermuxTask.processTermuxTaskResult(this, null);
                     kill();
                     return;
@@ -198,9 +200,7 @@ public final class TermuxTask {
             return;
         }
 
-        mExecutionCommand.stdout = mStdout.toString();
-        mExecutionCommand.stderr = mStderr.toString();
-        mExecutionCommand.exitCode = exitCode;
+        mExecutionCommand.resultData.exitCode = exitCode;
 
         if (!mExecutionCommand.setState(ExecutionState.EXECUTED))
             return;
@@ -225,13 +225,9 @@ public final class TermuxTask {
 
         Logger.logDebug(LOG_TAG, "Send SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxTask");
 
-        if (mExecutionCommand.setStateFailed(ExecutionCommand.RESULT_CODE_FAILED, context.getString(R.string.error_sending_sigkill_to_process), null)) {
+        if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process))) {
             if (processResult) {
-                // Get whatever output has been set till now in case its needed
-                mExecutionCommand.stdout = mStdout.toString();
-                mExecutionCommand.stderr = mStderr.toString();
-                mExecutionCommand.exitCode = 137; // SIGKILL
-
+                mExecutionCommand.resultData.exitCode = 137; // SIGKILL
                 TermuxTask.processTermuxTaskResult(this, null);
             }
         }
@@ -263,10 +259,10 @@ public final class TermuxTask {
      * then the {@link TermuxTaskClient#onTermuxTaskExited(TermuxTask)} callback will be called.
      *
      * @param termuxTask The {@link TermuxTask}, which should be set if
-     *                  {@link #execute(Context, ExecutionCommand, TermuxTaskClient, boolean)}
+     *                  {@link #execute(Context, ExecutionCommand, TermuxTaskClient, ShellEnvironmentClient, boolean)}
      *                   successfully started the process.
      * @param executionCommand The {@link ExecutionCommand}, which should be set if
-     *                          {@link #execute(Context, ExecutionCommand, TermuxTaskClient, boolean)}
+     *                          {@link #execute(Context, ExecutionCommand, TermuxTaskClient, ShellEnvironmentClient, boolean)}
      *                          failed to start the process.
      */
     private static void processTermuxTaskResult(final TermuxTask termuxTask, ExecutionCommand executionCommand) {

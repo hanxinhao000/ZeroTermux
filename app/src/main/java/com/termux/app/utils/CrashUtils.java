@@ -10,10 +10,12 @@ import androidx.annotation.Nullable;
 
 import com.termux.R;
 import com.termux.app.activities.ReportActivity;
+import com.termux.shared.models.errors.Error;
 import com.termux.shared.notification.NotificationUtils;
 import com.termux.shared.file.FileUtils;
-import com.termux.app.models.ReportInfo;
-import com.termux.app.models.UserAction;
+import com.termux.shared.models.ReportInfo;
+import com.termux.shared.models.UserAction;
+import com.termux.shared.notification.TermuxNotificationUtils;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.settings.preferences.TermuxPreferenceConstants;
 import com.termux.shared.data.DataUtils;
@@ -26,11 +28,12 @@ import java.nio.charset.Charset;
 
 public class CrashUtils {
 
+
     private static final String LOG_TAG = "CrashUtils";
 
     /**
-     * Notify the user of a previous app crash by reading the crash info from the crash log file at
-     * {@link TermuxConstants#TERMUX_CRASH_LOG_FILE_PATH}. The crash log file would have been
+     * Notify the user of an app crash at last run by reading the crash info from the crash log file
+     * at {@link TermuxConstants#TERMUX_CRASH_LOG_FILE_PATH}. The crash log file would have been
      * created by {@link com.termux.shared.crash.CrashHandler}.
      *
      * If the crash log file exists and is not empty and
@@ -43,9 +46,8 @@ public class CrashUtils {
      * @param context The {@link Context} for operations.
      * @param logTagParam The log tag to use for logging.
      */
-    public static void notifyCrash(final Context context, final String logTagParam) {
+    public static void notifyAppCrashOnLastRun(final Context context, final String logTagParam) {
         if (context == null) return;
-
 
         TermuxAppSharedPreferences preferences = TermuxAppSharedPreferences.build(context);
         if (preferences == null) return;
@@ -62,50 +64,79 @@ public class CrashUtils {
                 if (!FileUtils.regularFileExists(TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH, false))
                     return;
 
-                String errmsg;
+                Error error;
                 StringBuilder reportStringBuilder = new StringBuilder();
 
                 // Read report string from crash log file
-                errmsg = FileUtils.readStringFromFile(context, "crash log", TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH, Charset.defaultCharset(), reportStringBuilder, false);
-                if (errmsg != null) {
-                    Logger.logError(logTag, errmsg);
+                error = FileUtils.readStringFromFile("crash log", TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH, Charset.defaultCharset(), reportStringBuilder, false);
+                if (error != null) {
+                    Logger.logErrorExtended(logTag, error.toString());
                     return;
                 }
 
                 // Move crash log file to backup location if it exists
-                FileUtils.moveRegularFile(context, "crash log", TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH, TermuxConstants.TERMUX_CRASH_LOG_BACKUP_FILE_PATH, true);
-                if (errmsg != null) {
-                    Logger.logError(logTag, errmsg);
+                error = FileUtils.moveRegularFile("crash log", TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH, TermuxConstants.TERMUX_CRASH_LOG_BACKUP_FILE_PATH, true);
+                if (error != null) {
+                    Logger.logErrorExtended(logTag, error.toString());
                 }
 
                 String reportString = reportStringBuilder.toString();
 
-                if (reportString == null || reportString.isEmpty())
+                if (reportString.isEmpty())
                     return;
 
-                // Send a notification to show the crash log which when clicked will open the {@link ReportActivity}
-                // to show the details of the crash
-                String title = TermuxConstants.TERMUX_APP_NAME + " Crash Report";
+                Logger.logDebug(logTag, "A crash log file found at \"" + TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH +  "\".");
 
-                Logger.logDebug(logTag, "The crash log file at \"" + TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH +  "\" found. Sending \"" + title + "\" notification.");
-
-                Intent notificationIntent = ReportActivity.newInstance(context, new ReportInfo(UserAction.CRASH_REPORT, logTag, title, null, reportString, "\n\n" + TermuxUtils.getReportIssueMarkdownString(context), true));
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                // Setup the notification channel if not already set up
-                setupCrashReportsNotificationChannel(context);
-
-                // Build the notification
-                Notification.Builder builder = getCrashReportsNotificationBuilder(context, title, null, null, pendingIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
-                if (builder == null)  return;
-
-                // Send the notification
-                int nextNotificationId = NotificationUtils.getNextNotificationId(context);
-                NotificationManager notificationManager = NotificationUtils.getNotificationManager(context);
-                if (notificationManager != null)
-                    notificationManager.notify(nextNotificationId, builder.build());
+                sendCrashReportNotification(context, logTag, reportString, false);
             }
         }.start();
+    }
+
+    /**
+     * Send a crash report notification for {@link TermuxConstants#TERMUX_CRASH_REPORTS_NOTIFICATION_CHANNEL_ID}
+     * and {@link TermuxConstants#TERMUX_CRASH_REPORTS_NOTIFICATION_CHANNEL_NAME}.
+     *
+     * @param context The {@link Context} for operations.
+     * @param logTag The log tag to use for logging.
+     * @param reportString The text for the crash report.
+     * @param forceNotification If set to {@code true}, then a notification will be shown
+     *                          regardless of if pending intent is {@code null} or
+     *                          {@link TermuxPreferenceConstants.TERMUX_APP#KEY_CRASH_REPORT_NOTIFICATIONS_ENABLED}
+     *                          is {@code false}.
+     */
+    public static void sendCrashReportNotification(final Context context, String logTag, String reportString, boolean forceNotification) {
+        if (context == null) return;
+
+        TermuxAppSharedPreferences preferences = TermuxAppSharedPreferences.build(context);
+        if (preferences == null) return;
+
+        // If user has disabled notifications for crashes
+        if (!preferences.areCrashReportNotificationsEnabled() && !forceNotification)
+            return;
+
+        logTag = DataUtils.getDefaultIfNull(logTag, LOG_TAG);
+
+        // Send a notification to show the crash log which when clicked will open the {@link ReportActivity}
+        // to show the details of the crash
+        String title = TermuxConstants.TERMUX_APP_NAME + " Crash Report";
+
+        Logger.logDebug(logTag, "Sending \"" + title + "\" notification.");
+
+        Intent notificationIntent = ReportActivity.newInstance(context, new ReportInfo(UserAction.CRASH_REPORT.getName(), logTag, title, null, reportString, "\n\n" + TermuxUtils.getReportIssueMarkdownString(context), true));
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Setup the notification channel if not already set up
+        setupCrashReportsNotificationChannel(context);
+
+        // Build the notification
+        Notification.Builder builder = getCrashReportsNotificationBuilder(context, title, null, null, pendingIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
+        if (builder == null) return;
+
+        // Send the notification
+        int nextNotificationId = TermuxNotificationUtils.getNextNotificationId(context);
+        NotificationManager notificationManager = NotificationUtils.getNotificationManager(context);
+        if (notificationManager != null)
+            notificationManager.notify(nextNotificationId, builder.build());
     }
 
     /**

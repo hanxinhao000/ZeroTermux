@@ -12,6 +12,11 @@ android {
     buildFeatures {
         viewBinding true
     }
+    lintOptions {
+
+        checkReleaseBuilds false
+
+    }
     signingConfigs {
         release {
             keyAlias 'phone1'
@@ -65,7 +70,7 @@ android {
         minSdkVersion project.properties.minSdkVersion.toInteger()
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 114
-        versionName "0.114.05"
+        versionName "0.114.05.1"
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"

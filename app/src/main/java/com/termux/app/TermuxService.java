@@ -23,6 +23,11 @@ import com.termux.R;
 import com.termux.app.settings.properties.TermuxAppSharedProperties;
 import com.termux.app.terminal.TermuxTerminalSessionClient;
 import com.termux.app.utils.PluginUtils;
+import com.termux.shared.data.IntentUtils;
+import com.termux.shared.models.errors.Errno;
+import com.termux.shared.shell.ShellUtils;
+import com.termux.shared.shell.TermuxShellEnvironmentClient;
+import com.termux.shared.shell.TermuxShellUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_SERVICE;
@@ -32,7 +37,6 @@ import com.termux.shared.terminal.TermuxTerminalSessionClientBase;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.notification.NotificationUtils;
 import com.termux.shared.packages.PermissionUtils;
-import com.termux.shared.shell.ShellUtils;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.models.ExecutionCommand;
 import com.termux.shared.shell.TermuxTask;
@@ -160,7 +164,7 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
     public void onDestroy() {
         Logger.logVerbose(LOG_TAG, "onDestroy");
 
-        ShellUtils.clearTermuxTMPDIR(this, true);
+        TermuxShellUtils.clearTermuxTMPDIR(true);
 
         actionReleaseWakeLock(false);
         if (!mWantsToStop)
@@ -254,22 +258,22 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         List<TermuxSession> termuxSessions = new ArrayList<>(mTermuxSessions);
         for (int i = 0; i < termuxSessions.size(); i++) {
             ExecutionCommand executionCommand = termuxSessions.get(i).getExecutionCommand();
-            processResult = mWantsToStop || (executionCommand.isPluginExecutionCommand && executionCommand.pluginPendingIntent != null);
+            processResult = mWantsToStop || executionCommand.isPluginExecutionCommandWithPendingResult();
             termuxSessions.get(i).killIfExecuting(this, processResult);
         }
 
         List<TermuxTask> termuxTasks = new ArrayList<>(mTermuxTasks);
         for (int i = 0; i < termuxTasks.size(); i++) {
             ExecutionCommand executionCommand = termuxTasks.get(i).getExecutionCommand();
-            if (executionCommand.isPluginExecutionCommand && executionCommand.pluginPendingIntent != null)
+            if (executionCommand.isPluginExecutionCommandWithPendingResult())
                 termuxTasks.get(i).killIfExecuting(this, true);
         }
 
         List<ExecutionCommand> pendingPluginExecutionCommands = new ArrayList<>(mPendingPluginExecutionCommands);
         for (int i = 0; i < pendingPluginExecutionCommands.size(); i++) {
             ExecutionCommand executionCommand = pendingPluginExecutionCommands.get(i);
-            if (!executionCommand.shouldNotProcessResults() && executionCommand.pluginPendingIntent != null) {
-                if (executionCommand.setStateFailed(ExecutionCommand.RESULT_CODE_CANCELED, this.getString(com.termux.shared.R.string.error_execution_cancelled), null)) {
+            if (!executionCommand.shouldNotProcessResults() && executionCommand.isPluginExecutionCommandWithPendingResult()) {
+                if (executionCommand.setStateFailed(Errno.ERRNO_CANCELLED.getCode(), this.getString(com.termux.shared.R.string.error_execution_cancelled))) {
                     PluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
                 }
             }
@@ -357,20 +361,28 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
 
         if (executionCommand.executableUri != null) {
             executionCommand.executable = executionCommand.executableUri.getPath();
-            executionCommand.arguments = intent.getStringArrayExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS);
+            executionCommand.arguments = IntentUtils.getStringArrayExtraIfSet(intent, TERMUX_SERVICE.EXTRA_ARGUMENTS, null);
             if (executionCommand.inBackground)
-                executionCommand.stdin = intent.getStringExtra(TERMUX_SERVICE.EXTRA_STDIN);
+                executionCommand.stdin = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_STDIN, null);
         }
 
-        executionCommand.workingDirectory = intent.getStringExtra(TERMUX_SERVICE.EXTRA_WORKDIR);
+        executionCommand.workingDirectory = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_WORKDIR, null);
         executionCommand.isFailsafe = intent.getBooleanExtra(TERMUX_ACTIVITY.ACTION_FAILSAFE_SESSION, false);
         executionCommand.sessionAction = intent.getStringExtra(TERMUX_SERVICE.EXTRA_SESSION_ACTION);
-        executionCommand.commandLabel = DataUtils.getDefaultIfNull(intent.getStringExtra(TERMUX_SERVICE.EXTRA_COMMAND_LABEL), "Execution Intent Command");
-        executionCommand.commandDescription = intent.getStringExtra(TERMUX_SERVICE.EXTRA_COMMAND_DESCRIPTION);
-        executionCommand.commandHelp = intent.getStringExtra(TERMUX_SERVICE.EXTRA_COMMAND_HELP);
-        executionCommand.pluginAPIHelp = intent.getStringExtra(TERMUX_SERVICE.EXTRA_PLUGIN_API_HELP);
+        executionCommand.commandLabel = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_LABEL, "Execution Intent Command");
+        executionCommand.commandDescription = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_DESCRIPTION, null);
+        executionCommand.commandHelp = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_HELP, null);
+        executionCommand.pluginAPIHelp = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_PLUGIN_API_HELP, null);
         executionCommand.isPluginExecutionCommand = true;
-        executionCommand.pluginPendingIntent = intent.getParcelableExtra(TERMUX_SERVICE.EXTRA_PENDING_INTENT);
+        executionCommand.resultConfig.resultPendingIntent = intent.getParcelableExtra(TERMUX_SERVICE.EXTRA_PENDING_INTENT);
+        executionCommand.resultConfig.resultDirectoryPath = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_DIRECTORY, null);
+        if (executionCommand.resultConfig.resultDirectoryPath != null) {
+            executionCommand.resultConfig.resultSingleFile = intent.getBooleanExtra(TERMUX_SERVICE.EXTRA_RESULT_SINGLE_FILE, false);
+            executionCommand.resultConfig.resultFileBasename = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_BASENAME, null);
+            executionCommand.resultConfig.resultFileOutputFormat = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_OUTPUT_FORMAT, null);
+            executionCommand.resultConfig.resultFileErrorFormat = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_ERROR_FORMAT, null);
+            executionCommand.resultConfig.resultFilesSuffix = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILES_SUFFIX, null);
+        }
 
         // Add the execution command to pending plugin execution commands list
         mPendingPluginExecutionCommands.add(executionCommand);
@@ -416,9 +428,14 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         if (Logger.getLogLevel() >= Logger.LOG_LEVEL_VERBOSE)
             Logger.logVerbose(LOG_TAG, executionCommand.toString());
 
-        TermuxTask newTermuxTask = TermuxTask.execute(this, executionCommand, this, false);
+        TermuxTask newTermuxTask = TermuxTask.execute(this, executionCommand, this, new TermuxShellEnvironmentClient(), false);
         if (newTermuxTask == null) {
             Logger.logError(LOG_TAG, "Failed to execute new TermuxTask command for:\n" + executionCommand.getCommandIdAndLabelLogString());
+            // If the execution command was started for a plugin, then process the error
+            if (executionCommand.isPluginExecutionCommand)
+                PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, false);
+            else
+                Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
 
@@ -507,9 +524,14 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         // Otherwise if command was manually started by the user like by adding a new terminal session,
         // then no need to set stdout
         executionCommand.terminalTranscriptRows = getTerminalTranscriptRows();
-        TermuxSession newTermuxSession = TermuxSession.execute(this, executionCommand, getTermuxTerminalSessionClient(), this, sessionName, executionCommand.isPluginExecutionCommand);
+        TermuxSession newTermuxSession = TermuxSession.execute(this, executionCommand, getTermuxTerminalSessionClient(), this, new TermuxShellEnvironmentClient(), sessionName, executionCommand.isPluginExecutionCommand);
         if (newTermuxSession == null) {
             Logger.logError(LOG_TAG, "Failed to execute new TermuxSession command for:\n" + executionCommand.getCommandIdAndLabelLogString());
+            // If the execution command was started for a plugin, then process the error
+            if (executionCommand.isPluginExecutionCommand)
+                PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, false);
+            else
+                Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
 
@@ -618,8 +640,13 @@ public final class TermuxService extends Service implements TermuxTask.TermuxTas
         // For android >= 10, apps require Display over other apps permission to start foreground activities
         // from background (services). If it is not granted, then TermuxSessions that are started will
         // show in Termux notification but will not run until user manually clicks the notification.
-        if (PermissionUtils.validateDisplayOverOtherAppsPermissionForPostAndroid10(this)) {
+        if (PermissionUtils.validateDisplayOverOtherAppsPermissionForPostAndroid10(this, true)) {
             TermuxActivity.startTermuxActivity(this);
+        } else {
+            TermuxAppSharedPreferences preferences = TermuxAppSharedPreferences.build(this);
+            if (preferences == null) return;
+            if (preferences.arePluginErrorNotificationsEnabled())
+                Logger.showToast(this, this.getString(R.string.error_display_over_other_apps_permission_not_granted), true);
         }
     }
 

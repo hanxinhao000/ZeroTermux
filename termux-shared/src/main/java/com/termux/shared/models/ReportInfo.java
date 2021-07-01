@@ -1,6 +1,7 @@
-package com.termux.app.models;
+package com.termux.shared.models;
 
 import com.termux.shared.markdown.MarkdownUtils;
+import com.termux.shared.termux.AndroidUtils;
 import com.termux.shared.termux.TermuxUtils;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.io.Serializable;
 public class ReportInfo implements Serializable {
 
     /** The user action that was being processed for which the report was generated. */
-    public final UserAction userAction;
+    public final String userAction;
     /** The internal app component that sent the report. */
     public final String sender;
     /** The report title. */
@@ -26,7 +27,7 @@ public class ReportInfo implements Serializable {
     /** The timestamp for the report. */
     public final String reportTimestamp;
 
-    public ReportInfo(UserAction userAction, String sender, String reportTitle, String reportStringPrefix, String reportString, String reportStringSuffix, boolean addReportInfoToMarkdown) {
+    public ReportInfo(String userAction, String sender, String reportTitle, String reportStringPrefix, String reportString, String reportStringSuffix, boolean addReportInfoToMarkdown) {
         this.userAction = userAction;
         this.sender = sender;
         this.reportTitle = reportTitle;
@@ -34,7 +35,7 @@ public class ReportInfo implements Serializable {
         this.reportString = reportString;
         this.reportStringSuffix = reportStringSuffix;
         this.addReportInfoToMarkdown = addReportInfoToMarkdown;
-        this.reportTimestamp = TermuxUtils.getCurrentTimeStamp();
+        this.reportTimestamp = AndroidUtils.getCurrentTimeStamp();
     }
 
     /**
@@ -49,10 +50,10 @@ public class ReportInfo implements Serializable {
         StringBuilder markdownString = new StringBuilder();
 
         if (reportInfo.addReportInfoToMarkdown) {
-            markdownString.append("## 报告信息\n\n");
-            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("用户操作", reportInfo.userAction, "-"));
-            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("事件发起", reportInfo.sender, "-"));
-            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("日期", reportInfo.reportTimestamp, "-"));
+            markdownString.append("## Report Info\n\n");
+            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("User Action", reportInfo.userAction, "-"));
+            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Sender", reportInfo.sender, "-"));
+            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Report Timestamp", reportInfo.reportTimestamp, "-"));
             markdownString.append("\n##\n\n");
         }
 
@@ -60,5 +61,4 @@ public class ReportInfo implements Serializable {
 
         return markdownString.toString();
     }
-
 }

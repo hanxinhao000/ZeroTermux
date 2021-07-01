@@ -1,11 +1,4 @@
-package com.termux.app.activities;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.termux.shared.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +7,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.termux.R;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.markdown.MarkdownUtils;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+
+import com.termux.shared.R;
 import com.termux.shared.interact.ShareUtils;
+import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.models.ReportInfo;
+import com.termux.shared.termux.TermuxConstants;
 
 import org.commonmark.node.FencedCodeBlock;
 

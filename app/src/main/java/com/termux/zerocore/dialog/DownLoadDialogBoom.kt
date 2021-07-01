@@ -236,8 +236,40 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
                                 data.id = toLong
 
-                                Aria.download(mDownLoadDialogBoom).load(data.id).resume()
-                                holder.download?.setImageResource(R.mipmap.jiazai)
+                                Aria.download(this).load(data.id).stop()
+                                Aria.download(this).load(data.id).cancel(true);
+
+                                if(toLong == -1L){
+
+
+                                    if(data.type == "apk"){
+
+                                        data.id = Aria.download(mDownLoadDialogBoom)
+                                            .load("$ip${data.download}") //读取下载地址
+                                            .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                            .create()
+                                    }else{
+                                        data.id = Aria.download(mDownLoadDialogBoom)
+                                            .load("$ip${data.download}") //读取下载地址
+                                            .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                            .create()
+                                    }
+
+
+                                    holder.download?.setImageResource(R.mipmap.jiazai)
+
+                                    if(data.id == -1L){
+                                        SaveData.saveStringOther("$ip${data.download}","def")
+                                    }else{
+                                        SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                                    }
+
+                                }else{
+                                    Aria.download(mDownLoadDialogBoom).load(data.id).resume()
+                                    holder.download?.setImageResource(R.mipmap.jiazai)
+                                }
+
+
                             } catch (e: Exception) {
                                 e.printStackTrace()
 
@@ -257,7 +289,11 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
                                 holder.download?.setImageResource(R.mipmap.jiazai)
 
-                                SaveData.saveStringOther("$ip${data.download}", "${data.id}")
+                                if(data.id == -1L){
+                                    SaveData.saveStringOther("$ip${data.download}","def")
+                                }else{
+                                    SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                                }
                             }
                         }else{
 
@@ -276,7 +312,11 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                             }
 
                             holder.download?.setImageResource(R.mipmap.jiazai)
-                            SaveData.saveStringOther("$ip${data.download}", "${data.id}")
+                            if(data.id == -1L){
+                                SaveData.saveStringOther("$ip${data.download}","def")
+                            }else{
+                                SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                            }
 
 
                         }
@@ -310,10 +350,41 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
                                 val toLong = stringOther.toLong()
 
+
+
                                 data.id = toLong
                                 UUtils.showLog("任务状态-----------恢复的ID(恢复):${data.id}")
-                                Aria.download(mDownLoadDialogBoom).load(data.id).resume()
-                                holder.download?.setImageResource(R.mipmap.jiazai)
+                                if(toLong == -1L){
+
+                                    Aria.download(this).load(data.id).stop()
+                                    Aria.download(this).load(data.id).cancel(true);
+
+                                    if(data.type == "apk"){
+
+                                        data.id = Aria.download(mDownLoadDialogBoom)
+                                            .load("$ip${data.download}") //读取下载地址
+                                            .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                            .create()
+                                    }else{
+                                        data.id = Aria.download(mDownLoadDialogBoom)
+                                            .load("$ip${data.download}") //读取下载地址
+                                            .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                            .create()
+                                    }
+
+
+                                    holder.download?.setImageResource(R.mipmap.jiazai)
+
+                                    if(data.id == -1L){
+                                        SaveData.saveStringOther("$ip${data.download}","def")
+                                    }else{
+                                        SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                                    }
+
+                                }else{
+                                    Aria.download(mDownLoadDialogBoom).load(data.id).resume()
+                                    holder.download?.setImageResource(R.mipmap.jiazai)
+                                }
                             }catch (e:Exception){
                                 e.printStackTrace()
 
@@ -329,7 +400,13 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                         .create()
                                 }
                                 holder.download?.setImageResource(R.mipmap.jiazai)
-                                SaveData.saveStringOther("$ip${data.download}","${data.id}")
+
+                                if(data.id == -1L){
+                                    SaveData.saveStringOther("$ip${data.download}","def")
+                                }else{
+                                    SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                                }
+
                             }
 
 
@@ -348,7 +425,11 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                     .create()
                             }
                             holder.download?.setImageResource(R.mipmap.jiazai)
-                            SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                            if(data.id == -1L){
+                                SaveData.saveStringOther("$ip${data.download}","def")
+                            }else{
+                                SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                            }
                             UUtils.showLog("任务状态------------创建的ID:${data.id}")
                         }
 
@@ -385,7 +466,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
                     val taskState = Aria.download(this).load(data.id).taskState
 
-                    if(taskState == 4) {
+                    if(taskState == 4 || taskState == -1) {
                         UUtils.showLog("当前状态:$taskState")
 
                         Aria.download(this).load(data.id).stop()

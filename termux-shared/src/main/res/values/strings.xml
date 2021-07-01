@@ -13,6 +13,7 @@
 
 <resources>
 
+    <string name="msg_directory_absolute_path">%1$s Directory Absolute Path: \"%2$s\"</string>
     <!-- FileUtils -->
     <string name="error_executable_required">Executable required.</string>
     <string name="error_null_or_empty_parameter">The %1$s is to \"%2$s\" null or empty.</string>
@@ -102,5 +103,8 @@
     <string name="log_level_verbose">"Verbose"</string>
     <string name="log_level_unknown">"*Unknown*"</string>
     <string name="log_level_value">Logcat log level set to \"%1$s\"</string>
+
+    <string name="title_report_text">报告文本</string>
+
 
 </resources>

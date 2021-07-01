@@ -126,7 +126,7 @@
         </provider>
 
         <activity
-            android:name=".app.activities.ReportActivity"
+            android:name=".shared.activities.ReportActivity"
             android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"
             />

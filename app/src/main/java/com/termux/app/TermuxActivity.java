@@ -52,6 +52,7 @@ import com.mallotec.reb.localeplugin.LocalePlugin;
 import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
+import com.termux.shared.packages.PermissionUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY;
 import com.termux.app.activities.HelpActivity;
@@ -223,7 +224,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private static final int CONTEXT_MENU_SETTINGS_ID = 8;
     private static final int CONTEXT_MENU_REPORT_ID = 9;
 
-    private static final int REQUESTCODE_PERMISSION_STORAGE = 1234;
 
     private static final String ARG_TERMINAL_TOOLBAR_TEXT_INPUT = "terminal_toolbar_text_input";
 
@@ -237,7 +237,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         // Check if a crash happened on last run of the app and show a
         // notification with the crash details if it did
-        CrashUtils.notifyCrash(this, LOG_TAG);
+        CrashUtils.notifyAppCrashOnLastRun(this, LOG_TAG);
 
         // Load termux shared properties
         mProperties = new TermuxAppSharedProperties(this);
@@ -414,8 +414,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         if (mTermuxService.isTermuxSessionsEmpty()) {
             if (mIsVisible) {
                 TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
-
-                    //  getDrawer().openDrawer(Gravity.RIGHT);
                     if (mTermuxService == null) return; // Activity might have been destroyed.
                     try {
                         Bundle bundle = getIntent().getExtras();
@@ -426,14 +424,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                         mTermuxTerminalSessionClient.addNewSession(launchFailsafe, null);
                     } catch (WindowManager.BadTokenException e) {
                         // Activity finished - ignore.
-                    }
-
-
-
-                }, new Runnable() {
-                    @Override
-                    public void run() {
-                        getDrawer().openDrawer(Gravity.LEFT);
                     }
                 });
             } else {
@@ -766,22 +756,22 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      * For processes to access shared internal storage (/sdcard) we need this permission.
      */
     public boolean ensureStoragePermissionGranted() {
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (PermissionUtils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             return true;
         } else {
-            Logger.logDebug(LOG_TAG, "Storage permission not granted, requesting permission.");
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUESTCODE_PERMISSION_STORAGE);
+            Logger.logInfo(LOG_TAG, "Storage permission not granted, requesting permission.");
+            PermissionUtils.requestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION);
             return false;
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUESTCODE_PERMISSION_STORAGE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Logger.logDebug(LOG_TAG, "Storage permission granted by user on request.");
+        if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Logger.logInfo(LOG_TAG, "Storage permission granted by user on request.");
             TermuxInstaller.setupStorageSymlinks(this);
         } else {
-            Logger.logDebug(LOG_TAG, "Storage permission denied by user on request.");
+            Logger.logInfo(LOG_TAG, "Storage permission denied by user on request.");
         }
     }
 

@@ -12,6 +12,7 @@ import com.termux.shared.termux.TermuxConstants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,25 @@ public class Logger {
     public static final int DEFAULT_LOG_LEVEL = LOG_LEVEL_NORMAL;
     private static int CURRENT_LOG_LEVEL = DEFAULT_LOG_LEVEL;
 
-    public static final int LOGGER_ENTRY_SIZE_LIMIT_IN_BYTES = 4 * 1024; // 4KB
+    /**
+     * The maximum size of the log entry payload that can be written to the logger. An attempt to
+     * write more than this amount will result in a truncated log entry.
+     *
+     * The limit is 4068 but this includes log tag and log level prefix "D/" before log tag and ": "
+     * suffix after it.
+     *
+     * #define LOGGER_ENTRY_MAX_PAYLOAD 4068
+     * https://cs.android.com/android/_/android/platform/system/core/+/android10-release:liblog/include/log/log_read.h;l=127
+     */
+    public static final int LOGGER_ENTRY_MAX_PAYLOAD = 4068; // 4068 bytes
+
+    /**
+     * The maximum safe size of the log entry payload that can be written to the logger, based on
+     * {@link #LOGGER_ENTRY_MAX_PAYLOAD}. Using 4000 as a safe limit to give log tag and its
+     * prefix/suffix max 68 characters for itself. Use "log*Extended()" functions to use max possible
+     * limit if tag is already known.
+     */
+    public static final int LOGGER_ENTRY_MAX_SAFE_PAYLOAD = 4000; // 4000 bytes
 
 
 
@@ -44,6 +63,40 @@ public class Logger {
             Log.v(getFullTag(tag), message);
     }
 
+    public static void logExtendedMessage(int logLevel, String tag, String message) {
+        if (message == null) return;
+
+        int cutOffIndex;
+        int nextNewlineIndex;
+        String prefix = "";
+
+        // -8 for prefix "(xx/xx)" (max 99 sections), - log tag length, -4 for log tag prefix "D/" and suffix ": "
+        int maxEntrySize = LOGGER_ENTRY_MAX_PAYLOAD - 8 - getFullTag(tag).length() - 4;
+
+        List<String> messagesList = new ArrayList<>();
+
+        while(!message.isEmpty()) {
+            if (message.length() > maxEntrySize) {
+                cutOffIndex = maxEntrySize;
+                nextNewlineIndex = message.lastIndexOf('\n', cutOffIndex);
+                if (nextNewlineIndex != -1) {
+                    cutOffIndex = nextNewlineIndex + 1;
+                }
+                messagesList.add(message.substring(0, cutOffIndex));
+                message = message.substring(cutOffIndex);
+            } else {
+                messagesList.add(message);
+                break;
+            }
+        }
+
+        for(int i=0; i<messagesList.size(); i++) {
+            if (messagesList.size() > 1)
+                prefix = "(" + (i + 1) + "/" + messagesList.size() + ")\n";
+            logMessage(logLevel, tag, prefix + messagesList.get(i));
+        }
+    }
+
 
 
     public static void logError(String tag, String message) {
@@ -52,6 +105,14 @@ public class Logger {
 
     public static void logError(String message) {
         logMessage(Log.ERROR, DEFAULT_LOG_TAG, message);
+    }
+
+    public static void logErrorExtended(String tag, String message) {
+        logExtendedMessage(Log.ERROR, tag, message);
+    }
+
+    public static void logErrorExtended(String message) {
+        logExtendedMessage(Log.ERROR, DEFAULT_LOG_TAG, message);
     }
 
 
@@ -64,6 +125,14 @@ public class Logger {
         logMessage(Log.WARN, DEFAULT_LOG_TAG, message);
     }
 
+    public static void logWarnExtended(String tag, String message) {
+        logExtendedMessage(Log.WARN, tag, message);
+    }
+
+    public static void logWarnExtended(String message) {
+        logExtendedMessage(Log.WARN, DEFAULT_LOG_TAG, message);
+    }
+
 
 
     public static void logInfo(String tag, String message) {
@@ -72,6 +141,14 @@ public class Logger {
 
     public static void logInfo(String message) {
         logMessage(Log.INFO, DEFAULT_LOG_TAG, message);
+    }
+
+    public static void logInfoExtended(String tag, String message) {
+        logExtendedMessage(Log.INFO, tag, message);
+    }
+
+    public static void logInfoExtended(String message) {
+        logExtendedMessage(Log.INFO, DEFAULT_LOG_TAG, message);
     }
 
 
@@ -84,6 +161,14 @@ public class Logger {
         logMessage(Log.DEBUG, DEFAULT_LOG_TAG, message);
     }
 
+    public static void logDebugExtended(String tag, String message) {
+        logExtendedMessage(Log.DEBUG, tag, message);
+    }
+
+    public static void logDebugExtended(String message) {
+        logExtendedMessage(Log.DEBUG, DEFAULT_LOG_TAG, message);
+    }
+
 
 
     public static void logVerbose(String tag, String message) {
@@ -92,6 +177,14 @@ public class Logger {
 
     public static void logVerbose(String message) {
         logMessage(Log.VERBOSE, DEFAULT_LOG_TAG, message);
+    }
+
+    public static void logVerboseExtended(String tag, String message) {
+        logExtendedMessage(Log.VERBOSE, tag, message);
+    }
+
+    public static void logVerboseExtended(String message) {
+        logExtendedMessage(Log.VERBOSE, DEFAULT_LOG_TAG, message);
     }
 
 
@@ -127,8 +220,7 @@ public class Logger {
 
 
     public static void logStackTraceWithMessage(String tag, String message, Throwable throwable) {
-        if (CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
-            Log.e(getFullTag(tag), getMessageAndStackTraceString(message, throwable));
+        Logger.logErrorExtended(tag, getMessageAndStackTraceString(message, throwable));
     }
 
     public static void logStackTraceWithMessage(String message, Throwable throwable) {
@@ -143,10 +235,13 @@ public class Logger {
         logStackTraceWithMessage(DEFAULT_LOG_TAG, null, throwable);
     }
 
-    public static void logStackTracesWithMessage(String tag, String message, List<Throwable> throwableList) {
-        if (CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
-            Log.e(getFullTag(tag), getMessageAndStackTracesString(message, throwableList));
+
+
+    public static void logStackTracesWithMessage(String tag, String message, List<Throwable> throwablesList) {
+        Logger.logErrorExtended(tag, getMessageAndStackTracesString(message, throwablesList));
     }
+
+
 
     public static String getMessageAndStackTraceString(String message, Throwable throwable) {
         if (message == null && throwable == null)
@@ -159,16 +254,18 @@ public class Logger {
             return getStackTraceString(throwable);
     }
 
-    public static String getMessageAndStackTracesString(String message, List<Throwable> throwableList) {
-        if (message == null && (throwableList == null || throwableList.size() == 0))
+    public static String getMessageAndStackTracesString(String message, List<Throwable> throwablesList) {
+        if (message == null && (throwablesList == null || throwablesList.size() == 0))
             return null;
-        else if (message != null && (throwableList != null && throwableList.size() != 0))
-            return message + ":\n" + getStackTracesString(null, getStackTraceStringArray(throwableList));
-        else if (throwableList == null || throwableList.size() == 0)
+        else if (message != null && (throwablesList != null && throwablesList.size() != 0))
+            return message + ":\n" + getStackTracesString(null, getStackTracesStringArray(throwablesList));
+        else if (throwablesList == null || throwablesList.size() == 0)
             return message;
         else
-            return getStackTracesString(null, getStackTraceStringArray(throwableList));
+            return getStackTracesString(null, getStackTracesStringArray(throwablesList));
     }
+
+
 
     public static String getStackTraceString(Throwable throwable) {
         if (throwable == null) return null;
@@ -182,26 +279,29 @@ public class Logger {
             pw.close();
             stackTraceString = errors.toString();
             errors.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return stackTraceString;
     }
 
-    public static String[] getStackTraceStringArray(Throwable throwable) {
-        return getStackTraceStringArray(Collections.singletonList(throwable));
+
+
+    public static String[] getStackTracesStringArray(Throwable throwable) {
+        return getStackTracesStringArray(Collections.singletonList(throwable));
     }
 
-    public static String[] getStackTraceStringArray(List<Throwable> throwableList) {
-        if (throwableList == null) return null;
-
-        final String[] stackTraceStringArray = new String[throwableList.size()];
-        for (int i = 0; i < throwableList.size(); i++) {
-            stackTraceStringArray[i] = getStackTraceString(throwableList.get(i));
+    public static String[] getStackTracesStringArray(List<Throwable> throwablesList) {
+        if (throwablesList == null) return null;
+        final String[] stackTraceStringArray = new String[throwablesList.size()];
+        for (int i = 0; i < throwablesList.size(); i++) {
+            stackTraceStringArray[i] = getStackTraceString(throwablesList.get(i));
         }
         return stackTraceStringArray;
     }
+
+
 
     public static String getStackTracesString(String label, String[] stackTraceStringArray) {
         if (label == null) label = "StackTraces:";
@@ -254,7 +354,7 @@ public class Logger {
         else
             return  label + ": "  +  def;
     }
-    
+
 
 
     public static void showToast(final Context context, final String toastText, boolean longDuration) {
@@ -283,7 +383,7 @@ public class Logger {
             logLevelLabels[i] = getLogLevelLabel(context, Integer.parseInt(logLevels[i].toString()), addDefaultTag);
         }
 
-       return logLevelLabels;
+        return logLevelLabels;
     }
 
     public static String getLogLevelLabel(final Context context, final int logLevel, final boolean addDefaultTag) {
