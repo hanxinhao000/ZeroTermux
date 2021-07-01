@@ -1075,6 +1075,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             ProtocolDialog protocolDialog = new ProtocolDialog(this);
 
             protocolDialog.show();
+
+            protocolDialog.setCancelable(false);
         }
 
 
