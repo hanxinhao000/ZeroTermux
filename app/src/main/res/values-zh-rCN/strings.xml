@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE resources [
+    <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
+    <!ENTITY TERMUX_APP_NAME "ZeroTermux">
+    <!ENTITY TERMUX_API_APP_NAME "Termux:API">
+    <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
+    <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
+    <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
+    <!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker">
+    <!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget">
+    <!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">
+    ]>
+
+<resources>
+    <string name="application_name">&TERMUX_APP_NAME;</string>
+    <string name="shared_user_label">&TERMUX_APP_NAME; 用户</string>
+
+
+
+    <!-- Termux RUN_COMMAND permission -->
+    <string name="permission_run_command_label">运行命令 &TERMUX_APP_NAME; 环境</string>
+    <string name="permission_run_command_description">内执行任意命令 &TERMUX_APP_NAME;
+        环境</string>
+
+
+
+    <!-- Termux Bootstrap Packages Installation -->
+    <string name="bootstrap_installer_body">安装引导程序包…</string>
+    <string name="bootstrap_error_title">无法安装引导程序</string>
+    <string name="bootstrap_error_body">&TERMUX_APP_NAME;无法安装引导程序包。</string>
+    <string name="bootstrap_error_abort">中止</string>
+    <string name="bootstrap_error_try_again">重试</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 \"%1$s\".</string>
+
+
+
+    <!-- Terminal Sidebar and Shortcuts -->
+    <string name="action_new_session">新会话</string>
+    <string name="action_new_session_failsafe">故障安全</string>
+    <string name="title_max_terminals_reached">达到最大终端</string>
+    <string name="msg_max_terminals_reached">在创建新的之前关闭现有的。</string>
+
+    <string name="title_rename_session">设置会话名称</string>
+    <string name="action_rename_session_confirm">设置</string>
+    <string name="title_create_named_session">新命名的会话</string>
+    <string name="action_create_named_session_confirm">创建</string>
+
+    <string name="action_toggle_soft_keyboard">键盘</string>
+
+    <string name="msg_enabling_terminal_toolbar">启用终端工具栏</string>
+    <string name="msg_disabling_terminal_toolbar">禁用终端工具栏</string>
+
+
+
+    <!-- Terminal Popup -->
+    <string name="action_select_url">选择网址</string>
+    <string name="title_select_url_dialog">点击网址复制或长按打开</string>
+    <string name="title_select_url_none_found">在终端中找不到 URL。</string>
+    <string name="msg_select_url_copied_to_clipboard">网址已复制到剪贴板</string>
+
+    <string name="action_share_transcript">分享成绩单</string>
+    <string name="title_share_transcript">终端转录本</string>
+    <string name="title_share_transcript_with">将成绩单发送至：</string>
+
+    <string name="action_autofill_password">自动填充密码</string>
+
+    <string name="action_reset_terminal">重启</string>
+    <string name="msg_terminal_reset">终端复位</string>
+
+    <string name="action_kill_process">杀死进程 (%d)</string>
+    <string name="title_confirm_kill_process">你确定杀死该会话?</string>
+
+    <string name="action_style_terminal">样式</string>
+    <string name="action_toggle_keep_screen_on">保持屏幕开启</string>
+    <string name="action_open_help">帮助</string>
+    <string name="action_open_settings">设置</string>
+
+    <string name="action_report_issue">报告问题</string>
+    <string name="msg_generating_report">生成报告</string>
+
+    <string name="error_styling_not_installed">这个 &TERMUX_STYLING_APP_NAME; 未安装插件应用程序.</string>
+    <string name="action_styling_install">安装</string>
+
+
+
+    <!-- Termux Notifications -->
+    <string name="notification_action_exit">退出</string>
+    <string name="notification_action_wake_lock">获取唤醒锁</string>
+    <string name="notification_action_wake_unlock">释放唤醒锁</string>
+
+
+
+    <!-- Termux RunCommandService -->
+    <string name="error_run_command_service_invalid_intent_action">对 RunCommandService 的无效意图操作： `%1$s`</string>
+    <string name="error_run_command_service_mandatory_extra_missing">RunCommandService 缺少必要的额外内容： \"%1$s\"</string>
+    <string name="error_run_command_service_allow_external_apps_ungranted">RunCommandService 请求 `allow-external-apps` 要设置的属性 `true` 里 `&TERMUX_PROPERTIES_PRIMARY_PATH_SHORT;` 文件.</string>
+    <string name="error_run_command_service_api_help">访问 %1$s 有关 RUN_COMMAND 意图用法的更多信息。</string>
+
+
+
+    <!-- Termux Execution Commands -->
+    <string name="msg_executable_absolute_path">可执行绝对路径： \"%1$s\"</string>
+    <string name="msg_working_directory_absolute_path">工作目录绝对路径： \"%1$s\"</string>
+
+
+
+    <!-- Termux Report And ShareUtils -->
+    <string name="action_copy">复制</string>
+    <string name="action_share">分享</string>
+
+    <string name="title_share_with">共同分享</string>
+    <string name="title_report_text">报告文本</string>
+
+
+
+    <!-- Termux File Receiver -->
+    <string name="title_file_received">将文件保存在 ~/downloads/</string>
+    <string name="action_file_received_edit">编辑</string>
+    <string name="action_file_received_open_directory">打开目录</string>
+
+
+
+    <!-- Termux Settings -->
+    <string name="title_activity_termux_settings">&TERMUX_APP_NAME; 设置</string>
+
+    <!-- Termux App Preferences -->
+    <string name="termux_preferences_title">&TERMUX_APP_NAME;</string>
+    <string name="termux_preferences_summary">配置文件在 &TERMUX_APP_NAME; app</string>
+
+    <!-- Debugging Preferences -->
+    <string name="termux_debugging_preferences_title">调试</string>
+    <string name="termux_debugging_preferences_summary">调试首选项</string>
+
+    <!-- Logging Category -->
+    <string name="termux_logging_header">日志记录</string>
+
+    <!-- Log Level -->
+    <string name="termux_log_level_title">日志等级</string>
+
+    <!-- Terminal View Key Logging -->
+    <string name="termux_terminal_view_key_logging_enabled_title">终端视图键记录</string>
+    <string name="termux_terminal_view_key_logging_enabled_off">日志将没有终端视图键的条目。 （默认）</string>
+    <string name="termux_terminal_view_key_logging_enabled_on">Logcat 日志将包含终端视图键的条目。这些非常冗长，在正常情况下应该禁用，否则会导致性能问题。</string>
+
+    <!-- Plugin Error Notifications -->
+    <string name="termux_plugin_error_notifications_enabled_title">插件错误通知</string>
+    <string name="termux_plugin_error_notifications_enabled_off">禁用插件错误的闪烁和通知。</string>
+    <string name="termux_plugin_error_notifications_enabled_on">显示插件错误的闪烁和通知。 （默认）</string>
+
+    <!-- Crash Report Notifications -->
+    <string name="termux_crash_report_notifications_enabled_title">崩溃报告通知</string>
+    <string name="termux_crash_report_notifications_enabled_off">禁用崩溃报告的通知。</string>
+    <string name="termux_crash_report_notifications_enabled_on">显示崩溃报告的通知。 （默认）</string>
+
+
+    <!-- Terminal IO Preferences -->
+    <string name="termux_terminal_io_preferences_title">终端输入/输出</string>
+    <string name="termux_terminal_io_preferences_summary">终端 I/O 的首选项</string>
+
+    <!-- Keyboard Category -->
+    <string name="termux_keyboard_header">键盘</string>
+
+    <!-- Soft Keyboard -->
+    <string name="termux_soft_keyboard_enabled_title">软键盘已启用</string>
+    <string name="termux_soft_keyboard_enabled_off">软键盘将被禁用。</string>
+    <string name="termux_soft_keyboard_enabled_on">软键盘将被启用。（默认）</string>
+
+    <!-- Soft Keyboard Only If No Hardware-->
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">无硬件时仅软键盘</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">即使连接了硬件键盘，也将启用软键盘。 （默认）</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">只有在没有连接硬件键盘时才会启用软键盘。</string>
+
+
+    <!-- Termux Tasker App Preferences -->
+    <string name="termux_tasker_preferences_title">&TERMUX_TASKER_APP_NAME;</string>
+    <string name="termux_tasker_preferences_summary">配置文件在 &TERMUX_TASKER_APP_NAME; app</string>
+
+
+    <!-- About Preference -->
+    <string name="about_preference_title">关于</string>
+
+    <!-- Donate Preference -->
+    <string name="donate_preference_title">捐赠</string>
+    <string name="切换源">切换源</string>
+    <string name="容器切换">容器切换</string>
+    <string name="备份恢复">备份/恢复</string>
+    <string name="发行版本">发行版本</string>
+    <string name="QEMU">QEMU</string>
+    <string name="命令定义">命令定义</string>
+    <string name="短信通话">短信/通话</string>
+    <string name="打开目录">打开目录</string>
+    <string name="开机启动">开机启动(关)</string>
+    <string name="开机启动开">开机启动(开)</string>
+    <string name="MOE">MOE</string>
+    <string name="MOE全能">MOE全能</string>
+    <string name="清华源">清华源</string>
+    <string name="北京源">北京源</string>
+    <string name="官方源">官方源</string>
+    <string name="警告">警告</string>
+    <string name="该操作会覆盖您的文件记录">该操作会覆盖您的文件记录,是否继续?</string>
+    <string name="确定">确定</string>
+    <string name="无名称系统">无名称容器</string>
+    <string name="删除">删除</string>
+    <string name="切换">切换</string>
+    <string name="删除完成_需要重进才能刷新">删除完成_需要重进才能刷新</string>
+    <string name="备份">备份</string>
+    <string name="恢复">恢复</string>
+    <string name="设置">设置</string>
+    <string name="有任务正在进行">有任务正在进行</string>
+    <string name="有任务进行中">有任务进行中</string>
+    <string name="按钮一开始启动您的备份">开始启动您的备份</string>
+    <string name="开始备份">开始备份</string>
+    <string name="你没有SD卡权限">你没有SD卡权限</string>
+    <string name="选择您的备份方式">选择您的备份方式</string>
+    <string name="默认备份">默认备份</string>
+    <string name="强制备份">强制备份</string>
+    <string name="没有找到目录">没有找到目录</string>
+    <string name="这块直接输入回车即可">echo "这块直接输入回车即可" \n</string>
+    <string name="开始">开始</string>
+    <string name="不要说备份着闪退之类的">不要说备份着闪退之类的</string>
+    <string name="备份完成">备份完成</string>
+    <string name="已成功备份已成功备份">已成功备份已成功备份</string>
+    <string name="我知道了">我知道了</string>
+    <string name="开始检测备份环境">开始检测备份环境</string>
+    <string name="备份环境监测完成">备份环境监测完成</string>
+    <string name="开始检测是否有sd卡软链接">开始检测是否有sd卡软链接</string>
+    <string name="没有找到storage目录">没有找到storage目录</string>
+    <string name="已检测到软连接">已检测到软连接</string>
+    <string name="秒后开始备份">秒后开始备份</string>
+    <string name="没有SD卡权限">没有可恢复文件!</string>
+    <string name="恢复方式">恢复方式</string>
+    <string name="默认恢复">默认恢复</string>
+    <string name="强制恢复">强制恢复</string>
+    <string name="请输入系统名称">请输入系统名称</string>
+    <string name="请稍等此过程禁止切屏">请稍等此过程禁止切屏</string>
+    <string name="正在搜索多系统">正在搜索多系统</string>
+    <string name="危险">危险</string>
+    <string name="恢复设备数据会擦除掉之前所有的数据">恢复设备数据会擦除掉之前所有的数据</string>
+    <string name="我清楚我在做什么">我清楚我在做什么</string>
+    <string name="我在考虑考虑">我在考虑考虑</string>
+    <string name="开始清除数据">开始清除数据</string>
+    <string name="恢复完成会自定退出">恢复完成会自定退出</string>
+    <string name="恢复完成会自定退出擦除">恢复完成会自定退出擦除</string>
+    <string name="恢复完成会自定退出写入">恢复完成会自定退出写入</string>
+    <string name="恢复完成会自定退出写展开">恢复完成会自定退出写展开</string>
+    <string name="恢复完成会自定退出写恢复">恢复完成会自定退出写恢复</string>
+    <string name="恢复完成请重启APP">恢复完成请重启APP</string>
+    <string name="恢复成功如果很短">恢复成功如果很短</string>
+    <string name="你必须重启APP才能使用新的恢复系统">你必须重启APP才能使用新的恢复系统</string>
+    <string name="出现了一个错误">出现了一个错误</string>
+    <string name="确定开始">确定开始备份您的当前系统?</string>
+    <string name="提示">提示</string>
+    <string name="确定要恢复">确定要恢复并创建一个新容器系统?</string>
+    <string name="海的QEMU">海的QEMU</string>
+    <string name="当前为自动">当前为自动</string>
+    <string name="键盘">键盘</string>
+    <string name="文件名不能为空">文件名不能为空</string>
+    <string name="出错了">出错了</string>
+    <string name="添加一个命令">添加一个命令</string>
+    <string name="添加一个命令解释">添加一个命令解释</string>
+    <string name="请选择运行的架构">请选择运行的架构</string>
+    <string name="删除当前命令">删除当前命令</string>
+    <string name="修改当前命令">修改当前命令</string>
+    <string name="名称不能为空">名称不能为空</string>
+    <string name="命令不能为空">命令不能为空</string>
+    <string name="添加成功">添加成功</string>
+    <string name="请输入命令名称">请输入命令名称</string>
+    <string name="请输入您要添加的命令">请输入您要添加的命令</string>
+    <string name="自动回车">自动回车</string>
+    <string name="保存当前配置">保存当前配置</string>
+    <string name="好的">好的</string>
+    <string name="镜像运行结束">镜像运行结束</string>
+    <string name="您的命令出错了">您的命令出错了</string>
+    <string name="清空">清空</string>
+    <string name="已完成清空">已完成清空</string>
+    <string name="修改">修改</string>
+    <string name="已完成修改">已完成修改</string>
+    <string name="修改成功">修改成功</string>
+    <string name="请再试一次">请再试一次</string>
+    <string name="删除成功">删除成功</string>
+    <string name="切换成功">切换成功</string>
+    <string name="没有找到命令">没有找到命令</string>
+    <string name="命令出错">命令出错</string>
+    <string name="加载中">加载中</string>
+    <string name="回到主目录">回到主目录</string>
+    <string name="返回上层">返回上层</string>
+    <string name="查看文件">查看文件</string>
+    <string name="打开">打开</string>
+    <string name="运行">运行</string>
+    <string name="自动出错">自动出错</string>
+    <string name="当前目录不在">当前目录不在</string>
+    <string name="会话">会话</string>
+    <string name="自动命令">自动命令</string>
+    <string name="搜索文件">搜索文件</string>
+    <string name="再次输入您要搜索的文件">再次输入您要搜索的文件</string>
+    <string name="请输入您要查找的命令">请输入您要查找的命令</string>
+    <string name="恢复默认命令">恢复默认命令</string>
+    <string name="自定义方案">自定义方案</string>
+    <string name="导入导出命令">导入导出命令</string>
+    <string name="配置文件出错">配置文件出错</string>
+    <string name="导入">导入</string>
+    <string name="导出">导出</string>
+    <string name="已导入配置文件">已导入配置文件</string>
+    <string name="当前没有数据">当前没有数据</string>
+    <string name="保存成功">保存成功</string>
+    <string name="请选择一个配置文件">请选择一个配置文件</string>
+    <string name="当前目录下没有镜像文件">当前目录下没有镜像文件</string>
+    <string name="使用默认命令">使用默认命令</string>
+    <string name="当前目录下没有配置文件">当前目录下没有配置文件</string>
+    <string name="目录下有一个相同文件">目录下有一个相同文件</string>
+    <string name="保存文件">保存文件</string>
+    <string name="请输入保存的文件名">请输入保存的文件名</string>
+    <string name="安装短信读取工具">短信工具</string>
+    <string name="该操作有风险">该操作有风险,您的手机可能会被攻击从而泄露你的短信与通讯录,是否继续安装?(您可以在不使用的情况下关闭短信敏感权限)</string>
+    <string name="您已安装工具">您已安装工具,无需重复安装.使用命令(smsread)</string>
+    <string name="您当前未安装">您当前未安装</string>
+    <string name="是否安装">是否安装?</string>
+    <string name="安装完成">安装完成,请输入smsread使用</string>
+    <string name="您已安装工具1">您已安装工具</string>
+    <string name="您未安装该插件">即将开始安装插件,是否继续?</string>
+    <string name="需要在您的手机">
+        需要您的内部存储权限!\n
+        需要在您的手机创建以下目录:\n
+        [内部存储/xinhao/data/]备份包 \n
+        [内部存储/xinhao/apk/]临时APK \n
+        [内部存储/xinhao/windows/]qemu目录 \n
+        [内部存储/xinhao/command/]命令目录 \n
+        [内部存储/xinhao/font/]字体目录 \n
+        [内部存储/xinhao/iso/]镜像目录 \n
+        [内部存储/xinhao/mysql/]mysql临时文件 \n
+        [内部存储/xinhao/online_system/]离线termux包 \n
+        [内部存储/xinhao/qemu/]qemu目录 \n
+        [内部存储/xinhao/server/]server目录 \n
+        [内部存储/xinhao/share/]分享目录 \n
+        [内部存储/xinhao/web_config/]web临时目录 \n
+
+    </string>
+    <string name="版本">版本</string>
+    <string name="会话窗口在右侧">提示:会话窗口在右侧\n双击命令窗口打开快捷命令\n使用许可:学习交流</string>
+    <string name="开源地址">开源地址</string>
+    <string name="已打开开机启动命令">已打开开机启动命令,重启APP生效</string>
+    <string name="已关闭开机启动命令">已关闭开机启动命令,重启后生效</string>
+    <string name="悬浮窗口">悬浮窗口</string>
+    <string name="draw_overlay_permission_explanation">这个应用程序需要权限来绘制覆盖。</string>
+    <string name="grant_permission">获取</string>
+    <string name="initial_instruction_toast">长按在窗口上移动\n\n长按在窗口上缩放手势,缩放窗口大小</string>
+    <string name="notification_title">Termux:悬浮</string>
+    <string name="notification_message_visible">触摸隐藏窗口。</string>
+    <string name="notification_message_hidden">触摸隐藏窗口。</string>
+    <string name="正在载入中">正在载入中,请稍后。</string>
+    <string name="字体选择">字体选择</string>
+    <string name="您一切选择的字体来源于互联网">您一切选择的字体来源于互联网</string>
+    <string name="没有在内部存储">没有在[内部存储/xinhao/font]找到任何字体文件</string>
+    <string name="Utermux默认字体">ZeroTermux默认字体</string>
+    <string name="Utermux中文字体">ZeroTermux中文字体</string>
+    <string name="创建文件错误">创建文件错误</string>
+    <string name="字体设置成功">字体设置成功</string>
+    <string name="如果进入终端没有任何显示">如果进入终端没有任何显示代表您的字体文件损坏,请重新设置字体</string>
+    <string name="字体设置">字体设置</string>
+    <string name="局域服务器">服务器版本</string>
+    <string name="未连接">未连接</string>
+    <string name="公共仓库">公共仓库</string>
+    <string name="正在连接到自定义服务器">正在连接到自定义服务器</string>
+    <string name="请输入自定义服务器IP">请输入自定义服务器IP</string>
+    <string name="默认地址">http://10.242.164.19</string>
+    <string name="无法连接到自定义服务器">无法连接到自定义服务器!</string>
+    <string name="连接">连接</string>
+    <string name="如何创建服务器">如何创建服务器</string>
+    <string name="服务器数据格式不正确">服务器数据格式不正确</string>
+    <string name="服务器">服务器</string>
+    <string name="地址">地址</string>
+    <string name="大小">大小</string>
+    <string name="简介">简介</string>
+    <string name="剩余">剩余</string>
+    <string name="第三方服务器上的可执行文件">第三方服务器上的可执行文件可能不安全,确定是否安装?</string>
+    <string name="下载站">下载站</string>
+    <string name="正在连接到下载站服务器">正在连接到下载站服务器</string>
+    <string name="无法连接到下载站服务器">无法连接到下载站服务器</string>
+    <string name="正在连接">正在连接</string>
+    <string name="VNC">VNC</string>
+    <string name="快速VNC">快速VNC</string>
+    <string name="自定VNC">自定VNC</string>
+    <string name="高级VNC">高级VNC</string>
+    <string name="请下载插件">请下载插件</string>
+    <string name="请输入地址">请输入地址</string>
+    <string name="请输入端口">请输入端口</string>
+    <string name="请输入密码">请输入密码</string>
+    <string name="连接到自定VNC">连接到自定VNC</string>
+    <string name="协议">协议</string>
+
+
+    <string name="许可证">法律声明:\n
+
+
+
+
+        ZeroTermux 是根据 Termux 二次开发的一个非盈利性的软件\n\n部分版权归ZeroTermux所属\n\n对任何法律问题及风险不承担任何责任，没有任何商业目的\n\n\n
+        切勿使用到违法用途！\n
+        \n
+        请遵纪守法，做一个良好公民,\n
+        \n
+        ZeroTermux 的初心是让你更快的走进linux世界,为以后建设社会贡献一份精神,出一份力\n
+        \n
+
+        在使用一定程度之后,极力建议你过渡到官方termux[入门之后开始使用](推荐),\n
+        \n
+
+        毕竟ZT能帮你一时，却帮不了你一世!\n
+        \n
+
+
+        注意:【切换系统】功能当中的【删除功能可能会清空您的SD卡】\n
+        \n
+        请关闭sd卡授权在执行该【删除】功能\n
+        \n
+        如果由你的操作(不局限于【切换系统】的【删除功能】,这里说明的是ZeroTermux的所有功能)失误导致你的SD卡包括:\n
+        \n
+        照片\n
+        视频\n
+        音频\n
+        以及其它所有数据,由你(ZeroTermux(简称ZT)的个人使用用户)自己承担\n
+        \n
+
+
+        公共仓库下载来源不可控,不属于ZeroTermux所能控制的,全部来源于第三方仓库,ZeroTermux以及作者不会对第三方仓库来源的所有东西负责!\n
+\n
+        \n
+        如果第三方仓库有属于一切违法的活动/文件,由提供第三方仓库的作者承担任何法律责任!ZeroTermux以及作者不承担任何法律/其它责任!
+
+        \n
+        \n
+        授权许可:\n
+        \n
+
+        ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!\n
+        \n
+        ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!\n\n
+        ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!\n\n
+
+        1.本软件(ZeroTermux)为开源软件,你可以自由分发、复制、更改,但请遵循GPL协议!\n\n
+        2.软件遵循GPL协议(http://www.opensource.org/licenses/gpl-2.0.php)\n\n
+        3.本软件(ZeroTermux)的所有功能均为学习交流使用,切勿商用,如用户(使用ZeroTermux用户)的意外操作、有意操作、无意操作等由用户承担!\n
+        4.本软件(ZeroTermux)由第一条例一样为免费学习交流使用，软件内涉及的图标以及字体均来源于互联网。\n
+         4.1.字体为Android默认字体,如使用其他字体请用户(使用ZeroTermux用户)承担所有风险以及法律责任。\n
+         4.2.图标使用为阿里巴巴ICO公用图库，使用该图标的原则是学习与交流,并非商用,如有侵权立即删除。\n
+        5.在本软件(ZeroTermux)内使用的的恢复包、数据包、zip包等都有使用风险，切全部都来源于互联网，请用户酌情使用,如有造成无法挽回的损失,请用户承担风险。\n
+        6.所有恢复包、数据包、zip包ZeroTermux不能控制其内容,如有包内侵权本软件作者不承担任何责任，均由恢复包、数据包、zip包制作者承担(tar.gz备份功能法律声明)。\n
+        7.感谢所有该项目所应用到功能的作者。\n
+        8.使用ZeroTermux会有直接或间接的损害你的设备,如有造成无法挽回的损失由用户(ZeroTermux)承担,本软件以及作者不承担任何法律等责任\n
+
+
+    </string>
+    <string name="不同意">不同意</string>
+    <string name="同意">同意</string>
+    <string name="请认真阅读许可协议">请认真阅读许可协议以及责任划分</string>
+    <string name="无法创建">无法创建(内部存储/xinhao/data)文件夹,请手动创建!</string>
+    <string name="无法创建1">无法创建(内部存储/xinhao/apk)文件夹,请手动创建!</string>
+    <string name="已开始打印APP实时delog">已开始打印APP实时log</string>
+    <string name="暂未开放下载">暂未开放下载</string>
+    <string name="雪花关">雪花(关)</string>
+    <string name="雪花开">雪花(开)</string>
+    <string name="官方插件">官方插件</string>
+    <string name="TermuxApi">T…x:Api</string>
+    <string name="TermuxTasker">T…x:Tasker</string>
+    <string name="TermuxBoot">T…x:Boot</string>
+    <string name="TermuxStyling">T…x:Styling</string>
+    <string name="全屏模式">全屏模式</string>
+</resources>

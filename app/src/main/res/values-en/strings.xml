@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE resources [
+    <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
+    <!ENTITY TERMUX_APP_NAME "Termux">
+    <!ENTITY TERMUX_API_APP_NAME "Termux:API">
+    <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
+    <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
+    <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
+    <!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker">
+    <!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget">
+    <!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">
+    ]>
+
+<resources>
+    <string name="application_name">&TERMUX_APP_NAME;</string>
+    <string name="shared_user_label">&TERMUX_APP_NAME; user</string>
+
+
+
+    <!-- Termux RUN_COMMAND permission -->
+    <string name="permission_run_command_label">Run commands in &TERMUX_APP_NAME; environment</string>
+    <string name="permission_run_command_description">execute arbitrary commands within &TERMUX_APP_NAME;
+        environment</string>
+
+
+
+    <!-- Termux Bootstrap Packages Installation -->
+    <string name="bootstrap_installer_body">Installing bootstrap packages…</string>
+    <string name="bootstrap_error_title">Unable to install bootstrap</string>
+    <string name="bootstrap_error_body">&TERMUX_APP_NAME; was unable to install the bootstrap packages.</string>
+    <string name="bootstrap_error_abort">Abort</string>
+    <string name="bootstrap_error_try_again">Try again</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; can only be run as the primary user.\nBootstrap binaries compiled for &TERMUX_APP_NAME; have hardcoded $PREFIX path and cannot be installed under any path other than \"%1$s\".</string>
+
+
+
+    <!-- Terminal Sidebar and Shortcuts -->
+    <string name="action_new_session">New session</string>
+    <string name="action_new_session_failsafe">Failsafe</string>
+    <string name="title_max_terminals_reached">Max terminals reached</string>
+    <string name="msg_max_terminals_reached">Close down existing ones before creating new.</string>
+
+    <string name="title_rename_session">Set session name</string>
+    <string name="action_rename_session_confirm">Set</string>
+    <string name="title_create_named_session">New named session</string>
+    <string name="action_create_named_session_confirm">Create</string>
+
+    <string name="action_toggle_soft_keyboard">Keyboard</string>
+
+    <string name="msg_enabling_terminal_toolbar">Enabling Terminal Toolbar</string>
+    <string name="msg_disabling_terminal_toolbar">Disabling Terminal Toolbar</string>
+
+
+
+    <!-- Terminal Popup -->
+    <string name="action_select_url">Select URL</string>
+    <string name="title_select_url_dialog">Click URL to copy or long press to open</string>
+    <string name="title_select_url_none_found">No URL found in the terminal.</string>
+    <string name="msg_select_url_copied_to_clipboard">URL copied to clipboard</string>
+
+    <string name="action_share_transcript">Share transcript</string>
+    <string name="title_share_transcript">Terminal transcript</string>
+    <string name="title_share_transcript_with">Send transcript to:</string>
+
+    <string name="action_autofill_password">Autofill password</string>
+
+    <string name="action_reset_terminal">Reset</string>
+    <string name="msg_terminal_reset">Terminal reset</string>
+
+    <string name="action_kill_process">Kill process (%d)</string>
+    <string name="title_confirm_kill_process">Really kill this session?</string>
+
+    <string name="action_style_terminal">Style</string>
+    <string name="action_toggle_keep_screen_on">Keep screen on</string>
+    <string name="action_open_help">Help</string>
+    <string name="action_open_settings">Settings</string>
+
+    <string name="action_report_issue">Report Issue</string>
+    <string name="msg_generating_report">Generating Report</string>
+
+    <string name="error_styling_not_installed">The &TERMUX_STYLING_APP_NAME; Plugin App is not installed.</string>
+    <string name="action_styling_install">Install</string>
+
+
+
+    <!-- Termux Notifications -->
+    <string name="notification_action_exit">Exit</string>
+    <string name="notification_action_wake_lock">Acquire wakelock</string>
+    <string name="notification_action_wake_unlock">Release wakelock</string>
+
+
+
+    <!-- TermuxService -->
+    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME; requires \"Display over other apps\" permission to start terminal sessions from background on Android >= 10. Grants it from Settings -> Apps -> &TERMUX_APP_NAME; -> Advanced</string>
+
+
+
+    <!-- Termux RunCommandService -->
+    <string name="error_run_command_service_invalid_intent_action">Invalid intent action to RunCommandService: `%1$s`</string>
+    <string name="error_run_command_service_mandatory_extra_missing">Mandatory extra missing to RunCommandService: \"%1$s\"</string>
+    <string name="error_run_command_service_allow_external_apps_ungranted">RunCommandService require `allow-external-apps` property to be set to `true` in `&TERMUX_PROPERTIES_PRIMARY_PATH_SHORT;` file.</string>
+    <string name="error_run_command_service_api_help">Visit %1$s for more info on RUN_COMMAND Intent usage.</string>
+
+
+
+    <!-- Termux Execution Commands -->
+    <string name="msg_executable_absolute_path">Executable Absolute Path: \"%1$s\"</string>
+    <string name="msg_working_directory_absolute_path">Working Directory Absolute Path: \"%1$s\"</string>
+
+
+
+    <!-- Termux File Receiver -->
+    <string name="title_file_received">Save file in ~/downloads/</string>
+    <string name="action_file_received_edit">Edit</string>
+    <string name="action_file_received_open_directory">Open directory</string>
+
+
+
+    <!-- Termux Settings -->
+    <string name="title_activity_termux_settings">&TERMUX_APP_NAME; Settings</string>
+
+    <!-- Termux App Preferences -->
+    <string name="termux_preferences_title">&TERMUX_APP_NAME;</string>
+    <string name="termux_preferences_summary">Preferences for &TERMUX_APP_NAME; app</string>
+
+    <!-- Debugging Preferences -->
+    <string name="termux_debugging_preferences_title">Debugging</string>
+    <string name="termux_debugging_preferences_summary">Preferences for debugging</string>
+
+    <!-- Logging Category -->
+    <string name="termux_logging_header">Logging</string>
+
+    <!-- Log Level -->
+    <string name="termux_log_level_title">Log Level</string>
+
+    <!-- Terminal View Key Logging -->
+    <string name="termux_terminal_view_key_logging_enabled_title">Terminal View Key Logging</string>
+    <string name="termux_terminal_view_key_logging_enabled_off">Logs will not have entries for terminal view keys. (Default)</string>
+    <string name="termux_terminal_view_key_logging_enabled_on">Logcat logs will have entries for terminal view keys. These are very verbose and should be disabled under normal circumstances or will cause performance issues.</string>
+
+    <!-- Plugin Error Notifications -->
+    <string name="termux_plugin_error_notifications_enabled_title">Plugin Error Notifications</string>
+    <string name="termux_plugin_error_notifications_enabled_off">Disable flashes and notifications for plugin errors.</string>
+    <string name="termux_plugin_error_notifications_enabled_on">Show flashes and notifications for plugin errors. (Default)</string>
+
+    <!-- Crash Report Notifications -->
+    <string name="termux_crash_report_notifications_enabled_title">Crash Report Notifications</string>
+    <string name="termux_crash_report_notifications_enabled_off">Disable notifications for crash reports.</string>
+    <string name="termux_crash_report_notifications_enabled_on">Show notifications for crash reports. (Default)</string>
+
+
+    <!-- Terminal IO Preferences -->
+    <string name="termux_terminal_io_preferences_title">Terminal I/O</string>
+    <string name="termux_terminal_io_preferences_summary">Preferences for terminal I/O</string>
+
+    <!-- Keyboard Category -->
+    <string name="termux_keyboard_header">Keyboard</string>
+
+    <!-- Soft Keyboard -->
+    <string name="termux_soft_keyboard_enabled_title">Soft Keyboard Enabled</string>
+    <string name="termux_soft_keyboard_enabled_off">Soft keyboard will be disabled.</string>
+    <string name="termux_soft_keyboard_enabled_on">Soft keyboard will be enabled. (Default)</string>
+
+    <!-- Soft Keyboard Only If No Hardware-->
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">Soft Keyboard Only If No Hardware</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">Soft keyboard will be enabled even if hardware keyboard is connected. (Default)</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">Soft keyboard will be enabled only if no hardware keyboard is connected.</string>
+
+
+    <!-- Termux Tasker App Preferences -->
+    <string name="termux_tasker_preferences_title">&TERMUX_TASKER_APP_NAME;</string>
+    <string name="termux_tasker_preferences_summary">Preferences for &TERMUX_TASKER_APP_NAME; app</string>
+
+
+    <!-- About Preference -->
+    <string name="about_preference_title">About</string>
+
+    <!-- Donate Preference -->
+    <string name="donate_preference_title">Donate</string>
+
+
+
+
+    <string name="切换源">Source</string>
+    <string name="容器切换">ContainerSwitching</string>
+    <string name="备份恢复">Backup/restore</string>
+    <string name="发行版本">linux</string>
+    <string name="QEMU">QEMU</string>
+    <string name="命令定义">CommandEditing</string>
+    <string name="短信通话">SMS/Call</string>
+    <string name="打开目录">OpenDirectory</string>
+    <string name="开机启动">Startup(off)</string>
+    <string name="开机启动开">Startup(on)</string>
+    <string name="MOE">MOE</string>
+    <string name="MOE全能">MOE ALL</string>
+    <string name="清华源">QingHuaSource</string>
+    <string name="北京源">BeiJinSource</string>
+    <string name="官方源">OfficialSource</string>
+    <string name="警告">warning</string>
+    <string name="该操作会覆盖您的文件记录">This operation will overwrite your file records, do you want to continue?</string>
+    <string name="确定">determine</string>
+    <string name="无名称系统">UnnamedContainer</string>
+    <string name="删除">delete</string>
+    <string name="切换">Switch</string>
+    <string name="删除完成_需要重进才能刷新">Delete complete_ need to re-enter to refresh</string>
+    <string name="备份">Backup</string>
+    <string name="恢复">restore</string>
+    <string name="设置">Setting</string>
+    <string name="有任务正在进行">There is a task in progress</string>
+    <string name="有任务进行中">There is a task in progress</string>
+    <string name="按钮一开始启动您的备份">Start your backup</string>
+    <string name="开始备份">Start backup</string>
+    <string name="你没有SD卡权限">"You don't have SD card permission"</string>
+    <string name="选择您的备份方式">Choose your backup method</string>
+    <string name="默认备份">Default backup</string>
+    <string name="强制备份">Mandatory backup</string>
+    <string name="没有找到目录">No directory found</string>
+    <string name="这块直接输入回车即可">echo "InPut Enter" \n</string>
+    <string name="开始">begin</string>
+    <string name="不要说备份着闪退之类的">Don’t talk about backing up and crashing</string>
+    <string name="备份完成">Backup complete</string>
+    <string name="已成功备份已成功备份">Successfully backed up </string>
+    <string name="我知道了">I know</string>
+    <string name="开始检测备份环境">Start testing the backup environment</string>
+    <string name="备份环境监测完成">Backup environment monitoring completed</string>
+    <string name="开始检测是否有sd卡软链接">Start to detect whether there is a soft link to the sd card</string>
+    <string name="没有找到storage目录">The storage directory was not found</string>
+    <string name="已检测到软连接">Soft connection detected</string>
+    <string name="秒后开始备份">Start backup in seconds 3</string>
+    <string name="没有SD卡权限">No recoverable files!</string>
+    <string name="恢复方式">Recovery method</string>
+    <string name="默认恢复">Default recovery</string>
+    <string name="强制恢复">Forced recovery</string>
+    <string name="请输入系统名称">Please enter the system name</string>
+    <string name="请稍等此过程禁止切屏">Please wait for this process to prohibit screen cutting</string>
+    <string name="正在搜索多系统">Searching for multiple systems</string>
+    <string name="危险">Danger</string>
+    <string name="恢复设备数据会擦除掉之前所有的数据">Restoring device data will erase all previous data</string>
+    <string name="我清楚我在做什么">"I know what i'm doing"</string>
+    <string name="我在考虑考虑">"I'm considering"</string>
+    <string name="开始清除数据">Start to clear data</string>
+    <string name="恢复完成会自定退出">It will exit automatically after recovery is complete</string>
+    <string name="恢复完成会自定退出擦除">After the recovery is complete, it will exit the erasing automatically</string>
+    <string name="恢复完成会自定退出写入">After the recovery is complete, it will exit writing automatically</string>
+    <string name="恢复完成会自定退出写展开">After the recovery is complete, it will automatically exit the write and expand</string>
+    <string name="恢复完成会自定退出写恢复">After the recovery is complete, it will automatically exit the write recovery</string>
+    <string name="恢复完成请重启APP">Please restart the app after the recovery is complete</string>
+    <string name="恢复成功如果很短">If the recovery is short</string>
+    <string name="你必须重启APP才能使用新的恢复系统">You must restart the app to use the new recovery system</string>
+    <string name="出现了一个错误">An error occurred</string>
+    <string name="确定开始">
+Make sure to start backing up your current system?</string>
+    <string name="提示">prompt</string>
+    <string name="确定要恢复">
+Determine to restore and create a new container system?</string>
+    <string name="海的QEMU">QEMU of the sea</string>
+    <string name="当前为自动">Currently automatic</string>
+    <string name="键盘">keyboard</string>
+    <string name="文件名不能为空">
+File name cannot be empty</string>
+    <string name="出错了">
+error</string>
+    <string name="添加一个命令">Add a command</string>
+    <string name="添加一个命令解释">Add a command explanation</string>
+    <string name="请选择运行的架构">Please select the running architecture</string>
+    <string name="删除当前命令">Delete current command</string>
+    <string name="修改当前命令">Modify the current command</string>
+    <string name="名称不能为空">Name is required</string>
+    <string name="命令不能为空">Command cannot be empty</string>
+    <string name="添加成功">Added successfully</string>
+    <string name="请输入命令名称">Please enter the command name</string>
+    <string name="请输入您要添加的命令">Please enter the command you want to add</string>
+    <string name="自动回车">Automatic carriage return</string>
+    <string name="保存当前配置">Save the current configuration</string>
+    <string name="好的">Ok</string>
+    <string name="镜像运行结束">End of mirroring operation</string>
+    <string name="您的命令出错了">There was an error in your command</string>
+    <string name="清空">Empty</string>
+    <string name="已完成清空">Completed empty</string>
+    <string name="修改">modify</string>
+    <string name="已完成修改">Modified</string>
+    <string name="修改成功">Successfully modified</string>
+    <string name="请再试一次">please try again</string>
+    <string name="删除成功">successfully deleted</string>
+    <string name="切换成功">Switch successfully</string>
+    <string name="没有找到命令">Command not found</string>
+    <string name="命令出错">Command error</string>
+    <string name="加载中">Loading</string>
+    <string name="回到主目录">Back to main list</string>
+    <string name="返回上层">Return to the upper level</string>
+    <string name="查看文件">check the file</string>
+    <string name="打开">open</string>
+    <string name="运行">run</string>
+    <string name="自动出错">Automatic error</string>
+    <string name="当前目录不在">The current directory is not</string>
+    <string name="会话">Conversation</string>
+    <string name="自动命令">Autocommand</string>
+    <string name="搜索文件">Search file</string>
+    <string name="再次输入您要搜索的文件">Enter the file you want to search again</string>
+    <string name="请输入您要查找的命令">Please enter the command you are looking for</string>
+    <string name="恢复默认命令">Restore default command</string>
+    <string name="自定义方案">Custom scheme</string>
+    <string name="导入导出命令">Import and export commands</string>
+    <string name="配置文件出错">Configuration file error</string>
+    <string name="导入">Import</string>
+    <string name="导出">Export</string>
+    <string name="已导入配置文件">Configuration file imported</string>
+    <string name="当前没有数据">No data currently</string>
+    <string name="保存成功">Saved successfully</string>
+    <string name="请选择一个配置文件">Please select a profile</string>
+    <string name="当前目录下没有镜像文件">There is no mirror file in the current directory</string>
+    <string name="使用默认命令">Use default commands</string>
+    <string name="当前目录下没有配置文件">There is no configuration file in the current directory</string>
+    <string name="目录下有一个相同文件">There is a same file in the directory</string>
+    <string name="保存文件">save document</string>
+    <string name="请输入保存的文件名">Please enter the saved file name</string>
+    <string name="安装短信读取工具">SMS tool</string>
+    <string name="该操作有风险">This operation is risky. Your mobile phone may be attacked to leak your SMS and address book. Do you want to continue the installation? (You can turn off the SMS sensitive permission when you are not using it)</string>
+    <string name="您已安装工具">You have already installed the tool, so there is no need to install it again. Use the command(smsread)</string>
+    <string name="您当前未安装">You are not currently installed</string>
+    <string name="是否安装">Whether to install?</string>
+    <string name="安装完成">The installation is complete, please enter smsread to use</string>
+    <string name="您已安装工具1">You have installed tools</string>
+    <string name="您未安装该插件">The plug-in installation is about to start, do you want to continue?</string>
+    <string name="需要在您的手机">
+       Need your internal storage permissions!\n
+        The following directory needs to be created on your phone:\n
+        [Internal storage/xinhao/data/] backup package \n
+        [Internal Storage/xinhao/apk/] Temporary APK \n
+        [Internal storage/xinhao/windows/]qemu directory \n
+        [Internal storage/xinhao/command/] command directory \n
+        [Internal storage/xinhao/font/] font directory \n
+        [Internal storage/xinhao/iso/] Mirror directory \n
+        [Internal storage/xinhao/mysql/] MySQL temporary files \n
+        [Internal storage/xinhao/online_system/] offline termux package \n
+        [Internal storage/xinhao/qemu/]qemu directory \n
+        [Internal storage/xinhao/server/]server directory \n
+        [Internal storage/xinhao/share/] share directory \n
+        [Internal storage/xinhao/web_config/] web temporary directory \n
+
+    </string>
+    <string name="版本">version</string>
+    <string name="会话窗口在右侧">Tip: The session window is on the right side\nDouble-click the command window to open the shortcut command\nLicense: Learn to communicate</string>
+    <string name="开源地址">Open source address</string>
+    <string name="已打开开机启动命令">The boot command has been opened, restart the APP to take effect</string>
+    <string name="已关闭开机启动命令">The boot command has been turned off and will take effect after restart</string>
+    <string name="悬浮窗口">Floating window</string>
+    <string name="draw_overlay_permission_explanation">This app needs permission to draw overlay。</string>
+    <string name="grant_permission">Obtain</string>
+    <string name="initial_instruction_toast">Long press to move on the window\n\nLong press to zoom on the window, zoom the window size</string>
+    <string name="notification_title">Termux:Suspension</string>
+    <string name="notification_message_visible">Touch to hide window。</string>
+    <string name="notification_message_hidden">Touch to hide window。</string>
+    <string name="正在载入中">Loading, please wait。</string>
+    <string name="字体选择">Font selection</string>
+    <string name="您一切选择的字体来源于互联网">All the fonts you choose come from the Internet</string>
+    <string name="没有在内部存储">No font files were found in [internal storage/xinhao/font]</string>
+    <string name="Utermux默认字体">ZeroTermux Default font</string>
+    <string name="Utermux中文字体">ZeroTermux English Fonts</string>
+    <string name="创建文件错误">Error creating file</string>
+    <string name="字体设置成功">The font is set successfully</string>
+    <string name="如果进入终端没有任何显示">If you enter the terminal without any display, it means that your font file is damaged, please reset the font</string>
+    <string name="字体设置">Font settings</string>
+    <string name="局域服务器">Server version</string>
+    <string name="未连接">not connected</string>
+    <string name="公共仓库">Public warehouse</string>
+    <string name="正在连接到自定义服务器">Connecting to custom server</string>
+    <string name="请输入自定义服务器IP">Please enter the custom server IP</string>
+    <string name="默认地址">http://10.242.164.19</string>
+    <string name="无法连接到自定义服务器">Unable to connect to custom server!</string>
+    <string name="连接">connection</string>
+    <string name="如何创建服务器">How to create a server</string>
+    <string name="服务器数据格式不正确">Server data format is incorrect</string>
+    <string name="服务器">server</string>
+    <string name="地址">address</string>
+    <string name="大小">size</string>
+    <string name="简介">Introduction</string>
+    <string name="剩余">Remaining</string>
+    <string name="第三方服务器上的可执行文件">The executable file on the third-party server may be insecure, determine whether to install it?</string>
+    <string name="下载站">Download station</string>
+    <string name="正在连接到下载站服务器">Connecting to download station server</string>
+    <string name="无法连接到下载站服务器">Unable to connect to the download station server</string>
+    <string name="正在连接">connecting</string>
+    <string name="VNC">VNC</string>
+    <string name="快速VNC">Fast VNC</string>
+    <string name="自定VNC">Custom VNC</string>
+    <string name="高级VNC">Advanced VNC</string>
+    <string name="请下载插件">Please download the plugin</string>
+    <string name="请输入地址">Please enter the address</string>
+    <string name="请输入端口">Please enter the port</string>
+    <string name="请输入密码">Please enter the password</string>
+    <string name="连接到自定VNC">Connect to custom VNC</string>
+    <string name="协议">protocol</string>
+
+
+    <string name="许可证">Legal Notices:\n
+
+
+
+
+       " ZeroTermux is a non-profit software developed based on Termux\n\nPart of the copyright belongs to ZeroTermux\n\nNo responsibility for any legal issues and risks, and no commercial purpose\n\n\n
+        Do not use for illegal purposes! \n
+        \n
+        Please abide by the law and be a good citizen,\n
+        \n
+        The original intention of ZeroTermux is to let you enter the linux world faster, contribute a spirit to the construction of society in the future, and make a contribution\n
+        \n
+
+        After a certain level of use, it is strongly recommended that you transition to the official termux [start using after getting started] (recommended),\n
+        \n
+
+        After all, ZT can help you for a while, but it can't help you for the rest of your life!\n
+        \n
+
+
+       Note: [Delete function may empty your SD card] in the [Switch system] function\n
+        \n
+        Please turn off the sd card authorization to execute the [Delete] function\n
+        \n
+        If your operation (not limited to the [Delete Function] of [Switch System], here is all the functions of ZeroTermux), your SD card includes:\n
+        \n
+        Photo\n
+        Video\n
+        Audio\n
+        As well as all other data, you (the personal user of ZeroTermux (ZT)) are responsible for yourself\n
+        \n
+
+
+       The download source of the public warehouse is uncontrollable and is not under the control of ZeroTermux. It all comes from a third-party warehouse. ZeroTermux and the author will not be responsible for everything from the third-party warehouse!\n
+\n
+        \n
+        If the third-party warehouse has all illegal activities/documents, the author who provides the third-party warehouse bears any legal responsibility! ZeroTermux and the author do not bear any legal/other responsibilities!
+
+        \n
+        \n
+        License:\n
+        \n
+
+        All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!\n
+        \n
+        All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!\n\n
+        All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!\n\n
+
+        1. This software (ZeroTermux) is open source software, you can freely distribute, copy, and change, but please follow the GPL agreement!\n\n
+        2. The software follows the GPL agreement (http://www.opensource.org/licenses/gpl-2.0.php)\n\n
+        3. All the functions of this software (ZeroTermux) are for learning and communication use, do not use commercially, such as accidental operations, intentional operations, unintentional operations, etc. of the user (users who use ZeroTermux) are borne by the user!\n
+        4. This software (ZeroTermux) is used for free learning and communication as in the first regulation. The icons and fonts involved in the software are all from the Internet. \n
+         4.1. The font is the Android default font. If you use other fonts, please users (users using ZeroTermux) bear all risks and legal responsibilities. \n
+         4.2. The icon is used as the public library of Alibaba ICO. The principle of using the icon is for learning and communication, not for commercial use. If there is any infringement, it will be deleted immediately. \n
+        5. The recovery packages, data packages, zip packages, etc. used in this software (ZeroTermux) are all at risk. All of them are from the Internet. Please use it at your discretion. If any irreparable loss is caused, the user shall bear the risk. . \n
+        6. All recovery packages, data packages, and zip packages ZeroTermux cannot control their content. If there is any infringement in the package, the author of this software does not bear any responsibility, and the creator of the recovery package, data package, and zip package shall bear the responsibility (tar.gz backup function law statement). \n
+        7. Thanks to all the authors of the functions applied to this project. \n
+        8.Using ZeroTermux will directly or indirectly damage your equipment. If there is any irreparable loss, the user (ZeroTermux) shall bear the responsibility of the software and the author.\n"
+
+
+    </string>
+    <string name="不同意">disagree</string>
+    <string name="同意">agree</string>
+    <string name="请认真阅读许可协议">Please read the license agreement and the division of responsibilities carefully</string>
+    <string name="无法创建">Unable to create the (internal storage/xinhao/data) folder, please create it manually!</string>
+    <string name="无法创建1">Unable to create (internal storage/xinhao/apk) folder, please create it manually!</string>
+    <string name="已开始打印APP实时delog">Started to print APP real-time log</string>
+    <string name="暂未开放下载">Not yet available for download</string>
+    <string name="雪花关">Snowflake (Off)</string>
+    <string name="雪花开">Snowflakes (open)</string>
+    <string name="官方插件">Official plugin</string>
+    <string name="TermuxApi">T…x:Api</string>
+    <string name="TermuxTasker">T…x:Tasker</string>
+    <string name="TermuxBoot">T…x:Boot</string>
+    <string name="TermuxStyling">T…x:Styling</string>
+    <string name="全屏模式">Full screen mode</string>
+</resources>
