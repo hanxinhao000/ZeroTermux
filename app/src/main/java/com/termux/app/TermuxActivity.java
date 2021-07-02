@@ -1786,6 +1786,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
 
+
+
     private SwitchDialog switchDialogShow(String title,String msg){
 
         getDrawer().closeDrawer(Gravity.LEFT);
@@ -2145,7 +2147,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     /**
      *
-     * 判断面板是否显示
+     * 重新进入该窗口面板默认关闭
      *
      *
      */
@@ -2153,12 +2155,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void isShow(){
 
-        if(getDrawer().isOpen()){
-            title_mb.setVisibility(View.VISIBLE);
-        }else{
-            title_mb.setVisibility(View.GONE);
-
-        }
+        title_mb.setVisibility(View.GONE);
+        getDrawer().close();
 
 
 
