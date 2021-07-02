@@ -19,6 +19,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.system.ErrnoException;
+import android.system.Os;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -348,6 +350,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        isShow();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
@@ -428,6 +436,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     } catch (WindowManager.BadTokenException e) {
                         // Activity finished - ignore.
                     }
+
+
+                    initFiles();
                 });
             } else {
                 // The service connected while not in foreground - just bail out.
@@ -1132,15 +1143,22 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private void initStatue(){
         String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
 
-                if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
-                    xue_hua_start.setText(UUtils.getString(R.string.雪花关));
-                    xue_fragment.removeAllViews();
-                }else{
-                    xue_hua_start.setText(UUtils.getString(R.string.雪花开));
-                    SnowView snowView = new SnowView(TermuxActivity.this);
-                    xue_fragment.removeAllViews();
-                    xue_fragment.addView(snowView);
-                }
+        if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
+            xue_hua_start.setText(UUtils.getString(R.string.雪花关));
+            xue_fragment.removeAllViews();
+        }else{
+            xue_hua_start.setText(UUtils.getString(R.string.雪花开));
+            SnowView snowView = new SnowView(TermuxActivity.this);
+            xue_fragment.removeAllViews();
+            xue_fragment.addView(snowView);
+        }
+
+
+
+
+
+
+
     }
 
 
@@ -1899,6 +1917,18 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         }
 
 
+        if(msg.equals("left")){
+
+            getDrawer().openDrawer(Gravity.LEFT);
+
+        }
+
+        if(msg.equals("right")){
+
+            getDrawer().openDrawer(Gravity.RIGHT);
+
+        }
+
 
     }
 
@@ -2362,5 +2392,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     }
 
+
+    private void initFiles(){
+
+
+        File mainFile = new File(FileUrl.INSTANCE.getMainBinUrl());
+        File openLeftFile = new File(FileUrl.INSTANCE.getOpenLeft());
+        File openRigthFile = new File(FileUrl.INSTANCE.getOpenRight());
+        if(mainFile.exists()){
+
+            if(!openLeftFile.exists()){
+                UUtils.writerFile("runcommand/openleftwindow",openLeftFile);
+               UUtils.chmod(openLeftFile);
+            }
+            if(!openRigthFile.exists()){
+                UUtils.writerFile("runcommand/openrightwindow",openRigthFile);
+                UUtils.chmod(openRigthFile);
+            }
+
+        }
+
+    }
 
 }

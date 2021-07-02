@@ -1,0 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
+am broadcast --user 0 \
+		 --es com.termux.app.reload_style left \
+		 -a com.termux.app.reload_style com.termux > /dev/null

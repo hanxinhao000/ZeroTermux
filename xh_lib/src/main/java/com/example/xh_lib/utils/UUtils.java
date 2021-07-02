@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.system.ErrnoException;
+import android.system.Os;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -863,5 +865,15 @@ public class UUtils {
             uri = Uri.fromFile(new File(filePath));
         }
         return uri;
+    }
+
+    public static void chmod(File file){
+
+        try {
+            Os.chmod(file.getAbsolutePath(), 0700);
+        } catch (ErrnoException e) {
+            e.printStackTrace();
+        }
+
     }
 }
