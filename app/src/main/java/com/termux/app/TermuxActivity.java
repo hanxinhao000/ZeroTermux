@@ -995,6 +995,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout yuyan;
     private TextView service_status;
     private TextView msg_tv;
+    private TextView ip_status;
     private TextView xue_hua_start;
     private FrameLayout xue_fragment;
 
@@ -1036,6 +1037,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         termux_pl = findViewById(R.id.termux_pl);
         quanping = findViewById(R.id.quanping);
         yuyan = findViewById(R.id.yuyan);
+        ip_status = findViewById(R.id.ip_status);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -2343,6 +2345,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void getServiceVs(){
 
+        ip_status.setText(UUtils.getHostIP());
+
 
         new BaseHttpUtils().getUrl(HTTPIP.IP + "/repository/main.json", new HttpResponseListenerBase() {
             @Override
@@ -2424,5 +2428,6 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         }
 
     }
+
 
 }

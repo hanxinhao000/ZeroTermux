@@ -471,6 +471,7 @@
     <string name="English">English</string>
     <string name="取消">取消</string>
     <string name="termux_x11">termux-x11</string>
+    <string name="本机IP">本机IP</string>
 
 
 </resources>
