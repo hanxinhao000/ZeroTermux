@@ -80,7 +80,7 @@ public class PermissionUtils {
     }
 
     public static boolean validateDisplayOverOtherAppsPermissionForPostAndroid10(Context context, boolean logResults) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return true;
+        if (Build.VERSION.SDK_INT < 29) return true;
 
         if (!PermissionUtils.checkDisplayOverOtherAppsPermission(context)) {
             if (logResults)

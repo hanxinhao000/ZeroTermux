@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.github.iielse.switchbutton.SwitchView
 
+
 import com.termux.R
 
 class NginxPopuWindow : BasePuPuWindow {
@@ -32,12 +33,14 @@ class NginxPopuWindow : BasePuPuWindow {
 
                 isRun = true
                 mSwitchButton!!.isOpened = isRun
+
             }
 
             override fun toggleToOff(view: SwitchView?) {
 
                 isRun = false
                 mSwitchButton!!.isOpened = isRun
+
             }
 
         })

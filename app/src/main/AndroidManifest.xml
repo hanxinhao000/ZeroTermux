@@ -130,6 +130,7 @@
             android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"
             />
+        <service android:name="com.taopao.androidnginxrtmp.service.NginxService"  android:persistent="true"/>
 
         <activity
             android:name=".filepicker.TermuxFileReceiverActivity"

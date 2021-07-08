@@ -17,6 +17,10 @@ android {
         checkReleaseBuilds false
 
     }
+    tasks.withType(JavaCompile) {
+        options.fork = true
+        options.forkOptions.jvmArgs += ["-Duser.language=en"]
+    }
     signingConfigs {
         release {
             keyAlias 'phone1'
@@ -32,9 +36,15 @@ android {
         }
     }
 
+  /*  sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }*/
 
 
     dependencies {
+        implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.5.0-rc01"
         implementation "androidx.drawerlayout:drawerlayout:1.1.1"
@@ -142,7 +152,6 @@ android {
 dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation project(path: ':xh_lib')
-    implementation project(path: ':androidnginxlib')
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
     implementation "androidx.core:core-ktx:+"
