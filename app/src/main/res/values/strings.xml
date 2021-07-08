@@ -471,7 +471,15 @@
     <string name="English">English</string>
     <string name="取消">取消</string>
     <string name="termux_x11">termux-x11</string>
+
+
+
+
     <string name="本机IP">本机IP</string>
+    <string name="Zero功能">Zero功能</string>
+    <string name="ZeroTermux内置功能">ZeroTermux 内置功能</string>
+    <string name="内置nginx">Nginx(内置)</string>
+    <string name="Nginx开关">Nginx开关</string>
 
 
 </resources>

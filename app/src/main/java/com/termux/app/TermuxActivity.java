@@ -82,6 +82,7 @@ import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.BoomCommandDialog;
+import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
 import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
@@ -992,6 +993,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout xue_hua;
     private LinearLayout termux_pl;
     private LinearLayout quanping;
+    private LinearLayout zero_fun;
     private LinearLayout yuyan;
     private TextView service_status;
     private TextView msg_tv;
@@ -1038,6 +1040,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         quanping = findViewById(R.id.quanping);
         yuyan = findViewById(R.id.yuyan);
         ip_status = findViewById(R.id.ip_status);
+        zero_fun = findViewById(R.id.zero_fun);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1058,6 +1061,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         xue_hua.setOnClickListener(this);
         termux_pl.setOnClickListener(this);
         quanping.setOnClickListener(this);
+        zero_fun.setOnClickListener(this);
         yuyan.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -1470,6 +1474,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 yuyan_list.add(msg_en);
 
                 showMenuDialog(yuyan_list,yuyan);
+
+                break;
+                //底层弹窗
+            case R.id.zero_fun:
+
+                BoomZeroTermuxDialog boomZeroTermuxDialog = new BoomZeroTermuxDialog(this);
+                boomZeroTermuxDialog.show();
+                boomZeroTermuxDialog.setCancelable(true);
+
 
                 break;
 

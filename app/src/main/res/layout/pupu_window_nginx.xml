@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823_2e"
+    android:padding="10dp"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/Nginx开关"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+
+        <com.github.iielse.switchbutton.SwitchView
+            android:layout_width="35dp"
+            android:id="@+id/switch_btn"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"/>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+</LinearLayout>

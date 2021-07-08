@@ -44,6 +44,8 @@ android {
         implementation 'com.google.code.gson:gson:2.8.6'
         //网络框架
         implementation 'com.lzy.net:okgo:3.0.4'
+        //switch Btn
+        implementation 'com.github.iielse:switchbutton:1.0.4'
 
         implementation 'com.github.getActivity:XXPermissions:11.5'
         implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
@@ -140,6 +142,7 @@ android {
 dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation project(path: ':xh_lib')
+    implementation project(path: ':androidnginxlib')
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
     implementation "androidx.core:core-ktx:+"
