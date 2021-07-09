@@ -1291,12 +1291,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                 break;
             case R.id.github:
-                SendJoinUtils.INSTANCE.sendJoin(this);
+               // SendJoinUtils.INSTANCE.sendJoin(this);
 
-             /*   Intent intent = new Intent();
+                Intent intent = new Intent();
                 intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux"));//Url 就是你要打开的网址
                 intent.setAction(Intent.ACTION_VIEW);
-                startActivity(intent); //启动浏览器*/
+                startActivity(intent); //启动浏览器
                 break;
             case R.id.start_command:
 

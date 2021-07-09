@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823_2e"
+    android:padding="10dp"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/WebStart开关"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+
+        <com.github.iielse.switchbutton.SwitchView
+            android:layout_width="35dp"
+            android:id="@+id/switch_btn"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"/>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/端口"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_ffffff"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:inputType="number"
+            android:gravity="center"
+            android:id="@+id/port_ed"
+            android:textSize="15sp"
+            android:hint="7766"
+            android:textColorHint="@color/color_232635"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/路径"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_232635"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/root_address"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="/"
+            android:textColorHint="@color/color_232635"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/访问地址"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_ffffff"
+            android:paddingLeft="5dp"
+            android:id="@+id/http_address"
+            android:paddingRight="5dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="--"
+            android:textColorHint="@color/color_232635"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/原作者地址"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_2e84e6"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/code_address"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="@string/项目地址"
+            android:textColorHint="@color/color_232635"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+</LinearLayout>

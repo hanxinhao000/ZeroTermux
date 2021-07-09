@@ -34,83 +34,252 @@
               android:layout_height="wrap_content"/>
 
 
-          <androidx.cardview.widget.CardView
-              android:layout_width="80dp"
-              android:layout_marginLeft="5dp"
-              android:paddingTop="5dp"
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:orientation="horizontal"
               android:layout_marginTop="10dp"
-              android:paddingBottom="5dp"
-              android:layout_marginRight="5dp"
-              app:cardElevation="0dp"
-              app:cardBackgroundColor="@color/color_55000000"
-              app:cardCornerRadius="3dp"
-              android:layout_height="90dp">
+              android:layout_height="wrap_content">
+
+              <androidx.cardview.widget.CardView
+                  android:layout_width="80dp"
+                  android:layout_marginLeft="5dp"
+                  android:paddingTop="5dp"
+                  android:paddingBottom="5dp"
+                  android:visibility="gone"
+                  android:layout_marginRight="5dp"
+                  app:cardElevation="0dp"
+                  app:cardBackgroundColor="@color/color_55000000"
+                  app:cardCornerRadius="3dp"
+                  android:layout_height="90dp">
 
 
 
-              <LinearLayout
-                  android:layout_width="match_parent"
-                  android:orientation="vertical"
-                  android:gravity="center"
-                  android:layout_height="match_parent">
-
-
-                  <RelativeLayout
+                  <LinearLayout
                       android:layout_width="match_parent"
+                      android:orientation="vertical"
+                      android:gravity="center"
                       android:layout_height="match_parent">
 
 
-                      <LinearLayout
+                      <RelativeLayout
                           android:layout_width="match_parent"
-                          android:orientation="vertical"
-                          android:layout_gravity="center"
-                          android:id="@+id/nginx"
-                          android:gravity="center"
                           android:layout_height="match_parent">
 
+
+                          <LinearLayout
+                              android:layout_width="match_parent"
+                              android:orientation="vertical"
+                              android:layout_gravity="center"
+                              android:id="@+id/nginx"
+                              android:gravity="center"
+                              android:layout_height="match_parent">
+
+                              <ImageView
+                                  android:layout_width="40dp"
+                                  android:src="@mipmap/ngnix"
+                                  android:layout_height="40dp"/>
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_marginBottom="5dp"
+                                  android:padding="2dp"
+                                  android:paddingLeft="10dp"
+                                  android:textStyle="bold"
+                                  android:paddingTop="10dp"
+                                  android:paddingBottom="10dp"
+                                  android:text="@string/内置nginx"
+                                  android:layout_alignParentRight="true"
+                                  android:textColor="@color/color_ffffff"
+                                  android:textSize="10sp" />
+
+
+                          </LinearLayout>
+
+
+
                           <ImageView
-                              android:layout_width="40dp"
-                              android:src="@mipmap/ngnix"
-                              android:layout_height="40dp"/>
-
-                          <TextView
-                              android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:layout_marginTop="5dp"
-                              android:layout_marginBottom="5dp"
-                              android:padding="2dp"
-                              android:paddingLeft="10dp"
-                              android:textStyle="bold"
-                              android:paddingTop="10dp"
-                              android:paddingBottom="10dp"
-                              android:text="@string/内置nginx"
+                              android:layout_width="15dp"
+                              android:src="@mipmap/start_activity_ico"
+                              android:layout_marginRight="2dp"
+                              android:layout_marginTop="2dp"
+                              android:visibility="gone"
                               android:layout_alignParentRight="true"
-                              android:textColor="@color/color_ffffff"
-                              android:textSize="10sp" />
+                              android:layout_height="15dp"/>
 
 
-                      </LinearLayout>
+                      </RelativeLayout>
 
 
-
-                      <ImageView
-                          android:layout_width="15dp"
-                          android:src="@mipmap/start_activity_ico"
-                          android:layout_marginRight="2dp"
-                          android:layout_marginTop="2dp"
-                          android:visibility="gone"
-                          android:layout_alignParentRight="true"
-                          android:layout_height="15dp"/>
-
-
-                  </RelativeLayout>
-
-
-              </LinearLayout>
+                  </LinearLayout>
 
 
 
-          </androidx.cardview.widget.CardView>
+              </androidx.cardview.widget.CardView>
+
+
+
+              <androidx.cardview.widget.CardView
+                  android:layout_width="80dp"
+                  android:layout_marginLeft="5dp"
+                  android:paddingTop="5dp"
+                  android:paddingBottom="5dp"
+                  android:layout_marginRight="5dp"
+                  app:cardElevation="0dp"
+                  app:cardBackgroundColor="@color/color_55000000"
+                  app:cardCornerRadius="3dp"
+                  android:layout_height="90dp">
+
+
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:layout_height="match_parent">
+
+
+                      <RelativeLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent">
+
+
+                          <LinearLayout
+                              android:layout_width="match_parent"
+                              android:orientation="vertical"
+                              android:layout_gravity="center"
+                              android:id="@+id/web_start"
+                              android:gravity="center"
+                              android:layout_height="match_parent">
+
+                              <ImageView
+                                  android:layout_width="40dp"
+                                  android:src="@mipmap/web_start_ico"
+                                  android:layout_height="40dp"/>
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_marginBottom="5dp"
+                                  android:padding="2dp"
+                                  android:paddingLeft="10dp"
+                                  android:textStyle="bold"
+                                  android:paddingTop="10dp"
+                                  android:paddingBottom="10dp"
+                                  android:text="@string/访问目录"
+                                  android:layout_alignParentRight="true"
+                                  android:textColor="@color/color_ffffff"
+                                  android:textSize="10sp" />
+
+
+                          </LinearLayout>
+
+
+
+                          <ImageView
+                              android:layout_width="15dp"
+                              android:src="@mipmap/start_activity_ico"
+                              android:layout_marginRight="2dp"
+                              android:layout_marginTop="2dp"
+                              android:visibility="gone"
+                              android:layout_alignParentRight="true"
+                              android:layout_height="15dp"/>
+
+
+                      </RelativeLayout>
+
+
+                  </LinearLayout>
+
+
+
+              </androidx.cardview.widget.CardView>
+
+
+              <androidx.cardview.widget.CardView
+                  android:layout_width="80dp"
+                  android:layout_marginLeft="5dp"
+                  android:paddingTop="5dp"
+                  android:paddingBottom="5dp"
+                  android:layout_marginRight="5dp"
+                  android:visibility="gone"
+                  app:cardElevation="0dp"
+                  app:cardBackgroundColor="@color/color_55000000"
+                  app:cardCornerRadius="3dp"
+                  android:layout_height="90dp">
+
+
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:layout_height="match_parent">
+
+
+                      <RelativeLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent">
+
+
+                          <LinearLayout
+                              android:layout_width="match_parent"
+                              android:orientation="vertical"
+                              android:layout_gravity="center"
+                              android:id="@+id/web_start_sd"
+                              android:gravity="center"
+                              android:layout_height="match_parent">
+
+                              <ImageView
+                                  android:layout_width="40dp"
+                                  android:src="@mipmap/web_start_ico"
+                                  android:layout_height="40dp"/>
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_marginBottom="5dp"
+                                  android:padding="2dp"
+                                  android:paddingLeft="10dp"
+                                  android:textStyle="bold"
+                                  android:paddingTop="10dp"
+                                  android:paddingBottom="10dp"
+                                  android:text="@string/访问目录sd"
+                                  android:layout_alignParentRight="true"
+                                  android:textColor="@color/color_ffffff"
+                                  android:textSize="10sp" />
+
+
+                          </LinearLayout>
+
+
+
+                          <ImageView
+                              android:layout_width="15dp"
+                              android:src="@mipmap/start_activity_ico"
+                              android:layout_marginRight="2dp"
+                              android:layout_marginTop="2dp"
+                              android:visibility="gone"
+                              android:layout_alignParentRight="true"
+                              android:layout_height="15dp"/>
+
+
+                      </RelativeLayout>
+
+
+                  </LinearLayout>
+
+
+
+              </androidx.cardview.widget.CardView>
+
+
+
+
+          </LinearLayout>
 
 
 

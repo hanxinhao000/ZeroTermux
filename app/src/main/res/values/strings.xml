@@ -480,6 +480,17 @@
     <string name="ZeroTermux内置功能">ZeroTermux 内置功能</string>
     <string name="内置nginx">Nginx(内置)</string>
     <string name="Nginx开关">Nginx开关</string>
+    <string name="访问linux目录">访问linux目录</string>
+    <string name="访问目录">访问目录(/)</string>
+    <string name="访问目录sd">访问目录(SD)</string>
+    <string name="WebStart开关">WebStart开关</string>
+    <string name="端口">端口</string>
+    <string name="路径">路径</string>
+    <string name="访问地址">访问地址</string>
+    <string name="原作者地址">原作者地址</string>
+    <string name="项目地址">项目地址</string>
+    <string name="所选的端口号范围超出65535最大值">所选的端口号范围超出65535最大值,将默认更改为7766端口</string>
+    <string name="开启成功">服务开启成功!</string>
 
 
 </resources>
