@@ -476,7 +476,7 @@
     <string name="本机IP">本机IP</string>
 
     <string name="Zero功能">Zero功能</string>
-    <string name="ZeroTermux内置功能">ZeroTermux 内置功能</string>
+    <string name="ZeroTermux内置功能">ZeroTermux 脚本区域(长按打开作者地址)</string>
     <string name="内置nginx">Nginx(内置)</string>
     <string name="Nginx开关">Nginx开关</string>
     <string name="访问linux目录">访问linux目录</string>

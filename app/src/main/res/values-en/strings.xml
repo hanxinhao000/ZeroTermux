@@ -480,7 +480,7 @@ error</string>
     <string name="本机IP">Local IP</string>
 
     <string name="Zero功能">Zero function</string>
-    <string name="ZeroTermux内置功能">ZeroTermux built-in functions</string>
+    <string name="ZeroTermux内置功能">ZeroTermux command area (long press to open author address)</string>
     <string name="内置nginx">Nginx (built-in)</string>
     <string name="Nginx开关">Nginx switch</string>
     <string name="访问linux目录">Access linux directory</string>

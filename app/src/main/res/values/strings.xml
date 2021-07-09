@@ -478,7 +478,7 @@
     <string name="本机IP">本机IP</string>
 
     <string name="Zero功能">Zero功能</string>
-    <string name="ZeroTermux内置功能">ZeroTermux 内置功能</string>
+    <string name="ZeroTermux内置功能">ZeroTermux 脚本区域(长按打开作者地址)</string>
     <string name="内置nginx">Nginx(内置)</string>
     <string name="Nginx开关">Nginx开关</string>
     <string name="访问linux目录">访问linux目录</string>
@@ -492,6 +492,13 @@
     <string name="项目地址">项目地址</string>
     <string name="所选的端口号范围超出65535最大值">所选的端口号范围超出65535最大值,将默认更改为7766端口</string>
     <string name="开启成功">服务开启成功!</string>
+
+
+
+
+    <string name="软件开发">软件开发分类</string>
+    <string name="MyServer">MyServer</string>
+    <string name="Termux_ADB">Termux-ADB</string>
 
 
 </resources>

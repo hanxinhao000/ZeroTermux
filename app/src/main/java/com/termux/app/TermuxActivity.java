@@ -1479,6 +1479,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 break;
                 //底层弹窗
             case R.id.zero_fun:
+                getDrawer().close();
 
                 BoomZeroTermuxDialog boomZeroTermuxDialog = new BoomZeroTermuxDialog(this);
                 boomZeroTermuxDialog.show();
@@ -1571,9 +1572,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     }
                 });
 
-               if(true){
-                   throw new RuntimeException("测试");
-               }
+
                 break;
             //北京
             case 2:
