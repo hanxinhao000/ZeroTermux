@@ -479,4 +479,20 @@ error</string>
 
     <string name="本机IP">Local IP</string>
 
+    <string name="Zero功能">Zero function</string>
+    <string name="ZeroTermux内置功能">ZeroTermux built-in functions</string>
+    <string name="内置nginx">Nginx (built-in)</string>
+    <string name="Nginx开关">Nginx switch</string>
+    <string name="访问linux目录">Access linux directory</string>
+    <string name="访问目录">Access directory (/)</string>
+    <string name="访问目录sd">Access Directory (SD)</string>
+    <string name="WebStart开关">WebStart switch</string>
+    <string name="端口">port</string>
+    <string name="路径">path</string>
+    <string name="访问地址">address</string>
+    <string name="原作者地址">Original author address</string>
+    <string name="项目地址">project address</string>
+    <string name="所选的端口号范围超出65535最大值">The selected port number range exceeds the maximum value of 65535, and the default is changed to port 7766</string>
+    <string name="开启成功">Service opened successfully!</string>
+
 </resources>
