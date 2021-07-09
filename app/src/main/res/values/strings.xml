@@ -499,6 +499,14 @@
     <string name="软件开发">软件开发分类</string>
     <string name="MyServer">MyServer</string>
     <string name="Termux_ADB">Termux-ADB</string>
+    <string name="实验功能">实验功能</string>
+    <string name="ZeroTermux实验功能">ZeroTermux 实验功能</string>
+    <string name="网络ADB">网络ADB(ROOT)</string>
+    <string name="网络ADBNo">网络ADB(无ROOT)</string>
+    <string name="没有找到本机的ROOT权限">没有找到本机的ROOT权限,是否强制继续?</string>
+    <string name="运行完成">命令执行完成,请确保在Root下执行\n请使用:\n \n adb.exe connect</string>
+    <string name="网络ADBClose">关闭ADB(ROOT)</string>
+    <string name="关闭成功">ADB命令关闭成功</string>
 
 
 </resources>

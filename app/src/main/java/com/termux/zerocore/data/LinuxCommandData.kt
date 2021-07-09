@@ -46,6 +46,8 @@ object LinuxCommandData {
          *
          * https://github.com/rajkumardusad/MyServer
          *
+         * 本地命令
+         *
          *
          */
 
@@ -73,6 +75,8 @@ object LinuxCommandData {
          * termux-ADB
          *
          * https://github.com/MasterDevX/Termux-ADB
+         *
+         * 本地命令
          *
          *
          */

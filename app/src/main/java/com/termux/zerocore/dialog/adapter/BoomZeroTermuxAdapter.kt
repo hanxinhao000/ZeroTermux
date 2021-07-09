@@ -62,23 +62,33 @@ class BoomZeroTermuxAdapter : RecyclerView.Adapter<BoomZeroTermuxViewHolder> {
 
                 mDissListener?.close()
 
-                val loadingDialog = LoadingDialog(mActivity!!)
-                loadingDialog.show()
+                if(zeroRunCommandBean.isHttpCommand){
 
-                UUtils.runOnThread {
+                    TermuxActivity.mTerminalView.sendTextToTerminal(zeroRunCommandBean.runCommand)
+
+                }else{
+
+                    val loadingDialog = LoadingDialog(mActivity!!)
+                    loadingDialog.show()
+
+                    UUtils.runOnThread {
 
 
-                    UUtils.writerFile(zeroRunCommandBean.assetsName, File(mainHomeUrl, "/${zeroRunCommandBean.fileName}"))
+                        UUtils.writerFile(zeroRunCommandBean.assetsName, File(mainHomeUrl, "/${zeroRunCommandBean.fileName}"))
 
-                    mActivity!!.runOnUiThread {
+                        mActivity!!.runOnUiThread {
 
-                        loadingDialog.dismiss()
+                            loadingDialog.dismiss()
 
-                        TermuxActivity.mTerminalView.sendTextToTerminal(zeroRunCommandBean.runCommand)
+                            TermuxActivity.mTerminalView.sendTextToTerminal(zeroRunCommandBean.runCommand)
+
+                        }
 
                     }
 
                 }
+
+
 
 
 

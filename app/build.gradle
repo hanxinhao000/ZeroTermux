@@ -66,6 +66,8 @@ android {
 
         debugImplementation 'com.github.getActivity:Logcat:9.6'
 
+        implementation 'com.scottyab:rootbeer-lib:0.1.0'
+
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"

@@ -21,6 +21,16 @@ public class ZeroRunCommandBean {
     private String runCommand;
     //是否显示
     private boolean isShow = true;
+    //是否是网络命令
+    private boolean isHttpCommand = false;
+
+    public boolean isHttpCommand() {
+        return isHttpCommand;
+    }
+
+    public void setHttpCommand(boolean httpCommand) {
+        isHttpCommand = httpCommand;
+    }
 
     public boolean isShow() {
         return isShow;

@@ -87,6 +87,7 @@ import com.termux.zerocore.dialog.DownLoadDialogBoom;
 import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
 import com.termux.zerocore.dialog.ProtocolDialog;
+import com.termux.zerocore.dialog.SYFunBoomDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.dialog.VNCConnectionDialog;
 import com.termux.zerocore.http.HTTPIP;
@@ -995,6 +996,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout quanping;
     private LinearLayout zero_fun;
     private LinearLayout yuyan;
+    private LinearLayout shiyan_fun;
     private TextView service_status;
     private TextView msg_tv;
     private TextView ip_status;
@@ -1041,6 +1043,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         yuyan = findViewById(R.id.yuyan);
         ip_status = findViewById(R.id.ip_status);
         zero_fun = findViewById(R.id.zero_fun);
+        shiyan_fun = findViewById(R.id.shiyan_fun);
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -1063,6 +1066,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         quanping.setOnClickListener(this);
         zero_fun.setOnClickListener(this);
         yuyan.setOnClickListener(this);
+        shiyan_fun.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1485,6 +1489,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 boomZeroTermuxDialog.show();
                 boomZeroTermuxDialog.setCancelable(true);
 
+
+                break;
+
+            case R.id.shiyan_fun:
+
+                SYFunBoomDialog syFunBoomDialog = new SYFunBoomDialog(this);
+                syFunBoomDialog.show();
+                syFunBoomDialog.setCancelable(true);
 
                 break;
 

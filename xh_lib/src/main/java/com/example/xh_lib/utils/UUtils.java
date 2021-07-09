@@ -928,4 +928,31 @@ public class UUtils {
         return hostIp;
 
     }
+
+
+    public static boolean checkSuFile() {
+        Process process = null;
+        try {
+            //   /system/xbin/which 或者  /system/bin/which
+            process = Runtime.getRuntime().exec(new String[]{"which", "su"});
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            if (in.readLine() != null) return true;
+            return false;
+        } catch (Throwable t) {
+            return false;
+        } finally {
+            if (process != null) process.destroy();
+        }
+    }
+
+    public static File checkRootFile() {
+        File file = null;
+        String[] paths = {"/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su",
+            "/system/bin/failsafe/su", "/data/local/su"};
+        for (String path : paths) {
+            file = new File(path);
+            if (file.exists()) return file;
+        }
+        return file;
+    }
 }

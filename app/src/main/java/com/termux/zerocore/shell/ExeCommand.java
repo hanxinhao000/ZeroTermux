@@ -61,6 +61,7 @@ public class ExeCommand {
         try {
             Log.i("auto", "getResult");
             String s = new String(result);
+            Log.i("日志:", "getResult" + s);
 
             result.setLength(0);
             return s;
@@ -78,14 +79,19 @@ public class ExeCommand {
      * @param maxTime 最大等待时间 (ms)
      * @return this
      */
-    public ExeCommand run(String command, final int maxTime) {
+    public ExeCommand run(String command, final int maxTime,boolean isRoot) {
         Log.i("auto", "run command:" + command + ",maxtime:" + maxTime);
         if (command == null || command.length() == 0) {
             return this;
         }
 
         try {
-            process = Runtime.getRuntime().exec("sh");//看情况可能是su
+            if(isRoot){
+                process = Runtime.getRuntime().exec("su");//看情况可能是su
+            }else{
+                process = Runtime.getRuntime().exec("sh");//看情况可能是su
+            }
+
         } catch (Exception e) {
             return this;
         }
@@ -96,14 +102,9 @@ public class ExeCommand {
 
         try {
             //向sh写入要执行的命令
-            os.write("export PATH=/data/data/com.termux:$PATH".getBytes());
-            os.writeBytes("\n");
             os.write(command.getBytes());
             os.writeBytes("\n");
             os.flush();
-            os.writeBytes("exit\n");
-            os.flush();
-
             os.close();
             //如果等待时间设置为非正，就不开启超时关闭功能
             if (maxTime > 0) {
@@ -144,7 +145,6 @@ public class ExeCommand {
 
                             writeLock.lock();
                             result.append(line);
-
                             Log.e("XINHAO_HANERROR", "run: " + line );
                             writeLock.unlock();
                         }

@@ -207,7 +207,7 @@ public class SwitchActivity extends AppCompatActivity  implements View.OnClickLi
                                             } catch (IOException e) {
                                                 e.printStackTrace();
                                             }
-                                            ExeCommand cmd2 = new ExeCommand(false).run(mFileHome.getAbsolutePath() + " rm -rf " + mList.get(position).dir, 60000);
+                                            ExeCommand cmd2 = new ExeCommand(false).run(mFileHome.getAbsolutePath() + " rm -rf " + mList.get(position).dir, 60000,false);
 
                                             while (cmd2.isRunning()) {
                                                 try {
