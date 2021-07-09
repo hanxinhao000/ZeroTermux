@@ -125,6 +125,7 @@
                   android:layout_marginLeft="5dp"
                   android:paddingTop="5dp"
                   android:paddingBottom="5dp"
+                  android:visibility="gone"
                   android:layout_marginRight="5dp"
                   app:cardElevation="0dp"
                   app:cardBackgroundColor="@color/color_55000000"

@@ -1108,6 +1108,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                         title_mb.setVisibility(View.GONE);
                     }else{
                         title_mb.setVisibility(View.VISIBLE);
+                        ip_status.setText(UUtils.getHostIP());
 
                     }
 

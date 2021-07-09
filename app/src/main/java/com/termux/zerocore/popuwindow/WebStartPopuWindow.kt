@@ -97,37 +97,15 @@ class WebStartPopuWindow : BasePuPuWindow {
 
             try {
 
-                var toInt = 7766
-                val toString = port_ed!!.text.toString()
-                if(toString.isNotEmpty()){
-                    toInt = toString.toInt()
-                }
 
-
-                if(toInt > 65535){
-                    toInt = 7766
-                    port_ed!!.setText("7766")
-                    UUtils.showMsg(UUtils.getString(R.string.所选的端口号范围超出65535最大值))
-                }
-
-                var rootAddressString = root_address!!.text.toString()
-
-                if(rootAddressString.isEmpty()){
-
-                    rootAddressString = Environment.getStorageDirectory().absolutePath
-
-                }
-
-                UUtils.showLog("传入的地址:${rootAddressString}")
-
-                http_address!!.text = "${UUtils.getHostIP()}:$toInt"
+                http_address!!.text = "${UUtils.getHostIP()}:${7766}"
                 try {
 
                     val activity = mContext as Activity
                     val intent = Intent()
                     intent.action = "com.start_server.action.ENTER"
-                    intent.putExtra("address", rootAddressString)
-                    intent.putExtra("port", toInt)
+                    intent.putExtra("address", "")
+                    intent.putExtra("port", 7766)
                     activity.startActivity(intent)
                     UUtils.showMsg(UUtils.getString(R.string.开启成功))
 
