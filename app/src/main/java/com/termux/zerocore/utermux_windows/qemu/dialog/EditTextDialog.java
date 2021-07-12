@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ public class EditTextDialog extends BaseDialogCentre {
     private TextView commit;
     private TextView start;
     private TextView commit_file;
+    private ImageView close_img;
     private String id;
     private EditText edit_text;
     public EditTextDialog(@NonNull Context context) {
@@ -41,6 +43,7 @@ public class EditTextDialog extends BaseDialogCentre {
     public void initViewDialog(View mView) {
 
         cancel = mView.findViewById(R.id.cancel);
+        close_img = mView.findViewById(R.id.close_img);
         commit = mView.findViewById(R.id.commit);
         commit_file = mView.findViewById(R.id.commit_file);
         start = mView.findViewById(R.id.start);
@@ -53,6 +56,13 @@ public class EditTextDialog extends BaseDialogCentre {
                 mSystemSwitchListener.switchEdit(edit_text);
 
 
+            }
+        });
+
+        close_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 

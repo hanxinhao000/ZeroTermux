@@ -512,7 +512,7 @@
 
     <string name="欢迎来到windows模拟器页面">欢迎来到windows模拟器页面</string>
     <string name="环境">环境</string>
-    <string name="qamu环境">qamu环境</string>
+    <string name="qamu环境">qemu环境</string>
     <string name="qamu环境开">[已安装]</string>
     <string name="qamu环境关">[未安装]</string>
     <string name="点击安装">点击安装</string>

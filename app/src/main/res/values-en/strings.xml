@@ -504,9 +504,82 @@ error</string>
     <string name="网络ADB">Network ADB(ROOT)</string>
     <string name="网络ADBNo">Network ADB (no ROOT)</string>
     <string name="没有找到本机的ROOT权限">The ROOT permission of the machine is not found. Do you want to force it to continue?</string>
-    <string name="运行完成">
-The command execution is complete, please make sure to execute it under Root\nPlease use:\n \n adb.exe connect</string>
+    <string name="运行完成">The command execution is complete, please make sure to execute it under Root\nPlease use:\n \n adb.exe connect</string>
     <string name="网络ADBClose">Close ADB(ROOT)</string>
     <string name="关闭成功">ADB command closed successfully</string>
+
+
+
+    <string name="欢迎来到windows模拟器页面">Welcome to the windows simulator page</string>
+    <string name="环境">surroundings</string>
+    <string name="qamu环境">qemu environment</string>
+    <string name="qamu环境开">[installed]</string>
+    <string name="qamu环境关">[NotInstalled]</string>
+    <string name="点击安装">Click install</string>
+    <string name="显示环境">Display environment</string>
+    <string name="显示环境开">[installed]</string>
+    <string name="显示环境关">[NotInstalled]</string>
+    <string name="ROOT运行">ROOT Run</string>
+    <string name="ROOT运行1">Please enter tsu in Termux</string>
+    <string name="帮我安装">Help me install</string>
+    <string name="快捷运行">Quick run</string>
+    <string name="警告测dsfsdf">Warning: If [system call bad] appears, please execute [termux-chroot] in the terminal and then enter!</string>
+    <string name="win10系统">win10 system</string>
+    <string name="win7系统">win7 system</string>
+    <string name="winXP系统">winXP system</string>
+    <string name="替换官方版本">Replace the official version</string>
+    <string name="用官版的请点击">For the official version, please click</string>
+    <string name="MAC系统">MAC system</string>
+    <string name="我自己的系统">My own system</string>
+    <string name="打开当前VNC任务">Open the current VNC task</string>
+    <string name="Windows注意">Note: The image will be copied to the working area of UTermux[/Home/UTWindow/]</string>
+    <string name="当前操作镜像">Current operation mirror:</string>
+    <string name="无">Empty</string>
+    <string name="打开操作镜像">Open operation mirror</string>
+    <string name="清空操作镜像">Clear operation mirror</string>
+    <string name="请显示QEMU命令">Please show QEMU commands</string>
+    <string name="请输入QEMU命令">Please enter the QEMU command</string>
+    <string name="清空命令行">Clear the command line</string>
+    <string name="QEMU执行并打开显示器">QEMU executes and turns on the display</string>
+    <string name="QEMU执行">QEMU execution</string>
+    <string name="填充默认命令">Fill default commands</string>
+    <string name="提示dsfsdfmmm">
+       "It may affect performance, or cannot enter the system!!\n
+        It may affect performance, or can't enter the system!\n
+        If it is slow, please delete it\n
+        -drive file=fat:rw:/home/storage/shared/xinhao/share\n
+        Place the interactive files with the virtual machine under the [internal storage/xinhao/share] directory\n
+        To copy new files, you must restart the virtual machine to see the files!!\n
+        To copy new files, you must restart the virtual machine to see the files!!\n
+        Tip: If you need to share files (virtual machine interactive files), it has been added by default\n
+        Please add before -vnc:\n
+        -drive file=fat:rw:/sdcard/xinhao/share\n
+        Command, long press to copy the command"
+    </string>
+    <string name="正在疏通所需要的环境">Is dredging the required environment</string>
+    <string name="请输入回车键继续">Please enter the enter key to continue</string>
+    <string name="请选择一个镜像">Please select a mirror</string>
+    <string name="请选择模拟器配置文件">Please select an emulator profile</string>
+    <string name="成功">success</string>
+    <string name="qemu_x86_win">Win/linux/(x64_x86)</string>
+    <string name="qemu_i386_win">Win/linux/(i386)</string>
+    <string name="qemu_ppc_win">MAC(ppc)</string>
+    <string name="请在下载站下载VNC插件">Please download the VNC plug-in at [download site]</string>
+    <string name="环境不达要求">The environment is not up to the requirements</string>
+    <string name="你没有安装tyu65t6y5u">"You have not installed wget or proot \nDo you want to install it now"</string>
+    <string name="给我安装">Install</string>
+    <string name="不安装">Cancel</string>
+    <string name="错误">error</string>
+    <string name="你没有安装相关环境qemuppp5555p">"You have not installed the relevant environment, please click to install"</string>
+    <string name="在线安装">Online installation</string>
+    <string name="请等待安装完成在进入">Please wait for the installation to complete before entering</string>
+    <string name="稍后">Later</string>
+    <string name="系统初始化失败">System initialization failed</string>
+    <string name="请输入回车键继续55">Please enter the enter key to continue</string>
+    <string name="获取镜像">Extraction code: 6b7w</string>
+    <string name="是否前往下载系统">Whether to go to the download system</string>
+    <string name="前往">Go to</string>
+    <string name="Zero">Zero/UTermux simulation</string>
+    <string name="一键启动">one-button start</string>
 
 </resources>
