@@ -2078,95 +2078,114 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
 
-            SwitchDialog switchDialog2 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.需要在您的手机));
 
-            switchDialog2.getCancel().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switchDialog2.dismiss();
+            /**
+             *
+             * 防止某些手机重复显示此Dialog
+             *
+             *
+             */
+            String sdcard_xinhao = SaveData.INSTANCE.getStringOther("sdcard_xinhao");
 
-                    finish();
-                }
-            });
-            switchDialog2.setCancelable(false);
-            switchDialog2.getOk().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switchDialog2.dismiss();
+            if(sdcard_xinhao == null || sdcard_xinhao.isEmpty() || sdcard_xinhao.equals("def")){
 
-                    XXPermissions.with(TermuxActivity.this)
-                        .permission(Permission.WRITE_EXTERNAL_STORAGE)
-                        .permission(Permission.READ_EXTERNAL_STORAGE)
-                        .request(new OnPermissionCallback() {
+                SaveData.INSTANCE.saveStringOther("sdcard_xinhao","true");
 
-                            @Override
-                            public void onGranted(List<String> permissions, boolean all) {
-                                if (all) {
+                SwitchDialog switchDialog2 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.需要在您的手机));
 
-                                    if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxHome().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxData().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxData().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxWindows().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxWindows().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxCommand().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxCommand().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxFont().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxFont().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxIso().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxIso().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxMysql().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxMysql().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxOnlineSystem().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxOnlineSystem().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxQemu().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxQemu().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxServer().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxServer().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxShare().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxShare().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxSystem().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxSystem().mkdirs();
-                                    }
-                                    if(!FileUrl.INSTANCE.getZeroTermuxWebConfig().exists()){
-                                        FileUrl.INSTANCE.getZeroTermuxWebConfig().mkdirs();
-                                    }
-                                    UUtils.showMsg("ok");
-                                } else {
+                switchDialog2.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog2.dismiss();
 
-                                    UUtils.showMsg("无权限");
+                        finish();
+                    }
+                });
+                switchDialog2.setCancelable(false);
+                switchDialog2.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog2.dismiss();
+
+                        XXPermissions.with(TermuxActivity.this)
+                            .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                            .permission(Permission.READ_EXTERNAL_STORAGE)
+                            .request(new OnPermissionCallback() {
+
+                                @Override
+                                public void onGranted(List<String> permissions, boolean all) {
+                                    if (all) {
+
+                                        if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxHome().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxData().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxData().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxWindows().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxWindows().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxCommand().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxCommand().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxFont().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxFont().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxIso().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxIso().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxMysql().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxMysql().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxOnlineSystem().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxOnlineSystem().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxQemu().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxQemu().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxServer().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxServer().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxShare().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxShare().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxSystem().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxSystem().mkdirs();
+                                        }
+                                        if(!FileUrl.INSTANCE.getZeroTermuxWebConfig().exists()){
+                                            FileUrl.INSTANCE.getZeroTermuxWebConfig().mkdirs();
+                                        }
+                                        UUtils.showMsg("ok");
+                                    } else {
+
+                                        UUtils.showMsg("无权限");
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onDenied(List<String> permissions, boolean never) {
-                                if (never) {
-                                    UUtils.showMsg("无权限");
-                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
-                                    XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
-                                } else {
-                                    UUtils.showMsg("无权限");
+                                @Override
+                                public void onDenied(List<String> permissions, boolean never) {
+                                    if (never) {
+                                        UUtils.showMsg("无权限");
+                                        // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                        XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                                    } else {
+                                        UUtils.showMsg("无权限");
+                                    }
                                 }
-                            }
-                        });
+                            });
 
 
-                }
-            });
+                    }
+                });
+            }else{
+
+            }
+
+
+
 
         }
 

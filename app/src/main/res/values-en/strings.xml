@@ -495,4 +495,18 @@ error</string>
     <string name="所选的端口号范围超出65535最大值">The selected port number range exceeds the maximum value of 65535, and the default is changed to port 7766</string>
     <string name="开启成功">Service opened successfully!</string>
 
+
+    <string name="软件开发">SoftwareDevelopment</string>
+    <string name="MyServer">MyServer</string>
+    <string name="Termux_ADB">Termux-ADB</string>
+    <string name="实验功能">ExperimentalFunction</string>
+    <string name="ZeroTermux实验功能">ZeroTermux ExperimentalFunction</string>
+    <string name="网络ADB">Network ADB(ROOT)</string>
+    <string name="网络ADBNo">Network ADB (no ROOT)</string>
+    <string name="没有找到本机的ROOT权限">The ROOT permission of the machine is not found. Do you want to force it to continue?</string>
+    <string name="运行完成">
+The command execution is complete, please make sure to execute it under Root\nPlease use:\n \n adb.exe connect</string>
+    <string name="网络ADBClose">Close ADB(ROOT)</string>
+    <string name="关闭成功">ADB command closed successfully</string>
+
 </resources>

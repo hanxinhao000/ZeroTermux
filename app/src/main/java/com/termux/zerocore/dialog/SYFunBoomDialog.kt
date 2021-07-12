@@ -49,7 +49,7 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
                     switchDialog.setCancelable(false)
                     switchDialog.cancel!!.setOnClickListener { switchDialog.dismiss() }
                     switchDialog.ok!!.setOnClickListener {
-
+                        switchDialog.dismiss()
                         runRootAdbHttp()
 
                     }
@@ -74,7 +74,7 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
                     switchDialog.setCancelable(false)
                     switchDialog.cancel!!.setOnClickListener { switchDialog.dismiss() }
                     switchDialog.ok!!.setOnClickListener {
-
+                        switchDialog.dismiss()
                         runRootAdbHttpClose()
 
                     }
