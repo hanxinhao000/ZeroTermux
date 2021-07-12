@@ -44,23 +44,52 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
     private var recycler_view:RecyclerView? = null
     private var service_name:TextView? = null
     private var pro:ProgressBar? = null
+    private var chongzhi_img:ImageView? = null
 
     private var mArray: ArrayList<Data>? = null
     private var mDownLoadAdapter: DownLoadAdapter? = null
     private var mDownLoadMuTILS: DownLoadMuTILS? = null
     private var ip: String = ""
+    //当前点击的ID
+    private var clickId = 0
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
 
     override fun initViewDialog(mView: View) {
         recycler_view = mView.findViewById(R.id.recycler_view)
         service_name = mView.findViewById(R.id.service_name)
+        chongzhi_img = mView.findViewById(R.id.chongzhi_img)
         pro = mView.findViewById(R.id.pro)
         mDownLoadMuTILS = DownLoadMuTILS()
         mDownLoadMuTILS?.register()
         mDownLoadMuTILS?.setDownLoadMuTILSListener(this)
         initAdapter()
         createWJ()
+
+        chongzhi_img?.setOnClickListener {
+
+
+            val switchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.确定重置所有任务))
+
+            switchDialog.cancel!!.setOnClickListener {
+
+
+                switchDialog.dismiss()
+
+
+            }
+            switchDialog.ok!!.setOnClickListener {
+
+                dismiss()
+                switchDialog.dismiss()
+                Aria.download(this).removeAllTask(false)
+                UUtils.showMsg(UUtils.getString(R.string.重置成功))
+
+
+
+            }
+
+        }
     }
 
     override fun getContentView(): Int {
@@ -265,8 +294,40 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                     }
 
                                 }else{
-                                    Aria.download(mDownLoadDialogBoom).load(data.id).resume()
-                                    holder.download?.setImageResource(R.mipmap.jiazai)
+                                    val taskState =
+                                        Aria.download(mDownLoadDialogBoom).load(data.id).taskExists()
+
+                                    if(taskState){
+                                        Aria.download(mDownLoadDialogBoom).load(data.id).resume()
+                                        holder.download?.setImageResource(R.mipmap.jiazai)
+                                    }else{
+
+                                        if(data.type == "apk"){
+
+                                            data.id = Aria.download(mDownLoadDialogBoom)
+                                                .load("$ip${data.download}") //读取下载地址
+                                                .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                                .create()
+                                        }else{
+                                            data.id = Aria.download(mDownLoadDialogBoom)
+                                                .load("$ip${data.download}") //读取下载地址
+                                                .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                                .create()
+                                        }
+
+
+                                        holder.download?.setImageResource(R.mipmap.jiazai)
+
+                                        if(data.id == -1L){
+                                            SaveData.saveStringOther("$ip${data.download}","def")
+                                        }else{
+                                            SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                                        }
+
+
+                                    }
+
+
                                 }
 
 
@@ -382,8 +443,38 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
                                     }
 
                                 }else{
-                                    Aria.download(mDownLoadDialogBoom).load(data.id).resume()
-                                    holder.download?.setImageResource(R.mipmap.jiazai)
+                                    val taskState =
+                                        Aria.download(mDownLoadDialogBoom).load(data.id).taskExists()
+
+                                    if(taskState){
+                                        Aria.download(mDownLoadDialogBoom).load(data.id).resume()
+                                        holder.download?.setImageResource(R.mipmap.jiazai)
+                                    }else{
+
+                                        if(data.type == "apk"){
+
+                                            data.id = Aria.download(mDownLoadDialogBoom)
+                                                .load("$ip${data.download}") //读取下载地址
+                                                .setFilePath("${FileUrl.zeroTermuxApk}/${data.fileName}") //设置文件保存的完整路径
+                                                .create()
+                                        }else{
+                                            data.id = Aria.download(mDownLoadDialogBoom)
+                                                .load("$ip${data.download}") //读取下载地址
+                                                .setFilePath("${FileUrl.zeroTermuxData}/${data.fileName}") //设置文件保存的完整路径
+                                                .create()
+                                        }
+
+
+                                        holder.download?.setImageResource(R.mipmap.jiazai)
+
+                                        if(data.id == -1L){
+                                            SaveData.saveStringOther("$ip${data.download}","def")
+                                        }else{
+                                            SaveData.saveStringOther("$ip${data.download}","${data.id}")
+                                        }
+
+
+                                    }
                                 }
                             }catch (e:Exception){
                                 e.printStackTrace()
@@ -757,6 +848,10 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
 
     override fun onTaskFail(task: DownloadTask?) {
         if(task == null){
+
+
+
+
             return
         }
 

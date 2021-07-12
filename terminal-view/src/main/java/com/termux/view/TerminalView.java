@@ -29,6 +29,7 @@ import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Scroller;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -36,6 +37,8 @@ import com.termux.terminal.KeyHandler;
 import com.termux.terminal.TerminalEmulator;
 import com.termux.terminal.TerminalSession;
 import com.termux.view.textselection.TextSelectionCursorController;
+
+import java.util.UUID;
 
 /** View displaying and interacting with a {@link TerminalSession}. */
 public final class TerminalView extends View {
@@ -211,6 +214,18 @@ public final class TerminalView extends View {
                     performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                     startTextSelectionMode(event);
                 }
+
+                /**
+                 *
+                 *
+                 * ZeroTermux 长按
+                 *
+                 *
+                 */
+                if(mOnLongClickListener!= null){
+                    mOnLongClickListener.onLong();
+                }
+
             }
         });
         mScroller = new Scroller(context);
@@ -1210,22 +1225,6 @@ public final class TerminalView extends View {
     }
 
 
-    /**
-     *
-     *
-     * ZeroTermux
-     *
-     */
-
-    private  DoubleClickListener mDoubleClickListener;
-    public void setDoubleClickListener(DoubleClickListener mDoubleClickListener){
-        this.mDoubleClickListener = mDoubleClickListener;
-    }
-    public interface DoubleClickListener{
-        void doubleClicke();
-
-    }
-
 
 
 
@@ -1281,8 +1280,37 @@ public final class TerminalView extends View {
         }
     }
 
+    /**
+     *
+     *
+     * ZeroTermux
+     *
+     */
+
+    private  DoubleClickListener mDoubleClickListener;
+    public void setDoubleClickListener(DoubleClickListener mDoubleClickListener){
+        this.mDoubleClickListener = mDoubleClickListener;
+    }
+    public interface DoubleClickListener{
+        void doubleClicke();
+
+    }
+
     public String getText555(){
         return  mEmulator.getScreen().getTranscriptText();
+    }
+
+    private OnLongClickListener mOnLongClickListener;
+
+    public void setOnLongClickListener(OnLongClickListener mOnLongClickListener){
+
+        this.mOnLongClickListener = mOnLongClickListener;
+    }
+
+    public interface OnLongClickListener{
+
+        void onLong();
+
     }
 
 

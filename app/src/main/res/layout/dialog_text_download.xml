@@ -9,14 +9,30 @@
 
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:id="@+id/service_name"
-        android:textColor="@color/color_ffffff"
-        android:text="@string/服务器"
-        android:layout_height="wrap_content"/>
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:textSize="15sp"
+           android:textStyle="bold"
+           android:id="@+id/service_name"
+           android:textColor="@color/color_ffffff"
+           android:text="@string/服务器"
+           android:layout_height="wrap_content"/>
+
+       <ImageView
+           android:layout_width="20dp"
+           android:layout_alignParentRight="true"
+           android:src="@mipmap/chongzhi_ico"
+           android:id="@+id/chongzhi_img"
+           android:visibility="gone"
+           android:layout_centerVertical="true"
+           android:layout_height="20dp"/>
+
+
+   </RelativeLayout>
 
 
     <RelativeLayout

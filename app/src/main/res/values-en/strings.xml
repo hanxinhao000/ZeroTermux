@@ -582,4 +582,8 @@ error</string>
     <string name="Zero">Zero/UTermux simulation</string>
     <string name="一键启动">one-button start</string>
 
+    <string name="确定重置所有任务">
+Are you sure to reset and delete all tasks?\nIf your download status is messy/incorrect, please apply this setting\nNote: The downloaded ones will not be deleted\nThe downloading ones will be deleted</string>
+    <string name="重置成功">
+Reset successfully</string>
 </resources>

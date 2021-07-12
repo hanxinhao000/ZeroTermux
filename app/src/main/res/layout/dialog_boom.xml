@@ -82,7 +82,7 @@
                                 android:layout_height="match_parent"
                                 android:text="@string/键盘"
                                 android:textColor="@color/color_FFFFFF"
-                                android:textSize="12sp" />
+                                android:textSize="10sp" />
 
 
 
@@ -118,7 +118,7 @@
                                 android:layout_height="match_parent"
                                 android:text="@string/会话"
                                 android:textColor="@color/color_FFFFFF"
-                                android:textSize="12sp" />
+                                android:textSize="10sp" />
 
 
 
@@ -154,7 +154,7 @@
                                 android:layout_height="match_parent"
                                 android:text="@string/自动命令"
                                 android:textColor="@color/color_FFFFFF"
-                                android:textSize="12sp" />
+                                android:textSize="10sp" />
 
 
 

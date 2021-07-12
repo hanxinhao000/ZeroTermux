@@ -576,4 +576,7 @@
     <string name="前往">前往</string>
     <string name="Zero">Zero/UTermux模拟</string>
     <string name="一键启动">一键启动</string>
+
+    <string name="确定重置所有任务">确定重置并删除所有任务?\n如果您的下载状态错乱/不正确请应用此设置\n注意:已下载完成的不会被删除\n正在下载的会被删除</string>
+    <string name="重置成功">重置成功</string>
 </resources>
