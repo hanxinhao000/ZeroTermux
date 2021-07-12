@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+
+    android:background="@drawable/shape_r_3dp_161823_2e"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:background="@drawable/windows_line"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"
+        android:textColor="#A9B7C6"
+        android:id="@+id/edit_text"
+        android:lineSpacingExtra="2dp"
+        android:lineSpacingMultiplier="1.2"
+        android:padding="10dp"
+        android:layout_above="@+id/boom_rl"
+        android:gravity="left|top"
+        android:layout_marginBottom="10dp"
+        android:layout_height="350dp"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:id="@+id/boom_rl"
+      android:layout_marginBottom="10dp"
+      android:layout_height="wrap_content">
+
+
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
+          android:orientation="vertical"
+          android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:text="@string/恢复默认命令"
+              android:textColor="#fff"
+              android:id="@+id/cancel"
+              android:gravity="center"
+              android:textSize="16sp"
+              android:layout_height="wrap_content"/>
+
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
+          android:orientation="vertical"
+          android:layout_height="wrap_content">
+
+
+          <RelativeLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+
+              <TextView
+                  android:layout_width="match_parent"
+                  android:text="@string/修改"
+                  android:textColor="#fff"
+                  android:id="@+id/commit"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_height="wrap_content"/>
+              <TextView
+                  android:layout_width="match_parent"
+                  android:text="@string/保存当前配置"
+                  android:textColor="#fff"
+                  android:visibility="gone"
+                  android:id="@+id/commit_file"
+                  android:gravity="center"
+                  android:textSize="16sp"
+                  android:layout_height="wrap_content"/>
+
+          </RelativeLayout>
+
+
+      </LinearLayout>
+
+      <LinearLayout
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:paddingTop="8dp"
+          android:paddingBottom="8dp"
+          android:orientation="vertical"
+          android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="match_parent"
+              android:text="@string/一键启动"
+              android:textColor="#fff"
+              android:gravity="center"
+              android:id="@+id/start"
+              android:textSize="16sp"
+              android:layout_height="wrap_content"/>
+
+
+      </LinearLayout>
+
+  </LinearLayout>
+
+
+
+
+
+</LinearLayout>

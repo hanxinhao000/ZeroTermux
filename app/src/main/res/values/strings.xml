@@ -509,4 +509,77 @@
     <string name="关闭成功">ADB命令关闭成功</string>
 
 
+
+    <string name="欢迎来到windows模拟器页面">欢迎来到windows模拟器页面</string>
+    <string name="环境">环境</string>
+    <string name="qamu环境">qamu环境</string>
+    <string name="qamu环境开">[已安装]</string>
+    <string name="qamu环境关">[未安装]</string>
+    <string name="点击安装">点击安装</string>
+    <string name="显示环境">显示环境</string>
+    <string name="显示环境开">[已安装]</string>
+    <string name="显示环境关">[未安装]</string>
+    <string name="ROOT运行">ROOT运行</string>
+    <string name="ROOT运行1">请在Termux输入tsu进入</string>
+    <string name="帮我安装">帮我安装</string>
+    <string name="快捷运行">快捷运行</string>
+    <string name="警告测dsfsdf">警告:如果出现【system call bad】请在终端执行【termux-chroot】后在进入!</string>
+    <string name="win10系统">win10系统</string>
+    <string name="win7系统">win7系统</string>
+    <string name="winXP系统">winXP系统</string>
+    <string name="替换官方版本">替换官方版本</string>
+    <string name="用官版的请点击">用官版的请点击</string>
+    <string name="MAC系统">MAC系统</string>
+    <string name="我自己的系统">我自己的系统</string>
+    <string name="打开当前VNC任务">打开当前VNC任务</string>
+    <string name="Windows注意">注意:该镜像会被复制到UTermux的工作区域[/Home/UTWindow/]</string>
+    <string name="当前操作镜像">当前操作镜像:</string>
+    <string name="无">无</string>
+    <string name="打开操作镜像">打开操作镜像</string>
+    <string name="清空操作镜像">清空操作镜像</string>
+    <string name="请显示QEMU命令">请显示QEMU命令</string>
+    <string name="请输入QEMU命令">请输入QEMU命令</string>
+    <string name="清空命令行">清空命令行</string>
+    <string name="QEMU执行并打开显示器">QEMU执行并打开显示器</string>
+    <string name="QEMU执行">QEMU执行</string>
+    <string name="填充默认命令">填充默认命令</string>
+    <string name="提示dsfsdfmmm">
+        可能会影响性能,或进入不了系统!!\n
+        可能会影响性能,或进入不了系统!\n
+        如果开启慢，请删除掉\n
+        -drive file=fat:rw:/home/storage/shared/xinhao/share\n
+        与虚拟机交互文件放入【内部存储/xinhao/share】目录下\n
+        复制新的文件必须重启虚拟机才能看见文件!!\n
+        复制新的文件必须重启虚拟机才能看见文件!!\n
+        提示:如需要共享文件(虚拟机交互文件)默认已加入\n
+        请在 -vnc前边加入:\n
+        -drive file=fat:rw:/sdcard/xinhao/share\n
+        命令,长按可复制该指令
+    </string>
+    <string name="正在疏通所需要的环境">正在疏通所需要的环境</string>
+    <string name="请输入回车键继续">请输入回车键继续</string>
+    <string name="请选择一个镜像">请选择一个镜像</string>
+    <string name="请选择模拟器配置文件">请选择模拟器配置文件</string>
+    <string name="成功">成功</string>
+    <string name="qemu_x86_win">Win/linux/(x64_x86)</string>
+    <string name="qemu_i386_win">Win/linux/(i386)</string>
+    <string name="qemu_ppc_win">MAC(ppc)</string>
+    <string name="请在下载站下载VNC插件">请在[下载站]下载VNC插件</string>
+    <string name="环境不达要求">环境不达要求</string>
+    <string name="你没有安装tyu65t6y5u">"你没有安装 wget 或者 proot \n是否立即安装"</string>
+    <string name="给我安装">给我安装</string>
+    <string name="不安装">不安装</string>
+    <string name="错误">错误</string>
+    <string name="你没有安装相关环境qemuppp5555p">"你没有安装相关环境,请点击安装"</string>
+    <string name="在线安装">在线安装</string>
+    <string name="请等待安装完成在进入">请等待安装完成在进入</string>
+    <string name="稍后">稍后</string>
+    <string name="系统初始化失败">系统初始化失败</string>
+    <string name="请输入回车键继续55">请输入回车键继续</string>
+    <string name="获取镜像">提取码:6b7w</string>
+    <string name="是否前往下载系统">是否前往下载系统</string>
+    <string name="前往">前往</string>
+    <string name="Zero">Zero/UTermux模拟</string>
+    <string name="一键启动">一键启动</string>
+
 </resources>

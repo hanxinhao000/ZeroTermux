@@ -109,6 +109,7 @@
         <activity android:name=".zerocore.activity.SwitchActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".zerocore.activity.BackNewActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".zerocore.activity.FontActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".zerocore.utermux_windows.qemu.activity.RunWindowActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".app.activities.SettingsActivity"
             android:exported="true"

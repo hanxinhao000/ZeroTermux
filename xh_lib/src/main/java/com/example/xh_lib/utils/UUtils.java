@@ -1,6 +1,7 @@
 package com.example.xh_lib.utils;
 
 import android.app.Activity;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.example.xh_lib.R;
 import com.example.xh_lib.statusBar.StatusBarCompat;
 
 import java.io.BufferedReader;
@@ -954,5 +956,20 @@ public class UUtils {
             if (file.exists()) return file;
         }
         return file;
+    }
+
+    public static void copyToClip(String msg){
+
+
+        try{
+
+            ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+
+            clipboardManager.setText(msg);
+            UUtils.showMsg(UUtils.getString(R.string.复制成功));
+        }catch (Exception e){
+            UUtils.showMsg(UUtils.getString(R.string.复制失败));
+        }
+
     }
 }

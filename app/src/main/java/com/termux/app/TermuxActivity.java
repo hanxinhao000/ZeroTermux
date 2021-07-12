@@ -93,6 +93,7 @@ import com.termux.zerocore.dialog.VNCConnectionDialog;
 import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
+import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.SendJoinUtils;
 import com.termux.zerocore.utils.SmsUtils;
@@ -1248,6 +1249,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 MenuLeftPopuListWindow.MenuLeftPopuListData qemuData = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.qemu_ico_hai, UUtils.getString(R.string.海的QEMU), 5);
                 menuLeftPopuListData1.add(qemuData);
 
+                MenuLeftPopuListWindow.MenuLeftPopuListData zeroData = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.windows_xp, UUtils.getString(R.string.Zero), 501);
+                menuLeftPopuListData1.add(zeroData);
+
                 showMenuDialog(menuLeftPopuListData1,qemu);
 
                 break;
@@ -1636,6 +1640,11 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 getDrawer().closeDrawer(Gravity.LEFT);
                 UUtils.writerFile("linux/termux_toolx.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
+                break;
+
+            case 501:
+
+                startActivity(new Intent(this, RunWindowActivity.class));
                 break;
             case 6:
                 getDrawer().closeDrawer(Gravity.LEFT);

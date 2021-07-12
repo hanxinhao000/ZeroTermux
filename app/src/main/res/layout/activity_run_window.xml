@@ -1,0 +1,1071 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="#2b2b2b"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+   >
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:text="@string/欢迎来到windows模拟器页面"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#5E5E5E"
+            android:layout_marginTop="10dp"
+            android:layout_height="1px"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/环境"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/qamu环境"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/qamu环境关"
+                android:textColor="#fff"
+                android:id="@+id/qemu_state"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/点击安装"
+                        android:textColor="#5288D8"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/qemu_install"
+                        android:textSize="14sp"
+                        android:layout_height="wrap_content"/>
+
+                    <ProgressBar
+                        android:layout_width="20dp"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="invisible"
+                        android:layout_height="20dp"/>
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/显示环境"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/显示环境关"
+                android:visibility="gone"
+                android:textColor="#fff"
+                android:id="@+id/dis_state"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/点击安装"
+                        android:textColor="#5288D8"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/dis_install"
+                        android:textSize="14sp"
+                        android:layout_height="wrap_content"/>
+
+                    <ProgressBar
+                        android:layout_width="20dp"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="invisible"
+                        android:layout_height="20dp"/>
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/ROOT运行"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/ROOT运行1"
+                android:textColor="#fff"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_height="wrap_content"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/帮我安装"
+                        android:textColor="#5288D8"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:id="@+id/tsu_install"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_height="wrap_content"/>
+
+                    <ProgressBar
+                        android:layout_width="20dp"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="invisible"
+                        android:layout_height="20dp"/>
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#5E5E5E"
+            android:visibility="invisible"
+            android:layout_marginTop="10dp"
+            android:layout_height="1px"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/快捷运行"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/警告测dsfsdf"
+            android:textColor="@color/jinggao"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"/>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#5E5E5E"
+            android:layout_marginTop="10dp"
+            android:layout_height="1px"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:id="@+id/win10"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/windows" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/win10系统"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:visibility="visible"
+                android:id="@+id/win8"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/windows" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:id="@+id/zidongtishi"
+                    android:text="@string/win7系统"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:id="@+id/win7"
+                android:gravity="center"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/windows_xp" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/winXP系统"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/quanping" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/全屏模式"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/lishi" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/替换官方版本"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/用官版的请点击"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/quanping" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="全屏模式\n[再次点击关闭]"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+
+                android:visibility="visible"
+                android:id="@+id/winxp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/mac_" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/MAC系统"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:visibility="visible"
+                android:id="@+id/other"
+
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/my_windows" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+
+                    android:text="@string/我自己的系统"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+
+                android:id="@+id/mac"
+                android:gravity="center"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/vnc" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/打开当前VNC任务"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+
+
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/quanping" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/全屏模式"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/lishi" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/替换官方版本"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/用官版的请点击"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/quanping" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="全屏模式\n[再次点击关闭]"
+                    android:textColor="#fff"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+
+
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#5E5E5E"
+            android:layout_marginTop="10dp"
+            android:layout_height="1px"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:orientation="vertical"
+          android:visibility="gone"
+          android:layout_height="wrap_content">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="10dp"
+              android:text="@string/我自己的系统"
+              android:textColor="#5E5E5E"
+              android:gravity="center"
+              android:textStyle="bold"
+              android:textSize="14sp"
+              android:layout_height="wrap_content"/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="10dp"
+              android:text="@string/Windows注意"
+              android:textColor="#5E5E5E"
+              android:textStyle="bold"
+              android:textSize="14sp"
+              android:layout_height="wrap_content"/>
+
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_marginTop="5dp"
+              android:layout_marginLeft="10dp"
+              android:orientation="horizontal"
+              android:layout_height="wrap_content">
+
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:text="@string/当前操作镜像"
+                  android:textColor="#5E5E5E"
+                  android:gravity="center"
+                  android:textStyle="bold"
+                  android:textSize="14sp"
+                  android:layout_height="wrap_content"/>
+
+              <HorizontalScrollView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content">
+
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/无"
+                      android:textColor="#5E5E5E"
+                      android:layout_marginLeft="5dp"
+                      android:gravity="center"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+
+              </HorizontalScrollView>
+
+              <RelativeLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+
+                  <RelativeLayout
+                      android:layout_width="wrap_content"
+                      android:layout_alignParentRight="true"
+                      android:layout_marginRight="10dp"
+                      android:layout_height="wrap_content">
+
+                      <TextView
+                          android:layout_width="wrap_content"
+                          android:text="@string/打开操作镜像"
+                          android:textColor="#5E5E5E"
+                          android:layout_marginLeft="5dp"
+                          android:gravity="center"
+                          android:textStyle="bold"
+                          android:textSize="14sp"
+                          android:layout_height="wrap_content"/>
+
+                      <ProgressBar
+                          android:layout_width="20dp"
+                          android:layout_centerHorizontal="true"
+                          android:visibility="invisible"
+                          android:layout_height="20dp"/>
+
+
+                  </RelativeLayout>
+
+              </RelativeLayout>
+
+          </LinearLayout>
+
+
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_marginTop="10dp"
+              android:layout_height="wrap_content">
+
+
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:text="@string/清空操作镜像"
+                  android:textColor="#5E5E5E"
+                  android:layout_marginLeft="5dp"
+                  android:layout_marginRight="10dp"
+                  android:layout_alignParentRight="true"
+                  android:gravity="center"
+                  android:textStyle="bold"
+                  android:textSize="14sp"
+                  android:layout_height="wrap_content"/>
+
+          </RelativeLayout>
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="10dp"
+              android:textColor="#5E5E5E"
+              android:textSize="14sp"
+              android:textStyle="bold"
+              android:textColorHint="#5E5E5E"
+              android:gravity="left|top"
+              android:padding="5dp"
+              android:hint="@string/请显示QEMU命令"
+              android:layout_marginRight="10dp"
+              android:background="@drawable/windows_line"
+              android:layout_height="200dp"/>
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="10dp"
+              android:textColor="#fff"
+              android:textSize="14sp"
+              android:textStyle="bold"
+              android:textColorHint="#5E5E5E"
+              android:gravity="left|top"
+              android:padding="5dp"
+              android:hint="@string/请输入QEMU命令"
+              android:layout_marginRight="10dp"
+              android:background="@drawable/windows_line"
+              android:layout_height="200dp"/>
+
+
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:layout_height="wrap_content">
+
+              <LinearLayout
+                  android:layout_width="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_alignParentRight="true"
+                  android:layout_height="wrap_content">
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/清空命令行"
+                      android:textColor="#5E5E5E"
+                      android:paddingLeft="10dp"
+                      android:paddingBottom="3dp"
+                      android:paddingRight="10dp"
+                      android:paddingTop="3dp"
+                      android:background="@drawable/shape_btn_50b297"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/QEMU执行并打开显示器"
+                      android:textColor="#5E5E5E"
+                      android:paddingLeft="10dp"
+                      android:paddingBottom="3dp"
+                      android:layout_marginLeft="10dp"
+                      android:paddingRight="10dp"
+                      android:paddingTop="3dp"
+                      android:background="@drawable/shape_btn_50b297"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/QEMU执行"
+                      android:textColor="#5E5E5E"
+                      android:paddingLeft="10dp"
+                      android:paddingBottom="3dp"
+                      android:paddingRight="10dp"
+                      android:layout_marginLeft="10dp"
+                      android:paddingTop="3dp"
+                      android:background="@drawable/shape_btn_50b297"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+
+
+
+
+
+              </LinearLayout>
+
+
+
+          </RelativeLayout>
+
+
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:layout_height="wrap_content">
+
+              <LinearLayout
+                  android:layout_width="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_alignParentRight="true"
+                  android:layout_height="wrap_content">
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/清空命令行"
+                      android:textColor="#fff"
+                      android:paddingLeft="10dp"
+                      android:visibility="invisible"
+                      android:paddingBottom="3dp"
+                      android:paddingRight="10dp"
+                      android:paddingTop="3dp"
+                      android:background="@drawable/shape_btn_50b297"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/QEMU执行并打开显示器"
+                      android:textColor="#fff"
+                      android:paddingLeft="10dp"
+                      android:visibility="invisible"
+                      android:paddingBottom="3dp"
+                      android:layout_marginLeft="10dp"
+                      android:paddingRight="10dp"
+                      android:paddingTop="3dp"
+                      android:background="@drawable/shape_btn_50b297"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:text="@string/填充默认命令"
+                      android:textColor="#5E5E5E"
+                      android:paddingLeft="10dp"
+                      android:paddingBottom="3dp"
+                      android:paddingRight="10dp"
+                      android:layout_marginLeft="10dp"
+                      android:paddingTop="3dp"
+                      android:background="@drawable/shape_btn_50b297"
+                      android:textStyle="bold"
+                      android:textSize="14sp"
+                      android:layout_height="wrap_content"/>
+
+
+
+
+
+              </LinearLayout>
+
+
+
+          </RelativeLayout>
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="100dp"/>
+
+
+      </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:id="@+id/copy_commit"
+            android:layout_marginLeft="10dp"
+            android:text="@string/提示dsfsdfmmm"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+</ScrollView>
+
+
+</LinearLayout>

@@ -22,4 +22,6 @@
     <string name="服务器繁忙">服务器繁忙</string>
     <string name="标题">标题</string>
     <string name="确认">确认</string>
+    <string name="复制成功">复制成功</string>
+    <string name="复制失败">复制失败</string>
 </resources>
