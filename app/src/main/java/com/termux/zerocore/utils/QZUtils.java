@@ -160,7 +160,7 @@ public class QZUtils {
 
                         TermuxActivity.mTerminalView.sendTextToTerminal("echo \"----手动恢复开始----\" \n");
 
-                        TermuxActivity.mTerminalView.sendTextToTerminal("tar -xzvf ./storage/shared/xinhao/data/" + tarFle.getName().replace(" ","") + "  -C ../../" + createFile.getName() + " && mv ../../" + createFile.getName() + "/data/data/com.termux/files/home ../../" + createFile.getName() +" && "+ "mv ../../" + createFile.getName() + "/data/data/com.termux/files/usr ../../" + createFile.getName()+" && rm -rf ../../"+createFile.getName()+"/data && echo \"系统恢复完成,请在切换系统，切换您的系统\" \n");
+                        TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && tar -xzvf ./storage/shared/xinhao/data/" + tarFle.getName().replace(" ","") + "  -C ../../" + createFile.getName() + " && mv ../../" + createFile.getName() + "/data/data/com.termux/files/home ../../" + createFile.getName() +" && "+ "mv ../../" + createFile.getName() + "/data/data/com.termux/files/usr ../../" + createFile.getName()+" && rm -rf ../../"+createFile.getName()+"/data && echo \"系统恢复完成,请在切换系统，切换您的系统\" \n");
                         //TermuxActivity.mTerminalView.sendTextToTerminal("tar -xzvf./storage/shared/xinhao/data/" + tarFle.getName() + "  -C ../../" + createFile.getName() + " && mv ../../" + createFile.getName() + "/data/data/com.termux/files/home ../../" + createFile.getName() +" && "+ "mv ../../" + createFile.getName() + "/data/data/com.termux/files/usr ../../" + createFile.getName()+" && rm -rf ../../"+createFile.getName()+"/data && echo \"系统恢复完成,请在切换系统，切换您的系统\" \n");
 
                         try {

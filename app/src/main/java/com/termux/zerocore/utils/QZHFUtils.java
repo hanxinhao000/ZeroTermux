@@ -144,7 +144,7 @@ public class QZHFUtils {
                     public void run() {
                         myDialog.dismiss();
 
-                        TermuxActivity.mTerminalView.sendTextToTerminal("tar -zcvf ./storage/shared/xinhao/data/" + systemName + " /data/data/com.termux/files && echo \"备份完成，备份文件在->内部存储/xinhao/data/|目录下\" \n");
+                        TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && tar -zcvf ./storage/shared/xinhao/data/" + systemName + " /data/data/com.termux/files && echo \"备份完成，备份文件在->内部存储/xinhao/data/|目录下\" \n");
 
 
                         restoreFragment.getActivity().finish();
