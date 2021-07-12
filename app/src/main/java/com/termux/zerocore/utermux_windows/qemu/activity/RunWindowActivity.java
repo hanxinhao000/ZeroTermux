@@ -1145,7 +1145,7 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
 
 
                     TermuxData.IsQemuSul isQemuSul = TermuxData.getInstall().getmIsQemuSul();
-                    UUtils.showMsg("收到广播ffffffffffffffffffffff" + isQemuSul);
+                  //  UUtils.showMsg("收到广播ffffffffffffffffffffff" + isQemuSul);
                     isError = true;
 
                 }
