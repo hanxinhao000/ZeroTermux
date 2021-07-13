@@ -13,7 +13,7 @@
 
 # 默认源为 清华源 与 北京源
 
-##  在使用一定程度之后,极力建议你过渡到官方termux[入门之后开始使用](推荐)
+##  在使用一定程度之后,极力建议你过渡到官方termux[入门之后开始使用](https://github.com/termux/termux-app)
 
 ## After a certain level of use, it is strongly recommended that you transition to the official termux [start using after getting started] (recommended)
 
