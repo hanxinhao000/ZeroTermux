@@ -99,6 +99,36 @@ object LinuxCommandData {
         mArrayList.add(aDBBean)
 
 
+
+        /**
+         *
+         * vsCode
+         *
+         * --
+         *
+         * 本地命令
+         *
+         *
+         */
+
+
+        val vScodeBean = ZeroRunCommandBean()
+
+        vScodeBean.type = 1
+
+        vScodeBean.name = UUtils.getString(R.string.VSCODE)
+
+        vScodeBean.fileName = "vscode.zip"
+
+        vScodeBean.address = "https://github.com/"
+
+        vScodeBean.assetsName = "zipcommand/vscode.zip"
+
+        vScodeBean.runCommand = "cd ~ && cd ~ && unzip vscode.zip && chmod 777 vscode.sh && ./vscode.sh \n"
+
+        mArrayList.add(vScodeBean)
+
+
         return mArrayList
 
 

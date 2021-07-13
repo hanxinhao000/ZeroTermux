@@ -597,5 +597,6 @@
     <string name="termux_terminal_view_terminal_margin_adjustment_off">
 终端保证金调整将被禁用。</string>
     <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端保证金调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
+    <string name="VSCODE">VSCODE</string>
 
 </resources>
