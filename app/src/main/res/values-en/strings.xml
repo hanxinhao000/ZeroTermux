@@ -586,4 +586,17 @@ error</string>
 Are you sure to reset and delete all tasks?\nIf your download status is messy/incorrect, please apply this setting\nNote: The downloaded ones will not be deleted\nThe downloading ones will be deleted</string>
     <string name="重置成功">
 Reset successfully</string>
+
+    <!-- Terminal View Preferences -->
+    <string name="termux_terminal_view_preferences_title">Terminal View</string>
+    <string name="termux_terminal_view_preferences_summary">Preferences for terminal view</string>
+
+    <!-- View Category -->
+    <string name="termux_terminal_view_view_header">View</string>
+
+    <!-- Terminal View Margin Adjustment -->
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">Terminal Margin Adjustment</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_off">Terminal margin adjustment will be disabled.</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">Terminal margin adjustment will be enabled. It should be enabled to try to fix the issue where soft keyboard covers part of extra keys/terminal view. If it causes screen flickering on your devices, then disable it. (Default)</string>
+
 </resources>

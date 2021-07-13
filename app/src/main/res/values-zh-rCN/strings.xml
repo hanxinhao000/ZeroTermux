@@ -579,4 +579,19 @@
 
     <string name="确定重置所有任务">确定重置并删除所有任务?\n如果您的下载状态错乱/不正确请应用此设置\n注意:已下载完成的不会被删除\n正在下载的会被删除</string>
     <string name="重置成功">重置成功</string>
+
+
+    <!-- Terminal View Preferences -->
+    <string name="termux_terminal_view_preferences_title">终端视图</string>
+    <string name="termux_terminal_view_preferences_summary">终端视图的首选项</string>
+
+    <!-- View Category -->
+    <string name="termux_terminal_view_view_header">视图</string>
+
+    <!-- Terminal View Margin Adjustment -->
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端保证金调整</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_off">
+终端保证金调整将被禁用。</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端保证金调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
+
 </resources>
