@@ -1,12 +1,16 @@
 package com.termux.zerocore.dialog
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
 import com.blockchain.ub.util.custom.dialog.BaseDialogDown
 import com.example.xh_lib.utils.UUtils
 import com.scottyab.rootbeer.RootBeer
 import com.termux.R
+import com.termux.app.TermuxActivity
+import com.termux.zerocore.http.HTTPIP
 import com.termux.zerocore.shell.ExeCommand
 
 
@@ -14,6 +18,7 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
 
     private var adb_root:LinearLayout? = null
     private var adb_root_close:LinearLayout? = null
+    private var alpine:LinearLayout? = null
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
 
@@ -21,10 +26,12 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
 
         adb_root = mView.findViewById(R.id.adb_root)
         adb_root_close = mView.findViewById(R.id.adb_root_close)
+        alpine = mView.findViewById(R.id.alpine)
 
 
         adb_root!!.setOnClickListener(this)
         adb_root_close!!.setOnClickListener(this)
+        alpine!!.setOnClickListener(this)
     }
 
     override fun getContentView(): Int {
@@ -81,6 +88,26 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
 
                     //没有ROOT
                 }
+
+
+            }
+
+            R.id.alpine->{
+
+
+                try {
+                    val intent = Intent()
+                    intent.action = "com.alpine.action.ENTER"
+                    val activity = mContext as Activity
+                    activity.startActivity(intent)
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    UUtils.showMsg(UUtils.getString(R.string.请在下载站下载Alpine插件))
+                    dismiss()
+                    val activity = mContext as TermuxActivity
+                    activity.startHttp1(HTTPIP.IP)
+                }
+
 
 
             }

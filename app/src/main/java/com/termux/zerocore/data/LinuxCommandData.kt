@@ -112,7 +112,7 @@ object LinuxCommandData {
          */
 
 
-        val vScodeBean = ZeroRunCommandBean()
+   /*     val vScodeBean = ZeroRunCommandBean()
 
         vScodeBean.type = 1
 
@@ -128,7 +128,7 @@ object LinuxCommandData {
 
         mArrayList.add(vScodeBean)
 
-
+*/
         return mArrayList
 
 

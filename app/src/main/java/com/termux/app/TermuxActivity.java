@@ -2240,7 +2240,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      *
      */
 
-    private void startHttp(String ip){
+    public void startHttp(String ip){
 
 
         String ip_save = SaveData.INSTANCE.getStringOther("ip_save");
@@ -2349,7 +2349,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
      *
      */
 
-    private void startHttp1(String ip){
+    public void startHttp1(String ip){
 
         LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
 
