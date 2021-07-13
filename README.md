@@ -3,6 +3,11 @@
 
 <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg"  height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210629-182907.jpg" height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="720" width="360">
 
+
+## 语言环境(Language)
+
+## 中文 English
+
 # 区别
 
 1.备份恢复
@@ -11,7 +16,18 @@
 4.linux发行 (ubuntu kali..)
 5.等等
 
-# 默认源为 清华源 与 北京源
+
+# the difference
+
+1. Backup and recovery
+2. Container switching
+3. Source function switching
+4. Linux distribution (ubuntu kali...)
+5. Other
+
+## 默认源为 清华源 与 北京源(需手动切换[针对国内用户,国外用户请使用官方版本!])[地址](https://github.com/termux/termux-app)
+
+## The default source is Tsinghua source and Beijing source (need to switch manually [for domestic users, foreign users please use the official version!]) [Address](https://github.com/termux/termux-app)
 
 ##  在使用一定程度之后,极力建议你过渡到官方termux[入门之后开始使用](https://github.com/termux/termux-app)
 
