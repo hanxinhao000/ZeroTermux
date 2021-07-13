@@ -597,4 +597,6 @@
     <string name="VSCODE">VSCODE</string>
     <string name="X86_Alpine">X86_Alpine</string>
     <string name="请在下载站下载Alpine插件">请在下载站下载Alpine插件</string>
+    <string name="没有权限">没有内存权限,下载站无法打开!</string>
+
 </resources>

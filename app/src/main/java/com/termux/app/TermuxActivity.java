@@ -2351,40 +2351,76 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     public void startHttp1(String ip){
 
-        LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
 
-        loadingDialog.getMsg().setText(UUtils.getString(R.string.正在连接到下载站服务器));
+        XXPermissions.with(TermuxActivity.this)
+            .permission(Permission.WRITE_EXTERNAL_STORAGE)
+            .permission(Permission.READ_EXTERNAL_STORAGE)
+            .request(new OnPermissionCallback() {
 
-        loadingDialog.show();
+                @Override
+                public void onGranted(List<String> permissions, boolean all) {
+                    if (all) {
+
+                        LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+
+                        loadingDialog.getMsg().setText(UUtils.getString(R.string.正在连接到下载站服务器));
+
+                        loadingDialog.show();
 
 
 
-        new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
-            @Override
-            public void onSuccessful(@NotNull Message msg, int mWhat) {
-                loadingDialog.dismiss();
-                UUtils.showLog("连接成功:" + msg.obj);
+                        new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
+                            @Override
+                            public void onSuccessful(@NotNull Message msg, int mWhat) {
+                                loadingDialog.dismiss();
+                                UUtils.showLog("连接成功:" + msg.obj);
 
-                try{
-                    ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
+                                try{
+                                    ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
 
-                    DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
-                    downLoadDialogBoom.setIP(ip + "/repository/main.json");
-                    downLoadDialogBoom.show();
-                    downLoadDialogBoom.setCancelable(true);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
+                                    DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
+                                    downLoadDialogBoom.setIP(ip + "/repository/main.json");
+                                    downLoadDialogBoom.show();
+                                    downLoadDialogBoom.setCancelable(true);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(@org.jetbrains.annotations.Nullable Response<String> response, @NotNull String msg, int mWhat) {
+                                loadingDialog.dismiss();
+                                UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
+                            }
+                        },new HashMap<>(),5555);
+
+
+
+                    } else {
+
+                        UUtils.showMsg(UUtils.getString(R.string.没有权限));
+                    }
                 }
 
-            }
+                @Override
+                public void onDenied(List<String> permissions, boolean never) {
+                    if (never) {
+                        UUtils.showMsg(UUtils.getString(R.string.没有权限));
+                        // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                        XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                    } else {
+                        UUtils.showMsg(UUtils.getString(R.string.没有权限));
+                    }
+                }
+            });
 
-            @Override
-            public void onFailure(@org.jetbrains.annotations.Nullable Response<String> response, @NotNull String msg, int mWhat) {
-                loadingDialog.dismiss();
-                UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
-            }
-        },new HashMap<>(),5555);
+
+
+
+
+
 
 
     }

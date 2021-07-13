@@ -602,4 +602,5 @@ Reset successfully</string>
     <string name="VSCODE">VSCODE</string>
     <string name="X86_Alpine">X86_Alpine</string>
     <string name="请在下载站下载Alpine插件">Please download the Alpine plugin at the download site</string>
+    <string name="没有权限">Without memory permissions, the download station cannot be opened!</string>
 </resources>
