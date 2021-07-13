@@ -7,8 +7,6 @@
 
 ##  ZeroTermux 是根据 Termux 二次开发的一个非盈利性的软件 (ZeroTermux is a non-profit software developed based on Termux)
 
-## ZeroTermux 可随时由 Termux 官方作者警告并停止更新(ZeroTermux can be warned and stopped by the official Termux author at any time)
-
 ## 语言环境(Language)
 
 ## 中文 English (Chinese English)
