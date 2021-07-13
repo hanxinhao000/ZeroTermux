@@ -6,7 +6,7 @@
 
 ## 语言环境(Language)
 
-## 中文 English
+## 中文 English (Chinese English)
 
 # 区别
 
