@@ -3,6 +3,11 @@
 
 <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg"  height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210629-182907.jpg" height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="720" width="360">
 
+## 软件意图(Software intent)
+
+##  ZeroTermux 是根据 Termux 二次开发的一个非盈利性的软件 (ZeroTermux is a non-profit software developed based on Termux)
+
+## ZeroTermux 可随时由 Termux 官方作者警告并停止更新(ZeroTermux can be warned and stopped by the official Termux author at any time)
 
 ## 语言环境(Language)
 
