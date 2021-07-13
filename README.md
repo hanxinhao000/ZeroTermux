@@ -21,6 +21,10 @@
 
 # [点击访问(Go To)](https://github.com/termux/termux-app)
 
+## 阿里巴巴 ico 访问链接(Alibaba ico access link)
+
+# [点击访问(Go To)](https://www.iconfont.cn/)
+
 # 声明
 
  ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途!以及非法用途!
