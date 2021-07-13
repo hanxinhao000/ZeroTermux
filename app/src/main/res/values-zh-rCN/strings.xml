@@ -31,7 +31,7 @@
     <string name="bootstrap_error_body">&TERMUX_APP_NAME;无法安装引导程序包。</string>
     <string name="bootstrap_error_abort">中止</string>
     <string name="bootstrap_error_try_again">重试</string>
-    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 \"%1$s\".</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 %1$s.</string>
 
 
 

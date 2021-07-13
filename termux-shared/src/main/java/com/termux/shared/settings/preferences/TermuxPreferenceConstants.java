@@ -68,6 +68,13 @@ public final class TermuxPreferenceConstants {
 
 
         /**
+         * Defines the key for whether terminal view margin adjustment that is done to prevent soft
+         * keyboard from covering bottom part of terminal view on some devices is enabled or not.
+         * Margin adjustment may cause screen flickering on some devices and so should be disabled.
+         */
+        public static final String KEY_TERMINAL_MARGIN_ADJUSTMENT =  "terminal_margin_adjustment";
+        public static final boolean DEFAULT_TERMINAL_MARGIN_ADJUSTMENT = true;
+        /**
          * Defines the key for whether the soft keyboard will be enabled, for cases where users want
          * to use a hardware keyboard instead.
          */

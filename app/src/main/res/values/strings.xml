@@ -31,7 +31,7 @@
     <string name="bootstrap_error_body">&TERMUX_APP_NAME;无法安装引导程序包。</string>
     <string name="bootstrap_error_abort">中止</string>
     <string name="bootstrap_error_try_again">重试</string>
-    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 \"%1$s\".</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 %1$s.</string>
 
 
 
@@ -583,5 +583,18 @@
     <string name="一键启动">一键启动</string>
     <string name="确定重置所有任务">确定重置并删除所有任务?\n如果您的下载状态错乱/不正确请应用此设置\n注意:已下载完成的不会被删除\n正在下载的会被删除</string>
     <string name="重置成功">重置成功</string>
+
+
+    <!-- Terminal View Preferences -->
+    <string name="termux_terminal_view_preferences_title">Terminal View</string>
+    <string name="termux_terminal_view_preferences_summary">Preferences for terminal view</string>
+
+    <!-- View Category -->
+    <string name="termux_terminal_view_view_header">View</string>
+
+    <!-- Terminal View Margin Adjustment -->
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">Terminal Margin Adjustment</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_off">Terminal margin adjustment will be disabled.</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">Terminal margin adjustment will be enabled. It should be enabled to try to fix the issue where soft keyboard covers part of extra keys/terminal view. If it causes screen flickering on your devices, then disable it. (Default)</string>
 
 </resources>

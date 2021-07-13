@@ -14,10 +14,13 @@ import android.view.WindowManager;
 import com.termux.R;
 import com.termux.app.utils.CrashUtils;
 import com.termux.shared.file.FileUtils;
+import com.termux.shared.file.TermuxFileUtils;
 import com.termux.shared.interact.DialogUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.logger.Logger;
+import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.models.errors.Error;
+import com.termux.shared.packages.PackageUtils;
 import com.termux.shared.termux.TermuxConstants;
 
 import java.io.BufferedReader;
@@ -56,12 +59,29 @@ public final class TermuxInstaller {
 
     /** Performs bootstrap setup if necessary. */
     static void setupBootstrapIfNeeded(final Activity activity, final Runnable whenDone) {
+
+        String bootstrapErrorMessage;
+        Error filesDirectoryAccessibleError;
+
+        // This will also call Context.getFilesDir(), which should ensure that TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH
+        // is created if it does not already exist, like if it was not already created by android
+        filesDirectoryAccessibleError = TermuxFileUtils.isTermuxFilesDirectoryAccessible(activity, true, true);
+        boolean isFilesDirectoryAccessible = filesDirectoryAccessibleError == null;
+
         // Termux can only be run as the primary user (device owner) since only that
         // account has the expected file system paths. Verify that:
-        UserManager um = (UserManager) activity.getSystemService(Context.USER_SERVICE);
-        boolean isPrimaryUser = um.getSerialNumberForUser(android.os.Process.myUserHandle()) == 0;
-        if (!isPrimaryUser) {
-            String bootstrapErrorMessage = activity.getString(R.string.bootstrap_error_not_primary_user_message, TermuxConstants.TERMUX_PREFIX_DIR_PATH);
+        if (!PackageUtils.isCurrentUserThePrimaryUser(activity)) {
+            bootstrapErrorMessage = activity.getString(R.string.bootstrap_error_not_primary_user_message, MarkdownUtils.getMarkdownCodeForString(TermuxConstants.TERMUX_PREFIX_DIR_PATH, false));
+            Logger.logError(LOG_TAG, bootstrapErrorMessage);
+            CrashUtils.sendCrashReportNotification(activity, LOG_TAG, "## Bootstrap Error\n\n" + bootstrapErrorMessage, true, true);
+            MessageDialogUtils.exitAppWithErrorMessage(activity,
+                activity.getString(R.string.bootstrap_error_title),
+                bootstrapErrorMessage);
+            return;
+        }
+
+        if (!isFilesDirectoryAccessible) {
+            bootstrapErrorMessage = Error.getMinimalErrorString(filesDirectoryAccessibleError) + "\nTERMUX_FILES_DIR: " + MarkdownUtils.getMarkdownCodeForString(TermuxConstants.TERMUX_FILES_DIR_PATH, false);
             Logger.logError(LOG_TAG, bootstrapErrorMessage);
             MessageDialogUtils.exitAppWithErrorMessage(activity,
                 activity.getString(R.string.bootstrap_error_title),
@@ -155,7 +175,8 @@ public final class TermuxInstaller {
                                         while ((readBytes = zipInput.read(buffer)) != -1)
                                             outStream.write(buffer, 0, readBytes);
                                     }
-                                    if (zipEntryName.startsWith("bin/") || zipEntryName.startsWith("libexec") || zipEntryName.startsWith("lib/apt/methods")) {
+                                    if (zipEntryName.startsWith("bin/") || zipEntryName.startsWith("libexec") ||
+                                        zipEntryName.startsWith("lib/apt/apt-helper") || zipEntryName.startsWith("lib/apt/methods")) {
                                         //noinspection OctalInteger
                                         Os.chmod(targetFile.getAbsolutePath(), 0700);
                                     }
@@ -199,7 +220,7 @@ public final class TermuxInstaller {
         Logger.logErrorExtended(LOG_TAG, "Bootstrap Error:\n" + message);
 
         // Send a notification with the exception so that the user knows why bootstrap setup failed
-        CrashUtils.sendCrashReportNotification(activity, LOG_TAG, "## Bootstrap Error\n\n" + message, true);
+        CrashUtils.sendCrashReportNotification(activity, LOG_TAG, "## Bootstrap Error\n\n" + message, true, true);
 
         activity.runOnUiThread(() -> {
             try {
@@ -234,7 +255,7 @@ public final class TermuxInstaller {
                     if (error != null) {
                         Logger.logErrorAndShowToast(context, LOG_TAG, error.getMessage());
                         Logger.logErrorExtended(LOG_TAG, "Setup Storage Error\n" + error.toString());
-                        CrashUtils.sendCrashReportNotification(context, LOG_TAG, "## Setup Storage Error\n\n" + Error.getErrorMarkdownString(error), true);
+                        CrashUtils.sendCrashReportNotification(context, LOG_TAG, "## Setup Storage Error\n\n" + Error.getErrorMarkdownString(error), true,true);
                         return;
                     }
 
@@ -273,7 +294,7 @@ public final class TermuxInstaller {
                 } catch (Exception e) {
                     Logger.logErrorAndShowToast(context, LOG_TAG, e.getMessage());
                     Logger.logStackTraceWithMessage(LOG_TAG, "Setup Storage Error: Error setting up link", e);
-                    CrashUtils.sendCrashReportNotification(context, LOG_TAG, "## Setup Storage Error\n\n" + Logger.getStackTracesMarkdownString(null, Logger.getStackTracesStringArray(e)), true);
+                    CrashUtils.sendCrashReportNotification(context, LOG_TAG, "## Setup Storage Error\n\n" + Logger.getStackTracesMarkdownString(null, Logger.getStackTracesStringArray(e)), true,true);
                 }
             }
         }.start();

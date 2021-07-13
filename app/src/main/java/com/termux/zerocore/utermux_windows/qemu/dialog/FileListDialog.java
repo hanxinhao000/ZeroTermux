@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class FileListDialog extends BaseDialogCentre {
     private TextView title;
     private TextView tv_empty;
     private TextView def_txt;
+    private ImageView close_img;
     ArrayList<File> files1Array;
 
     private LinearLayout def_ll;
@@ -89,8 +91,18 @@ public class FileListDialog extends BaseDialogCentre {
         title = mView.findViewById(R.id.title);
         tv_empty = mView.findViewById(R.id.tv_empty);
         def_txt = mView.findViewById(R.id.def_txt);
+        close_img = mView.findViewById(R.id.close_img);
         def_ll = mView.findViewById(R.id.def_ll);
+
+        close_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         File[] files = file.listFiles();
+
+
 
         if(files != null && files.length > 0){
             tv_empty.setVisibility(View.GONE);
