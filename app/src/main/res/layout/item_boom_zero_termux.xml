@@ -23,7 +23,7 @@
            android:layout_height="wrap_content"/>
 
        <androidx.cardview.widget.CardView
-           android:layout_width="80dp"
+           android:layout_width="100dp"
            android:layout_marginLeft="5dp"
            android:paddingTop="5dp"
            android:id="@+id/msg_card"
@@ -76,7 +76,7 @@
                            android:text="@string/容器切换"
                            android:layout_alignParentRight="true"
                            android:textColor="@color/color_ffffff"
-                           android:textSize="12sp" />
+                           android:textSize="10sp" />
 
 
                    </LinearLayout>

@@ -82,6 +82,12 @@ class BoomZeroTermuxAdapter : RecyclerView.Adapter<BoomZeroTermuxViewHolder> {
 
                             TermuxActivity.mTerminalView.sendTextToTerminal(zeroRunCommandBean.runCommand)
 
+                            if(zeroRunCommandBean.runCommit != null){
+                                zeroRunCommandBean.runCommit.run()
+                            }
+
+
+
                         }
 
                     }

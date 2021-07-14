@@ -23,6 +23,22 @@ public class ZeroRunCommandBean {
     private boolean isShow = true;
     //是否是网络命令
     private boolean isHttpCommand = false;
+    //自定义事件
+    private RunCommit mRunCommit;
+
+    public RunCommit getRunCommit() {
+        return mRunCommit;
+    }
+
+    public void setRunCommit(RunCommit mRunCommit) {
+        this.mRunCommit = mRunCommit;
+    }
+
+    public interface RunCommit{
+
+        public void run();
+
+    }
 
     public boolean isHttpCommand() {
         return isHttpCommand;
