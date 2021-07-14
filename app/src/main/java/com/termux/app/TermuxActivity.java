@@ -2563,10 +2563,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void getServiceVs(){
 
-
         ip_status.setText(UUtils.getHostIP());
-
-
         new BaseHttpUtils().getUrl(HTTPIP.IP + "/repository/main.json", new HttpResponseListenerBase() {
             @Override
             public void onSuccessful(@NotNull Message msg, int mWhat) {

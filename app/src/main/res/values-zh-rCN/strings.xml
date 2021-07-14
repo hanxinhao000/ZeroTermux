@@ -617,4 +617,7 @@
     <string name="无权限读取">无权限读取</string>
     <string name="请等待">请等待</string>
     <string name="远程控制下请先安装vim">远程控制下请先安装vim,否则程序不会创建sms.txt以及phone.txt</string>
+
+    <string name="网络访问linux目录">网络linux目录</string>
+    <string name="filebrowser已运行">filebrowser已运行,端口19951,账户:admin 密码:admin</string>
 </resources>
