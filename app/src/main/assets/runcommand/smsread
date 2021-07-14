@@ -2,3 +2,6 @@
 am broadcast --user 0 \
 		 --es com.termux.app.reload_style readsms \
 		 -a com.termux.app.reload_style com.termux > /dev/null
+
+echo "远程控制下请先安装vim,否则程序不会创建sms.txt以及phone.txt"
+echo "Please install vim first under remote control, otherwise the program will not create sms.txt and phone.txt"

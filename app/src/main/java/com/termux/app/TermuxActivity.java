@@ -1955,6 +1955,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     }
 
+    //判断短消息是否正在读取
+    private boolean isPhoneRun = false;
 
     private void resBroadcastReceiever(String msg){
 
@@ -1988,18 +1990,18 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
                             } else {
                                // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
                             }
                         }
 
                         @Override
                         public void onDenied(List<String> permissions, boolean never) {
                             if (never) {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
                                 // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                 XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
                             } else {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
                             }
                         }
                     });
@@ -2011,62 +2013,85 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         //联系人
         if(msg.equals("contactperson")){
 
+            if(!isPhoneRun){
 
-            boolean vim = IsInstallCommand.INSTANCE.isInstall(this, "vim", CodeString.INSTANCE.getRunsmsInstallSh());
+                synchronized (TermuxActivity.class){
 
-            if(vim){
+                    isPhoneRun = true;
 
-                XXPermissions.with(this)
-                    .permission(Permission.READ_CONTACTS)
-                    .request(new OnPermissionCallback() {
+                    boolean vim = IsInstallCommand.INSTANCE.isInstall(this, "vim", CodeString.INSTANCE.getRunsmsInstallSh());
 
-                        @Override
-                        public void onGranted(List<String> permissions, boolean all) {
-                            if (all) {
-                                // UUtils.showMsg("获取录音和日历权限成功");
+                    if(vim){
 
-                                LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
-                                loadingDialog.show();
+                        XXPermissions.with(this)
+                            .permission(Permission.READ_CONTACTS)
+                            .request(new OnPermissionCallback() {
 
-                               new Thread(new Runnable() {
-                                   @Override
-                                   public void run() {
-                                       String allContacts = PhoneUtils.getAllContacts(UUtils.getContext());
-                                       UUtils.setFileString(new File(FileUrl.INSTANCE.getPhoneUrlFile()),allContacts);
-                                       UUtils.sleepSetRunMm(new Runnable() {
-                                           @Override
-                                           public void run() {
-                                               TermuxActivity.this.runOnUiThread(new Runnable() {
-                                                   @Override
-                                                   public void run() {
-                                                       loadingDialog.dismiss();
-                                                       TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim phone.txt \n");
-                                                   }
-                                               });
-                                           }
-                                       },100);
-                                   }
-                               }).start();
+                                @Override
+                                public void onGranted(List<String> permissions, boolean all) {
 
-                            } else {
-                                // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
-                            }
-                        }
+                                    if (all) {
+                                        // UUtils.showMsg("获取录音和日历权限成功");
 
-                        @Override
-                        public void onDenied(List<String> permissions, boolean never) {
-                            if (never) {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
-                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
-                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
-                            } else {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
-                            }
-                        }
-                    });
+                                        LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+                                        loadingDialog.show();
+
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                String allContacts = PhoneUtils.getAllContacts(UUtils.getContext());
+                                                UUtils.setFileString(new File(FileUrl.INSTANCE.getPhoneUrlFile()),allContacts);
+                                                UUtils.sleepSetRunMm(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        TermuxActivity.this.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                isPhoneRun = false;
+                                                                loadingDialog.dismiss();
+                                                                TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim phone.txt \n");
+                                                            }
+                                                        });
+                                                    }
+                                                },100);
+                                            }
+                                        }).start();
+
+                                    } else {
+                                        isPhoneRun = false;
+                                        // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                    }
+                                }
+
+                                @Override
+                                public void onDenied(List<String> permissions, boolean never) {
+                                    isPhoneRun = false;
+                                    if (never) {
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                        // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                        XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                                    } else {
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                    }
+                                }
+                            });
+
+                    }else{
+                        isPhoneRun = false;
+                    }
+
+                }
+
+
+            }else{
+
+                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.请等待)+"! \n");
 
             }
+
+
+
 
 
         }
