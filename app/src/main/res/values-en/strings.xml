@@ -619,4 +619,8 @@ Reset successfully</string>
     <string name="电话">phone</string>
     <string name="备注">Remarks</string>
     <string name="序号">Serial number</string>
+
+    <string name="无权限读取">No permission to read</string>
+    <string name="请等待">Please wait</string>
+    <string name="远程控制下请先安装vim">Please install vim first under remote control, otherwise the program will not create sms.txt and phone.txt</string>
 </resources>
