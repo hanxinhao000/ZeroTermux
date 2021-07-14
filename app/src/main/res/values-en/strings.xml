@@ -315,12 +315,12 @@ error</string>
     <string name="目录下有一个相同文件">There is a same file in the directory</string>
     <string name="保存文件">save document</string>
     <string name="请输入保存的文件名">Please enter the saved file name</string>
-    <string name="安装短信读取工具">SMS tool</string>
+    <string name="安装短信读取工具">SMS/Address Book Tool</string>
     <string name="该操作有风险">This operation is risky. Your mobile phone may be attacked to leak your SMS and address book. Do you want to continue the installation? (You can turn off the SMS sensitive permission when you are not using it)</string>
-    <string name="您已安装工具">You have already installed the tool, so there is no need to install it again. Use the command(smsread)</string>
+    <string name="您已安装工具">You have already installed the tool, so there is no need to install it again. Use the command(SMS: smsread, address book: readcontacts)</string>
     <string name="您当前未安装">You are not currently installed</string>
     <string name="是否安装">Whether to install?</string>
-    <string name="安装完成">The installation is complete, please enter smsread to use</string>
+    <string name="安装完成">The installation is complete, please enter (SMS: smsread, address book: readcontacts) to use</string>
     <string name="您已安装工具1">You have installed tools</string>
     <string name="您未安装该插件">The plug-in installation is about to start, do you want to continue?</string>
     <string name="需要在您的手机">
@@ -603,4 +603,20 @@ Reset successfully</string>
     <string name="X86_Alpine">X86_Alpine</string>
     <string name="请在下载站下载Alpine插件">Please download the Alpine plugin at the download site</string>
     <string name="没有权限">Without memory permissions, the download station cannot be opened!</string>
+
+
+    <string name="可能检测到OTG设备">The OTG device may be detected, but the reading fails, please unplug the device and try again, or give permission to read OTG!</string>
+    <string name="检测到OTG设备">An OTG device is detected, and permission is about to be applied for [If the permission appears before this session window, it may be a system compatibility issue that can be ignored]</string>
+    <string name="下次提示">下次提示</string>
+    <string name="如果下次想继续使用OTG设备">Next time prompt</string>
+    <string name="OTG设备异常">
+       OTG device abnormal\n
+        Unable to read the USB (OTG) usable directory\n
+        The directory structure is empty!
+    </string>
+    <string name="无联系人">No contacts or no permissions</string>
+    <string name="姓名">Name</string>
+    <string name="电话">phone</string>
+    <string name="备注">Remarks</string>
+    <string name="序号">Serial number</string>
 </resources>

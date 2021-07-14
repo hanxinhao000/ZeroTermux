@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -12,6 +13,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.system.ErrnoException;
 import android.system.Os;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -44,6 +48,13 @@ import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
 import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
 import com.example.xh_lib.utils.UUtils2;
+import com.github.mjdev.libaums.UsbMassStorageDevice;
+import com.github.mjdev.libaums.fs.FileSystem;
+import com.github.mjdev.libaums.fs.UsbFile;
+import com.github.mjdev.libaums.partition.Partition;
+import com.github.mjdev.libaums.server.http.UsbFileHttpServer;
+import com.github.mjdev.libaums.server.http.server.HttpServer;
+import com.github.mjdev.libaums.server.http.server.NanoHttpdServer;
 import com.google.gson.Gson;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
@@ -81,6 +92,7 @@ import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
+import com.termux.zerocore.data.UsbFileData;
 import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
@@ -94,7 +106,9 @@ import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
+import com.termux.zerocore.utils.DskUtils;
 import com.termux.zerocore.utils.IsInstallCommand;
+import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SendJoinUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.StartRunCommandUtils;
@@ -116,9 +130,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import static com.termux.shared.termux.TermuxConstants.TERMUX_HOME_DIR_PATH;
 
 /**
  * A terminal emulator activity.
@@ -351,6 +368,19 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
         isShow();
 
+        /**
+         *
+         * OTG
+         *
+         *
+         */
+
+       /* IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        filter.addAction(ACTION_USB_PERMISSION);
+        registerReceiver(mUsbReceiver, filter);*/
+
     }
 
     @Override
@@ -400,6 +430,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         } catch (Exception e) {
             // ignore.
         }
+
+        /**
+         *
+         * OTG
+         *
+         *
+         */
+
+      //  unregisterReceiver(mUsbReceiver);
     }
 
     @Override
@@ -1672,9 +1711,10 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
                             UUtils.writerFile("runcommand/smsread",new File(FileUrl.INSTANCE.getSmsUrl()));
-
+                            UUtils.writerFile("runcommand/readcontacts",new File(FileUrl.INSTANCE.getPhoneUrl()));
 
                             TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunsmsChomdSh());
+                            TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunPhoneChomdSh());
 
                             UUtils.showMsg(UUtils.getString(R.string.安装完成));
 
@@ -1965,6 +2005,69 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                     });
 
             }
+
+        }
+
+        //联系人
+        if(msg.equals("contactperson")){
+
+
+            boolean vim = IsInstallCommand.INSTANCE.isInstall(this, "vim", CodeString.INSTANCE.getRunsmsInstallSh());
+
+            if(vim){
+
+                XXPermissions.with(this)
+                    .permission(Permission.READ_CONTACTS)
+                    .request(new OnPermissionCallback() {
+
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+                                // UUtils.showMsg("获取录音和日历权限成功");
+
+                                LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+                                loadingDialog.show();
+
+                               new Thread(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       String allContacts = PhoneUtils.getAllContacts(UUtils.getContext());
+                                       UUtils.setFileString(new File(FileUrl.INSTANCE.getPhoneUrlFile()),allContacts);
+                                       UUtils.sleepSetRunMm(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               TermuxActivity.this.runOnUiThread(new Runnable() {
+                                                   @Override
+                                                   public void run() {
+                                                       loadingDialog.dismiss();
+                                                       TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim phone.txt \n");
+                                                   }
+                                               });
+                                           }
+                                       },100);
+                                   }
+                               }).start();
+
+                            } else {
+                                // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                            } else {
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo 无权限读取! \n");
+                            }
+                        }
+                    });
+
+            }
+
 
         }
 
@@ -2435,6 +2538,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private void getServiceVs(){
 
+
         ip_status.setText(UUtils.getHostIP());
 
 
@@ -2520,4 +2624,222 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
 
+
+    private boolean isTS = true;
+    private static final String ACTION_USB_PERMISSION = "com.androidinspain.otgviewer.USB_PERMISSION";
+    /**
+     *
+     *
+     * OTG 设备广播  暂时无法使用
+     *
+     *
+     */
+
+    private SwitchDialog otgSwitchDialog;
+
+    BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                UUtils.showLog("OTG:设备已拔出");
+                if(otgSwitchDialog != null && otgSwitchDialog.isShowing()){
+
+                    try{
+                        otgSwitchDialog.dismiss();
+                        otgSwitchDialog = null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        otgSwitchDialog = null;
+                    } finally {
+                        otgSwitchDialog = null;
+                    }
+
+
+                }
+            }
+
+            if(UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)){
+                UUtils.showLog("OTG:设备已插入");
+            }
+
+
+            UsbMassStorageDevice[] devices = UsbMassStorageDevice.getMassStorageDevices(TermuxActivity.this);
+
+
+            UUtils.showLog("OTG:集合长度(" + devices.length + ")");
+
+
+            if(UsbFileData.Companion.get().getMRefFileList() != null){
+                try{
+                    UsbFileData.Companion.get().getMRefFileList().ref();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+
+            if(devices.length > 0){
+                //获取管理者
+                UsbManager usbManager = (UsbManager) UUtils.getContext().getSystemService(Context.USB_SERVICE);
+                //枚举设备
+                UsbMassStorageDevice[] storageDevices = UsbMassStorageDevice.getMassStorageDevices(UUtils.getContext());//获取存储设备
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(TermuxActivity.this, 0, new Intent(ACTION_USB_PERMISSION), 0);
+                for (UsbMassStorageDevice device : storageDevices) {//可能有几个 一般只有一个 因为大部分手机只有1个otg插口
+
+
+
+                    if (usbManager.hasPermission(device.getUsbDevice())) {//有就直接读取设备是否有权限
+                        read(device);
+                    } else {//没有就去发起意图申请
+
+                        if(isTS){
+
+                            if(otgSwitchDialog != null && otgSwitchDialog.isShowing()){
+
+                                try{
+                                    otgSwitchDialog.dismiss();
+                                    otgSwitchDialog = null;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    otgSwitchDialog = null;
+                                } finally {
+                                    otgSwitchDialog = null;
+                                }
+
+
+                            }
+
+                            otgSwitchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.检测到OTG设备));
+
+                            otgSwitchDialog.getCancel().setText(UUtils.getString(R.string.下次提示));
+
+                            otgSwitchDialog.getCancel().setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    isTS = false;
+                                    UUtils.showMsg(UUtils.getString(R.string.如果下次想继续使用OTG设备));
+                                    otgSwitchDialog.dismiss();
+                                }
+                            });
+                            otgSwitchDialog.getOk().setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    usbManager.requestPermission(device.getUsbDevice(), pendingIntent); //该代码执行后，系统弹出一个对话框，
+                                    otgSwitchDialog.dismiss();
+                                }
+                            });
+
+                        }
+
+
+
+
+                    }
+                }
+
+            }
+        }
+    };
+
+
+    private void read(UsbMassStorageDevice device){
+
+
+        LoadingDialog loadingDialog = new LoadingDialog(this);
+        loadingDialog.show();
+
+        UUtils.runOnThread(new Runnable() {
+              @Override
+              public void run() {
+
+                  try{
+
+                  device.init();
+
+                  Thread.sleep(1000);
+
+                  if(device.getPartitions() == null  || device.getPartitions().isEmpty()){
+                      UUtils.showLog("OTG:目录为空:" + device.getPartitions());
+                      showExceptionDialog(loadingDialog);
+                      return;
+                  }
+
+                  TermuxActivity.this.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run() {
+                          if(loadingDialog != null && loadingDialog.isShowing()){
+
+                              try{
+                                  loadingDialog.dismiss();
+                              }catch (Exception e){
+                                  e.printStackTrace();
+                              }
+
+                          }
+                      }
+                  });
+
+                  Partition partition = device.getPartitions().get(0);
+                  FileSystem fileSystem = partition.getFileSystem();
+                  UsbFile rootDirectory = fileSystem.getRootDirectory();
+                  UsbFileData.Companion.get().setMUsbFile(rootDirectory);
+
+
+              }catch (Exception e){
+                  e.printStackTrace();
+                  UUtils.showLog("OTG:出错:" + e.toString());
+
+
+
+              }
+
+              }
+          });
+
+
+
+
+
+    }
+
+
+    //显示Dialog
+
+    private void showExceptionDialog(LoadingDialog mLoadingDialog){
+
+        if(mLoadingDialog != null && mLoadingDialog.isShowing()){
+
+            try{
+                mLoadingDialog.dismiss();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+
+        TermuxActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                SwitchDialog switchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.OTG设备异常));
+
+                switchDialog.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog.dismiss();
+                    }
+                });
+                switchDialog.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog.dismiss();
+                    }
+                });
+            }
+        });
+
+    }
 }

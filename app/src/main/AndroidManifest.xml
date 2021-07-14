@@ -12,6 +12,7 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+    <uses-feature android:name="android.hardware.usb.host" android:required="true" />
 
     <permission
         android:name="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND"
@@ -41,6 +42,11 @@
 
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+
+
+
     <application
         android:name=".app.TermuxApplication"
         android:allowBackup="false"
@@ -68,6 +74,9 @@
             android:label="@string/application_name"
             android:launchMode="singleTask"
             android:resizeableActivity="true">
+
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,6 +92,7 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+
 
         <activity-alias
             android:name=".HomeActivity"
@@ -116,6 +126,19 @@
             android:label="@string/title_activity_termux_settings"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
+
+        <provider
+            android:name="com.github.mjdev.libaums.storageprovider.UsbDocumentProvider"
+            android:authorities="com.github.mjdev.libaums.storageprovider.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS"
+            android:enabled="@bool/isAtLeastKitKat">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
@@ -131,7 +154,8 @@
             android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"
             />
-        <service android:name="com.taopao.androidnginxrtmp.service.NginxService"  android:persistent="true"/>
+
+
 
         <activity
             android:name=".filepicker.TermuxFileReceiverActivity"

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xh_lib.utils.UUtils;
+import com.github.mjdev.libaums.fs.UsbFile;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.app.TermuxInstaller;
@@ -23,6 +24,7 @@ import com.termux.app.TermuxService;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.adapter.RestoreAdapter;
+import com.termux.zerocore.data.UsbFileData;
 import com.termux.zerocore.dialog.MyDialog;
 import com.termux.zerocore.dialog.YesNoDialog;
 import com.termux.zerocore.shell.ExeCommand;
@@ -52,6 +54,9 @@ public class RestoreFragment extends BaseFragment {
     private TextView mTitle;
     private TextView mStartRe;
     private Process mProcess;
+    private RestoreAdapter restoreAdapter;
+
+    private ArrayList<File> files = new ArrayList<>();
 
     @Override
     public View getFragmentView() {
@@ -65,7 +70,7 @@ public class RestoreFragment extends BaseFragment {
         mTitle = (TextView) findViewById(R.id.title);
         mStartRe = (TextView) findViewById(R.id.start_re);
 
-        ArrayList<File> files = new ArrayList<>();
+
 
         File[] files1 = mSdFile.listFiles();
 
@@ -73,6 +78,8 @@ public class RestoreFragment extends BaseFragment {
             mStartRe.setText(UUtils.getString(R.string.没有SD卡权限));
             return;
         }
+
+        files.clear();
 
         for (int i = 0; i < files1.length; i++) {
 
@@ -89,9 +96,9 @@ public class RestoreFragment extends BaseFragment {
         }
 
 
+        restoreAdapter = new RestoreAdapter(files);
+        mListView.setAdapter(restoreAdapter);
 
-
-        mListView.setAdapter(new RestoreAdapter(files));
 
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

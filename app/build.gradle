@@ -68,6 +68,11 @@ android {
 
         implementation 'com.scottyab:rootbeer-lib:0.1.0'
 
+        //OTG0
+        implementation 'me.jahnen:libaums:0.8.0'
+        implementation 'me.jahnen:libaums-httpserver:0.5.3'
+        implementation 'me.jahnen:libaums-storageprovider:0.5.1'
+
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"
@@ -84,7 +89,7 @@ android {
         minSdkVersion project.properties.minSdkVersion.toInteger()
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 117
-        versionName "0.117.08"
+        versionName "0.117.09"
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"

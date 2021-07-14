@@ -311,12 +311,12 @@
     <string name="目录下有一个相同文件">目录下有一个相同文件</string>
     <string name="保存文件">保存文件</string>
     <string name="请输入保存的文件名">请输入保存的文件名</string>
-    <string name="安装短信读取工具">短信工具</string>
+    <string name="安装短信读取工具">短信/通讯录工具</string>
     <string name="该操作有风险">该操作有风险,您的手机可能会被攻击从而泄露你的短信与通讯录,是否继续安装?(您可以在不使用的情况下关闭短信敏感权限)</string>
-    <string name="您已安装工具">您已安装工具,无需重复安装.使用命令(smsread)</string>
+    <string name="您已安装工具">您已安装工具,无需重复安装.使用命令(短信:smsread、通讯录:readcontacts)</string>
     <string name="您当前未安装">您当前未安装</string>
     <string name="是否安装">是否安装?</string>
-    <string name="安装完成">安装完成,请输入smsread使用</string>
+    <string name="安装完成">安装完成,请输入(短信:smsread、通讯录:readcontacts)使用</string>
     <string name="您已安装工具1">您已安装工具</string>
     <string name="您未安装该插件">即将开始安装插件,是否继续?</string>
     <string name="需要在您的手机">
@@ -601,5 +601,21 @@
     <string name="X86_Alpine">X86_Alpine</string>
     <string name="请在下载站下载Alpine插件">请在下载站下载Alpine插件</string>
     <string name="没有权限">没有内存权限,下载站无法打开!</string>
+
+
+    <string name="可能检测到OTG设备">可能检测到OTG设备,但是读取失败,请拔插设备再试,或者给予读取OTG权限!</string>
+    <string name="检测到OTG设备">检测到OTG设备,即将申请权限[如果权限出现在此会话窗口之前,可能是系统兼容性问题忽略即可]</string>
+    <string name="下次提示">下次提示</string>
+    <string name="如果下次想继续使用OTG设备">如果下次想继续使用OTG设备,请退出APP重新进入,该提示会再次出现</string>
+    <string name="OTG设备异常">
+        OTG设备异常\n
+        无法读取到USB(OTG)可用的目录\n
+        目录结构为空!
+    </string>
+    <string name="无联系人">无联系人或无权限</string>
+    <string name="姓名">姓名</string>
+    <string name="电话">电话</string>
+    <string name="备注">备注</string>
+    <string name="序号">序号</string>
 
 </resources>
