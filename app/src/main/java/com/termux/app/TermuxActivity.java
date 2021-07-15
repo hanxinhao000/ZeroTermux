@@ -1681,7 +1681,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             //qemu
             case 5:
                 getDrawer().closeDrawer(Gravity.LEFT);
-                UUtils.writerFile("linux/termux_toolx.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
+                UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
                 break;
 
@@ -1692,7 +1692,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             case 502:
 
                 getDrawer().closeDrawer(Gravity.LEFT);
-                UUtils.writerFile("linux/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
+                UUtils.writerFile("qemu/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
 
                 break;
