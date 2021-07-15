@@ -36,7 +36,7 @@ wget http://od.ixcmstudio.cn/repository/main/windows/win7P.tar.gz
 
 tar zxvf win7P.tar.gz
 
-rm linux-armv7.tar.gz
+rm win7P.tar.gz
 
 chmod 777 start-win7.sh
 
