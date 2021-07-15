@@ -74,9 +74,9 @@ public final class TermuxInstaller {
             bootstrapErrorMessage = activity.getString(R.string.bootstrap_error_not_primary_user_message, MarkdownUtils.getMarkdownCodeForString(TermuxConstants.TERMUX_PREFIX_DIR_PATH, false));
             Logger.logError(LOG_TAG, bootstrapErrorMessage);
             CrashUtils.sendCrashReportNotification(activity, LOG_TAG, "## Bootstrap Error\n\n" + bootstrapErrorMessage, true, true);
-            MessageDialogUtils.exitAppWithErrorMessage(activity,
+            MessageDialogUtils.showMessage(activity,
                 activity.getString(R.string.bootstrap_error_title),
-                bootstrapErrorMessage);
+                bootstrapErrorMessage, null);
             return;
         }
 

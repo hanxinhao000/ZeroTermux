@@ -997,13 +997,13 @@ public final class TermuxConstants {
          * {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s` and `exit_code` to `%2$s`.
          * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is empty
          * and `exit_code` does not equal `0` and {@link ResultConfig#resultFileOutputFormat} is not passed. */
-        public static final String FORMAT_SUCCESS_STDOUT__EXIT_CODE = "%1$s%n%n%n%nexit_code=`%2$s`%n";
+        public static final String FORMAT_SUCCESS_STDOUT__EXIT_CODE = "%1$s%n%n%n%nexit_code=%2$s%n";
         /** The {@link Formatter} format string for success if `stdout`, `stderr` and `exit_code` need to be
          * written to {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s`, `stderr`
          * maps to `%2$s` and `exit_code` to `%3$s`.
          * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is not empty
          * and {@link ResultConfig#resultFileOutputFormat} is not passed. */
-        public static final String FORMAT_SUCCESS_STDOUT__STDERR__EXIT_CODE = "stdout=%n```%n%1$s%n```%n%n%n%nstderr=%n```%n%2$s%n```%n%n%n%nexit_code=`%3$s`%n";
+        public static final String FORMAT_SUCCESS_STDOUT__STDERR__EXIT_CODE = "stdout=%n%1$s%n%n%n%nstderr=%n%2$s%n%n%n%nexit_code=%3$s%n";
         /** The {@link Formatter} format string for failure if `err`, `errmsg`(`error`), `stdout`,
          * `stderr` and `exit_code` need to be written to {@link ResultConfig#resultFileBasename} where
          * `err` maps to `%1$s`, `errmsg` maps to `%2$s`, `stdout` maps
@@ -1012,7 +1012,7 @@ public final class TermuxConstants {
          * raise {@link IllegalFormatException}.
          * This is used when `err` does not equal {@link Errno#ERRNO_SUCCESS} (-1) and
          * {@link ResultConfig#resultFileErrorFormat} is not passed. */
-        public static final String FORMAT_FAILED_ERR__ERRMSG__STDOUT__STDERR__EXIT_CODE = "err=`%1$s`%n%n%n%nerrmsg=%n```%n%2$s%n```%n%n%n%nstdout=%n```%n%3$s%n```%n%n%n%nstderr=%n```%n%4$s%n```%n%n%n%nexit_code=`%5$s`%n";
+        public static final String FORMAT_FAILED_ERR__ERRMSG__STDOUT__STDERR__EXIT_CODE = "err=%1$s%n%n%n%nerrmsg=%n%2$s%n%n%n%nstdout=%n%3$s%n%n%n%nstderr=%n%4$s%n%n%n%nexit_code=%5$s%n";
 
 
 
