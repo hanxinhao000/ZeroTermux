@@ -1681,8 +1681,24 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             //qemu
             case 5:
                 getDrawer().closeDrawer(Gravity.LEFT);
-                UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
-                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
+                LoadingDialog loadingDialog = new LoadingDialog(this);
+                loadingDialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
+                                loadingDialog.dismiss();
+                            }
+                        });
+                    }
+                }).start();
+
+
                 break;
 
             case 501:
