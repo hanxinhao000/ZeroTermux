@@ -1292,6 +1292,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 MenuLeftPopuListWindow.MenuLeftPopuListData zeroData = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.windows_xp, UUtils.getString(R.string.Zero), 501);
                 menuLeftPopuListData1.add(zeroData);
 
+                MenuLeftPopuListWindow.MenuLeftPopuListData win7Data = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.windows, UUtils.getString(R.string.Win7模拟), 502);
+                menuLeftPopuListData1.add(win7Data);
+
                 showMenuDialog(menuLeftPopuListData1,qemu);
 
                 break;
@@ -1685,6 +1688,13 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             case 501:
 
                 startActivity(new Intent(this, RunWindowActivity.class));
+                break;
+            case 502:
+
+                getDrawer().closeDrawer(Gravity.LEFT);
+                UUtils.writerFile("linux/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
+                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
+
                 break;
             case 6:
                 getDrawer().closeDrawer(Gravity.LEFT);

@@ -87,6 +87,7 @@ public class EditTextDialog extends BaseDialogCentre {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mStartCommand != null)
                 mStartCommand.startCommand(edit_text.getText().toString());
             }
         });
@@ -95,7 +96,7 @@ public class EditTextDialog extends BaseDialogCentre {
             @Override
             public void onClick(View v) {
 
-
+                if(mStartCommand != null)
                 mEditStartCommand.editCommand(edit_text.getText().toString());
 
             }
