@@ -1707,9 +1707,43 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 break;
             case 502:
 
-                getDrawer().closeDrawer(Gravity.LEFT);
-                UUtils.writerFile("qemu/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
-                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
+                XXPermissions.with(TermuxActivity.this)
+                    .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                    .permission(Permission.READ_EXTERNAL_STORAGE)
+                    .request(new OnPermissionCallback() {
+
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+
+                                File zeroTermuxShare = FileUrl.INSTANCE.getZeroTermuxShare();
+                                if(!zeroTermuxShare.exists()){
+                                    zeroTermuxShare.mkdirs();
+                                }
+
+                                getDrawer().closeDrawer(Gravity.LEFT);
+                                UUtils.writerFile("qemu/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
+                                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
+
+                            } else {
+
+                                UUtils.showMsg("无权限");
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                UUtils.showMsg("无权限");
+                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                            } else {
+                                UUtils.showMsg("无权限");
+                            }
+                        }
+                    });
+
+
 
                 break;
             case 6:
