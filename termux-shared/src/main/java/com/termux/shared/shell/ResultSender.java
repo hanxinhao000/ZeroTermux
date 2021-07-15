@@ -201,7 +201,7 @@ public class ResultSender {
                 return error;
             }
 
-            String error_or_output = "";
+            String error_or_output;
 
             if (resultData.isStateFailed()) {
                 try {
@@ -226,7 +226,7 @@ public class ResultSender {
                         if (resultDataStderr.isEmpty() && resultDataExitCode.equals("0"))
                             error_or_output = String.format(RESULT_SENDER.FORMAT_SUCCESS_STDOUT, resultDataStdout);
                         else if (resultDataStderr.isEmpty())
-                            String.format(RESULT_SENDER.FORMAT_SUCCESS_STDOUT__EXIT_CODE,
+                            error_or_output = String.format(RESULT_SENDER.FORMAT_SUCCESS_STDOUT__EXIT_CODE,
                                 resultDataStdout,
                                 MarkdownUtils.getMarkdownCodeForString(resultDataExitCode, false));
                         else
