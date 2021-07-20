@@ -625,4 +625,5 @@ Reset successfully</string>
     <string name="远程控制下请先安装vim">Please install vim first under remote control, otherwise the program will not create sms.txt and phone.txt</string>
     <string name="网络访问linux目录">Network DIR</string>
     <string name="filebrowser已运行">filebrowser is running, port 19951, account: admin password: admin</string>
+    <string name="WinXp">Windows Xp</string>
 </resources>

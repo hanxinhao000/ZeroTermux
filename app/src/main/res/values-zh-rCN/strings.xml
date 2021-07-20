@@ -620,4 +620,5 @@
 
     <string name="网络访问linux目录">网络linux目录</string>
     <string name="filebrowser已运行">filebrowser已运行,端口19951,账户:admin 密码:admin</string>
+    <string name="WinXp">Windows Xp</string>
 </resources>

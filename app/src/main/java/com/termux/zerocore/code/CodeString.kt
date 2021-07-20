@@ -19,6 +19,7 @@ public object CodeString {
     public val runLinuxSh:String = "cd ~ && cd ~ && chmod 777 linux.sh && ./linux.sh \n"
     public val runQemuSh:String = "cd ~ && cd ~ && chmod 777 utqemu.sh && ./utqemu.sh \n"
     public val runWin7Sh:String = "cd ~ && cd ~ && chmod 777 qemu_win7.sh && ./qemu_win7.sh \n"
+    public val runWinXPSh:String = "cd ~ && cd ~ && chmod 777 qemu_winxp.sh && ./qemu_winxp.sh \n"
     public val runMoeSh:String = "pkg install -y curl ; bash -c \"$(curl -L gitee.com/mo2/linux/raw/2/2)\" \n"
     public val runsmsChomdSh:String = "cd .. && cd usr && cd bin && chmod 777 smsread && cd ~ \n"
     public val runPhoneChomdSh:String = "cd .. && cd usr && cd bin && chmod 777 readcontacts && cd ~ \n"

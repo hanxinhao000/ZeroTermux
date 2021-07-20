@@ -1295,6 +1295,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 MenuLeftPopuListWindow.MenuLeftPopuListData win7Data = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.windows, UUtils.getString(R.string.Win7模拟), 502);
                 menuLeftPopuListData1.add(win7Data);
 
+                MenuLeftPopuListWindow.MenuLeftPopuListData winXpData = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.windows_xp_ico, UUtils.getString(R.string.WinXp), 503);
+                menuLeftPopuListData1.add(winXpData);
+
                 showMenuDialog(menuLeftPopuListData1,qemu);
 
                 break;
@@ -1724,6 +1727,48 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                                 getDrawer().closeDrawer(Gravity.LEFT);
                                 UUtils.writerFile("qemu/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
                                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
+
+                            } else {
+
+                                UUtils.showMsg("无权限");
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                UUtils.showMsg("无权限");
+                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
+                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
+                            } else {
+                                UUtils.showMsg("无权限");
+                            }
+                        }
+                    });
+
+
+
+                break;
+
+            case 503:
+
+                XXPermissions.with(TermuxActivity.this)
+                    .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                    .permission(Permission.READ_EXTERNAL_STORAGE)
+                    .request(new OnPermissionCallback() {
+
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+
+                                File zeroTermuxShare = FileUrl.INSTANCE.getZeroTermuxShare();
+                                if(!zeroTermuxShare.exists()){
+                                    zeroTermuxShare.mkdirs();
+                                }
+
+                                getDrawer().closeDrawer(Gravity.LEFT);
+                                UUtils.writerFile("qemu/qemu_winxp.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_winxp.sh"));
+                                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWinXPSh());
 
                             } else {
 

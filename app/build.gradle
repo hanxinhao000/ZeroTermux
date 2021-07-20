@@ -25,13 +25,13 @@ android {
         release {
             keyAlias 'phone1'
             keyPassword '654321'
-            storeFile file('E:/BaiduNetdiskDownload/termux-app-master/签名文件/phone.jks')
+            storeFile file('D:/Utermux/termux-app-master/签名文件/phone.jks')
             storePassword '123456'
         }
         debug {
             keyAlias 'phone1'
             keyPassword '654321'
-            storeFile file('E:/BaiduNetdiskDownload/termux-app-master/签名文件/phone.jks')
+            storeFile file('D:/Utermux/termux-app-master/签名文件/phone.jks')
             storePassword '123456'
         }
     }
