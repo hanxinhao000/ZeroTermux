@@ -57,7 +57,7 @@
         5.在本软件(ZeroTermux)内使用的的恢复包、数据包、zip包等都有使用风险，切全部都来源于互联网，请用户酌情使用,如有造成无法挽回的损失,请用户承担风险。
         6.所有恢复包、数据包、zip包ZeroTermux不能控制其内容,如有包内侵权本软件作者不承担任何责任，均由恢复包、数据包、zip包制作者承担(tar.gz备份功能法律声明)。
         7.感谢所有该项目所应用到功能的作者。
-        8.使用ZeroTermux会有直接或间接的损害你的设备,如有造成无法挽回的损失由用户(ZeroTermux)承担,本软件以及作者不承担任何法律等责任
+        8.使用ZeroTermux会有直接或间接的损害你的设备,如有造成无法挽回的损失由用户承担,本软件以及作者不承担任何法律等责任
         
  # statement
  
@@ -72,7 +72,7 @@
         5. The recovery packages, data packages, zip packages, etc. used in this software (ZeroTermux) are all at risk. All of them are from the Internet. Please use it at your discretion. If any irreparable loss is caused, the user shall bear the risk. . 
         6. All recovery packages, data packages, and zip packages ZeroTermux cannot control their content. If there is any infringement in the package, the author of this software does not bear any responsibility, and the creator of the recovery package, data package, and zip package shall bear the responsibility (tar.gz backup function law statement). 
         7. Thanks to all the authors of the functions applied to this project. 
-        8.Using ZeroTermux will directly or indirectly damage your equipment. If there is any irreparable loss, the user (ZeroTermux) shall bear the responsibility of the software and the author."
+        8.Using ZeroTermux will directly or indirectly damage your equipment. If there is any irreparable loss, the user shall bear the responsibility of the software and the author."
 
 
  
