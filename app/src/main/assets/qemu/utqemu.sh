@@ -4,18 +4,11 @@ cd $(dirname $0)
 
 INFO() {
 	clear
-	UPDATE="2021/07/07"
+	UPDATE="2021/07/30"
 	printf "${YELLOW}更新日期$UPDATE 更新内容${RES}
-	更新aspice下载地址
-	增加qemu安装自动检测与镜像目录联动执行
-	增加termux-api下载
-	修复IDE接口无法加载光驱
-	修改IDE磁盘接口参数，使其速度更快，但缺点是容易丢失数据
-	新增termux最新版本下载选项
-	加入我另一个脚本termux-toolx，可安装体验linux(debian)系统
-	针对部分用户出现脚本下载错误，换了个服务器
-	容器内新增aspice与xsdl下载地址
-	修复termux环境无法安装qemu的bug
+	新增本地共享文件夹，主目录下share，由于镜像原因，可能部份镜像不支持
+	新增一些功能参数
+	放开原来隐藏选项tcg缓存设置，该选项在默认为手机设备运行内存的1/4，最佳设置参数可提高模拟效率(仅支持qemu5以上版本)
 	增加了一些未经完全测试通过的参数配置
 	修改了一些细节\n"
 }
@@ -43,10 +36,88 @@ echo -e "\e[32m$(qemu-system-x86_64 --version | head -n 1)\e[0m"
 ABOUT_UTQEMU(){
 	clear
 	printf "${YELLOW}关于utqemu脚本${RES}
-	最初是为utermux写下的qemu-system-x86脚本，目的是增加utermux可选功能，给使用者提供简易快捷的启动，我是业余爱好者，给使用者提供简易快捷的启动。非专业人士，所以内容比较乱，请勿吐槽。为适配常用镜像格式，脚本的参数选用是比较常用。业余的我，专业的参数配置并不懂，脚本参数都是来自官方网站、百度与群友。qemu5.0以上的版本较旧版本变化比较大，所以5.0后的参数选项比较丰富，欢迎群友体验使用。\n"
+	最初是为utermux写下的qemu-system-x86脚本，目的是增加utermux可选功能，给使用者提供简易快捷的启动，我是业余爱好者，给使用者提供简易快捷的启动。非专业人士，所以内容比较乱，请勿吐槽。为适配常用镜像格式，脚本的参数选用是比较常用。业余的我，专业的参数配置并不懂，脚本参数都是来自官方网站、百度与群友。qemu5.0以上的版本较旧版本变化比较大，所以5.0后的参数选项比较丰富，欢迎群友体验使用。\n\n"
+	case $SYS in
+		ANDROID) CONFIRM ;;
+		*) COMPILE ;;
+	esac
+
+
+}
+###################
+COMPILE(){
+	read -r -p "是否编译安装各版本qemu(仅编译x86与i386) 1)是 9)返回 " input
+	case $input in
+	1) echo -e "请选择qemu版本
+1) 2*
+2) 3*
+3) 4*
+4) 5*
+5) 6*"
+	read -r -p "请选择 " input
+	case $input in
+		1) VERSION=2 ;;
+		2) VERSION=3 ;;
+		3) VERSION=4 ;;
+		4) VERSION=5 ;;
+		5) VERSION=6 ;;
+		*) ABOUT_UTQEMU ;;
+	esac
+	echo -e "${YELLOW}安装所需依赖包${RES}"
+	cd
+	sudo_
+	if ! grep -q https /etc/apt/sources.list; then
+	$sudo apt install apt-transport-https ca-certificates -y && sed -i "s/http/https/g" /etc/apt/sources.list && $sudo apt update
+	fi
+	$sudo apt install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libsdl1.2-dev libsnappy-dev liblzo2-dev automake gcc python3 python3-setuptools build-essential ninja-build libspice-server-dev libsdl2-dev libspice-protocol-dev meson libgtk-3-dev libaio-dev gettext samba pulseaudio python libbluetooth-dev libbrlapi-dev libbz2-dev libcap-dev libcap-ng-dev libcurl4-gnutls-dev libibverbs-dev libncurses5-dev libnuma-dev librbd-dev librdmacm-dev libsasl2-dev libseccomp-dev libusb-dev flex bison git-email libssh2-1-dev libvde-dev libvdeplug-dev libvte-*-dev libxen-dev valgrind xfslibs-dev libnfs-dev libiscsi-dev -y
+	if [ $? != 0 ]; then
+	$sudo apt install
+	fi
+
+	echo -e "${YELLOW}检测下载${RES}"
+	VERSION=$(curl https://download.qemu.org | grep qemu-${VERSION}\..\..\.tar.xz\" | tail -n 1 | awk -F 'href="' '{print $2}' | awk -F '.tar' '{print $1}')
+	if [ -z "$VERSION" ]; then
+	echo -e "${RED}获取失败，请重试${RES}"
 	CONFIRM
+	ABOUT_UTQEMU
+	fi
+	if [ ! -f $(pwd)/"$VERSION.tar.xz" ]; then
+	curl -O https://download.qemu.org/$VERSION.tar.xz
+	fi
+	if [ ! -f $(pwd)/"$VERSION.tar.xz" ]; then
+	echo -e "${RED}获取失败，请重试${RES}"
+	CONFIRM
+	ABOUT_UTQEMU
+	else
+	tar xvJf $VERSION.tar.xz
+	if [ $? == 1 ]; then
+		echo -e "${RED}解压失败，请重试${RES}"
+		sleep 2
+		rm -rf $VERSION.tar.xz
+		ABOUT_UTQEMU
+	fi
+	rm -rf $VERSION.tar.xz && cd $VERSION
+	fi
+#	sed -i 's/^\(spice.*"\)$/#\1\nspice="yes"/' configure
+#aarch64-softmmu,arm-softmmu,i386-softmmu,x86_64-softmmu,ppc-softmmu,ppc64-softmmu,mips-softmmu,m68k-softmmu
+./configure --target-list=i386-softmmu,x86_64-softmmu --enable-spice --enable-gtk --enable-sdl --audio-drv-list=oss,alsa,sdl,pa --python=$(command -v python3)
+	if [ $? != 0 ]; then
+		echo -e "${RED}编译失败${RES}"
+		CONFIRM
+		ABOUT_UTQEMU
+	fi
+	make -j8 && make install
+	if [ -e /usr/local/bin/qemu-system-i386 ]; then
+		echo -e "${YELLOW}已安装${RES}"
+		cd && rm -rf $VERSION
+	fi
+	unset VERSION
+ ;;
+	*) ;;
+	esac
 	QEMU_SYSTEM	
 }
+###################
 ABOUT_VIRTIO(){
 	clear
 	printf "${YELLOW}关于virtio驱动${RES}
@@ -211,7 +282,8 @@ QEMU_VERSION(){
                 SYS=ANDROID
 	elif [ ! $(command -v qemu-system-x86_64) ]; then
 		echo ""
-        elif [[ $(qemu-system-x86_64 --version) =~ :[5-9] ]] ; then
+	elif [[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = [5-9] ]]; then
+#        elif [[ $(qemu-system-x86_64 --version) =~ :[5-9] ]] ; then
 		SYS=QEMU_ADV
 	else
 		SYS=QEMU_PRE
@@ -263,6 +335,7 @@ LOGIN() {
 	echo $UPDATE >>$DEBIAN-qemu/root/.utqemu_
 	elif ! grep -q $UPDATE "$DEBIAN-qemu/root/.utqemu_" ; then
 	echo -e "\n${GREEN}检测到脚本有更新，更新日期$UPDATE${RES}"
+	INFO
 	read -r -p "1)更新 0)忽略并不再提示此版本 " input
 	case $input in
 		1|"") rm $DEBIAN-qemu/root/utqemu.sh 2>/dev/null
@@ -342,7 +415,6 @@ nameserver 223.6.6.6" >$sys_name/etc/resolv.conf
 echo "${US_URL}/ bullseye ${DEB}
 ${US_URL}/ bullseye-updates ${DEB}
 ${US_URL}/ bullseye-backports ${DEB}
-#${US_URL}-security/ bullseye/updates ${DEB}
 ${US_URL}-security bullseye-security ${DEB}" >$sys_name/etc/apt/sources.list
 
 			;;
@@ -555,7 +627,7 @@ echo -e "\n1) 创建空磁盘(目前支持qcow2,vmdk)
 	esac
 	sleep 2
 	exit 1 ;;
-	4) if ! grep -E -q 'buster|bullseye/sid' "/etc/os-release"; then
+	4) if ! grep -E -q 'buster|bullseye' "/etc/os-release"; then
 	echo -e "\n${RED}只支持bullseye与buster${RES}\n"
 	sleep 2
 	QEMU_ETC
@@ -572,7 +644,6 @@ ${US_URL}-security bullseye-security ${DEB}" >/etc/apt/sources.list
 echo "${US_URL} stable ${DEB}
 ${US_URL} stable-updates ${DEB}" >/etc/apt/sources.list
 		fi
-		sudo_
 	       	$sudo apt update ;;
 		2) 
 		if grep -q 'bullseye/sid' /etc/os-release ;then
@@ -586,7 +657,6 @@ ${BF_URL} buster-updates ${DEB}
 ${BF_URL} buster-backports ${DEB}
 ${BF_URL}-security buster/updates ${DEB}" >/etc/apt/sources.list
 	fi
-	sudo_
        	$sudo apt update ;;
 		9) QEMU_SYSTEM ;;
 		0) exit 1 ;;
@@ -610,7 +680,14 @@ ${BF_URL}-security buster/updates ${DEB}" >/etc/apt/sources.list
 	case $input in
 	1) echo -e "\n${YELLOW}检测最新版本${RES}"
 	VERSION=`curl https://f-droid.org/packages/com.termux/ | grep apk | sed -n 2p | cut -d '_' -f 2 | cut -d '"' -f 1`
+	if [ ! -z "$VERSION" ]; then
 	echo -e "\n下载地址\n${GREEN}https://mirrors.tuna.tsinghua.edu.cn/fdroid/repo/com.termux_$VERSION${RES}\n"
+	else 
+	echo -e "${RED}获取错误，请重试${RES}"
+	sleep 2
+	unset VERSION
+	QEMU_ETC
+	fi
 	read -r -p "1)下载 9)返回 " input
 	case $input in
 		1) rm termux.apk 2>/dev/null
@@ -716,26 +793,112 @@ PA() {
 	if [ ! -e "${DIRECT}/xinhao/share/" ]; then
 		mkdir -p ${DIRECT}/xinhao/share
 	fi
+	if [ ! -d "${HOME}/share" ]; then
+		mkdir ${HOME}/share
+	chmod 755 ${HOME}/share
+	fi
 	if [ ! -e "${DIRECT}${STORAGE}" ]; then
 		echo -e "${RED}创建目录失败${RES}"
 	else
-		echo -e "${GREEN}手机根目录下已创建/xinhao/windows文件夹，请把系统镜像，分驱镜像，光盘放进这个目录里\n\n共享目录是/xinhao/share(目录内总文件大小不能超过500m)\n${RES}"
+	uname -a | grep 'Android' -q
+	if [ $? == 0 ]; then
+		echo -e "${GREEN}手机根目录下已创建/xinhao/windows文件夹，请把系统镜像，分驱镜像，光盘放进这个目录里\n\n共享目录是/xinhao/share(目录内总文件大小不能超过500m)${RES}\n"
+	else
+	case $ARCH in
+	computer) echo -e "${GREEN}主目录下已创建/xinhao/windows文件夹，请把系统镜像，分驱镜像，光盘放进这个目录里\n\n共享目录是/xinhao/share(目录内总文件大小不能超过500m)\n本地共享目录是本系统主目录下的share(容量不受限制，可随意修改)${RES}" ;;
+	*) 
+	if [ $(command -v smbpasswd) ]; then
+		echo -e "${YELLOW}请设置模拟系统访问本地共享目录的密码(输入过程不会显示)，用户名为本用户$(whoami)${RES}"
+		smbpasswd -a $(whoami)
+	fi
+	mkdir /etc/samba 2>/dev/null
+	if [ -f /etc/samba/smb.conf ]; then
+	cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+	fi
+	cat >/etc/samba/smb.conf<<-'eof'
+[share]
+path = ${HOME}/share
+available = yes
+browseable = yes
+public = yes
+writeable = yes
+guest ok = yes
+eof
+	echo -e "${GREEN}手机目录下已创建/xinhao/windows文件夹，请把系统镜像，分驱镜像，光盘放进这个目录里\n\n共享目录是/xinhao/share(目录内总文件大小不能超过500m)\n本地共享目录是本系统主目录下的share(容量不受限制，可随意修改)${RES}" ;;
+	esac
+	fi
 	fi
 }
 ##################
+MOVE_IN() {
+	unset FILE_NAME
+	echo -e "\n已为你列出${DIRECT}${STORAGE}目录下的文件"
+	ls ${DIRECT}${STORAGE}
+	echo -n -e "${RES}\n请输入要拷贝的${YELLOW}文件名${RES}全名，请输入: "
+	read FILE_NAME
+	if [ -z $FILE_NAME ]; then
+	echo -e "\n${RED}无此文件${RES}"
+	sleep 1
+		QEMU_SYSTEM
+	elif [ ! -e ${DIRECT}${STORAGE}$FILE_NAME ]; then
+	echo -e "\n${RED}无此文件${RES}"
+	sleep 1
+	QEMU_SYSTEM
+	fi
+	cp -v ${DIRECT}${STORAGE}$FILE_NAME ${HOME}/share -r
+	echo -e "${YELLOW}done..${RES}"
+	unset FILE_NAME
+	sleep 2
+	QEMU_SYSTEM
+}
+
+MOVE_OUT() {
+	unset FILE_NAME
+	echo -e "\n已为你列出本地共享目录下的文件"
+	ls ${HOME}/share
+	echo -n -e "${RES}\n请输入要拷贝的${YELLOW}文件名${RES}全名，请输入: "
+	read FILE_NAME
+	if [ -z $FILE_NAME ]; then
+	echo -e "\n${RED}无此文件${RES}"
+	sleep 1
+	QEMU_SYSTEM
+	elif [ ! -e "${HOME}/share/$FILE_NAME" ]; then
+	echo -e "\n${RED}无此文件${RES}"
+	sleep 1
+	QEMU_SYSTEM
+	fi
+	cp -v ${HOME}/share/$FILE_NAME ${DIRECT}${STORAGE} -r
+	echo -e "${YELLOW}done..${RES}"
+	unset FILE_NAME
+	sleep 2
+	QEMU_SYSTEM
+}
+
+
+##################
 QEMU_SYSTEM() {
 	if [ ! $(command -v curl) ]; then
-		sudo_
+		$sudo apt update
 		$sudo apt install curl -y
 	fi
 	unset hda_name display hdb_name iso_name iso1_name SOUND_MODEL VGA_MODEL CPU_MODEL NET_MODEL SMP URL script_name QEMU_MODE
 	QEMU_VERSION
 	NOTE
 echo -e "
-1)  安装qemu-system-x86_64，并联动更新模拟器所需应用\n\e[33m(由于qemu的依赖问题，安装过程可能会失败，请尝试重新安装)${RES}
-2)  创建windows镜像目录
-3)  启动qemu-system-x86_64模拟器
-4)  让termux成为网页服务器\n(使模拟系统可以通过浏览器访问本机内容)
+1)  安装qemu-system-x86_64，并联动更新模拟器所需应用\n\e[33m(由于qemu的依赖问题，安装过程可能会失败，请尝试重新安装)${RES}"
+case $ARCH in
+	computer) echo -e "2)  创建windows镜像目录" ;;
+	*)
+	uname -a | grep 'Android' -q
+	if [ $? == 0 ]; then
+	echo -e "2)  创建windows镜像目录"
+else
+	echo -e "2)  创建windows镜像目录及本地共享文件目录share拷贝"
+	fi ;;
+esac
+echo -e "3)  启动qemu-system-x86_64模拟器
+4)  让termux成为网页服务器
+    (使模拟系统可以通过浏览器访问本机内容)
 5)  virtio驱动相关"
 	case $SYS in
 	ANDROID) ;;
@@ -744,7 +907,7 @@ echo -e "
 echo -e "7)  查看日志
 8)  更新内容
 9)  关于utqemu
-10) 在线termux-toolx脚本安装体验linux系统(debian)
+10) 在线termux-toolx脚本体验维护linux系统(debian)
 0)  退出\n"
 	read -r -p "请选择: " input
 	case $input in
@@ -759,41 +922,50 @@ echo -e "7)  查看日志
 	apt --fix-broken install -y && apt install qemu-system-x86-64-headless qemu-system-i386-headless curl -y
 	fi
 	else
-       	$sudo apt update -y && $sudo apt install qemu-system-x86 xserver-xorg x11-utils pulseaudio curl -y
+	sudo_
+	if ! grep -q https /etc/apt/sources.list; then
+	$sudo apt install apt-transport-https ca-certificates -y && sed -i "s/http/https/g" /etc/apt/sources.list && $sudo apt update
+	fi
+       	$sudo apt install qemu-system-x86 xserver-xorg x11-utils pulseaudio curl samba -y
 	if [ ! $(command -v qemu-system-x86) ]; then
 	echo -e "\n检测安装失败，重新安装\n"
 	sleep 1
-	$sudo apt install qemu-system-x86 xserver-xorg x11-utils pulseaudio curl -y
+	$sudo apt install qemu-system-x86 xserver-xorg x11-utils pulseaudio curl samba -y
 	fi
-	echo -e "${YELLOW}创建镜像目录${RES}"
-	sleep 1
 	PA
 	echo -e "\n${GREEN}已完成安装，如无法正常使用，请重新执行此操作${RES}"
-#apt install samba
 	fi
+	CONFIRM
         QEMU_SYSTEM
         ;;
 	2)
-: <<\eof
-	if [ -e "/root/sd" ]; then
-	ln  -s /root/sd /sdcard
-	fi
-	echo -e "创建windows镜像目录及共享目录\n"
-        if [ ! -e "${DIRECT}${STORAGE}" ]; then
-                mkdir -p ${DIRECT}${STORAGE}
-        fi
-        if [ ! -e "${DIRECT}/xinhao/share/" ]; then
-                mkdir -p ${DIRECT}/xinhao/share
-        fi
-        if [ ! -e "${DIRECT}${STORAGE}" ]; then        
-	echo -e "${RED}创建目录失败${RES}"
-        else
-	echo -e "${GREEN}手机根目录下已创建/xinhao/windows文件夹，请把系统镜像，分驱镜像，光盘放进这个目录里\n\n共享目录是/xinhao/share(目录内总文件大小不能超过500m)\n${RES}"
-        fi
-eof
+	case $ARCH in
+	computer) PA
+		CONFIRM
+		QEMU_SYSTEM ;;
+	*)
+	uname -a | grep 'Android' -q
+	if [ $? == 0 ]; then
 	PA
         CONFIRM
         QEMU_SYSTEM
+	else
+	echo -e "\n1) 创建镜像目录
+2) 拷贝${DIRECT}${STORAGE}文件进本地共享目录share
+3) 拷贝本地共享目录share里的文件到手机存储目录${DIRECT}${STORAGE}"
+	read -r -p "请选择: " input
+	case $input in
+	1) PA
+	CONFIRM ;;
+	2) MOVE_IN ;;
+	3) MOVE_OUT ;;
+	*) INVALID_INPUT
+		CONFIRM ;;
+	esac
+	QEMU_SYSTEM
+	fi ;;
+	esac
+
         ;;
 	3) START_QEMU ;;
 	4) WEB_SERVER ;;
@@ -840,6 +1012,9 @@ START_QEMU() {
 	sleep 2
 	QEMU_SYSTEM
 	fi
+	if [ ! -d ${HOME}/share ]; then
+		mkdir ${HOME}/share
+	fi
 	if [ ! -d ${DIRECT}/xinhao ]; then
 		echo -e "\n${RED}未检测到你的镜像目录，请确认已赋予手机存储权限并创建镜像目录${RES}"
 		CONFIRM
@@ -868,9 +1043,11 @@ START_QEMU() {
 	printf "%s\n${BLUE}启动模拟器\n${GREEN}请打开aspice 127.0.0.1 端口 5900"
 	else
 	grep '\-cpu' $(which $script_name)
-	printf "%s\n${GREEN}启动模拟器"
+	printf "%s\n${GREEN}启动模拟器\n"
 	fi
-	printf "%s\n${YELLOW}如启动失败请ctrl+c退回shell，并查阅日志${RES}"
+	echo ""
+	echo '如共享目录成功加载，请在浏览器地址输 \\10.0.2.4'
+	printf "%s${YELLOW}如启动失败请ctrl+c退回shell，并查阅日志${RES}"
 	sleep 1
 	$script_name >/dev/null 2>>${HOME}/.utqemu_log
 	if [ $? == 1 ]; then
@@ -904,7 +1081,8 @@ esac
 		*) display=spice ;;
 	esac
 	;;
-		4) echo -e "\n${BLUE}窗口输出${RES}"
+		4) echo -e "\n${BLUE}窗口输出\n${GREEN}鼠标锁定 ctrl+alt+g\n全屏     ctrl+alt+f${RES}"
+			CONFIRM
 			display=gtk_ ;;
 		5) display=wlan_vnc
 	echo -e "\n${GREEN}为减少效率的影响，暂不支持声音输出${RES}\n因部分机型支持双wifi或wifi热点同开，导致出现两段ip，请确保使用的${RED}ip唯一${RES}\n输出显示的设备vnc地址为$IP:0${RES}"
@@ -913,11 +1091,11 @@ esac
 			QEMU_PRE) INVALID_INPUT
 			QEMU_SYSTEM ;; 
 		*) printf "\n%b\n" "${GREEN}本选项使用常用配置参数${RES}"
-		printf "%-7s %-7s %s\n" 系统 winxp win7 声卡 ac97 hda 显卡 cirrus VGA 网卡 e1000 e1000
+		printf "%-7s %-7s %-7s %s\n" 系统 winxp win7 virtio驱动模式 声卡 ac97 hda hda 显卡 cirrus VGA qxl 网卡 e1000 e1000 virtio 接口 ide sata virtio
 		printf "%-7s %s %s\n\n" 视频 vnc 127.0.0.1:0
 	mem=$(free -m | awk '{print $2/4}' | sed -n 2p | cut -d '.' -f 1)
 	echo -e "${YELLOW}请选择拟模拟的系统${RES}"
-	read -r -p "1)winxp 2)win7 9)返回 " input
+	read -r -p "1)winxp 2)win7 3)virtio驱动模式 9)返回 " input
 	case $input in
 	1) echo -e "\nqemu5.0以上版本模拟winxp开机比较慢\n"
 	LIST
@@ -927,14 +1105,16 @@ esac
 	else
 	mem_=512
 	fi
-	MA=pc-i440fx-3.1 VIDEO="-device cirrus-vga" DRIVE="-drive file=${DIRECT}${STORAGE}$hda_name,if=ide,index=0,media=disk,aio=threads,cache=writeback" NET="-device e1000,netdev=user0 -netdev user,id=user0" AUDIO="-device AC97" SHARE="-drive file=fat:rw:${DIRECT}/xinhao/share,if=ide,index=3,media=disk,aio=threads,cache=writeback";;
+	MA=pc-i440fx-3.1 VIDEO="-device cirrus-vga" DRIVE="-drive file=${DIRECT}${STORAGE}$hda_name,if=ide,index=0,media=disk,aio=threads,cache=writeback" NET="-device e1000,netdev=user0 -netdev user,id=user0,,smb=${HOME}/share" AUDIO="-device AC97" SHARE="-drive file=fat:rw:${DIRECT}/xinhao/share,if=ide,index=3,media=disk,aio=threads,cache=writeback";;
 	2) 	LIST
 	HDA_READ
-	MA=pc VIDEO="-device VGA" DRIVE="-drive id=disk,file=${DIRECT}${STORAGE}$hda_name,if=none -device ahci,id=ahci -device ide-hd,drive=disk,bus=ahci.0" NET="-device e1000,netdev=user0 -netdev user,id=user0" AUDIO="-device intel-hda -device hda-duplex" SHARE="-usb -drive if=none,format=raw,id=disk1,file=fat:rw:${DIRECT}/xinhao/share/ -device usb-storage,drive=disk1"
+	MA=pc VIDEO="-device VGA" DRIVE="-drive id=disk,file=${DIRECT}${STORAGE}$hda_name,if=none -device ahci,id=ahci -device ide-hd,drive=disk,bus=ahci.0" NET="-device e1000,netdev=user0 -netdev user,id=user0,,smb=${HOME}/share" AUDIO="-device intel-hda -device hda-duplex" SHARE="-usb -drive if=none,format=raw,id=disk1,file=fat:rw:${DIRECT}/xinhao/share/ -device usb-storage,drive=disk1"
 ;;
-	3) 	LIST
+	3) echo -e "${GREEN}此选项参数是hda声卡，virtio网卡，qxl显卡，virtio磁盘接口(注意，模拟系统需已装驱动，否则启动不成功)${RES}"
+		sleep 1
+		LIST
 		HDA_READ
-	MA=q35 VIDEO="-device qxl-vga" DRIVE="-drive file=${DIRECT}${STORAGE}$hda_name,index=0,media=disk,if=virtio,cache=none" NET="-device virtio-net-pci,netdev=user0 -netdev user,id=user0" AUDIO="-device intel-hda -device hda-duplex" SHARE="-drive file=fat:rw:${DIRECT}/xinhao/share,index=3,media=disk,if=virtio"
+	MA=q35 VIDEO="-device qxl-vga" DRIVE="-drive file=${DIRECT}${STORAGE}$hda_name,index=0,media=disk,if=virtio,cache=none" NET="-device virtio-net-pci,netdev=user0 -netdev user,id=user0,smb=${HOME}/share" AUDIO="-device intel-hda -device hda-duplex" SHARE="-drive file=fat:rw:${DIRECT}/xinhao/share,index=3,media=disk,if=virtio"
 	;;
 	9) QEMU_SYSTEM ;;
 	*) INVALID_INPUT
@@ -943,18 +1123,20 @@ esac
 killall -9 qemu-system-x86 2>/dev/null
 killall -9 qemu-system-i38 2>/dev/null
 export PULSE_SERVER=tcp:127.0.0.1:4713
-START="qemu-system-x86_64 -machine $MA,hmat=off,usb=off,vmport=off,dump-guest-core=off,kernel-irqchip=off,mem-merge=off --accel tcg,thread=multi -m $mem_ -nodefaults -no-user-config -msg timestamp=off -cpu max,-hle,-rtm -smp 2 $VIDEO $NET -audiodev alsa,id=alsa1,in.format=s16,in.channels=2,in.frequency=44100,out.buffer-length=5124,out.period-length=1024 $AUDIO,audiodev=alsa1 -rtc base=localtime -boot order=cd,menu=on,strict=off -usb -device usb-tablet $DRIVE $SHARE -display vnc=127.0.0.1:0,lossy=on,non-adaptive=off"
+START="qemu-system-x86_64 -machine $MA,hmat=off,usb=off,vmport=off,dump-guest-core=off,mem-merge=off --accel tcg,thread=multi -m $mem_ -nodefaults -no-user-config -msg timestamp=off -cpu max,-hle,-rtm -smp 2 $VIDEO $NET -audiodev alsa,id=alsa1,in.format=s16,in.channels=2,in.frequency=44100,out.buffer-length=5124,out.period-length=1024 $AUDIO,audiodev=alsa1 -rtc base=localtime -boot order=cd,menu=on,strict=off -usb -device usb-tablet $DRIVE $SHARE -display vnc=127.0.0.1:0,lossy=on,non-adaptive=off"
 #-display vnc=127.0.0.1:0,key-delay-ms=0,connections=15000"
 
 cat <<-EOF
 $START
 EOF
 	printf "%s\n${BLUE}启动模拟器\n${GREEN}请打开vncviewer 127.0.0.1:0"
+	echo ""
+	echo '如共享目录成功加载，请在浏览器地址输 \\10.0.2.4'
 	printf "%s\n${YELLOW}如启动失败请ctrl+c退回shell，并查阅日志${RES}\n"
 	$START >/dev/null 2>>${HOME}/.utqemu_log
 	if [ $? == 1 ]; then
 	FAIL
-	printf "%s${RED}启动意外中止，请查看日志d(ŐдŐ๑)${RES}\n"
+	printf "%s${RED}启动意外中止，请查看日志${YELLOW}d(ŐдŐ๑)${RES}\n"
 	fi
 	exit 1 ;;
 	esac
@@ -1006,9 +1188,10 @@ EOF
 #mem-merge=on|off启用或禁用内存合并支持。主机支持时，此功能可在VM实例之间重复删除相同的内存页面（默认情况下启用）。
 #aes-key-wrap=on|off在s390-ccw主机上 启用或禁用AES密钥包装支持。此功能控制是否将创建AES包装密钥以允许执行AES加密功能。默认为开。
 #dea-key-wrap=on|off在s390-ccw主机上 启用或禁用DEA密钥包装支持。此功能是否DEA控制，默认开
-	MA="usb=off,vmport=off,dump-guest-core=off,kernel-irqchip=off,mem-merge=off"
+	MA="usb=off,vmport=off,dump-guest-core=off,mem-merge=off"
 #enforce-config-section=on
 	TCG="tcg,thread=multi"
+
 	read -r -p "1)pc 2)q35 " input
 	case $input in
 		1|"")
@@ -1018,18 +1201,18 @@ EOF
 		QEMU_PRE) set -- "${@}" "-machine" "pc" "--accel" "$TCG" ;;
 		*)
 	echo -e "\n请选择${YELLOW}加速${RES}方式(理论上差不多，但貌似指定tcg更流畅点，请自行体验)"
-	read -r -p "1)tcg 2)自动检测 " input
+	read -r -p "1)tcg 2)自动检测 3)锁定tcg缓存 " input
 	case $input in
 		1)
 	set -- "${@}" "-machine" "pc,$MA" "--accel" "$TCG" ;;
-		3) if [[ $(qemu-system-x86_64 --version) =~ :[4-5] ]] ; then
-	echo -e "${RED}你选了隐藏选项，注意！设置tcg的缓存可以提高模拟效率，以m为单位，跟手机闪存ram也有关系(调高了会出现后台杀)，请谨慎设置${RES}"
+		3) if [[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = [4-9] ]]; then
+	echo -e "${RED}注意！设置tcg的缓存可以提高模拟效率，以m为单位，跟手机闪存ram也有关系(调高了会出现后台杀)，请谨慎设置${RES}"
 	echo -n -e "请输入拟缓存的数值(以m为单位，例如1800)，回车为默认值，请输入: "
 	read TB
 	if [ -n "$TB" ]; then
 		set -- "${@}" "-machine" "pc,$MA" "--accel" "$TCG,tb-size=$TB"
 	else
-		set -- "${@}" "-machine" "pc,$MA" "--accel" "$TCG"
+		set -- "${@}" "-machine" "pc,$MA" "--accel" "$TCG,tb-size=$mem_"
 	fi
 	else
 		set -- "${@}" "-machine" "pc,$MA" "--accel" "$TCG"
@@ -1047,17 +1230,17 @@ EOF
 		QEMU_PRE) set -- "${@}" "-machine" "q35" "--accel" "$TCG" ;;
 		*)
 		echo -e "\n请选择${YELLOW}加速${RES}方式(理论上差不多，但貌似指定tcg更流畅点，请自行体验)"
-	read -r -p "1)tcg 2)自动检测 " input
+	read -r -p "1)tcg 2)自动检测 3)锁定tcg缓存 " input
 	case $input in
 		1) set -- "${@}" "-machine" "q35,$MA" "--accel" "$TCG" ;;
-		3) if [[ $(qemu-system-x86_64 --version) =~ :[4-5] ]] ; then
-	echo -e "${RED}你选了隐藏选项，注意！设置tcg的缓存可以提高模拟效率，以m为单位，跟手机闪存ram也有关系(调高了会出现后台杀)，请谨慎设置${RES}"
+		3) if [[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = [4-9] ]]; then
+	echo -e "${RED}注意！设置tcg的缓存可以提高模拟效率，以m为单位，跟手机闪存ram也有关系(调高了会出现后台杀)，请谨慎设置${RES}"
 	echo -n -e "请输入拟缓存的数值(以m为单位，例如1800)，回车为默认值，请输入: "
 	read TB
 	if [ -n "$TB" ]; then
 		set -- "${@}" "-machine" "q35,$MA" "--accel" "$TCG,tb-size=$TB"
 	else
-		set -- "${@}" "-machine" "q35,$MA" "--accel" "$TCG"
+		set -- "${@}" "-machine" "q35,$MA" "--accel" "$TCG,tb-size=$mem_"
 	fi
 	else                                                            set -- "${@}" "-machine" "pc,$MA" "--accel" "$TCG"
 	fi ;;
@@ -1095,7 +1278,6 @@ EOF
 	esac
 	echo -n -e "请输入${YELLOW}光盘${RES}全名,不加载请直接回车（例如DVD.iso）: "
 	read iso_name
-#		set -- "${@}" "-net" "nic" "-net" "user,smb=${DIRECT}/xinhao/"
 #内存
 	echo -e -n "请输入模拟的${YELLOW}内存${RES}大小(建议本机的1/4)，以m为单位（1g=1024m，例如输512），自动分配请回车: "
         read mem
@@ -1248,7 +1430,7 @@ QEMU_PRE) read -r -p "1)n270 2)athlon 3)pentium2 4)core2duo 5)Skylake-Server-IBR
 #PROOT
 #####################
 #<5.0
-	qemu-system-x86_64 --version | grep ':[5-9]' -q || uname -a | grep 'Android' -q
+	[[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = [5-9] ]] || uname -a | grep 'Android' -q
 	if [ $? != 0 ]; then
 	echo -e "请选择${YELLOW}显卡${RES}"
 	read -r -p "1)cirrus 2)vmware 3)std 4)virtio 5)qxl " input
@@ -1261,7 +1443,9 @@ QEMU_PRE) read -r -p "1)n270 2)athlon 3)pentium2 4)core2duo 5)Skylake-Server-IBR
 	esac
 	set -- "${@}" "-vga" "${VGA_MODEL}"
 #内存锁，默认打开
+	if [[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = [1-3] ]]; then
 	set -- "${@}" "-realtime" "mlock=off"
+	fi
 
 	echo -e "请选择${YELLOW}网卡${RES}"
 	read -r -p "1)e1000 2)rtl8139 3)virtio 0)不加载 " input
@@ -1270,12 +1454,10 @@ QEMU_PRE) read -r -p "1)n270 2)athlon 3)pentium2 4)core2duo 5)Skylake-Server-IBR
 		3) NET_MODEL="nic,model=virtio" ;;
 		0) ;;
 		*) NET_MODEL="nic,model=e1000" ;;
-#set -- "${@}" "-net" "nic"
-#set -- "${@}" "-net" "user,smb=${DIRECT}/xinhao"
 	esac
 	if [ -n "${NET_MODEL}" ]; then
 	set -- "${@}" "-net" "${NET_MODEL}"
-	set -- "${@}" "-net" "user"
+	set -- "${@}" "-net" "user,smb=${HOME}/share"
 	else
 	set -- "${@}" "-net" "none"
 	fi
@@ -1283,6 +1465,24 @@ QEMU_PRE) read -r -p "1)n270 2)athlon 3)pentium2 4)core2duo 5)Skylake-Server-IBR
 		wlan_vnc) ;;
 		*)
 		echo -e "请选择${YELLOW}声卡${RES}(不加载可提升模拟效率)"
+	if [[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = 4 ]]; then
+	read -r -p "1)ac97 2)sb16 3)es1370 4)hda 5)ac97(修改参数，不适合spice) 6)hda(修改参数，不适合spice) 0)不加载 " input
+	case $input in
+		1|"") SOUND_MODEL=ac97 ;;
+		2) SOUND_MODEL=sb16 ;;
+		0) ;;
+                3) SOUND_MODEL=es1370 ;;
+		4) SOUND_MODEL=hda ;;
+		5) set -- "${@}" "-audiodev" "alsa,id=alsa1,in.format=s16,in.channels=2,in.frequency=44100,out.buffer-length=5124,out.period-length=1024"
+		set -- "${@}" "-device" "AC97,audiodev=alsa1" ;;
+		6) set -- "${@}" "-audiodev" "alsa,id=alsa1,in.format=s16,in.channels=2,in.frequency=44100,out.buffer-length=5124,out.period-length=1024"
+		set -- "${@}" "-device" "intel-hda" "-device" "hda-duplex,audiodev=alsa1" ;;
+		*) SOUND_MODEL=all ;;
+	esac
+
+else
+
+
 	read -r -p "1)ac97 2)sb16 3)es1370 4)hda 0)不加载 " input
 	case $input in
                 1|"") SOUND_MODEL=ac97 ;;
@@ -1292,6 +1492,7 @@ QEMU_PRE) read -r -p "1)n270 2)athlon 3)pentium2 4)core2duo 5)Skylake-Server-IBR
 		4) SOUND_MODEL=hda ;;
 		*) SOUND_MODEL=all ;;
 	esac
+	fi
 	if [ -n "${SOUND_MODEL}" ]; then
 	set -- "${@}" "-soundhw" "${SOUND_MODEL}"
 	fi ;;
@@ -1360,7 +1561,7 @@ EOF
 	esac
 	if [ -n "${NET_MODEL}" ]; then
 		set -- "${@}" "-device" "${NET_MODEL}"
-		set -- "${@}" "-netdev" "user,id=user0"
+		set -- "${@}" "-netdev" "user,id=user0,smb=${HOME}/share"
 	else
 		set -- "${@}" "-net" "none"
 	fi
@@ -1368,7 +1569,7 @@ EOF
 		wlan_vnc) ;;
 		*)
 	echo -e "请选择${YELLOW}声卡${RES}(不加载可提升模拟效率)"
-	read -r -p "1)es1370 2)sb16 3)hda 4)ac97(推荐) 5)ac97(修改参数，不适合spice) 6)hda(修改参数，不适合spice) 0)不加载 " input
+	read -r -p "1)es1370 2)sb16 3)hda 4)ac97(推荐) 5)ac97(修改参数，不适合spice) 6)hda(修改参数，不适合spice) 7)usb-audio 0)不加载 " input
 	case $input in
 		1) set -- "${@}" "-device" "ES1370" ;;
 		2) set -- "${@}" "-device" "sb16" ;;
@@ -1387,6 +1588,7 @@ EOF
 		set -- "${@}" "-device" "AC97,audiodev=alsa1" ;;
 		6) set -- "${@}" "-audiodev" "alsa,id=alsa1,in.format=s16,in.channels=2,in.frequency=44100,out.buffer-length=5124,out.period-length=1024"
 		set -- "${@}" "-device" "intel-hda" "-device" "hda-duplex,audiodev=alsa1" ;;
+		7) set -- "${@}" "-usb" "-device" "usb-audio" ;;
 		*) set -- "${@}" "-device" "AC97" ;;
 	esac	;;
 esac
@@ -1405,6 +1607,7 @@ esac
 	1|"") SHARE=true ;;
 	*) ;;
 	esac
+
 #开全内存balloon功能，俗称内存气球
 	echo -e "是否开${YELLOW}全内存balloon${RES}功能(需安装virtio驱动)"
 	read -r -p "1)开启 2)不开启 " input
@@ -1426,8 +1629,10 @@ esac
 	if [ -n "$UEFI" ]; then
 		set -- "${@}" "-pflash" "${DIRECT}${STORAGE}$UEFI"
 	else
-		set -- "${@}" "-pflash" "/usr/share/OVMF/OVMF_CODE.fd"
-		set -- "${@}" "-pflash" "/usr/share/OVMF/OVMF_VARS.fd"
+#		set -- "${@}" "-pflash" "/usr/share/OVMF/OVMF_CODE.fd"
+#		set -- "${@}" "-pflash" "/usr/share/OVMF/OVMF_VARS.fd"
+		set -- "${@}" "-drive" "if=pflash,format=raw,file=/usr/share/OVMF/OVMF_CODE.fd,readonly=on"
+		set -- "${@}" "-drive" "if=pflash,format=raw,file=/usr/share/OVMF/OVMF_VARS.fd,readonly=on"
 	fi ;;
 	*) ;;
 	esac ;;
@@ -1633,7 +1838,8 @@ EOF
 		vnc) 
 		set -- "${@}" "-display" "vnc=127.0.0.1:0,lossy=on,non-adaptive=off"
 		export PULSE_SERVER=tcp:127.0.0.1:4713 ;;
-		xsdl) export DISPLAY=127.0.0.1:0
+		xsdl)
+			export DISPLAY=127.0.0.1:0
 			export PULSE_SERVER=tcp:127.0.0.1:4713 ;;
 		spice) set -- "${@}" "-spice" "port=5900,addr=127.0.0.1,disable-ticketing,seamless-migration=off"
 			export PULSE_SERVER=tcp:127.0.0.1:4713 ;;
@@ -1732,6 +1938,8 @@ echo -e "2) 为磁盘接口添加virtio驱动（维基指导模式，需另外�
 
 	read -r -p "请选择: " input
 	case $input in
+		1) read -r -p "1)下载virtio驱动 2)下载virtio显卡驱动 9)返回 " input
+			case $input in
 		1) echo -e "${YELLOW}即将下载，下载速度可能比较慢，你也可以复制下载链接通过其他方式下载${RES}\n\n正在检测下载地址..."
 	DATE=`date +"%Y"`
 	FED_CURL="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/"
@@ -1762,13 +1970,27 @@ echo -e "2) 为磁盘接口添加virtio驱动（维基指导模式，需另外�
 	fi
 	else
 	echo -e "\n${RED}错误，请重试${RES}"
-	sleep 2
+	sleep 2 
 	fi ;;
 	*) ;;
 	esac
 	unset VERSION
 	QEMU_SYSTEM
 	fi
+	;;
+2)
+	if [ ! -f ${DIRECT}${STORAGE}virtio-gpu-wddm-dod.iso ]; then
+	echo -e "\n${GREEN}正在下载virtio显卡驱动盘${RES}"
+	curl -O https://cdn.jsdelivr.net/gh/chungyuhoi/script/gpu.tar.gz
+        tar zxvf gpu.tar.gz
+	mv virtio-gpu-wddm-dod.iso ${DIRECT}${STORAGE}
+	rm gpu.tar.gz
+	echo -e "\n已下载virtio显卡至${DIRECT}${STORAGE}目录，名为virtio-gpu-wddm-dod.iso"
+	fi
+	sleep 2 ;;
+	*) ;;
+	esac
+	QEMU_SYSTEM
                 ;;
 
 	2) case $SYS in
@@ -1854,6 +2076,7 @@ LOGIN_() {
 	4) 换源(如果无法安装或登录请尝试此操作)
 	5) 在线脚本安装体验linux系统(debian)
 	6) 在线脚本安装体验linux系统(ubuntu)
+	7) 下载新版termux
 
 	9) 设置打开termux(utermux)自动启动本脚本
 	0) 退出\n"
@@ -1885,6 +2108,21 @@ LOGIN_() {
 	4) SOURCE ;;
 	5) bash -c "$(curl https://cdn.jsdelivr.net/gh/chungyuhoi/script/bullseye.sh)" ;;
 	6) bash -c "$(curl https://cdn.jsdelivr.net/gh/chungyuhoi/script/focal.sh)" ;;
+	7) echo -e "\n${YELLOW}检测最新版本${RES}"
+        VERSION=`curl https://f-droid.org/packages/com.termux/ | grep apk | sed -n 2p | cut -d '_' -f 2 | cut -d '"' -f 1`
+        echo -e "\n下载地址\n${GREEN}https://mirrors.tuna.tsinghua.edu.cn/fdroid/repo/com.termux_$VERSION${RES}\n"
+        read -r -p "1)下载 9)返回 " input
+        case $input in
+                1) rm termux.apk 2>/dev/null
+        curl https://mirrors.tuna.tsinghua.edu.cn/fdroid/repo/com.termux_$VERSION -o termux.apk
+        mv -v termux.apk ${DIRECT}${STORAGE}
+        echo -e "\n已下载至${DIRECT}${STORAGE}目录"
+        sleep 2 ;;
+        *) ;;
+        esac
+        unset VERSION
+	clear
+	LOGIN_ ;;
 	9) read -r -p "1)开机启动脚本 2)取消开机启动脚本 " input
 	case $input in
 	1) curl https://cdn.jsdelivr.net/gh/chungyuhoi/script/utqemu.sh -o ${HOME}/utqemu.sh
@@ -1906,7 +2144,10 @@ ARCH_CHECK
 MEM
 QEMU_VERSION
 SYSTEM_CHECK
+uname -a | grep 'Android' -q
+if [ $? == 0 ]; then
 INFO
+fi
 LOGIN_
 }
 ####################
