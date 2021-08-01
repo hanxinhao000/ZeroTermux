@@ -116,6 +116,7 @@ public class ExtraKeysInfo {
         put("DEL", "⌦"); // U+2326 ⌦ ERASE TO THE RIGHT not well known but easy to understand
         put("DRAWER", "☰"); // U+2630 ☰ TRIGRAM FOR HEAVEN not well known but easy to understand
         put("KEYBOARD", "⌨"); // U+2328 ⌨ KEYBOARD not well known but easy to understand
+        put("PASTE", "⎘"); // U+2398
     }};
 
     static final CharDisplayMap lessKnownCharactersDisplay = new CharDisplayMap() {{

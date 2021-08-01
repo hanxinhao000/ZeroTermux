@@ -23,6 +23,15 @@ public class TermuxTerminalSessionClientBase implements TerminalSessionClient {
 
     @Override
     public void onClipboardText(TerminalSession session, String text) {
+
+    }
+
+    @Override
+    public void onCopyTextToClipboard(TerminalSession session, String text) {
+    }
+
+    @Override
+    public void onPasteTextFromClipboard(TerminalSession session) {
     }
 
     @Override

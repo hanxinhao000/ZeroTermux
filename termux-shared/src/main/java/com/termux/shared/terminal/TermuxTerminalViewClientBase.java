@@ -56,6 +56,10 @@ public class TermuxTerminalViewClientBase implements TerminalViewClient {
     public boolean readControlKey() {
         return false;
     }
+    @Override
+    public boolean isTerminalViewSelected() {
+        return true;
+    }
 
     @Override
     public boolean readAltKey() {

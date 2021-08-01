@@ -274,6 +274,16 @@ public final class TerminalSession extends TerminalOutput {
     }
 
     @Override
+    public void onCopyTextToClipboard(String text) {
+        mClient.onCopyTextToClipboard(this, text);
+    }
+
+    @Override
+    public void onPasteTextFromClipboard() {
+        mClient.onPasteTextFromClipboard(this);
+    }
+
+    @Override
     public void onBell() {
         mClient.onBell(this);
     }

@@ -46,7 +46,7 @@ public interface TerminalViewClient {
 
     boolean onLongPress(MotionEvent event);
 
-
+    boolean isTerminalViewSelected();
 
     boolean readControlKey();
 

@@ -15,6 +15,10 @@ public interface TerminalSessionClient {
 
     void onClipboardText(TerminalSession session, String text);
 
+    void onCopyTextToClipboard(TerminalSession session, String text);
+
+    void onPasteTextFromClipboard(TerminalSession session);
+
     void onBell(TerminalSession session);
 
     void onColorsChanged(TerminalSession session);
