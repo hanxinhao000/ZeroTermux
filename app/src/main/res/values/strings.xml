@@ -622,8 +622,14 @@
     <string name="远程控制下请先安装vim">远程控制下请先安装vim,否则程序不会创建sms.txt以及phone.txt</string>
     <string name="网络访问linux目录">网络linux目录</string>
     <string name="filebrowser已运行">filebrowser已运行,端口19951,账户:admin 密码:admin</string>
-    <string name="Win7模拟">Win7模拟</string>
     <string name="WinXp">Windows Xp</string>
+    <string name="Win7模拟">Win7模拟</string>
 
-    <string name="msg_add_termux_debug_info">Add termux debug info to report?</string>
+    <string name="msg_add_termux_debug_info">添加 termux 调试信息以报告？</string>
+    <!-- Termux API App Preferences -->
+    <string name="termux_api_preferences_title">&TERMUX_API_APP_NAME;</string>
+    <string name="termux_api_preferences_summary">偏好 &TERMUX_API_APP_NAME; 应用</string>
+    <!-- TermuxService -->
+    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME; 需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME; -> 先进的</string>
+
 </resources>

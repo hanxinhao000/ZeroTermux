@@ -626,4 +626,12 @@ Reset successfully</string>
     <string name="网络访问linux目录">Network DIR</string>
     <string name="filebrowser已运行">filebrowser is running, port 19951, account: admin password: admin</string>
     <string name="WinXp">Windows Xp</string>
+
+    <string name="msg_add_termux_debug_info">Add termux debug info to report?</string>
+    <!-- Termux API App Preferences -->
+    <string name="termux_api_preferences_title">&TERMUX_API_APP_NAME;</string>
+    <string name="termux_api_preferences_summary">Preferences for &TERMUX_API_APP_NAME; app</string>
+    <!-- TermuxService -->
+
+    <string name="Win7模拟">Win7 simulation</string>
 </resources>
