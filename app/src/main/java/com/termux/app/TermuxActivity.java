@@ -1055,6 +1055,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private TextView service_status;
     private TextView msg_tv;
     private TextView ip_status;
+    private TextView double_tishi;
     private TextView xue_hua_start;
     private FrameLayout xue_fragment;
 
@@ -1099,6 +1100,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         ip_status = findViewById(R.id.ip_status);
         zero_fun = findViewById(R.id.zero_fun);
         shiyan_fun = findViewById(R.id.shiyan_fun);
+        double_tishi = findViewById(R.id.double_tishi);
+
+        try{
+            double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         code_ll.setOnClickListener(this);
         rongqi.setOnClickListener(this);
@@ -2044,6 +2053,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     @Override
     public void doubleClicke() {
+
+
 
 
 

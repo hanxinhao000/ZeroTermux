@@ -634,4 +634,11 @@ Reset successfully</string>
     <!-- TermuxService -->
 
     <string name="Win7模拟">Win7 simulation</string>
+
+    <string name="选择方式">选择方式</string>
+    <string name="要获取最新版本">要获取最新版本，你需要在线下载，旧版本可以选择本地脚本</string>
+    <string name="获取线上">获取线上</string>
+    <string name="线上脚本">线上脚本</string>
+    <string name="本地脚本">本地脚本</string>
+    <string name="请双击命令窗口试试">ZeroTermux\n请双击命令窗口试试</string>
 </resources>
