@@ -1698,25 +1698,46 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             //qemu
             case 5:
                 getDrawer().closeDrawer(Gravity.LEFT);
-                LoadingDialog loadingDialog = new LoadingDialog(this);
-                loadingDialog.show();
 
 
+                SwitchDialog msgQemuLine = switchDialogShow(UUtils.getString(R.string.选择方式), UUtils.getString(R.string.要获取最新版本));
 
-
-                new Thread(new Runnable() {
+                msgQemuLine.show();
+                msgQemuLine.getOk().setText(UUtils.getString(R.string.线上脚本));
+                msgQemuLine.getOk().setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void run() {
-                        UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
-                        runOnUiThread(new Runnable() {
+                    public void onClick(View v) {
+                        msgQemuLine.dismiss();
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunLineQemu() + "\n");
+
+                    }
+                });
+                msgQemuLine.getCancel().setText(UUtils.getString(R.string.本地脚本));
+                msgQemuLine.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        msgQemuLine.dismiss();
+                        LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+                        loadingDialog.show();
+                        new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
-                                loadingDialog.dismiss();
+                                UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunQemuSh());
+                                        loadingDialog.dismiss();
+                                    }
+                                });
                             }
-                        });
+                        }).start();
+
                     }
-                }).start();
+                });
+                msgQemuLine.setCancelable(true);
+
+
 
 
                 break;
