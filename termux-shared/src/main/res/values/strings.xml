@@ -14,52 +14,6 @@
 <resources>
 
     <string name="msg_directory_absolute_path">%1$s Directory Absolute Path: \"%2$s\"</string>
-    <!-- FileUtils -->
-    <string name="error_executable_required">Executable required.</string>
-    <string name="error_null_or_empty_parameter">The %1$s is to \"%2$s\" null or empty.</string>
-    <string name="error_null_or_empty_regular_file_path">The regular file path is null or empty.</string>
-    <string name="error_null_or_empty_regular_file">The regular file is null or empty.</string>
-    <string name="error_null_or_empty_executable_file_path">The executable file path is null or empty.</string>
-    <string name="error_null_or_empty_executable_file">The executable file is null or empty.</string>
-    <string name="error_null_or_empty_directory_file_path">The directory file path is null or empty.</string>
-    <string name="error_null_or_empty_directory_file">The directory file is null or empty.</string>
-
-    <string name="error_file_not_found_at_path">The %1$s is not found at path \"%2$s\".</string>
-    <string name="error_no_regular_file_found">Regular file not found at %1$s path.</string>
-    <string name="error_not_a_regular_file">The %1$s at path \"%2$s\" is not a regular file.</string>
-    <string name="error_non_regular_file_found">Non-regular file found at %1$s path.</string>
-    <string name="error_non_directory_file_found">Non-directory file found at %1$s path.</string>
-    <string name="error_non_symlink_file_found">Non-symlink file found at %1$s path.</string>
-    <string name="error_file_not_an_allowed_file_type">The %1$s found at path \"%2$s\" is not one of allowed file types \"%3$s\".</string>
-
-    <string name="error_validate_file_existence_and_permissions_failed_with_exception">Validating file existence and permissions of %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-    <string name="error_validate_directory_existence_and_permissions_failed_with_exception">Validating directory existence and permissions of %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-
-    <string name="error_creating_file_failed">Creating %1$s at path \"%2$s\" failed.</string>
-    <string name="error_creating_file_failed_with_exception">Creating %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-
-    <string name="error_cannot_overwrite_a_non_symlink_file_type">Cannot overwrite %1$s while creating symlink at \"%2$s\" to \"%3$s\" since destination file type \"%4$s\" is not a symlink.</string>
-    <string name="error_creating_symlink_file_failed_with_exception">Creating %1$s at path \"%2$s\" to \"%3$s\" failed.\nException: %4$s</string>
-
-    <string name="error_copying_or_moving_file_failed_with_exception">%1$s from \"%2$s\" to \"%3$s\" failed.\nException: %4$s</string>
-    <string name="error_copying_or_moving_file_to_same_path">%1$s from \"%2$s\" to \"%3$s\" cannot be done since they point to the same path.</string>
-    <string name="error_cannot_overwrite_a_different_file_type">Cannot overwrite %1$s while %2$s it from \"%3$s\" to \"%4$s\" since destination file type \"%5$s\" is different from source file type \"%6$s\".</string>
-    <string name="error_cannot_move_directory_to_sub_directory_of_itself">Cannot move %1$s from \"%2$s\" to \"%3$s\" since destination is a subdirectory of the source.</string>
-
-    <string name="error_file_still_exists_after_deleting">The %1$s still exists after deleting it from \"%2$s\".</string>
-    <string name="error_deleting_file_failed">Deleting %1$s at path \"%2$s\" failed.</string>
-    <string name="error_deleting_file_failed_with_exception">Deleting %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-    <string name="error_clearing_directory_failed_with_exception">Clearing %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-
-    <string name="error_reading_string_to_file_failed_with_exception">Reading string from %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-    <string name="error_writing_string_to_file_failed_with_exception">Writing string to %1$s at path \"%2$s\" failed.\nException: %3$s</string>
-    <string name="error_unsupported_charset">Unsupported charset \"%1$s\"</string>
-    <string name="error_checking_if_charset_supported_failed">Checking if charset \"%1$s\" is suppoted failed.\nException: %2$s</string>
-
-    <string name="error_invalid_file_permissions_string_to_check">The file permission string to check is invalid.</string>
-    <string name="error_file_not_readable">The %1$s at path is not readable. Permission Denied.</string>
-    <string name="error_file_not_writable">The %1$s at path is not writable. Permission Denied.</string>
-    <string name="error_file_not_executable">The %1$s at path is not executable. Permission Denied.</string>
 
 
 
@@ -71,12 +25,22 @@
 
     <!-- PermissionUtils -->
     <string name="message_sudo_please_grant_permissions">Please grant permissions on next screen</string>
-    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME; requires \"Display over other apps\" permission to start terminal sessions from background on Android >= 10. Grants it from Settings -> Apps -> &TERMUX_APP_NAME; -> Advanced</string>
+
+
+
+    <!-- ReportActivity -->
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="action_save_to_file">Save To File</string>
+    <string name="title_report_text">Report Text</string>
+    <string name="msg_report_truncated">**Report Truncated**\n\nReport is too large to view here. Use `Save To File` option from options menu (3-dots on top right) and view it in an external text editor app.\n\n##\n\n</string>
 
 
 
     <!-- ShareUtils -->
     <string name="title_share_with">Share With</string>
+    <string name="msg_storage_permission_not_granted">The storage permission not granted."</string>
+    <string name="msg_file_saved_successfully">The %1$s file saved successfully at \"%2$s\""</string>
 
 
 
@@ -91,7 +55,13 @@
 
 
     <!-- TermuxUtils -->
-    <string name="msg_report_issue">If you want to report this issue, then copy its text from the options menu (3-dots on top right) and post an issue on one of the following links.\n\nIf you are posting a Termux app crash report, then please provide details on what you were doing that caused the crash and how to reproduce it, if possible.\n\nIf you are posting an issue on Github, then post it in the repository at which the report belongs at. You may optionally remove any device specific info that you consider private or don\'t want to share or that is not relevant to the issue.</string>
+    <string name="msg_report_issue">If you want to report this issue, then copy its text from the options menu (3-dots on top right) and post an issue on one of the following links.\n\nIf you are posting a Termux app crash report, then please provide details on what you were doing that caused the crash and how to reproduce it, if possible.\n\nIf you are posting an issue on Github, then post it in the repository at which the report belongs at. Issues opened or emails sent with **(partial) screenshots** instead of copied text or a file of this report **will likely be automatically closed/deleted**. You may optionally remove any device specific info that you consider private or don\'t want to share or that is not relevant to the issue.\n\nWe do not provide support for any hacking related tools/scripts. Any questions asked about them over email, on github or other official termux community forums **will likely be automatically closed/deleted** and may even result in **temporary or permanent** ban. Check %1$s/wiki/Hacking for details.</string>
+
+
+
+    <!-- Miscellaneous -->
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
 
 
 
@@ -103,8 +73,5 @@
     <string name="log_level_verbose">"Verbose"</string>
     <string name="log_level_unknown">"*Unknown*"</string>
     <string name="log_level_value">Logcat log level set to \"%1$s\"</string>
-
-    <string name="title_report_text">报告文本</string>
-
 
 </resources>

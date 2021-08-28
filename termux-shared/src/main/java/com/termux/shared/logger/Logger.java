@@ -26,6 +26,7 @@ public class Logger {
     public static final int LOG_LEVEL_VERBOSE = 3; // start logging verbose messages
 
     public static final int DEFAULT_LOG_LEVEL = LOG_LEVEL_NORMAL;
+    public static final int MAX_LOG_LEVEL = LOG_LEVEL_VERBOSE;
     private static int CURRENT_LOG_LEVEL = DEFAULT_LOG_LEVEL;
 
     /**
@@ -50,16 +51,16 @@ public class Logger {
 
 
 
-    public static void logMessage(int logLevel, String tag, String message) {
-        if (logLevel == Log.ERROR && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
+    public static void logMessage(int logPriority, String tag, String message) {
+        if (logPriority == Log.ERROR && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
             Log.e(getFullTag(tag), message);
-        else if (logLevel == Log.WARN && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
+        else if (logPriority == Log.WARN && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
             Log.w(getFullTag(tag), message);
-        else if (logLevel == Log.INFO && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
+        else if (logPriority == Log.INFO && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
             Log.i(getFullTag(tag), message);
-        else if (logLevel == Log.DEBUG && CURRENT_LOG_LEVEL >= LOG_LEVEL_DEBUG)
+        else if (logPriority == Log.DEBUG && CURRENT_LOG_LEVEL >= LOG_LEVEL_DEBUG)
             Log.d(getFullTag(tag), message);
-        else if (logLevel == Log.VERBOSE && CURRENT_LOG_LEVEL >= LOG_LEVEL_VERBOSE)
+        else if (logPriority == Log.VERBOSE && CURRENT_LOG_LEVEL >= LOG_LEVEL_VERBOSE)
             Log.v(getFullTag(tag), message);
     }
 
@@ -185,6 +186,10 @@ public class Logger {
 
     public static void logVerboseExtended(String message) {
         logExtendedMessage(Log.VERBOSE, DEFAULT_LOG_TAG, message);
+    }
+
+    public static void logVerboseForce(String tag, String message) {
+        Log.v(tag, message);
     }
 
 
@@ -409,7 +414,7 @@ public class Logger {
     }
 
     public static int setLogLevel(Context context, int logLevel) {
-        if (logLevel >= LOG_LEVEL_OFF && logLevel <= LOG_LEVEL_VERBOSE)
+        if (isLogLevelValid(logLevel))
             CURRENT_LOG_LEVEL = logLevel;
         else
             CURRENT_LOG_LEVEL = DEFAULT_LOG_LEVEL;
@@ -425,6 +430,17 @@ public class Logger {
             return tag;
         else
             return DEFAULT_LOG_TAG + ":" + tag;
+    }
+
+    public static boolean isLogLevelValid(Integer logLevel) {
+        return (logLevel != null && logLevel >= LOG_LEVEL_OFF && logLevel <= MAX_LOG_LEVEL);
+    }
+
+    /** Check if custom log level is valid and >= {@link #CURRENT_LOG_LEVEL}. If custom log level is
+     * not valid then {@link #LOG_LEVEL_VERBOSE} must be >= {@link #CURRENT_LOG_LEVEL}. */
+    public static boolean shouldEnableLoggingForCustomLogLevel(Integer customLogLevel) {
+        customLogLevel = Logger.isLogLevelValid(customLogLevel) ? customLogLevel: Logger.LOG_LEVEL_VERBOSE;
+        return (customLogLevel >= CURRENT_LOG_LEVEL);
     }
 
 }

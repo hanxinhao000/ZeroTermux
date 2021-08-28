@@ -34,6 +34,11 @@ public class TermuxTerminalViewClientBase implements TerminalViewClient {
     }
 
     @Override
+    public boolean isTerminalViewSelected() {
+        return true;
+    }
+
+    @Override
     public void copyModeChanged(boolean copyMode) {
     }
 
@@ -56,15 +61,23 @@ public class TermuxTerminalViewClientBase implements TerminalViewClient {
     public boolean readControlKey() {
         return false;
     }
-    @Override
-    public boolean isTerminalViewSelected() {
-        return true;
-    }
 
     @Override
     public boolean readAltKey() {
         return false;
     }
+
+    @Override
+    public boolean readShiftKey() {
+        return false;
+    }
+
+    @Override
+    public boolean readFnKey() {
+        return false;
+    }
+
+
 
     @Override
     public boolean onCodePoint(int codePoint, boolean ctrlDown, TerminalSession session) {

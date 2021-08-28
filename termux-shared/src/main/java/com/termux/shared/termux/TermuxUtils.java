@@ -212,7 +212,8 @@ public class TermuxUtils {
 
         markdownString.append((AndroidUtils.getAppInfoMarkdownString(context)));
 
-        Error error = TermuxFileUtils.isTermuxFilesDirectoryAccessible(context, true, true);
+        Error error;
+        error = TermuxFileUtils.isTermuxFilesDirectoryAccessible(context, true, true);
         if (error != null) {
             AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_FILES_DIR", TermuxConstants.TERMUX_FILES_DIR_PATH);
             AndroidUtils.appendPropertyToMarkdown(markdownString, "IS_TERMUX_FILES_DIR_ACCESSIBLE", "false - " + Error.getMinimalErrorString(error));
@@ -240,7 +241,7 @@ public class TermuxUtils {
 
         markdownString.append("## Where To Report An Issue");
 
-        markdownString.append("\n\n").append(context.getString(R.string.msg_report_issue)).append("\n");
+        markdownString.append("\n\n").append(context.getString(R.string.msg_report_issue, TermuxConstants.TERMUX_WIKI_URL)).append("\n");
 
         markdownString.append("\n\n### Email\n");
         markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_SUPPORT_EMAIL_URL, TermuxConstants.TERMUX_SUPPORT_EMAIL_MAILTO_URL)).append("  ");
@@ -340,22 +341,94 @@ public class TermuxUtils {
         aptInfoScript = aptInfoScript.replaceAll(Pattern.quote("@TERMUX_PREFIX@"), TermuxConstants.TERMUX_PREFIX_DIR_PATH);
 
         ExecutionCommand executionCommand = new ExecutionCommand(1, TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash", null, aptInfoScript, null, true, false);
+        executionCommand.commandLabel = "APT Info Command";
+        executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         TermuxTask termuxTask = TermuxTask.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);
         if (termuxTask == null || !executionCommand.isSuccessful() || executionCommand.resultData.exitCode != 0) {
-            Logger.logError(LOG_TAG, executionCommand.toString());
+            Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
         }
 
         if (!executionCommand.resultData.stderr.toString().isEmpty())
-            Logger.logError(LOG_TAG, executionCommand.toString());
+            Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
 
         StringBuilder markdownString = new StringBuilder();
 
         markdownString.append("## ").append(TermuxConstants.TERMUX_APP_NAME).append(" APT Info\n\n");
         markdownString.append(executionCommand.resultData.stdout.toString());
+        markdownString.append("\n##\n");
 
         return markdownString.toString();
     }
+
+    /**
+     * Get a markdown {@link String} for info for termux debugging.
+     *
+     * @param context The context for operations.
+     * @return Returns the markdown {@link String}.
+     */
+    public static String getTermuxDebugMarkdownString(@NonNull final Context context) {
+        String statInfo = TermuxFileUtils.getTermuxFilesStatMarkdownString(context);
+        String logcatInfo = getLogcatDumpMarkdownString(context);
+
+        if (statInfo != null && logcatInfo != null)
+            return statInfo + "\n\n" + logcatInfo;
+        else if (statInfo != null)
+            return statInfo;
+        else
+            return logcatInfo;
+
+    }
+
+    /**
+     * Get a markdown {@link String} for logcat command dump.
+     *
+     * @param context The context for operations.
+     * @return Returns the markdown {@link String}.
+     */
+    public static String getLogcatDumpMarkdownString(@NonNull final Context context) {
+        // Build script
+        // We need to prevent OutOfMemoryError since StreamGobbler StringBuilder + StringBuilder.toString()
+        // may require lot of memory if dump is too large.
+        // Putting a limit at 3000 lines. Assuming average 160 chars/line will result in 500KB usage
+        // per object.
+        // That many lines should be enough for debugging for recent issues anyways assuming termux
+        // has not been granted READ_LOGS permission s.
+        String logcatScript = "/system/bin/logcat -d -t 3000 2>&1";
+
+        // Run script
+        // Logging must be disabled for output of logcat command itself in StreamGobbler
+        ExecutionCommand executionCommand = new ExecutionCommand(1, "/system/bin/sh", null, logcatScript + "\n", "/", true, true);
+        executionCommand.commandLabel = "Logcat dump command";
+        executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
+        TermuxTask termuxTask = TermuxTask.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);
+        if (termuxTask == null || !executionCommand.isSuccessful()) {
+            Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
+            return null;
+        }
+
+        // Build script output
+        StringBuilder logcatOutput = new StringBuilder();
+        logcatOutput.append("$ ").append(logcatScript);
+        logcatOutput.append("\n").append(executionCommand.resultData.stdout.toString());
+
+        boolean stderrSet = !executionCommand.resultData.stderr.toString().isEmpty();
+        if (executionCommand.resultData.exitCode != 0 || stderrSet) {
+            Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
+            if (stderrSet)
+                logcatOutput.append("\n").append(executionCommand.resultData.stderr.toString());
+            logcatOutput.append("\n").append("exit code: ").append(executionCommand.resultData.exitCode.toString());
+        }
+
+        // Build markdown output
+        StringBuilder markdownString = new StringBuilder();
+        markdownString.append("## Logcat Dump\n\n");
+        markdownString.append("\n\n").append(MarkdownUtils.getMarkdownCodeForString(logcatOutput.toString(), true));
+        markdownString.append("\n##\n");
+
+        return markdownString.toString();
+    }
+
 
 
     public static String getAPKRelease(String signingCertificateSHA256Digest) {

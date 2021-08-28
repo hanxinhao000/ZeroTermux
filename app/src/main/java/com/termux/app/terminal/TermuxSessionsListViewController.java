@@ -44,7 +44,6 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
         View sessionRowView = convertView;
         if (sessionRowView == null) {
             LayoutInflater inflater = mActivity.getLayoutInflater();
-
             sessionRowView = inflater.inflate(R.layout.item_terminal_sessions_list, parent, false);
         }
 
@@ -87,13 +86,7 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
         }
         int defaultColor = isUsingBlackUI ? Color.WHITE : Color.BLACK;
         int color = sessionRunning || sessionAtRow.getExitStatus() == 0 ? defaultColor : Color.RED;
-        if(color == Color.RED){
-            sessionTitleView.setTextColor(color);
-        }else{
-            sessionTitleView.setTextColor(Color.WHITE);
-        }
-
-
+        sessionTitleView.setTextColor(color);
         return sessionRowView;
     }
 

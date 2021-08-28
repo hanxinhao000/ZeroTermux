@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.termux.shared.R;
 import com.termux.shared.data.DataUtils;
-import com.termux.shared.interact.DialogUtils;
+import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.termux.TermuxConstants;
 
@@ -59,7 +59,7 @@ public class PackageUtils {
             String errorMessage = context.getString(R.string.error_get_package_context_failed_message,
                 packageName, TermuxConstants.TERMUX_GITHUB_REPO_URL);
             Logger.logError(LOG_TAG, errorMessage);
-            DialogUtils.exitAppWithErrorMessage(context,
+            MessageDialogUtils.exitAppWithErrorMessage(context,
                 context.getString(R.string.error_get_package_context_failed_title),
                 errorMessage);
         }
@@ -124,13 +124,25 @@ public class PackageUtils {
     }
 
     /**
-     * Get the {@code versionName} for the package associated with the {@code context}.
+     * Check if the app associated with the {@code context} has {@link ApplicationInfo#FLAG_DEBUGGABLE}
+     * set.
      *
      * @param context The {@link Context} for the package.
      * @return Returns the {@code versionName}. This will be {@code null} if an exception is raised.
      */
     public static Boolean isAppForPackageADebugBuild(@NonNull final Context context) {
         return ( 0 != ( context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
+    }
+
+    /**
+     * Check if the app associated with the {@code context} has {@link ApplicationInfo#FLAG_EXTERNAL_STORAGE}
+     * set.
+     *
+     * @param context The {@link Context} for the package.
+     * @return Returns the {@code versionName}. This will be {@code null} if an exception is raised.
+     */
+    public static Boolean isAppInstalledOnExternalStorage(@NonNull final Context context) {
+        return ( 0 != ( context.getApplicationInfo().flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE ) );
     }
 
     /**
@@ -236,4 +248,5 @@ public class PackageUtils {
         }
         return null;
     }
+
 }

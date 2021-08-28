@@ -1,7 +1,7 @@
 package com.termux.shared.settings.preferences;
 
 /*
- * Version: v0.10.0
+ * Version: v0.12.0
  *
  * Changelog
  *
@@ -44,6 +44,15 @@ package com.termux.shared.settings.preferences;
  * - 0.10.0 (2021-05-12)
  *      - Added following to `TERMUX_APP`:
  *          `KEY_SOFT_KEYBOARD_ENABLED_ONLY_IF_NO_HARDWARE` and `DEFAULT_VALUE_KEY_SOFT_KEYBOARD_ENABLED_ONLY_IF_NO_HARDWARE`.
+ *
+ * - 0.11.0 (2021-07-08)
+ *      - Added following to `TERMUX_APP`:
+ *          `KEY_DISABLE_TERMINAL_MARGIN_ADJUSTMENT`.
+ *
+ * - 0.12.0 (2021-08-27)
+ *      - Added `TERMUX_API_APP.KEY_LOG_LEVEL`, `TERMUX_BOOT_APP.KEY_LOG_LEVEL`,
+ *          `TERMUX_FLOAT_APP.KEY_LOG_LEVEL`, `TERMUX_STYLING_APP.KEY_LOG_LEVEL`,
+ *          `TERMUX_Widget_APP.KEY_LOG_LEVEL`.
  */
 
 /**
@@ -61,19 +70,21 @@ public final class TermuxPreferenceConstants {
     public static final class TERMUX_APP {
 
         /**
-         * Defines the key for whether to show terminal toolbar containing extra keys and text input field.
-         */
-        public static final String KEY_SHOW_TERMINAL_TOOLBAR = "show_extra_keys";
-        public static final boolean DEFAULT_VALUE_SHOW_TERMINAL_TOOLBAR = true;
-
-
-        /**
          * Defines the key for whether terminal view margin adjustment that is done to prevent soft
          * keyboard from covering bottom part of terminal view on some devices is enabled or not.
          * Margin adjustment may cause screen flickering on some devices and so should be disabled.
          */
         public static final String KEY_TERMINAL_MARGIN_ADJUSTMENT =  "terminal_margin_adjustment";
         public static final boolean DEFAULT_TERMINAL_MARGIN_ADJUSTMENT = true;
+
+
+        /**
+         * Defines the key for whether to show terminal toolbar containing extra keys and text input field.
+         */
+        public static final String KEY_SHOW_TERMINAL_TOOLBAR = "show_extra_keys";
+        public static final boolean DEFAULT_VALUE_SHOW_TERMINAL_TOOLBAR = true;
+
+
         /**
          * Defines the key for whether the soft keyboard will be enabled, for cases where users want
          * to use a hardware keyboard instead.
@@ -109,7 +120,7 @@ public final class TermuxPreferenceConstants {
 
 
         /**
-         * Defines the key for current termux log level.
+         * Defines the key for current log level.
          */
         public static final String KEY_LOG_LEVEL = "log_level";
 
@@ -141,13 +152,85 @@ public final class TermuxPreferenceConstants {
 
     }
 
+
+
+    /**
+     * Termux API app constants.
+     */
+    public static final class TERMUX_API_APP {
+
+        /**
+         * Defines the key for current log level.
+         */
+        public static final String KEY_LOG_LEVEL = "log_level";
+
+    }
+
+
+
+    /**
+     * Termux Boot app constants.
+     */
+    public static final class TERMUX_BOOT_APP {
+
+        /**
+         * Defines the key for current log level.
+         */
+        public static final String KEY_LOG_LEVEL = "log_level";
+
+    }
+
+
+
+    /**
+     * Termux Float app constants.
+     */
+    public static final class TERMUX_FLOAT_APP {
+
+        /**
+         * Defines the key for current log level.
+         */
+        public static final String KEY_LOG_LEVEL = "log_level";
+
+    }
+
+
+
+    /**
+     * Termux Styling app constants.
+     */
+    public static final class TERMUX_STYLING_APP {
+
+        /**
+         * Defines the key for current log level.
+         */
+        public static final String KEY_LOG_LEVEL = "log_level";
+
+    }
+
+
+
     /**
      * Termux Tasker app constants.
      */
     public static final class TERMUX_TASKER_APP {
 
         /**
-         * Defines the key for current termux log level.
+         * Defines the key for current log level.
+         */
+        public static final String KEY_LOG_LEVEL = "log_level";
+
+    }
+
+
+
+    /**
+     * Termux Widget app constants.
+     */
+    public static final class TERMUX_WIDGET_APP {
+
+        /**
+         * Defines the key for current log level.
          */
         public static final String KEY_LOG_LEVEL = "log_level";
 

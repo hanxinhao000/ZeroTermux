@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import java.util.LinkedHashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 public class DataUtils {
 
@@ -98,6 +98,17 @@ public class DataUtils {
     }
 
     /**
+     * Get the {@code String} from an {@link Integer}.
+     *
+     * @param value The {@link Integer} value.
+     * @param def The default {@link String} value.
+     * @return Returns {@code value} if it is not {@code null}, otherwise returns {@code def}.
+     */
+    public static String getStringFromInteger(Integer value, String def) {
+        return (value == null) ? def : String.valueOf((int) value);
+    }
+
+    /**
      * Get the {@code hex string} from a {@link byte[]}.
      *
      * @param bytes The {@link byte[]} value.
@@ -163,6 +174,23 @@ public class DataUtils {
     /** Check if a string is null or empty. */
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
+    }
+
+
+
+    /** Get size of a serializable object. */
+    public static long getSerializedSize(Serializable object) {
+        if (object == null) return 0;
+        try {
+            ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream);
+            objectOutputStream.writeObject(object);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            return byteOutputStream.toByteArray().length;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
 }

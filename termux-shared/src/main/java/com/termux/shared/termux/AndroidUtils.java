@@ -40,17 +40,20 @@ public class AndroidUtils {
         AndroidUtils.appendPropertyToMarkdown(markdownString,"TARGET_SDK", PackageUtils.getTargetSDKForPackage(context));
         AndroidUtils.appendPropertyToMarkdown(markdownString,"IS_DEBUG_BUILD", PackageUtils.isAppForPackageADebugBuild(context));
 
+        if (PackageUtils.isAppInstalledOnExternalStorage(context)) {
+            AndroidUtils.appendPropertyToMarkdown(markdownString,"IS_INSTALLED_ON_EXTERNAL_STORAGE", true);
+        }
+
         String filesDir = context.getFilesDir().getAbsolutePath();
         if (!filesDir.equals("/data/user/0/" + context.getPackageName() + "/files") &&
             !filesDir.equals("/data/data/" + context.getPackageName() + "/files"))
-            AndroidUtils.appendPropertyToMarkdown(markdownString,"FILES_DIR", filesDir);
+        AndroidUtils.appendPropertyToMarkdown(markdownString,"FILES_DIR", filesDir);
 
         Long userId = PackageUtils.getSerialNumberForCurrentUser(context);
         if (userId == null || userId != 0)
             AndroidUtils.appendPropertyToMarkdown(markdownString,"USER_ID", userId);
 
         AndroidUtils.appendPropertyToMarkdownIfSet(markdownString,"PROFILE_OWNER", PackageUtils.getProfileOwnerPackageNameForUser(context));
-
 
         return markdownString.toString();
     }
@@ -179,6 +182,13 @@ public class AndroidUtils {
     public static String getCurrentTimeStamp() {
         @SuppressLint("SimpleDateFormat")
         final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return df.format(new Date());
+    }
+
+    public static String getCurrentMilliSecondUTCTimeStamp() {
+        @SuppressLint("SimpleDateFormat")
+        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         return df.format(new Date());
     }

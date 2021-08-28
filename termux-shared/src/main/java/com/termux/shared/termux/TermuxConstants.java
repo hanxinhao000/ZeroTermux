@@ -12,7 +12,7 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 /*
- * Version: v0.24.0
+ * Version: v0.26.0
  *
  * Changelog
  *
@@ -172,6 +172,16 @@ import java.util.List;
  *           `FORMAT_FAILED_ERR__ERRMSG__STDOUT__STDERR__EXIT_CODE`,
  *           `RESULT_FILE_ERR_PREFIX`, `RESULT_FILE_ERRMSG_PREFIX` `RESULT_FILE_STDOUT_PREFIX`,
  *           `RESULT_FILE_STDERR_PREFIX`, `RESULT_FILE_EXIT_CODE_PREFIX`.
+ *
+ * - 0.25.0 (2021-08-19)
+ *      - Added following to `TERMUX_APP.TERMUX_SERVICE`:
+ *          `EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL`.
+ *      - Added following to `TERMUX_APP.RUN_COMMAND_SERVICE`:
+ *          `EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL`.
+ *
+ * - 0.26.0 (2021-08-25)
+ *      - Changed `TERMUX_ACTIVITY.ACTION_FAILSAFE_SESSION` to `TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION`.
+ *
  */
 
 /**
@@ -237,7 +247,7 @@ public final class TermuxConstants {
      */
 
     /** Termux app name */
-    public static final String TERMUX_APP_NAME = "ZeroTermux"; // Default: "Termux"
+    public static final String TERMUX_APP_NAME = "Termux"; // Default: "Termux"
     /** Termux package name */
     public static final String TERMUX_PACKAGE_NAME = "com.termux"; // Default: "com.termux"
     /** Termux Github repo name */
@@ -757,8 +767,8 @@ public final class TermuxConstants {
          */
         public static final class TERMUX_ACTIVITY {
 
-            /** Intent action to start termux failsafe session */
-            public static final String ACTION_FAILSAFE_SESSION = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.failsafe_session"; // Default: "com.termux.app.failsafe_session"
+            /** Intent extra for if termux failsafe session needs to be started and is used by {@link TERMUX_ACTIVITY} and {@link TERMUX_SERVICE#ACTION_STOP_SERVICE} */
+            public static final String EXTRA_FAILSAFE_SESSION = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.failsafe_session"; // Default: "com.termux.app.failsafe_session"
 
 
             /** Intent action to make termux request storage permissions */
@@ -816,6 +826,8 @@ public final class TermuxConstants {
             public static final String EXTRA_WORKDIR = TERMUX_PACKAGE_NAME + ".execute.cwd"; // Default: "com.termux.execute.cwd"
             /** Intent {@code boolean} extra for command background mode for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
             public static final String EXTRA_BACKGROUND = TERMUX_PACKAGE_NAME + ".execute.background"; // Default: "com.termux.execute.background"
+            /** Intent {@code String} extra for custom log level for background commands defined by {@link com.termux.shared.logger.Logger} for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
+            public static final String EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL = TERMUX_PACKAGE_NAME + ".execute.background_custom_log_level"; // Default: "com.termux.execute.background_custom_log_level"
             /** Intent {@code String} extra for session action for foreground commands for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
             public static final String EXTRA_SESSION_ACTION = TERMUX_PACKAGE_NAME + ".execute.session_action"; // Default: "com.termux.execute.session_action"
             /** Intent {@code String} extra for label of the command for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
@@ -939,6 +951,8 @@ public final class TermuxConstants {
             public static final String EXTRA_WORKDIR = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_WORKDIR"; // Default: "com.termux.RUN_COMMAND_WORKDIR"
             /** Intent {@code boolean} extra for whether to run command in background or foreground terminal session for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
             public static final String EXTRA_BACKGROUND = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_BACKGROUND"; // Default: "com.termux.RUN_COMMAND_BACKGROUND"
+            /** Intent {@code String} extra for custom log level for background commands defined by {@link com.termux.shared.logger.Logger} for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
+            public static final String EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_BACKGROUND_CUSTOM_LOG_LEVEL"; // Default: "com.termux.RUN_COMMAND_BACKGROUND_CUSTOM_LOG_LEVEL"
             /** Intent {@code String} extra for session action of foreground commands for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
             public static final String EXTRA_SESSION_ACTION = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_SESSION_ACTION"; // Default: "com.termux.RUN_COMMAND_SESSION_ACTION"
             /** Intent {@code String} extra for label of the command for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
@@ -996,13 +1010,17 @@ public final class TermuxConstants {
         /** The {@link Formatter} format string for success if `stdout` and `exit_code` need to be written to
          * {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s` and `exit_code` to `%2$s`.
          * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is empty
-         * and `exit_code` does not equal `0` and {@link ResultConfig#resultFileOutputFormat} is not passed. */
+         * and `exit_code` does not equal `0` and {@link ResultConfig#resultFileOutputFormat} is not passed.
+         * The exit code will be placed in a markdown inline code. */
         public static final String FORMAT_SUCCESS_STDOUT__EXIT_CODE = "%1$s%n%n%n%nexit_code=%2$s%n";
         /** The {@link Formatter} format string for success if `stdout`, `stderr` and `exit_code` need to be
          * written to {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s`, `stderr`
          * maps to `%2$s` and `exit_code` to `%3$s`.
          * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is not empty
-         * and {@link ResultConfig#resultFileOutputFormat} is not passed. */
+         * and {@link ResultConfig#resultFileOutputFormat} is not passed.
+         * The stdout and stderr will be placed in a markdown code block. The exit code will be placed
+         * in a markdown inline code. The surrounding backticks will be 3 more than the consecutive
+         * backticks in any parameter itself for code blocks. */
         public static final String FORMAT_SUCCESS_STDOUT__STDERR__EXIT_CODE = "stdout=%n%1$s%n%n%n%nstderr=%n%2$s%n%n%n%nexit_code=%3$s%n";
         /** The {@link Formatter} format string for failure if `err`, `errmsg`(`error`), `stdout`,
          * `stderr` and `exit_code` need to be written to {@link ResultConfig#resultFileBasename} where
@@ -1011,7 +1029,11 @@ public final class TermuxConstants {
          * Do not define an argument greater than `5`, like `%6$s` if you change this value since it will
          * raise {@link IllegalFormatException}.
          * This is used when `err` does not equal {@link Errno#ERRNO_SUCCESS} (-1) and
-         * {@link ResultConfig#resultFileErrorFormat} is not passed. */
+         * {@link ResultConfig#resultFileErrorFormat} is not passed.
+         * The errmsg, stdout and stderr will be placed in a markdown code block. The err and exit code
+         * will be placed in a markdown inline code. The surrounding backticks will be 3 more than
+         * the consecutive backticks in any parameter itself for code blocks. The stdout, stderr
+         * and exit code may be empty without any surrounding backticks if not set. */
         public static final String FORMAT_FAILED_ERR__ERRMSG__STDOUT__STDERR__EXIT_CODE = "err=%1$s%n%n%n%nerrmsg=%n%2$s%n%n%n%nstdout=%n%3$s%n%n%n%nstderr=%n%4$s%n%n%n%nexit_code=%5$s%n";
 
 

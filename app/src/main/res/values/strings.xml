@@ -625,4 +625,5 @@
     <string name="Win7模拟">Win7模拟</string>
     <string name="WinXp">Windows Xp</string>
 
+    <string name="msg_add_termux_debug_info">Add termux debug info to report?</string>
 </resources>

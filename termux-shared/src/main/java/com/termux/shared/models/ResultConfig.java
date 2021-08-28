@@ -91,7 +91,7 @@ public class ResultConfig {
 
         return logString.toString();
     }
-
+    
     public String getResultPendingIntentVariablesLogString(boolean ignoreNull) {
         if (resultPendingIntent == null) return "Result PendingIntent Creator: -";
 

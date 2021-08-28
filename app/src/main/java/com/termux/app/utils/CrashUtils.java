@@ -4,17 +4,17 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Environment;
 
 import androidx.annotation.Nullable;
 
 import com.termux.R;
-import com.termux.app.activities.ReportActivity;
+import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.models.errors.Error;
 import com.termux.shared.notification.NotificationUtils;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.models.ReportInfo;
-import com.termux.shared.models.UserAction;
+import com.termux.app.models.UserAction;
 import com.termux.shared.notification.TermuxNotificationUtils;
 import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.settings.preferences.TermuxPreferenceConstants;
@@ -28,7 +28,6 @@ import com.termux.shared.termux.TermuxConstants;
 import java.nio.charset.Charset;
 
 public class CrashUtils {
-
 
     private static final String LOG_TAG = "CrashUtils";
 
@@ -88,7 +87,7 @@ public class CrashUtils {
 
                 Logger.logDebug(logTag, "A crash log file found at \"" + TermuxConstants.TERMUX_CRASH_LOG_FILE_PATH +  "\".");
 
-                sendCrashReportNotification(context, logTag, reportString, false,false);
+                sendCrashReportNotification(context, logTag, reportString, false, false);
             }
         }.start();
     }
@@ -99,11 +98,13 @@ public class CrashUtils {
      *
      * @param context The {@link Context} for operations.
      * @param logTag The log tag to use for logging.
-     * @param reportString The text for the crash report.
+     * @param message The message for the crash report.
      * @param forceNotification If set to {@code true}, then a notification will be shown
      *                          regardless of if pending intent is {@code null} or
      *                          {@link TermuxPreferenceConstants.TERMUX_APP#KEY_CRASH_REPORT_NOTIFICATIONS_ENABLED}
      *                          is {@code false}.
+     * @param addAppAndDeviceInfo If set to {@code true}, then app and device info will be appended
+     *                            to the message.
      */
     public static void sendCrashReportNotification(final Context context, String logTag, String message, boolean forceNotification, boolean addAppAndDeviceInfo) {
         if (context == null) return;
@@ -130,18 +131,33 @@ public class CrashUtils {
             reportString.append("\n\n").append(AndroidUtils.getDeviceInfoMarkdownString(context));
         }
 
-        Intent notificationIntent = ReportActivity.newInstance(context, new ReportInfo(UserAction.CRASH_REPORT.getName(), logTag, title, null, reportString.toString(), "\n\n" + TermuxUtils.getReportIssueMarkdownString(context), true));
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        String userActionName = UserAction.CRASH_REPORT.getName();
+        ReportActivity.NewInstanceResult result = ReportActivity.newInstance(context, new ReportInfo(userActionName,
+            logTag, title, null, reportString.toString(),
+            "\n\n" + TermuxUtils.getReportIssueMarkdownString(context), true,
+            userActionName,
+            Environment.getExternalStorageDirectory() + "/" +
+                FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true)));
+        if (result.contentIntent == null) return;
+
+        // Must ensure result code for PendingIntents and id for notification are unique otherwise will override previous
+        int nextNotificationId = TermuxNotificationUtils.getNextNotificationId(context);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, nextNotificationId, result.contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent deleteIntent = null;
+        if (result.deleteIntent != null)
+            deleteIntent = PendingIntent.getBroadcast(context, nextNotificationId, result.deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Setup the notification channel if not already set up
         setupCrashReportsNotificationChannel(context);
 
         // Build the notification
-        Notification.Builder builder = getCrashReportsNotificationBuilder(context, title, null, null, pendingIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
+        Notification.Builder builder = getCrashReportsNotificationBuilder(context, title, null,
+            null, contentIntent, deleteIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
         if (builder == null) return;
 
         // Send the notification
-        int nextNotificationId = TermuxNotificationUtils.getNextNotificationId(context);
         NotificationManager notificationManager = NotificationUtils.getNotificationManager(context);
         if (notificationManager != null)
             notificationManager.notify(nextNotificationId, builder.build());
@@ -155,16 +171,17 @@ public class CrashUtils {
      * @param title The title for the notification.
      * @param notificationText The second line text of the notification.
      * @param notificationBigText The full text of the notification that may optionally be styled.
-     * @param pendingIntent The {@link PendingIntent} which should be sent when notification is clicked.
+     * @param contentIntent The {@link PendingIntent} which should be sent when notification is clicked.
+     * @param deleteIntent The {@link PendingIntent} which should be sent when notification is deleted.
      * @param notificationMode The notification mode. It must be one of {@code NotificationUtils.NOTIFICATION_MODE_*}.
      * @return Returns the {@link Notification.Builder}.
      */
     @Nullable
-    public static Notification.Builder getCrashReportsNotificationBuilder(final Context context, final CharSequence title, final CharSequence notificationText, final CharSequence notificationBigText, final PendingIntent pendingIntent, final int notificationMode) {
+    public static Notification.Builder getCrashReportsNotificationBuilder(final Context context, final CharSequence title, final CharSequence notificationText, final CharSequence notificationBigText, final PendingIntent contentIntent, final PendingIntent deleteIntent, final int notificationMode) {
 
         Notification.Builder builder =  NotificationUtils.geNotificationBuilder(context,
             TermuxConstants.TERMUX_CRASH_REPORTS_NOTIFICATION_CHANNEL_ID, Notification.PRIORITY_HIGH,
-            title, notificationText, notificationBigText, pendingIntent, notificationMode);
+            title, notificationText, notificationBigText, contentIntent, deleteIntent, notificationMode);
 
         if (builder == null)  return null;
 

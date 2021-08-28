@@ -65,7 +65,10 @@ import com.mallotec.reb.localeplugin.LocalePlugin;
 import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
+import com.termux.shared.activities.ReportActivity;
+import com.termux.shared.interact.TextInputDialogUtils;
 import com.termux.shared.packages.PermissionUtils;
+import com.termux.shared.terminal.io.extrakeys.ExtraKeysView;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY;
 import com.termux.app.activities.HelpActivity;
@@ -75,9 +78,9 @@ import com.termux.app.terminal.TermuxSessionsListViewController;
 import com.termux.app.terminal.io.TerminalToolbarViewPager;
 import com.termux.app.terminal.TermuxTerminalSessionClient;
 import com.termux.app.terminal.TermuxTerminalViewClient;
-import com.termux.app.terminal.io.extrakeys.ExtraKeysView;
+
 import com.termux.app.settings.properties.TermuxAppSharedProperties;
-import com.termux.shared.interact.DialogUtils;
+
 import com.termux.shared.logger.Logger;
 import com.termux.shared.termux.TermuxUtils;
 import com.termux.terminal.TerminalSession;
@@ -262,6 +265,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         // Check if a crash happened on last run of the app and show a
         // notification with the crash details if it did
         CrashUtils.notifyAppCrashOnLastRun(this, LOG_TAG);
+
+        // Delete ReportInfo serialized object files from cache older than 14 days
+        ReportActivity.deleteReportInfoFilesOlderThanXDays(this, 14, false);
 
         // Load termux shared properties
         mProperties = new TermuxAppSharedProperties(this);
@@ -473,15 +479,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                         Bundle bundle = getIntent().getExtras();
                         boolean launchFailsafe = false;
                         if (bundle != null) {
-                            launchFailsafe = bundle.getBoolean(TERMUX_ACTIVITY.ACTION_FAILSAFE_SESSION, false);
+                            launchFailsafe = bundle.getBoolean(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
                         }
                         mTermuxTerminalSessionClient.addNewSession(launchFailsafe, null);
                     } catch (WindowManager.BadTokenException e) {
                         // Activity finished - ignore.
                     }
-
-
-                    initFiles();
                 });
             } else {
                 // The service connected while not in foreground - just bail out.
@@ -491,7 +494,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             Intent i = getIntent();
             if (i != null && Intent.ACTION_RUN.equals(i.getAction())) {
                 // Android 7.1 app shortcut from res/xml/shortcuts.xml.
-                boolean isFailSafe = i.getBooleanExtra(TERMUX_ACTIVITY.ACTION_FAILSAFE_SESSION, false);
+                boolean isFailSafe = i.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
                 mTermuxTerminalSessionClient.addNewSession(isFailSafe, null);
             } else {
                 mTermuxTerminalSessionClient.setCurrentSession(mTermuxTerminalSessionClient.getCurrentStoredSessionOrLast());
@@ -642,7 +645,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         View newSessionButton = findViewById(R.id.new_session_button);
         newSessionButton.setOnClickListener(v -> mTermuxTerminalSessionClient.addNewSession(false, null));
         newSessionButton.setOnLongClickListener(v -> {
-            DialogUtils.textInput(TermuxActivity.this, R.string.title_create_named_session, null,
+            TextInputDialogUtils.textInput(TermuxActivity.this, R.string.title_create_named_session, null,
                 R.string.action_create_named_session_confirm, text -> mTermuxTerminalSessionClient.addNewSession(false, text),
                 R.string.action_new_session_failsafe, text -> mTermuxTerminalSessionClient.addNewSession(true, text),
                 -1, null, null);
@@ -1137,7 +1140,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         String xieyi = SaveData.INSTANCE.getStringOther("xieyi");
 
 
-        if(xieyi == null || xieyi.isEmpty() || xieyi == "def"){
+        if(xieyi == null || xieyi.isEmpty() || xieyi.equals("def") ){
             ProtocolDialog protocolDialog = new ProtocolDialog(this);
 
             protocolDialog.show();
@@ -1697,11 +1700,14 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 getDrawer().closeDrawer(Gravity.LEFT);
                 LoadingDialog loadingDialog = new LoadingDialog(this);
                 loadingDialog.show();
+
+
+
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
-
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

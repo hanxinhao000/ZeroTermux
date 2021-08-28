@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.InputDevice;
@@ -22,15 +23,17 @@ import android.widget.Toast;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.shared.data.UrlUtils;
+import com.termux.shared.file.FileUtils;
+import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.shell.ShellUtils;
 import com.termux.shared.terminal.TermuxTerminalViewClientBase;
+import com.termux.shared.terminal.io.extrakeys.SpecialButton;
 import com.termux.shared.termux.AndroidUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.models.ReportInfo;
 import com.termux.app.models.UserAction;
 import com.termux.app.terminal.io.KeyboardShortcut;
-import com.termux.app.terminal.io.extrakeys.ExtraKeysView;
 import com.termux.shared.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
@@ -70,6 +73,10 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
     public TermuxTerminalViewClient(TermuxActivity activity, TermuxTerminalSessionClient termuxTerminalSessionClient) {
         this.mActivity = activity;
         this.mTermuxTerminalSessionClient = termuxTerminalSessionClient;
+    }
+
+    public TermuxActivity getActivity() {
+        return mActivity;
     }
 
     /**
@@ -192,6 +199,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
     }
 
 
+
     @Override
     public void copyModeChanged(boolean copyMode) {
         // Disable drawer while copying.
@@ -208,7 +216,8 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         if (keyCode == KeyEvent.KEYCODE_ENTER && !currentSession.isRunning()) {
             mTermuxTerminalSessionClient.removeFinishedSession(currentSession);
             return true;
-        } else if (e.isCtrlPressed() && e.isAltPressed()) {
+        } else if (!mActivity.getProperties().areHardwareKeyboardShortcutsDisabled() &&
+            e.isCtrlPressed() && e.isAltPressed()) {
             // Get the unmodified code point:
             int unicodeChar = e.getUnicodeChar(0);
 
@@ -285,12 +294,32 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
     @Override
     public boolean readControlKey() {
-        return (mActivity.getExtraKeysView() != null && mActivity.getExtraKeysView().readSpecialButton(ExtraKeysView.SpecialButton.CTRL)) || mVirtualControlKeyDown;
+        return readExtraKeysSpecialButton(SpecialButton.CTRL) || mVirtualControlKeyDown;
     }
 
     @Override
     public boolean readAltKey() {
-        return (mActivity.getExtraKeysView() != null && mActivity.getExtraKeysView().readSpecialButton(ExtraKeysView.SpecialButton.ALT));
+        return readExtraKeysSpecialButton(SpecialButton.ALT);
+    }
+
+    @Override
+    public boolean readShiftKey() {
+        return readExtraKeysSpecialButton(SpecialButton.SHIFT);
+    }
+
+    @Override
+    public boolean readFnKey() {
+        return readExtraKeysSpecialButton(SpecialButton.FN);
+    }
+
+    public boolean readExtraKeysSpecialButton(SpecialButton specialButton) {
+        if (mActivity.getExtraKeysView() == null) return false;
+        Boolean state = mActivity.getExtraKeysView().readSpecialButton(specialButton, true);
+        if (state == null) {
+            Logger.logError(LOG_TAG,"Failed to read an unregistered " + specialButton + " special button value from extra keys.");
+            return false;
+        }
+        return state;
     }
 
     @Override
@@ -521,13 +550,12 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
                 Logger.logVerbose(LOG_TAG, "Hiding soft keyboard on startup");
                 // Required to keep keyboard hidden when Termux app is switched back from another app
                 KeyboardUtils.setSoftKeyboardAlwaysHiddenFlags(mActivity);
-                // Required to keep keyboard hidden on app startup
 
                 KeyboardUtils.hideSoftKeyboard(mActivity, mActivity.getTerminalView());
                 mActivity.getTerminalView().requestFocus();
                 noShowKeyboard = true;
+                // Required to keep keyboard hidden on app startup
                 mShowSoftKeyboardIgnoreOnce = true;
-
             }
         }
 
@@ -663,20 +691,26 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         final String transcriptText = ShellUtils.getTerminalSessionTranscriptText(session, false, true);
         if (transcriptText == null) return;
 
+        MessageDialogUtils.showMessage(mActivity, TermuxConstants.TERMUX_APP_NAME + " Report Issue",
+            mActivity.getString(R.string.msg_add_termux_debug_info),
+            mActivity.getString(R.string.action_yes), (dialog, which) -> reportIssueFromTranscript(transcriptText, true),
+            mActivity.getString(R.string.action_no), (dialog, which) -> reportIssueFromTranscript(transcriptText, false),
+            null);
+    }
+
+    private void reportIssueFromTranscript(String transcriptText, boolean addTermuxDebugInfo) {
         Logger.showToast(mActivity, mActivity.getString(R.string.msg_generating_report), true);
 
         new Thread() {
             @Override
             public void run() {
-
-                String transcriptTextTruncated = DataUtils.getTruncatedCommandOutput(transcriptText, DataUtils.TRANSACTION_SIZE_LIMIT_IN_BYTES, false, true, false).trim();
-
                 StringBuilder reportString = new StringBuilder();
 
                 String title = TermuxConstants.TERMUX_APP_NAME + " Report Issue";
 
                 reportString.append("## Transcript\n");
-                reportString.append("\n").append(MarkdownUtils.getMarkdownCodeForString(transcriptTextTruncated, true));
+                reportString.append("\n").append(MarkdownUtils.getMarkdownCodeForString(transcriptText, true));
+                reportString.append("\n##\n");
 
                 reportString.append("\n\n").append(TermuxUtils.getAppInfoMarkdownString(mActivity, true));
                 reportString.append("\n\n").append(AndroidUtils.getDeviceInfoMarkdownString(mActivity));
@@ -685,7 +719,21 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
                 if (termuxAptInfo != null)
                     reportString.append("\n\n").append(termuxAptInfo);
 
-                ReportActivity.startReportActivity(mActivity, new ReportInfo(UserAction.REPORT_ISSUE_FROM_TRANSCRIPT.getName(), TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY_NAME, title, null, reportString.toString(), "\n\n" + TermuxUtils.getReportIssueMarkdownString(mActivity), false));
+                if (addTermuxDebugInfo) {
+                    String termuxDebugInfo = TermuxUtils.getTermuxDebugMarkdownString(mActivity);
+                    if (termuxDebugInfo != null)
+                        reportString.append("\n\n").append(termuxDebugInfo);
+                }
+
+                String userActionName = UserAction.REPORT_ISSUE_FROM_TRANSCRIPT.getName();
+                ReportActivity.startReportActivity(mActivity,
+                    new ReportInfo(userActionName,
+                        TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY_NAME, title, null,
+                        reportString.toString(), "\n\n" + TermuxUtils.getReportIssueMarkdownString(mActivity),
+                        false,
+                        userActionName,
+                        Environment.getExternalStorageDirectory() + "/" +
+                            FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true)));
             }
         }.start();
     }

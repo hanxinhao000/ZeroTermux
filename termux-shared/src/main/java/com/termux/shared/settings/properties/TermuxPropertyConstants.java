@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /*
- * Version: v0.12.0
+ * Version: v0.13.0
  *
  * Changelog
  *
@@ -55,6 +55,9 @@ import java.util.Set;
  *
  * - 0.12.0 (2021-06-10)
  *      - Add `*KEY_TERMINAL_CURSOR_STYLE*`.
+ *
+ * - 0.13.0 (2021-08-25)
+ *      - Add `*KEY_TERMINAL_MARGIN_HORIZONTAL*` and `*KEY_TERMINAL_MARGIN_VERTICAL*`.
  */
 
 /**
@@ -72,6 +75,10 @@ public final class TermuxPropertyConstants {
 
     /* boolean */
 
+    /** Defines the key for whether hardware keyboard shortcuts are enabled. */
+    public static final String KEY_DISABLE_HARDWARE_KEYBOARD_SHORTCUTS =  "disable-hardware-keyboard-shortcuts"; // Default: "disable-hardware-keyboard-shortcuts"
+
+
     /** Defines the key for whether a toast will be shown when user changes the terminal session */
     public static final String KEY_DISABLE_TERMINAL_SESSION_CHANGE_TOAST =  "disable-terminal-session-change-toast"; // Default: "disable-terminal-session-change-toast"
 
@@ -84,6 +91,11 @@ public final class TermuxPropertyConstants {
 
     /** Defines the key for whether to hide soft keyboard when termux app is started */
     public static final String KEY_HIDE_SOFT_KEYBOARD_ON_STARTUP =  "hide-soft-keyboard-on-startup"; // Default: "hide-soft-keyboard-on-startup"
+
+
+
+    /** Defines the key for whether url links in terminal transcript will automatically open on click or on tap */
+    public static final String KEY_TERMINAL_ONCLICK_URL_OPEN =  "terminal-onclick-url-open"; // Default: "terminal-onclick-url-open"
 
 
 
@@ -161,6 +173,20 @@ public final class TermuxPropertyConstants {
             .put(VALUE_TERMINAL_CURSOR_STYLE_UNDERLINE, IVALUE_TERMINAL_CURSOR_STYLE_UNDERLINE)
             .put(VALUE_TERMINAL_CURSOR_STYLE_BAR, IVALUE_TERMINAL_CURSOR_STYLE_BAR)
             .build();
+
+
+
+    /** Defines the key for the terminal margin on left and right in dp units */
+    public static final String KEY_TERMINAL_MARGIN_HORIZONTAL =  "terminal-margin-horizontal"; // Default: "terminal-margin-horizontal"
+    public static final int IVALUE_TERMINAL_MARGIN_HORIZONTAL_MIN = 0;
+    public static final int IVALUE_TERMINAL_MARGIN_HORIZONTAL_MAX = 100;
+    public static final int DEFAULT_IVALUE_TERMINAL_HORIZONTAL_MARGIN = 3;
+
+    /** Defines the key for the terminal margin on top and bottom in dp units */
+    public static final String KEY_TERMINAL_MARGIN_VERTICAL =  "terminal-margin-vertical"; // Default: "terminal-margin-vertical"
+    public static final int IVALUE_TERMINAL_MARGIN_VERTICAL_MIN = 0;
+    public static final int IVALUE_TERMINAL_MARGIN_VERTICAL_MAX = 100;
+    public static final int DEFAULT_IVALUE_TERMINAL_VERTICAL_MARGIN = 0;
 
 
 
@@ -243,8 +269,7 @@ public final class TermuxPropertyConstants {
     /** Defines the key for extra keys */
     public static final String KEY_EXTRA_KEYS =  "extra-keys"; // Default: "extra-keys"
     //public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[[ESC, TAB, CTRL, ALT, {key: '-', popup: '|'}, DOWN, UP]]"; // Single row
-   // public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[['ESC','/',{key: '-', popup: '|'},'HOME','UP','END','PGUP'], ['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]"; // Double row
-    public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[['ESC','TAB','CTRL','ALT','-','UP','ENTER'],['INS','END','SHIFT',':','LEFT','DOWN','RIGHT']]"; // Double row
+    public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[['ESC','/',{key: '-', popup: '|'},'HOME','UP','END','PGUP'], ['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]"; // Double row
 
     /** Defines the key for extra keys style */
     public static final String KEY_EXTRA_KEYS_STYLE =  "extra-keys-style"; // Default: "extra-keys-style"
@@ -291,9 +316,11 @@ public final class TermuxPropertyConstants {
      * */
     public static final Set<String> TERMUX_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
         /* boolean */
+        KEY_DISABLE_HARDWARE_KEYBOARD_SHORTCUTS,
         KEY_DISABLE_TERMINAL_SESSION_CHANGE_TOAST,
         KEY_ENFORCE_CHAR_BASED_INPUT,
         KEY_HIDE_SOFT_KEYBOARD_ON_STARTUP,
+        KEY_TERMINAL_ONCLICK_URL_OPEN,
         KEY_USE_BLACK_UI,
         KEY_USE_CTRL_SPACE_WORKAROUND,
         KEY_USE_FULLSCREEN,
@@ -304,6 +331,8 @@ public final class TermuxPropertyConstants {
         KEY_BELL_BEHAVIOUR,
         KEY_TERMINAL_CURSOR_BLINK_RATE,
         KEY_TERMINAL_CURSOR_STYLE,
+        KEY_TERMINAL_MARGIN_HORIZONTAL,
+        KEY_TERMINAL_MARGIN_VERTICAL,
         KEY_TERMINAL_TRANSCRIPT_ROWS,
 
         /* float */
@@ -330,9 +359,11 @@ public final class TermuxPropertyConstants {
      * default: false
      * */
     public static final Set<String> TERMUX_DEFAULT_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
+        KEY_DISABLE_HARDWARE_KEYBOARD_SHORTCUTS,
         KEY_DISABLE_TERMINAL_SESSION_CHANGE_TOAST,
         KEY_ENFORCE_CHAR_BASED_INPUT,
         KEY_HIDE_SOFT_KEYBOARD_ON_STARTUP,
+        KEY_TERMINAL_ONCLICK_URL_OPEN,
         KEY_USE_CTRL_SPACE_WORKAROUND,
         KEY_USE_FULLSCREEN,
         KEY_USE_FULLSCREEN_WORKAROUND,

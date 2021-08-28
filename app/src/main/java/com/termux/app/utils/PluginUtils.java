@@ -4,12 +4,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Environment;
 
 import androidx.annotation.Nullable;
 
 import com.termux.R;
 import com.termux.shared.activities.ReportActivity;
+import com.termux.shared.file.FileUtils;
 import com.termux.shared.file.TermuxFileUtils;
 import com.termux.shared.models.ResultConfig;
 import com.termux.shared.models.ResultData;
@@ -64,9 +65,12 @@ public class PluginUtils {
         }
 
         boolean isPluginExecutionCommandWithPendingResult = executionCommand.isPluginExecutionCommandWithPendingResult();
+        boolean isExecutionCommandLoggingEnabled = Logger.shouldEnableLoggingForCustomLogLevel(executionCommand.backgroundCustomLogLevel);
 
         // Log the output. ResultData should not be logged if pending result since ResultSender will do it
-        Logger.logDebugExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true, !isPluginExecutionCommandWithPendingResult));
+        // or if logging is disabled
+        Logger.logDebugExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true,
+            !isPluginExecutionCommandWithPendingResult, isExecutionCommandLoggingEnabled));
 
         // If execution command was started by a plugin which expects the result back
         if (isPluginExecutionCommandWithPendingResult) {
@@ -77,11 +81,12 @@ public class PluginUtils {
                 setPluginResultDirectoryVariables(executionCommand);
 
             // Send result to caller
-            error = ResultSender.sendCommandResultData(context, logTag, executionCommand.getCommandIdAndLabelLogString(), executionCommand.resultConfig, executionCommand.resultData);
+            error = ResultSender.sendCommandResultData(context, logTag, executionCommand.getCommandIdAndLabelLogString(),
+                executionCommand.resultConfig, executionCommand.resultData, isExecutionCommandLoggingEnabled);
             if (error != null) {
                 // error will be added to existing Errors
                 resultData.setStateFailed(error);
-                Logger.logDebugExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true, true));
+                Logger.logDebugExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true, true, isExecutionCommandLoggingEnabled));
 
                 // Flash and send notification for the error
                 Logger.showToast(context, ResultData.getErrorsListMinimalString(resultData), true);
@@ -132,9 +137,11 @@ public class PluginUtils {
         }
 
         boolean isPluginExecutionCommandWithPendingResult = executionCommand.isPluginExecutionCommandWithPendingResult();
+        boolean isExecutionCommandLoggingEnabled = Logger.shouldEnableLoggingForCustomLogLevel(executionCommand.backgroundCustomLogLevel);
 
         // Log the error and any exception. ResultData should not be logged if pending result since ResultSender will do it
-        Logger.logErrorExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true, !isPluginExecutionCommandWithPendingResult));
+        Logger.logErrorExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true,
+            !isPluginExecutionCommandWithPendingResult, isExecutionCommandLoggingEnabled));
 
         // If execution command was started by a plugin which expects the result back
         if (isPluginExecutionCommandWithPendingResult) {
@@ -145,11 +152,12 @@ public class PluginUtils {
                 setPluginResultDirectoryVariables(executionCommand);
 
             // Send result to caller
-            error = ResultSender.sendCommandResultData(context, logTag, executionCommand.getCommandIdAndLabelLogString(), executionCommand.resultConfig, executionCommand.resultData);
+            error = ResultSender.sendCommandResultData(context, logTag, executionCommand.getCommandIdAndLabelLogString(),
+                executionCommand.resultConfig, executionCommand.resultData, isExecutionCommandLoggingEnabled);
             if (error != null) {
                 // error will be added to existing Errors
                 resultData.setStateFailed(error);
-                Logger.logErrorExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true, true));
+                Logger.logErrorExtended(logTag, ExecutionCommand.getExecutionOutputLogString(executionCommand, true, true, isExecutionCommandLoggingEnabled));
                 forceNotification = true;
             }
 
@@ -170,7 +178,7 @@ public class PluginUtils {
 
     }
 
-    /** Set variables which will be used by {@link ResultSender#sendCommandResultData(Context, String, String, ResultConfig, ResultData)}
+    /** Set variables which will be used by {@link ResultSender#sendCommandResultData(Context, String, String, ResultConfig, ResultData, boolean)}
      * to send back the result via {@link ResultConfig#resultPendingIntent}. */
     public static void setPluginResultPendingIntentVariables(ExecutionCommand executionCommand) {
         ResultConfig resultConfig = executionCommand.resultConfig;
@@ -185,7 +193,7 @@ public class PluginUtils {
         resultConfig.resultErrmsgKey = TERMUX_SERVICE.EXTRA_PLUGIN_RESULT_BUNDLE_ERRMSG;
     }
 
-    /** Set variables which will be used by {@link ResultSender#sendCommandResultData(Context, String, String, ResultConfig, ResultData)}
+    /** Set variables which will be used by {@link ResultSender#sendCommandResultData(Context, String, String, ResultConfig, ResultData, boolean)}
      * to send back the result by writing it to files in {@link ResultConfig#resultDirectoryPath}. */
     public static void setPluginResultDirectoryVariables(ExecutionCommand executionCommand) {
         ResultConfig resultConfig = executionCommand.resultConfig;
@@ -219,8 +227,23 @@ public class PluginUtils {
         reportString.append("\n\n").append(TermuxUtils.getAppInfoMarkdownString(context, true));
         reportString.append("\n\n").append(AndroidUtils.getDeviceInfoMarkdownString(context));
 
-        Intent notificationIntent = ReportActivity.newInstance(context, new ReportInfo(UserAction.PLUGIN_EXECUTION_COMMAND.getName(), logTag, title, null, reportString.toString(), null,true));
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        String userActionName = UserAction.PLUGIN_EXECUTION_COMMAND.getName();
+        ReportActivity.NewInstanceResult result = ReportActivity.newInstance(context,
+            new ReportInfo(userActionName, logTag, title, null,
+                reportString.toString(), null,true,
+                userActionName,
+                Environment.getExternalStorageDirectory() + "/" +
+                    FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true)));
+        if (result.contentIntent == null) return;
+
+        // Must ensure result code for PendingIntents and id for notification are unique otherwise will override previous
+        int nextNotificationId = TermuxNotificationUtils.getNextNotificationId(context);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, nextNotificationId, result.contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent deleteIntent = null;
+        if (result.deleteIntent != null)
+            deleteIntent = PendingIntent.getBroadcast(context, nextNotificationId, result.deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Setup the notification channel if not already set up
         setupPluginCommandErrorsNotificationChannel(context);
@@ -230,11 +253,11 @@ public class PluginUtils {
         //CharSequence notificationTextCharSequence = notificationTextString;
 
         // Build the notification
-        Notification.Builder builder = getPluginCommandErrorsNotificationBuilder(context, title, notificationTextCharSequence, notificationTextCharSequence, pendingIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
+        Notification.Builder builder = getPluginCommandErrorsNotificationBuilder(context, title,
+            notificationTextCharSequence, notificationTextCharSequence, contentIntent, deleteIntent, NotificationUtils.NOTIFICATION_MODE_VIBRATE);
         if (builder == null) return;
 
         // Send the notification
-        int nextNotificationId = TermuxNotificationUtils.getNextNotificationId(context);
         NotificationManager notificationManager = NotificationUtils.getNotificationManager(context);
         if (notificationManager != null)
             notificationManager.notify(nextNotificationId, builder.build());
@@ -248,16 +271,19 @@ public class PluginUtils {
      * @param title The title for the notification.
      * @param notificationText The second line text of the notification.
      * @param notificationBigText The full text of the notification that may optionally be styled.
-     * @param pendingIntent The {@link PendingIntent} which should be sent when notification is clicked.
+     * @param contentIntent The {@link PendingIntent} which should be sent when notification is clicked.
+     * @param deleteIntent The {@link PendingIntent} which should be sent when notification is deleted.
      * @param notificationMode The notification mode. It must be one of {@code NotificationUtils.NOTIFICATION_MODE_*}.
      * @return Returns the {@link Notification.Builder}.
      */
     @Nullable
-    public static Notification.Builder getPluginCommandErrorsNotificationBuilder(final Context context, final CharSequence title, final CharSequence notificationText, final CharSequence notificationBigText, final PendingIntent pendingIntent, final int notificationMode) {
+    public static Notification.Builder getPluginCommandErrorsNotificationBuilder(
+        final Context context, final CharSequence title, final CharSequence notificationText,
+        final CharSequence notificationBigText, final PendingIntent contentIntent, final PendingIntent deleteIntent, final int notificationMode) {
 
         Notification.Builder builder =  NotificationUtils.geNotificationBuilder(context,
             TermuxConstants.TERMUX_PLUGIN_COMMAND_ERRORS_NOTIFICATION_CHANNEL_ID, Notification.PRIORITY_HIGH,
-            title, notificationText, notificationBigText, pendingIntent, notificationMode);
+            title, notificationText, notificationBigText, contentIntent, deleteIntent, notificationMode);
 
         if (builder == null)  return null;
 

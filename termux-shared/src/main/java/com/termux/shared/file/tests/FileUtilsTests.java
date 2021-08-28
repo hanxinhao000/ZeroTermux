@@ -304,7 +304,7 @@ public class FileUtilsTests {
     }
 
     public static void throwException(@NonNull final String message) throws Exception {
-        throw new Exception(message);
+            throw new Exception(message);
     }
 
 }

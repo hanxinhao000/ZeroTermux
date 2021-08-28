@@ -63,7 +63,11 @@ public class PermissionUtils {
             result = ContextCompat.checkSelfPermission(activity, permission);
             if (result != PackageManager.PERMISSION_GRANTED) {
                 Logger.logDebug(LOG_TAG, "Requesting Permissions: " + Arrays.toString(permissions));
-                activity.requestPermissions(new String[]{permission}, requestCode);
+                try {
+                    activity.requestPermissions(new String[]{permission}, requestCode);
+                } catch (Exception e) {
+                    Logger.logStackTraceWithMessage(LOG_TAG, "Failed to request permissions with request code " + requestCode + ": " + Arrays.toString(permissions), e);
+                }
             }
         }
     }
@@ -80,8 +84,8 @@ public class PermissionUtils {
     }
 
     public static boolean validateDisplayOverOtherAppsPermissionForPostAndroid10(Context context, boolean logResults) {
-        if (Build.VERSION.SDK_INT < 29) return true;
-
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return true;
+        
         if (!PermissionUtils.checkDisplayOverOtherAppsPermission(context)) {
             if (logResults)
                 Logger.logWarn(LOG_TAG, context.getPackageName() + " does not have Display over other apps (SYSTEM_ALERT_WINDOW) permission");

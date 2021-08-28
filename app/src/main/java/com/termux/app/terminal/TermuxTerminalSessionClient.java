@@ -14,7 +14,7 @@ import android.widget.ListView;
 
 import com.termux.R;
 import com.termux.shared.shell.TermuxSession;
-import com.termux.shared.interact.DialogUtils;
+import com.termux.shared.interact.TextInputDialogUtils;
 import com.termux.app.TermuxActivity;
 import com.termux.shared.terminal.TermuxTerminalSessionClientBase;
 import com.termux.shared.termux.TermuxConstants;
@@ -217,6 +217,15 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
         mActivity.getTerminalView().setTerminalCursorBlinkerState(enabled, false);
     }
 
+    /**
+     * Should be called when mActivity.onResetTerminalSession() is called
+     */
+    public void onResetTerminalSession() {
+        // Ensure blinker starts again after reset if cursor blinking was disabled before reset like
+        // with "tput civis" which would have called onTerminalCursorStateChange()
+        mActivity.getTerminalView().setTerminalCursorBlinkerState(true, true);
+    }
+
 
 
     @Override
@@ -304,7 +313,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     public void renameSession(final TerminalSession sessionToRename) {
         if (sessionToRename == null) return;
 
-        DialogUtils.textInput(mActivity, R.string.title_rename_session, sessionToRename.mSessionName, R.string.action_rename_session_confirm, text -> {
+        TextInputDialogUtils.textInput(mActivity, R.string.title_rename_session, sessionToRename.mSessionName, R.string.action_rename_session_confirm, text -> {
             sessionToRename.mSessionName = text;
             termuxSessionListNotifyUpdated();
         }, -1, null, -1, null, null);

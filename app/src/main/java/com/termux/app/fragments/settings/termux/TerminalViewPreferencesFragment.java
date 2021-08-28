@@ -55,7 +55,7 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
 
         switch (key) {
             case "terminal_margin_adjustment":
-                mPreferences.setTerminalMarginAdjustment(value);
+                    mPreferences.setTerminalMarginAdjustment(value);
                 break;
             default:
                 break;

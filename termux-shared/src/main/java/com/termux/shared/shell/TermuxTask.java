@@ -8,6 +8,7 @@ import android.system.OsConstants;
 import androidx.annotation.NonNull;
 
 import com.termux.shared.R;
+import com.termux.shared.data.DataUtils;
 import com.termux.shared.models.ExecutionCommand;
 import com.termux.shared.models.ResultData;
 import com.termux.shared.models.errors.Errno;
@@ -80,7 +81,9 @@ public final class TermuxTask {
             return null;
         }
 
-        Logger.logDebug(LOG_TAG, executionCommand.toString());
+        // No need to log stdin if logging is disabled, like for app internal scripts
+        Logger.logDebugExtended(LOG_TAG, ExecutionCommand.getExecutionInputLogString(executionCommand,
+            true, Logger.shouldEnableLoggingForCustomLogLevel(executionCommand.backgroundCustomLogLevel)));
 
         String taskName = ShellUtils.getExecutableBasename(executionCommand.executable);
 
@@ -139,14 +142,14 @@ public final class TermuxTask {
 
         // setup stdin, and stdout and stderr gobblers
         DataOutputStream STDIN = new DataOutputStream(mProcess.getOutputStream());
-        StreamGobbler STDOUT = new StreamGobbler(pid + "-stdout", mProcess.getInputStream(), mExecutionCommand.resultData.stdout);
-        StreamGobbler STDERR = new StreamGobbler(pid + "-stderr", mProcess.getErrorStream(), mExecutionCommand.resultData.stderr);
+        StreamGobbler STDOUT = new StreamGobbler(pid + "-stdout", mProcess.getInputStream(), mExecutionCommand.resultData.stdout, mExecutionCommand.backgroundCustomLogLevel);
+        StreamGobbler STDERR = new StreamGobbler(pid + "-stderr", mProcess.getErrorStream(), mExecutionCommand.resultData.stderr, mExecutionCommand.backgroundCustomLogLevel);
 
         // start gobbling
         STDOUT.start();
         STDERR.start();
 
-        if (mExecutionCommand.stdin != null && !mExecutionCommand.stdin.isEmpty()) {
+        if (!DataUtils.isNullOrEmpty(mExecutionCommand.stdin)) {
             try {
                 STDIN.write((mExecutionCommand.stdin + "\n").getBytes(StandardCharsets.UTF_8));
                 STDIN.flush();
