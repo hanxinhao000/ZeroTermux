@@ -13,8 +13,6 @@ public interface TerminalSessionClient {
 
     void onSessionFinished(TerminalSession finishedSession);
 
-    void onClipboardText(TerminalSession session, String text);
-
     void onCopyTextToClipboard(TerminalSession session, String text);
 
     void onPasteTextFromClipboard(TerminalSession session);
