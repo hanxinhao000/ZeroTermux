@@ -10,6 +10,7 @@ import com.termux.shared.file.filesystem.FileType;
 import com.termux.shared.file.filesystem.FileTypes;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
+import com.termux.shared.models.errors.Errno;
 import com.termux.shared.models.errors.Error;
 import com.termux.shared.models.errors.FileUtilsErrno;
 import com.termux.shared.models.errors.FunctionErrno;
@@ -33,7 +34,9 @@ import java.nio.charset.Charset;
 import java.nio.file.LinkOption;
 import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class FileUtils {
@@ -142,7 +145,21 @@ public class FileUtils {
      * @return Returns {@code true} if path in {@code dirPath}, otherwise returns {@code false}.
      */
     public static boolean isPathInDirPath(String path, final String dirPath, final boolean ensureUnder) {
-        if (path == null || dirPath == null) return false;
+       return isPathInDirPaths(path, Collections.singletonList(dirPath), ensureUnder);
+    }
+
+    /**
+     * Determines whether path is in one of the {@code dirPaths}. The {@code dirPaths} are not
+     * canonicalized and only normalized.
+     *
+     * @param path The {@code path} to check.
+     * @param dirPaths The {@code directory paths} to check in.
+     * @param ensureUnder If set to {@code true}, then it will be ensured that {@code path} is
+     *                    under the directories and does not equal it.
+     * @return Returns {@code true} if path in {@code dirPaths}, otherwise returns {@code false}.
+     */
+    public static boolean isPathInDirPaths(String path, final List<String> dirPaths, final boolean ensureUnder) {
+        if (path == null || path.isEmpty() || dirPaths == null || dirPaths.size() < 1) return false;
 
         try {
             path = new File(path).getCanonicalPath();
@@ -150,12 +167,20 @@ public class FileUtils {
             return false;
         }
 
-        String normalizedDirPath = normalizePath(dirPath);
+        boolean isPathInDirPaths;
 
-        if (ensureUnder)
-            return !path.equals(normalizedDirPath) && path.startsWith(normalizedDirPath + "/");
-        else
-            return path.startsWith(normalizedDirPath + "/");
+        for (String dirPath : dirPaths) {
+            String normalizedDirPath = normalizePath(dirPath);
+
+            if (ensureUnder)
+                isPathInDirPaths = !path.equals(normalizedDirPath) && path.startsWith(normalizedDirPath + "/");
+            else
+                isPathInDirPaths = path.startsWith(normalizedDirPath + "/");
+
+            if (isPathInDirPaths) return true;
+        }
+
+        return false;
     }
 
 
@@ -260,7 +285,7 @@ public class FileUtils {
 
             // If file exists but not a regular file
             if (fileType != FileType.NO_EXIST && fileType != FileType.REGULAR) {
-                return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file");
+                return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file", filePath).setLabel(label + "file");
             }
 
             boolean isPathUnderParentDirPath = false;
@@ -283,7 +308,8 @@ public class FileUtils {
             // If path is not a regular file
             // Regular files cannot be automatically created so we do not ignore if missing
             if (fileType != FileType.REGULAR) {
-                return FileUtilsErrno.ERRNO_NO_REGULAR_FILE_FOUND.getError(label + "file");
+                label += "regular file";
+                return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
             }
 
             // If there is not parentDirPath restriction or path is not under parentDirPath or
@@ -341,7 +367,7 @@ public class FileUtils {
 
             // If file exists but not a directory file
             if (fileType != FileType.NO_EXIST && fileType != FileType.DIRECTORY) {
-                return FileUtilsErrno.ERRNO_NON_DIRECTORY_FILE_FOUND.getError(label + "directory");
+                return FileUtilsErrno.ERRNO_NON_DIRECTORY_FILE_FOUND.getError(label + "directory", filePath).setLabel(label + "directory");
             }
 
             boolean isPathInParentDirPath = false;
@@ -380,7 +406,8 @@ public class FileUtils {
                 // If path is not a directory
                 // Directories can be automatically created so we can ignore if missing with above check
                 if (fileType != FileType.DIRECTORY) {
-                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "directory", filePath);
+                    label += "directory";
+                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
                 }
 
                 if (permissionsToCheck != null) {
@@ -455,7 +482,7 @@ public class FileUtils {
 
         // If file exists but not a regular file
         if (fileType != FileType.NO_EXIST && fileType != FileType.REGULAR) {
-            return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file");
+            return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file", filePath).setLabel(label + "file");
         }
 
         // If regular file already exists
@@ -645,8 +672,10 @@ public class FileUtils {
             // If target file does not exist
             if (targetFileType == FileType.NO_EXIST) {
                 // If dangling symlink should not be allowed, then return with error
-                if (!allowDangling)
-                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "symlink target file", targetFileAbsolutePath);
+                if (!allowDangling) {
+                    label += "symlink target file";
+                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, targetFileAbsolutePath).setLabel(label);
+                }
             }
 
             // If destination exists
@@ -920,8 +949,10 @@ public class FileUtils {
                 if (ignoreNonExistentSrcFile)
                     return null;
                     // Else return with error
-                else
-                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "source file", srcFilePath);
+                else {
+                    label += "source file";
+                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, srcFilePath).setLabel(label);
+                }
             }
 
             // If the file type of the source file does not exist in the allowedFileTypeFlags, then return with error
@@ -1121,8 +1152,10 @@ public class FileUtils {
                 if (ignoreNonExistentFile)
                     return null;
                 // Else return with error
-                else
-                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "file meant to be deleted", filePath);
+                else {
+                    label += "file meant to be deleted";
+                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
+                }
             }
 
             // If the file type of the file does not exist in the allowedFileTypeFlags
@@ -1224,7 +1257,7 @@ public class FileUtils {
 
             // If file exists but not a directory file
             if (fileType != FileType.NO_EXIST && fileType != FileType.DIRECTORY) {
-                return FileUtilsErrno.ERRNO_NON_DIRECTORY_FILE_FOUND.getError(label + "directory");
+                return FileUtilsErrno.ERRNO_NON_DIRECTORY_FILE_FOUND.getError(label + "directory", filePath).setLabel(label + "directory");
             }
 
             // If directory exists, clear its contents
@@ -1288,7 +1321,7 @@ public class FileUtils {
 
             // If file exists but not a directory file
             if (fileType != FileType.NO_EXIST && fileType != FileType.DIRECTORY) {
-                return FileUtilsErrno.ERRNO_NON_DIRECTORY_FILE_FOUND.getError(label + "directory");
+                return FileUtilsErrno.ERRNO_NON_DIRECTORY_FILE_FOUND.getError(label + "directory", filePath).setLabel(label + "directory");
             }
 
             // If file does not exist
@@ -1297,8 +1330,10 @@ public class FileUtils {
                 if (ignoreNonExistentFile)
                     return null;
                     // Else return with error
-                else
-                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "directory under which files had to be deleted", filePath);
+                else {
+                    label += "directory under which files had to be deleted";
+                    return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
+                }
             }
 
             // If directory exists, delete its contents
@@ -1349,7 +1384,7 @@ public class FileUtils {
 
         // If file exists but not a regular file
         if (fileType != FileType.NO_EXIST && fileType != FileType.REGULAR) {
-            return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file");
+            return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file", filePath).setLabel(label + "file");
         }
 
         // If file does not exist
@@ -1358,8 +1393,10 @@ public class FileUtils {
             if (ignoreNonExistentFile)
                 return null;
                 // Else return with error
-            else
-                return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "file meant to be read", filePath);
+            else {
+                label += "file meant to be read";
+                return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
+            }
         }
 
         if (charset == null) charset = Charset.defaultCharset();
@@ -1428,7 +1465,7 @@ public class FileUtils {
 
         // If file exists but not a regular file
         if (fileType != FileType.NO_EXIST && fileType != FileType.REGULAR) {
-            return new ReadSerializableObjectResult(FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file"), null);
+            return new ReadSerializableObjectResult(FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file", filePath).setLabel(label + "file"), null);
         }
 
         // If file does not exist
@@ -1437,8 +1474,10 @@ public class FileUtils {
             if (ignoreNonExistentFile)
                 return new ReadSerializableObjectResult(null, null);
                 // Else return with error
-            else
-                return new ReadSerializableObjectResult(FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label + "file meant to be read", filePath), null);
+            else {
+                label += "file meant to be read";
+                return new ReadSerializableObjectResult(FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label), null);
+            }
         }
 
         FileInputStream fileInputStream = null;
@@ -1556,7 +1595,7 @@ public class FileUtils {
 
         // If file exists but not a regular file
         if (fileType != FileType.NO_EXIST && fileType != FileType.REGULAR) {
-            return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file");
+            return FileUtilsErrno.ERRNO_NON_REGULAR_FILE_FOUND.getError(label + "file", filePath).setLabel(label + "file");
         }
 
         // Create the file parent directory
@@ -1764,17 +1803,17 @@ public class FileUtils {
 
         // If file is not readable
         if (permissionsToCheck.contains("r") && !file.canRead()) {
-            return FileUtilsErrno.ERRNO_FILE_NOT_READABLE.getError(label + "file");
+            return FileUtilsErrno.ERRNO_FILE_NOT_READABLE.getError(label + "file", filePath).setLabel(label + "file");
         }
 
         // If file is not writable
         if (permissionsToCheck.contains("w") && !file.canWrite()) {
-            return FileUtilsErrno.ERRNO_FILE_NOT_WRITABLE.getError(label + "file");
+            return FileUtilsErrno.ERRNO_FILE_NOT_WRITABLE.getError(label + "file", filePath).setLabel(label + "file");
         }
         // If file is not executable
         // This canExecute() will give "avc: granted { execute }" warnings for target sdk 29
         else if (permissionsToCheck.contains("x") && !file.canExecute() && !ignoreIfNotExecutable) {
-            return FileUtilsErrno.ERRNO_FILE_NOT_EXECUTABLE.getError(label + "file");
+            return FileUtilsErrno.ERRNO_FILE_NOT_EXECUTABLE.getError(label + "file", filePath).setLabel(label + "file");
         }
 
         return null;
@@ -1792,6 +1831,28 @@ public class FileUtils {
     public static boolean isValidPermissionString(final String string) {
         if (string == null || string.isEmpty()) return false;
         return Pattern.compile("^([r-])[w-][x-]$", 0).matcher(string).matches();
+    }
+
+
+
+    /**
+     * Get a {@link Error} that contains a shorter version of {@link Errno} message.
+     *
+     * @param error The original {@link Error} returned by one of the {@link FileUtils} functions.
+     * @return Returns the shorter {@link Error} if one exists, otherwise original {@code error}.
+     */
+    public static Error getShortFileUtilsError(final Error error) {
+        String type = error.getType();
+        if (!FileUtilsErrno.TYPE.equals(type)) return error;
+
+        Errno shortErrno = FileUtilsErrno.ERRNO_SHORT_MAPPING.get(Errno.valueOf(type, error.getCode()));
+        if (shortErrno == null) return error;
+
+        List<Throwable> throwables = error.getThrowablesList();
+        if (throwables.isEmpty())
+            return shortErrno.getError(DataUtils.getDefaultIfNull(error.getLabel(), "file"));
+        else
+            return shortErrno.getError(throwables, error.getLabel(), "file");
     }
 
 }

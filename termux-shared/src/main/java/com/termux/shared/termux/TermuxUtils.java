@@ -3,11 +3,14 @@ package com.termux.shared.termux;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
 import androidx.annotation.NonNull;
 
 import com.termux.shared.R;
+import com.termux.shared.file.FileUtils;
 import com.termux.shared.file.TermuxFileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
@@ -97,6 +100,87 @@ public class TermuxUtils {
      */
     public static Context getTermuxWidgetPackageContext(@NonNull Context context) {
         return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_WIDGET_PACKAGE_NAME);
+    }
+
+
+
+    /**
+     * Check if Termux app is installed and enabled. This can be used by external apps that don't
+     * share `sharedUserId` with the Termux app.
+     *
+     * If your third-party app is targeting sdk `30` (android `11`), then it needs to add `com.termux`
+     * package to the `queries` element or request `QUERY_ALL_PACKAGES` permission in its
+     * `AndroidManifest.xml`. Otherwise it will get `PackageSetting{...... com.termux/......} BLOCKED`
+     * errors in `logcat` and `RUN_COMMAND` won't work.
+     * Check [package-visibility](https://developer.android.com/training/basics/intents/package-visibility#package-name),
+     * `QUERY_ALL_PACKAGES` [googleplay policy](https://support.google.com/googleplay/android-developer/answer/10158779
+     * and this [article](https://medium.com/androiddevelopers/working-with-package-visibility-dc252829de2d) for more info.
+     *
+     * {@code
+     * <manifest
+     *     <queries>
+     *         <package android:name="com.termux" />
+     *    </queries>
+     * </manifest>
+     * }
+     *
+     * @param context The context for operations.
+     * @return Returns {@code errmsg} if {@link TermuxConstants#TERMUX_PACKAGE_NAME} is not installed
+     * or disabled, otherwise {@code null}.
+     */
+    public static String isTermuxAppInstalled(@NonNull final Context context) {
+        return PackageUtils.isAppInstalled(context, TermuxConstants.TERMUX_APP_NAME, TermuxConstants.TERMUX_PACKAGE_NAME);
+    }
+
+    /**
+     * Check if Termux:API app is installed and enabled. This can be used by external apps that don't
+     * share `sharedUserId` with the Termux:API app.
+     *
+     * @param context The context for operations.
+     * @return Returns {@code errmsg} if {@link TermuxConstants#TERMUX_API_PACKAGE_NAME} is not installed
+     * or disabled, otherwise {@code null}.
+     */
+    public static String isTermuxAPIAppInstalled(@NonNull final Context context) {
+        return PackageUtils.isAppInstalled(context, TermuxConstants.TERMUX_API_APP_NAME, TermuxConstants.TERMUX_API_PACKAGE_NAME);
+    }
+
+    /**
+     * Check if Termux app is installed and accessible. This can only be used by apps that share
+     * `sharedUserId` with the Termux app.
+     *
+     * This is done by checking if first checking if app is installed and enabled and then if
+     * {@code currentPackageContext} can be used to get the {@link Context} of the app with
+     * {@link TermuxConstants#TERMUX_PACKAGE_NAME} and then if
+     * {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} exists and has
+     * {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS} permissions. The directory will not
+     * be automatically created and neither the missing permissions automatically set.
+     *
+     * @param currentPackageContext The context of current package.
+     * @return Returns {@code errmsg} if failed to get termux package {@link Context} or
+     *         {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} is accessible, otherwise {@code null}.
+     */
+    public static String isTermuxAppAccessible(@NonNull final Context currentPackageContext) {
+        String errmsg = isTermuxAppInstalled(currentPackageContext);
+        if (errmsg == null) {
+            Context termuxPackageContext = TermuxUtils.getTermuxPackageContext(currentPackageContext);
+            // If failed to get Termux app package context
+            if (termuxPackageContext == null)
+                errmsg = currentPackageContext.getString(R.string.error_termux_app_package_context_not_accessible);
+
+            if (errmsg == null) {
+                // If TermuxConstants.TERMUX_PREFIX_DIR_PATH is not a directory or does not have required permissions
+                Error error = TermuxFileUtils.isTermuxPrefixDirectoryAccessible(false, false);
+                if (error != null)
+                    errmsg = currentPackageContext.getString(R.string.error_termux_prefix_dir_path_not_accessible,
+                        PackageUtils.getAppNameForPackage(currentPackageContext));
+            }
+        }
+
+        if (errmsg != null)
+            return errmsg + " " + currentPackageContext.getString(R.string.msg_termux_app_required_by_app,
+                PackageUtils.getAppNameForPackage(currentPackageContext));
+        else
+            return null;
     }
 
 
@@ -323,7 +407,7 @@ public class TermuxUtils {
     public static String geAPTInfoMarkdownString(@NonNull final Context context) {
 
         String aptInfoScript;
-        InputStream inputStream = context.getResources().openRawResource(com.termux.shared.R.raw.apt_info_script);
+        InputStream inputStream = context.getResources().openRawResource(R.raw.apt_info_script);
         try {
             aptInfoScript = IOUtils.toString(inputStream, Charset.defaultCharset());
         } catch (IOException e) {
@@ -437,13 +521,25 @@ public class TermuxUtils {
         switch (signingCertificateSHA256Digest.toUpperCase()) {
             case TermuxConstants.APK_RELEASE_FDROID_SIGNING_CERTIFICATE_SHA256_DIGEST:
                 return TermuxConstants.APK_RELEASE_FDROID;
-            case TermuxConstants.APK_RELEASE_GITHUB_DEBUG_BUILD_SIGNING_CERTIFICATE_SHA256_DIGEST:
-                return TermuxConstants.APK_RELEASE_GITHUB_DEBUG_BUILD;
+            case TermuxConstants.APK_RELEASE_GITHUB_SIGNING_CERTIFICATE_SHA256_DIGEST:
+                return TermuxConstants.APK_RELEASE_GITHUB;
             case TermuxConstants.APK_RELEASE_GOOGLE_PLAYSTORE_SIGNING_CERTIFICATE_SHA256_DIGEST:
                 return TermuxConstants.APK_RELEASE_GOOGLE_PLAYSTORE;
             default:
                 return "Unknown";
         }
+    }
+
+
+    /**
+     * Get a process id of the main app process of the {@link TermuxConstants#TERMUX_PACKAGE_NAME}
+     * package.
+     *
+     * @param context The context for operations.
+     * @return Returns the process if found and running, otherwise {@code null}.
+     */
+    public static String getTermuxAppPID(final Context context) {
+        return PackageUtils.getPackagePID(context, TermuxConstants.TERMUX_PACKAGE_NAME);
     }
 
 }

@@ -287,7 +287,7 @@ public final class TermuxTask {
             // If a callback is not set and execution command didn't fail, then we set success state now
             // Otherwise, the callback host can set it himself when its done with the termuxTask
             if (!executionCommand.isStateFailed())
-                executionCommand.setState(ExecutionCommand.ExecutionState.SUCCESS);
+                executionCommand.setState(ExecutionState.SUCCESS);
         }
     }
 

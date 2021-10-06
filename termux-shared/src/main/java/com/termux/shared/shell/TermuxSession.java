@@ -212,7 +212,7 @@ public class TermuxSession {
      * Only one of {@code termuxSession} and {@code executionCommand} must be set.
      *
      * If the {@code termuxSession} and its {@link #mTermuxSessionClient} are not {@code null},
-     * then the {@link TermuxSession.TermuxSessionClient#onTermuxSessionExited(TermuxSession)}
+     * then the {@link TermuxSessionClient#onTermuxSessionExited(TermuxSession)}
      * callback will be called.
      *
      * @param termuxSession The {@link TermuxSession}, which should be set if

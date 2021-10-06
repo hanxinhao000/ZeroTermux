@@ -90,7 +90,7 @@ public final class ExtraKeysView extends GridLayout {
 
         /**
          * This is called by {@link ExtraKeysView} when a button is clicked so that the client
-         * can perform any hepatic feedback. This is only called in the {@link Button.OnClickListener}
+         * can perform any hepatic feedback. This is only called in the {@link OnClickListener}
          * and not for every repeat. Its also called for {@link #mSpecialButtons}.
          *
          * @param view The view that was clicked.
@@ -162,6 +162,9 @@ public final class ExtraKeysView extends GridLayout {
     /** The background color for the extra keys button when its active. Defaults to
      * {@link #DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR}. */
     private int mButtonActiveBackgroundColor;
+
+    /** Defines whether text for the extra keys button should be all capitalized automatically. */
+    private boolean mButtonTextAllCaps = true;
 
 
     /**
@@ -305,6 +308,11 @@ public final class ExtraKeysView extends GridLayout {
         mButtonActiveBackgroundColor = buttonActiveBackgroundColor;
     }
 
+    /** Set {@link #mButtonTextAllCaps}. */
+    public void setButtonTextAllCaps(boolean buttonTextAllCaps) {
+        mButtonTextAllCaps = buttonTextAllCaps;
+    }
+
 
     /** Get {@link #mLongPressTimeout}. */
     public int getLongPressTimeout() {
@@ -382,6 +390,7 @@ public final class ExtraKeysView extends GridLayout {
 
                 button.setText(buttonInfo.getDisplay());
                 button.setTextColor(mButtonTextColor);
+                button.setAllCaps(mButtonTextAllCaps);
                 button.setPadding(0, 0, 0, 0);
 
                 button.setOnClickListener(view -> {
@@ -439,7 +448,7 @@ public final class ExtraKeysView extends GridLayout {
                     }
                 });
 
-                LayoutParams param = new GridLayout.LayoutParams();
+                LayoutParams param = new LayoutParams();
                 param.width = 0;
                 param.height = 0;
                 param.setMargins(0, 0, 0, 0);
@@ -564,6 +573,7 @@ public final class ExtraKeysView extends GridLayout {
             button.setTextColor(mButtonTextColor);
         }
         button.setText(extraButton.getDisplay());
+        button.setAllCaps(mButtonTextAllCaps);
         button.setPadding(0, 0, 0, 0);
         button.setMinHeight(0);
         button.setMinWidth(0);

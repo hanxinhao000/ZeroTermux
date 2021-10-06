@@ -1,5 +1,7 @@
 package com.termux.shared.settings.properties;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableBiMap;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.logger.Logger;
@@ -12,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /*
- * Version: v0.13.0
+ * Version: v0.15.0
  *
  * Changelog
  *
@@ -58,6 +60,12 @@ import java.util.Set;
  *
  * - 0.13.0 (2021-08-25)
  *      - Add `*KEY_TERMINAL_MARGIN_HORIZONTAL*` and `*KEY_TERMINAL_MARGIN_VERTICAL*`.
+ *
+ * - 0.14.0 (2021-09-02)
+ *      - Add `getTermuxFloatPropertiesFile()`.
+ *
+ * - 0.15.0 (2021-09-05)
+ *      - Add `KEY_EXTRA_KEYS_TEXT_ALL_CAPS`.
  */
 
 /**
@@ -86,6 +94,11 @@ public final class TermuxPropertyConstants {
 
     /** Defines the key for whether to enforce character based input to fix the issue where for some devices like Samsung, the letters might not appear until enter is pressed */
     public static final String KEY_ENFORCE_CHAR_BASED_INPUT =  "enforce-char-based-input"; // Default: "enforce-char-based-input"
+
+
+
+    /** Defines the key for whether text for the extra keys buttons should be all capitalized automatically */
+    public static final String KEY_EXTRA_KEYS_TEXT_ALL_CAPS =  "extra-keys-text-all-caps"; // Default: "extra-keys-text-all-caps"
 
 
 
@@ -269,8 +282,7 @@ public final class TermuxPropertyConstants {
     /** Defines the key for extra keys */
     public static final String KEY_EXTRA_KEYS =  "extra-keys"; // Default: "extra-keys"
     //public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[[ESC, TAB, CTRL, ALT, {key: '-', popup: '|'}, DOWN, UP]]"; // Single row
-   // public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[['ESC','/',{key: '-', popup: '|'},'HOME','UP','END','PGUP'], ['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]"; // Double row
-    public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[['ESC', 'TAB', 'CTRL', 'ALT', '-', 'UP', 'ENTER'],['INS', 'END','SHIFT',':', 'LEFT', 'DOWN', 'RIGHT']]"; // Double row
+    public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[['ESC','/',{key: '-', popup: '|'},'HOME','UP','END','PGUP'], ['TAB','CTRL','ALT','LEFT','DOWN','RIGHT','PGDN']]"; // Double row
 
     /** Defines the key for extra keys style */
     public static final String KEY_EXTRA_KEYS_STYLE =  "extra-keys-style"; // Default: "extra-keys-style"
@@ -320,6 +332,7 @@ public final class TermuxPropertyConstants {
         KEY_DISABLE_HARDWARE_KEYBOARD_SHORTCUTS,
         KEY_DISABLE_TERMINAL_SESSION_CHANGE_TOAST,
         KEY_ENFORCE_CHAR_BASED_INPUT,
+        KEY_EXTRA_KEYS_TEXT_ALL_CAPS,
         KEY_HIDE_SOFT_KEYBOARD_ON_STARTUP,
         KEY_TERMINAL_ONCLICK_URL_OPEN,
         KEY_USE_BLACK_UI,
@@ -354,12 +367,12 @@ public final class TermuxPropertyConstants {
         KEY_VOLUME_KEYS_BEHAVIOUR
         ));
 
-    /** Defines the set for keys loaded by termux that have default boolean behaviour
+    /** Defines the set for keys loaded by termux that have default boolean behaviour with false as default.
      * "true" -> true
      * "false" -> false
      * default: false
-     * */
-    public static final Set<String> TERMUX_DEFAULT_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
+     */
+    public static final Set<String> TERMUX_DEFAULT_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
         KEY_DISABLE_HARDWARE_KEYBOARD_SHORTCUTS,
         KEY_DISABLE_TERMINAL_SESSION_CHANGE_TOAST,
         KEY_ENFORCE_CHAR_BASED_INPUT,
@@ -371,13 +384,31 @@ public final class TermuxPropertyConstants {
         TermuxConstants.PROP_ALLOW_EXTERNAL_APPS
     ));
 
-    /** Defines the set for keys loaded by termux that have default inverted boolean behaviour
+    /** Defines the set for keys loaded by termux that have default boolean behaviour with true as default.
+     * "true" -> true
+     * "false" -> false
+     * default: true
+     */
+    public static final Set<String> TERMUX_DEFAULT_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
+        KEY_EXTRA_KEYS_TEXT_ALL_CAPS
+    ));
+
+    /** Defines the set for keys loaded by termux that have default inverted boolean behaviour with false as default.
+     * "false" -> true
+     * "true" -> false
+     * default: false
+     */
+    public static final Set<String> TERMUX_DEFAULT_INVERETED_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
+    ));
+
+    /** Defines the set for keys loaded by termux that have default inverted boolean behaviour with true as default.
      * "false" -> true
      * "true" -> false
      * default: true
-     * */
-    public static final Set<String> TERMUX_DEFAULT_INVERETED_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
+     */
+    public static final Set<String> TERMUX_DEFAULT_INVERETED_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST = new HashSet<>(Arrays.asList(
     ));
+
 
 
 
@@ -391,11 +422,28 @@ public final class TermuxPropertyConstants {
      * @return Returns the {@link File} object for termux properties.
      */
     public static File getTermuxPropertiesFile() {
-        String[] possiblePropertiesFileLocations = {
+        return getPropertiesFile(new String[]{
             TermuxConstants.TERMUX_PROPERTIES_PRIMARY_FILE_PATH,
             TermuxConstants.TERMUX_PROPERTIES_SECONDARY_FILE_PATH
-        };
+        });
+    }
 
+    /** Returns the first {@link File} found at
+     * {@link TermuxConstants#TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE_PATH} or
+     * {@link TermuxConstants#TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE_PATH}
+     * from which termux properties can be loaded.
+     * If the {@link File} found is not a regular file or is not readable then null is returned.
+     *
+     * @return Returns the {@link File} object for termux properties.
+     */
+    public static File getTermuxFloatPropertiesFile() {
+        return getPropertiesFile(new String[]{
+            TermuxConstants.TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE_PATH,
+            TermuxConstants.TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE_PATH
+        });
+    }
+
+    public static File getPropertiesFile(@NonNull String[] possiblePropertiesFileLocations) {
         File propertiesFile = new File(possiblePropertiesFileLocations[0]);
         int i = 0;
         while (!propertiesFile.exists() && i < possiblePropertiesFileLocations.length) {
@@ -406,7 +454,7 @@ public final class TermuxPropertyConstants {
         if (propertiesFile.isFile() && propertiesFile.canRead()) {
             return propertiesFile;
         } else {
-            Logger.logDebug("No readable termux.properties file found");
+            Logger.logDebug("No readable properties file found at: " + Arrays.toString(possiblePropertiesFileLocations));
             return null;
         }
     }
