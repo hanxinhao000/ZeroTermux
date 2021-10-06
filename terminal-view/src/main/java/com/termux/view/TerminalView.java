@@ -540,15 +540,9 @@ public final class TerminalView extends View {
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             if((System.currentTimeMillis() - doubleClick) < 260){
                 if(mDoubleClickListener != null){
-                    mDoubleClickListener.doubleClicke();
-
-
-
+                    mDoubleClickListener.doubleClicke(event.getX());
                 }
-
             }
-
-
             doubleClick = System.currentTimeMillis();
         }
 
@@ -1301,7 +1295,7 @@ public final class TerminalView extends View {
         this.mDoubleClickListener = mDoubleClickListener;
     }
     public interface DoubleClickListener{
-        void doubleClicke();
+        void doubleClicke(float x);
 
     }
 

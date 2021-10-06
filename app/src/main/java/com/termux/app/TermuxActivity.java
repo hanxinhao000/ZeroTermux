@@ -2052,9 +2052,23 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
     @Override
-    public void doubleClicke() {
+    public void doubleClicke(float x) {
 
 
+
+        int width = getWindow().getWindowManager().getDefaultDisplay().getWidth();
+        UUtils.showLog("点击位置:" + x + " 屏幕总宽度:" + width);
+
+        if(x <= 100){
+
+            getDrawer().openDrawer(Gravity.LEFT);
+            return;
+        }
+
+        if(x  >= width - 100){
+            getDrawer().openDrawer(Gravity.RIGHT);
+            return;
+        }
 
 
 
