@@ -121,6 +121,12 @@
 
 
 
+    <!-- Miscellaneous -->
+    <string name="error_allow_external_apps_ungranted">%1$s requires `allow-external-apps`
+        property to be set to `true` in `%2$s` file.</string>
+
+
+
     <!-- Termux Settings -->
     <string name="title_activity_termux_settings">&TERMUX_APP_NAME; 设置</string>
 
@@ -637,5 +643,7 @@
     <string name="线上脚本">线上脚本</string>
     <string name="本地脚本">本地脚本</string>
     <string name="请双击命令窗口试试">ZeroTermux\n请双击命令窗口试试</string>
+    <string name="ZeroTermux论坛">ZeroTermux论坛</string>
+    <string name="Zero论坛">Zero论坛</string>
 
 </resources>

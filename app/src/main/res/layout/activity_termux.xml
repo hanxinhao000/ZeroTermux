@@ -7,9 +7,12 @@
     android:fitsSystemWindows="true">
 
     <RelativeLayout
+        android:id="@+id/activity_termux_root_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_marginHorizontal="3dp"
+        android:layout_marginVertical="0dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -55,6 +58,18 @@
                     android:dividerHeight="0dp"
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="vertical">
+              <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageButton
+                        android:id="@+id/settings_button"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_settings"
+                        android:background="@null"
+                        android:contentDescription="@string/action_open_settings" />
+                </LinearLayout>
 
                     <ListView
                         android:id="@+id/terminal_sessions_list"

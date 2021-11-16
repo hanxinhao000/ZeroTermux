@@ -77,19 +77,18 @@ public class RunCommandService extends Service {
         }
 
         String executableExtra = executionCommand.executable = IntentUtils.getStringExtraIfSet(intent, RUN_COMMAND_SERVICE.EXTRA_COMMAND_PATH, null);
-
         executionCommand.arguments = IntentUtils.getStringArrayExtraIfSet(intent, RUN_COMMAND_SERVICE.EXTRA_ARGUMENTS, null);
 
         /*
-         * If intent was sent with `am` command, then normal comma characters may have been replaced
-         * with alternate characters if a normal comma existed in an argument itself to prevent it
-         * splitting into multiple arguments by `am` command.
-         * If `tudo` or `sudo` are used, then simply using their `-r` and `--comma-alternative` command
-         * options can be used without passing the below extras, but native supports is helpful if
-         * they are not being used.
-         * https://github.com/agnostic-apollo/tudo#passing-arguments-using-run_command-intent
-         * https://android.googlesource.com/platform/frameworks/base/+/21bdaf1/cmds/am/src/com/android/commands/am/Am.java#572
-         */
+        * If intent was sent with `am` command, then normal comma characters may have been replaced
+        * with alternate characters if a normal comma existed in an argument itself to prevent it
+        * splitting into multiple arguments by `am` command.
+        * If `tudo` or `sudo` are used, then simply using their `-r` and `--comma-alternative` command
+        * options can be used without passing the below extras, but native supports is helpful if
+        * they are not being used.
+        * https://github.com/agnostic-apollo/tudo#passing-arguments-using-run_command-intent
+        * https://android.googlesource.com/platform/frameworks/base/+/21bdaf1/cmds/am/src/com/android/commands/am/Am.java#572
+        */
         boolean replaceCommaAlternativeCharsInArguments = intent.getBooleanExtra(RUN_COMMAND_SERVICE.EXTRA_REPLACE_COMMA_ALTERNATIVE_CHARS_IN_ARGUMENTS, false);
         if (replaceCommaAlternativeCharsInArguments) {
             String commaAlternativeCharsInArguments = IntentUtils.getStringExtraIfSet(intent, RUN_COMMAND_SERVICE.EXTRA_COMMA_ALTERNATIVE_CHARS_IN_ARGUMENTS, null);
@@ -123,7 +122,7 @@ public class RunCommandService extends Service {
         // user knows someone tried to run a command in termux context, since it may be malicious
         // app or imported (tasker) plugin project and not the user himself. If a pending intent is
         // also sent, then its creator is also logged and shown.
-        errmsg = PluginUtils.checkIfRunCommandServiceAllowExternalAppsPolicyIsViolated(this);
+        errmsg = PluginUtils.checkIfAllowExternalAppsPolicyIsViolated(this, LOG_TAG);
         if (errmsg != null) {
             executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), errmsg);
             PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, true);
@@ -149,7 +148,6 @@ public class RunCommandService extends Service {
             FileUtils.APP_EXECUTABLE_FILE_PERMISSIONS, true, true,
             false);
         if (error != null) {
-            error.appendMessage("\n" + this.getString(R.string.msg_executable_absolute_path, executionCommand.executable));
             executionCommand.setStateFailed(error);
             PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, false);
             return stopService();
@@ -171,7 +169,6 @@ public class RunCommandService extends Service {
                 true, true, true,
                 false, true);
             if (error != null) {
-                error.appendMessage("\n" + this.getString(R.string.msg_working_directory_absolute_path, executionCommand.workingDirectory));
                 executionCommand.setStateFailed(error);
                 PluginUtils.processPluginExecutionCommandError(this, LOG_TAG, executionCommand, false);
                 return stopService();
@@ -188,10 +185,9 @@ public class RunCommandService extends Service {
             executionCommand.executable = executableExtra;
         }
 
-
-
         executionCommand.executableUri = new Uri.Builder().scheme(TERMUX_SERVICE.URI_SCHEME_SERVICE_EXECUTE).path(executionCommand.executable).build();
-        Logger.logVerbose(LOG_TAG, executionCommand.toString());
+
+        Logger.logVerboseExtended(LOG_TAG, executionCommand.toString());
 
         // Create execution intent with the action TERMUX_SERVICE#ACTION_SERVICE_EXECUTE to be sent to the TERMUX_SERVICE
         Intent execIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, executionCommand.executableUri);

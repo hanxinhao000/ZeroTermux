@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -37,9 +38,11 @@ import android.view.autofill.AutofillManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +86,7 @@ import com.termux.app.settings.properties.TermuxAppSharedProperties;
 
 import com.termux.shared.logger.Logger;
 import com.termux.shared.termux.TermuxUtils;
+import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
 import com.termux.app.utils.CrashUtils;
@@ -91,6 +95,7 @@ import com.termux.view.TerminalViewClient;
 import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.FontActivity;
 import com.termux.zerocore.activity.SwitchActivity;
+import com.termux.zerocore.activity.WebViewActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
@@ -287,9 +292,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             return;
         }
 
+        setMargins();
+
         mTermuxActivityRootView = findViewById(R.id.activity_termux_root_view);
         mTermuxActivityRootView.setActivity(this);
         mTermuxActivityBottomSpaceView = findViewById(R.id.activity_termux_bottom_space_view);
+        mTermuxActivityRootView.setOnApplyWindowInsetsListener(new TermuxActivityRootView.WindowInsetsListener());
 
         View content = findViewById(android.R.id.content);
         content.setOnApplyWindowInsetsListener((v, insets) -> {
@@ -306,6 +314,8 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         setTermuxTerminalViewAndClients();
 
         setTerminalToolbarView(savedInstanceState);
+
+        setSettingsButtonView();
 
         setNewSessionButtonView();
 
@@ -530,7 +540,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         if (mProperties.isUsingBlackUI()) {
             findViewById(R.id.left_drawer).setBackgroundColor(ContextCompat.getColor(this,
                 android.R.color.background_dark));
+            ((ImageButton) findViewById(R.id.settings_button)).setColorFilter(Color.WHITE);
         }
+    }
+
+    private void setMargins() {
+        RelativeLayout relativeLayout = findViewById(R.id.activity_termux_root_relative_layout);
+        int marginHorizontal = mProperties.getTerminalMarginHorizontal();
+        int marginVertical = mProperties.getTerminalMarginVertical();
+        ViewUtils.setLayoutMarginsInDp(relativeLayout, marginHorizontal, marginVertical, marginHorizontal, marginVertical);
     }
 
 
@@ -617,17 +635,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             findViewById(R.id.terminal_toolbar_text_input).requestFocus();
         }
     }
-    public ViewPager getTerminalToolbarViewPager() {
-        return (ViewPager) findViewById(R.id.terminal_toolbar_view_pager);
-    }
 
-    public boolean isTerminalViewSelected() {
-        return getTerminalToolbarViewPager().getCurrentItem() == 0;
-    }
-
-    public boolean isTerminalToolbarTextInputViewSelected() {
-        return getTerminalToolbarViewPager().getCurrentItem() == 1;
-    }
 
     private void saveTerminalToolbarTextInput(Bundle savedInstanceState) {
         if (savedInstanceState == null) return;
@@ -640,6 +648,13 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
 
+
+    private void setSettingsButtonView() {
+        ImageButton settingsButton = findViewById(R.id.settings_button);
+        settingsButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+        });
+    }
 
     private void setNewSessionButtonView() {
         View newSessionButton = findViewById(R.id.new_session_button);
@@ -744,7 +759,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 requestAutoFill();
                 return true;
             case CONTEXT_MENU_RESET_TERMINAL_ID:
-                resetSession(session);
+                onResetTerminalSession(session);
                 return true;
             case CONTEXT_MENU_KILL_PROCESS_ID:
                 showKillSessionDialog(session);
@@ -783,10 +798,13 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         b.show();
     }
 
-    private void resetSession(TerminalSession session) {
+    private void onResetTerminalSession(TerminalSession session) {
         if (session != null) {
             session.reset();
             showToast(getResources().getString(R.string.msg_terminal_reset), true);
+
+            if (mTermuxTerminalSessionClient != null)
+                mTermuxTerminalSessionClient.onResetTerminalSession();
         }
     }
 
@@ -872,6 +890,20 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         return (DrawerLayout) findViewById(R.id.drawer_layout);
     }
 
+
+    public ViewPager getTerminalToolbarViewPager() {
+        return (ViewPager) findViewById(R.id.terminal_toolbar_view_pager);
+    }
+
+    public boolean isTerminalViewSelected() {
+        return getTerminalToolbarViewPager().getCurrentItem() == 0;
+    }
+
+    public boolean isTerminalToolbarTextInputViewSelected() {
+        return getTerminalToolbarViewPager().getCurrentItem() == 1;
+    }
+
+
     public void termuxSessionListNotifyUpdated() {
         mTermuxSessionListViewController.notifyDataSetChanged();
     }
@@ -903,7 +935,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     }
 
     @Nullable
-    public static TerminalSession getCurrentSession() {
+    public TerminalSession getCurrentSession() {
         if (mTerminalView != null)
             return mTerminalView.getCurrentSession();
         else
@@ -947,11 +979,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             intent.removeExtra(TERMUX_ACTIVITY.EXTRA_RELOAD_STYLE);
             intent.setAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
         }
-        resBroadcastReceiever(extraReloadStyle);
     }
-
-
-
 
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -982,10 +1010,12 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             mProperties.loadTermuxPropertiesFromDisk();
 
             if (mExtraKeysView != null) {
+                mExtraKeysView.setButtonTextAllCaps(mProperties.shouldExtraKeysTextBeAllCaps());
                 mExtraKeysView.reload(mProperties.getExtraKeysInfo());
             }
         }
 
+        setMargins();
         setTerminalToolbarHeight();
 
         if (mTermuxTerminalSessionClient != null)
@@ -1052,6 +1082,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private LinearLayout zero_fun;
     private LinearLayout yuyan;
     private LinearLayout shiyan_fun;
+    private LinearLayout zerotermux_bbs;
     private TextView service_status;
     private TextView msg_tv;
     private TextView ip_status;
@@ -1070,6 +1101,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
 
         code_ll = findViewById(R.id.code_ll);
+        zerotermux_bbs = findViewById(R.id.zerotermux_bbs);
         rongqi = findViewById(R.id.rongqi);
         back_res = findViewById(R.id.back_res);
         linux_online = findViewById(R.id.linux_online);
@@ -1117,6 +1149,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         cmd_command.setOnClickListener(this);
         moe.setOnClickListener(this);
         msg.setOnClickListener(this);
+        zerotermux_bbs.setOnClickListener(this);
         files_mulu.setOnClickListener(this);
         github.setOnClickListener(this);
         start_command.setOnClickListener(this);
@@ -1330,6 +1363,15 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 BoomCommandDialog boomCommandDialog = new BoomCommandDialog(TermuxActivity.this);
                 boomCommandDialog.show();
                 boomCommandDialog.setCancelable(true);
+
+                break;
+            case R.id.zerotermux_bbs:
+
+
+                Intent intent2 = new Intent(this, WebViewActivity.class);
+                intent2.putExtra("title","ZeroTermux 论坛");
+                intent2.putExtra("content",HTTPIP.ZERO_BBS);
+                startActivity(intent2);
 
                 break;
             case R.id.moe:

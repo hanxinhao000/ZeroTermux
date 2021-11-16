@@ -13,6 +13,8 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
+import com.termux.app.utils.PluginUtils;
+import com.termux.shared.data.IntentUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.termux.TermuxConstants;
 
@@ -33,6 +35,8 @@ public class TermuxOpenReceiver extends BroadcastReceiver {
             Logger.logError(LOG_TAG, "termux-open: Called without intent data");
             return;
         }
+
+        Logger.logVerbose(LOG_TAG, "Intent Received:\n" + IntentUtils.getIntentString(intent));
 
         final String filePath = data.getPath();
         final String contentTypeExtra = intent.getStringExtra("content-type");
@@ -111,6 +115,8 @@ public class TermuxOpenReceiver extends BroadcastReceiver {
 
     public static class ContentProvider extends android.content.ContentProvider {
 
+        private static final String LOG_TAG = "TermuxContentProvider";
+
         @Override
         public boolean onCreate() {
             return true;
@@ -178,15 +184,33 @@ public class TermuxOpenReceiver extends BroadcastReceiver {
             File file = new File(uri.getPath());
             try {
                 String path = file.getCanonicalPath();
+                Logger.logDebug(LOG_TAG, "Open file request received for \"" + path + "\" with mode \"" + mode + "\"");
                 String storagePath = Environment.getExternalStorageDirectory().getCanonicalPath();
                 // See https://support.google.com/faqs/answer/7496913:
                 if (!(path.startsWith(TermuxConstants.TERMUX_FILES_DIR_PATH) || path.startsWith(storagePath))) {
                     throw new IllegalArgumentException("Invalid path: " + path);
                 }
+
+                // If "allow-external-apps" property to not set to "true", then throw exception
+                String errmsg = PluginUtils.checkIfAllowExternalAppsPolicyIsViolated(getContext(), LOG_TAG);
+                if (errmsg != null) {
+                    throw new IllegalArgumentException(errmsg);
+                }
+
+                // Do not allow apps with RUN_COMMAND permission to modify termux apps properties files,
+                // including allow-external-apps
+                if (TermuxConstants.TERMUX_PROPERTIES_PRIMARY_FILE_PATH.equals(path) ||
+                    TermuxConstants.TERMUX_PROPERTIES_SECONDARY_FILE_PATH.equals(path) ||
+                    TermuxConstants.TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE_PATH.equals(path) ||
+                    TermuxConstants.TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE_PATH.equals(path)) {
+                    mode = "r";
+                }
+
             } catch (IOException e) {
                 throw new IllegalArgumentException(e);
             }
-            return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+
+            return ParcelFileDescriptor.open(file, ParcelFileDescriptor.parseMode(mode));
         }
     }
 
