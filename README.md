@@ -40,6 +40,11 @@
 
 # [点击访问(Go To)](https://github.com/termux/termux-app)
 
+## 下载站地址(Download)
+
+# [点击访问(Go To)](https://d.icdown.club/repository/main/ZeroTermux/)
+
+
 ## 阿里巴巴 ico 访问链接(Alibaba ico access link)
 
 # [点击访问(Go To)](https://www.iconfont.cn/)
