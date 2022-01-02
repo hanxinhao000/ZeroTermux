@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/shape_r_3dp_161823_left"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_height="400dp">
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/show_data"
+        android:visibility="visible"
+        android:layout_height="400dp">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="390dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/service_name"
+                android:textColor="@color/color_ffffff"
+                android:text="@string/美化设置"
+                android:layout_height="wrap_content"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/字体颜色"
+                        android:layout_height="wrap_content"/>
+
+
+                    <com.rtugeek.android.colorseekbar.ColorSeekBar
+                        android:layout_width="match_parent"
+                        android:id="@+id/font_color"
+                        android:layout_marginTop="10dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/字体颜色透明度"
+                        android:layout_height="wrap_content"/>
+
+                    <com.rtugeek.android.colorseekbar.AlphaSeekBar
+                        android:id="@+id/font_color_ap"
+                        android:layout_marginTop="10dp"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_55ffffff"
+                        android:layout_height="1px"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:layout_marginTop="10dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/背景颜色"
+                        android:layout_height="wrap_content"/>
+
+                    <com.rtugeek.android.colorseekbar.ColorSeekBar
+                        android:layout_width="match_parent"
+                        android:id="@+id/back_color"
+                        android:layout_marginTop="10dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/背景颜色透明度"
+                        android:layout_height="wrap_content"/>
+
+                    <com.rtugeek.android.colorseekbar.AlphaSeekBar
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/back_color_ap"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/背景颜色半透明"
+                        android:layout_height="wrap_content"/>
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/back_ap"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_55ffffff"
+                        android:layout_height="1px"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/显示背景字体"
+                        android:layout_height="wrap_content"/>
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/back_text_show_switch"
+                        android:checked="true"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/color_55ffffff"
+                        android:layout_height="1px"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/背景图片"
+                        android:layout_height="wrap_content"/>
+
+                   <RelativeLayout
+                       android:layout_width="wrap_content"
+                       android:layout_marginTop="10dp"
+
+                       android:id="@+id/img_rl"
+                       android:layout_height="wrap_content">
+
+                       <ImageView
+                           android:layout_width="30dp"
+                           android:layout_marginTop="10dp"
+                           android:layout_centerHorizontal="true"
+                           android:src="@mipmap/add_image_back"
+                           android:id="@+id/show1"
+                           android:layout_centerVertical="true"
+                           android:scaleType="centerCrop"
+                           android:layout_height="30dp"/>
+
+                       <ImageView
+                           android:layout_width="120dp"
+                           android:visibility="invisible"
+                           android:layout_marginTop="10dp"
+                           android:id="@+id/show2"
+                           android:src="@mipmap/add_image_back"
+                           android:layout_centerVertical="true"
+                           android:scaleType="centerCrop"
+                           android:layout_height="120dp"/>
+
+                   </RelativeLayout>
+
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:id="@+id/def_tv"
+                        android:textColor="@color/color_ffffff"
+                        android:text="@string/重置"
+                        android:background="@drawable/shape_r_3dp_2e"
+                        android:layout_height="40dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"/>
+
+                </LinearLayout>
+
+
+
+
+            </ScrollView>
+
+
+        </LinearLayout>
+
+
+
+
+
+
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>

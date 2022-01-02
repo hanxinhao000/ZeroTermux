@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorBarView">
+        <!-- 设置滑块图标-->
+        <attr name="thumbDrawable" format="reference" />
+        <!-- 设置彩色长条高度-->
+        <attr name="barHeight" format="dimension" />
+        <!-- 设置滑块图标高度，宽度会根据高度等比适应-->
+        <attr name="thumbHeight" format="dimension" />
+    </declare-styleable>
+</resources>

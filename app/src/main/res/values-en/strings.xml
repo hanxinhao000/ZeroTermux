@@ -642,6 +642,7 @@ Reset successfully</string>
     <string name="本地脚本">Local script</string>
     <string name="请双击命令窗口试试">ZeroTermux\nPlease double-click the command window to try</string>
     <string name="Zero论坛">Zero BBS</string>
+    <string name="ZeroTermux论坛">ZeroTermux bbs</string>
 
     <string name="在线脚本">Online script</string>
     <string name="在线脚本服务器名称">Server Name</string>
@@ -650,4 +651,6 @@ Reset successfully</string>
     <string name="服务器在线但数据格式出错">The server is online, but the data format is wrong</string>
     <string name="当前文件下载已被禁止">The current file download has been forbidden</string>
     <string name="此脚本数据错误">The script data is wrong, please try to contact the administrator</string>
+
+
 </resources>

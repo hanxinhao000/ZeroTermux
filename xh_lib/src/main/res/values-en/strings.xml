@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BiometricLib</string>
+    <string name="app_name">ZeroTermux</string>
     <string name="biometric_dialog_cancel">Cancel</string>
     <string name="biometric_dialog_title">Verification</string>
     <string name="biometric_dialog_subtitle">Verify fingerprint to continue</string>

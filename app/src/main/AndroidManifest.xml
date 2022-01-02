@@ -12,7 +12,9 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
-    <uses-feature android:name="android.hardware.usb.host" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="true" />
 
     <permission
         android:name="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND"
@@ -34,18 +36,12 @@
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_SMS" />
-
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
-
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-
-
 
     <application
         android:name=".app.TermuxApplication"
@@ -53,13 +49,15 @@
         android:banner="@drawable/banner"
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/application_name"
-        android:usesCleartextTraffic="true"
-        tools:replace="android:allowBackup, android:supportsRtl"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
-        android:theme="@style/Theme.Termux">
-
+        android:theme="@style/Theme.Termux"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup, android:supportsRtl">
+        <activity android:name=".zerocore.activity.ImageActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
         <!--
          This (or rather, value 2.1 or higher) is needed to make the Samsung Galaxy S8
              mark the app with "This app is optimized to run in full screen."
@@ -74,9 +72,6 @@
             android:label="@string/application_name"
             android:launchMode="singleTask"
             android:resizeableActivity="true">
-
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -92,7 +87,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-
 
         <activity-alias
             android:name=".HomeActivity"
@@ -114,32 +108,41 @@
             android:parentActivityName=".app.TermuxActivity"
             android:resizeableActivity="true"
             android:theme="@android:style/Theme.Material.Light.DarkActionBar" />
-
-        <activity android:name=".zerocore.activity.UncaughtExceptionHandlerActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".zerocore.activity.SwitchActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".zerocore.activity.BackNewActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".zerocore.activity.FontActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".zerocore.utermux_windows.qemu.activity.RunWindowActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".zerocore.activity.WebViewActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
+            android:name=".zerocore.activity.UncaughtExceptionHandlerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.activity.SwitchActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.activity.BackNewActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.activity.FontActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.utermux_windows.qemu.activity.RunWindowActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.activity.WebViewActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".app.activities.SettingsActivity"
             android:exported="true"
             android:label="@string/title_activity_termux_settings"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
-
         <provider
             android:name="com.github.mjdev.libaums.storageprovider.UsbDocumentProvider"
             android:authorities="com.github.mjdev.libaums.storageprovider.documents"
+            android:enabled="@bool/isAtLeastKitKat"
             android:exported="true"
             android:grantUriPermissions="true"
-            android:permission="android.permission.MANAGE_DOCUMENTS"
-            android:enabled="@bool/isAtLeastKitKat">
+            android:permission="android.permission.MANAGE_DOCUMENTS">
             <intent-filter>
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
@@ -150,14 +153,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <activity android:name="com.zzti.fengyongge.imagepicker.PhotoPreviewActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name="com.zzti.fengyongge.imagepicker.PhotoSelectorActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
         <activity
             android:name=".shared.activities.ReportActivity"
-            android:theme="@style/Theme.AppCompat.TermuxReportActivity"
             android:documentLaunchMode="intoExisting"
-            />
-
-
-
+            android:theme="@style/Theme.AppCompat.TermuxReportActivity" />
         <activity
             android:name=".filepicker.TermuxFileReceiverActivity"
             android:excludeFromRecents="true"
@@ -218,8 +222,9 @@
         </service>
 
         <receiver android:name=".app.TermuxOpenReceiver" />
-
-        <receiver android:name=".shared.activities.ReportActivity$ReportActivityBroadcastReceiver"  android:exported="false" />
+        <receiver
+            android:name=".shared.activities.ReportActivity$ReportActivityBroadcastReceiver"
+            android:exported="false" />
 
         <provider
             android:name=".app.TermuxOpenReceiver$ContentProvider"
@@ -235,7 +240,5 @@
             android:name="com.samsung.android.multidisplay.keep_process_alive"
             android:value="true" />
     </application>
-
-
 
 </manifest>

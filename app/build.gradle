@@ -77,6 +77,15 @@ android {
         implementation 'com.just.agentweb:agentweb:4.0.2'
         implementation 'com.just.agentweb:download:4.0.2'
 
+        //颜色取色器
+        implementation 'com.github.rtugeek:colorseekbar:2.0.3'
+
+        //选取图片
+        implementation 'com.zzti.fengyongge:imagepicker:1.4.5'
+
+        //glide
+        implementation 'com.github.bumptech.glide:glide:4.8.0'
+        annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"
@@ -165,6 +174,9 @@ android {
 dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation project(path: ':xh_lib')
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
     implementation "androidx.core:core-ktx:+"

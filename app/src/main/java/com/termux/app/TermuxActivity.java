@@ -39,6 +39,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -48,6 +49,8 @@ import android.widget.Toast;
 
 import com.blockchain.ub.utils.httputils.BaseHttpUtils;
 import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
 import com.example.xh_lib.utils.UUtils2;
@@ -90,6 +93,7 @@ import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
 import com.termux.app.utils.CrashUtils;
+import com.termux.view.TerminalRenderer;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
 import com.termux.zerocore.activity.BackNewActivity;
@@ -101,6 +105,7 @@ import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.data.UsbFileData;
+import com.termux.zerocore.dialog.BeautifySettingDialog;
 import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
@@ -341,7 +346,50 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         createFiles();
         initZeroView();
         initStatue();
+        initColorConfig();
+    }
 
+
+    public void initColorConfig(){
+        String font_color = SaveData.INSTANCE.getStringOther("font_color");
+        String back_color = SaveData.INSTANCE.getStringOther("back_color");
+        String change_text = SaveData.INSTANCE.getStringOther("change_text");
+        String change_text_show = SaveData.INSTANCE.getStringOther("change_text_show");
+        if(!(font_color == null || font_color.isEmpty() || font_color.equals("def"))){
+            try {
+                int color = Integer.parseInt(font_color);
+                TerminalRenderer.COLOR_TEXT = color;
+                ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
+                mTerminalView.invalidate();
+                mExtraKeysView.setColorButton();
+                mExtraKeysView.invalidate();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(!(back_color == null || back_color.isEmpty() || back_color.equals("def"))){
+            try {
+                int color = Integer.parseInt(back_color);
+                this.back_color.setBackgroundColor(color);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if((change_text == null || change_text.isEmpty() || change_text.equals("def"))){
+            this.back_color.setAlpha(1f);
+        }else{
+            this.back_color.setAlpha(0.3f);
+        }
+
+        if((change_text_show == null || change_text_show.isEmpty() || change_text_show.equals("def"))){
+            double_tishi.setVisibility(View.VISIBLE);
+        }else{
+            double_tishi.setVisibility(View.GONE);
+        }
+        File file = new File(FileUrl.INSTANCE.getMainConfigImg() + "/back.jpg");
+        if(file.exists()) {
+            Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
+        }
     }
 
     @Override
@@ -1091,6 +1139,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private TextView xue_hua_start;
     private FrameLayout xue_fragment;
     private LinearLayout online_sh;
+    private LinearLayout beautify;
+    private View back_color;
+    private ImageView back_img;
 
     /**
      *
@@ -1136,6 +1187,9 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         shiyan_fun = findViewById(R.id.shiyan_fun);
         double_tishi = findViewById(R.id.double_tishi);
         online_sh = findViewById(R.id.online_sh);
+        beautify = findViewById(R.id.beautify);
+        back_color = findViewById(R.id.back_color);
+        back_img = findViewById(R.id.back_img);
 
         try{
             double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
@@ -1167,6 +1221,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         quanping.setOnClickListener(this);
         zero_fun.setOnClickListener(this);
         yuyan.setOnClickListener(this);
+        beautify.setOnClickListener(this);
         shiyan_fun.setOnClickListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -1636,6 +1691,80 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 mOnLineShDialog.show();
 
                 mOnLineShDialog.setCancelable(true);
+
+                break;
+
+            case R.id.beautify:
+
+                getDrawer().close();
+
+                BeautifySettingDialog mBeautifySettingDialog = new BeautifySettingDialog(this);
+
+                mBeautifySettingDialog.setBackColorChange(new BeautifySettingDialog.BackColorChange() {
+                    @Override
+                    public void onColorChange(int color) {
+                        back_color.setBackgroundColor(color);
+                    }
+
+                    @Override
+                    public void onColorApChange(int ap) {
+
+                    }
+                });
+
+                mBeautifySettingDialog.setOnChangeImageFile(new BeautifySettingDialog.OnChangeImageFile() {
+                    @Override
+                    public void onChangImage(@NotNull File mFile) {
+                        Glide.with(TermuxActivity.this).load(mFile).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
+                    }
+                });
+
+                mBeautifySettingDialog.setOnChangeTextView(new BeautifySettingDialog.OnChangeTextView() {
+                    @Override
+                    public void onChange(boolean change) {
+                        Logger.logDebug(LOG_TAG, "change:" + change);
+                        if(change){
+                            back_color.setAlpha(0.3f);
+                        }else{
+                            back_color.setAlpha(1f);
+                        }
+                    }
+                });
+                mBeautifySettingDialog.setOnTextCheckedChangeListener(new BeautifySettingDialog.OnTextCheckedChangeListener() {
+                    @Override
+                    public void onChange(boolean change) {
+                        Logger.logDebug(LOG_TAG, "setOnTextCheckedChangeListener:" + change);
+                        if(change){
+                            double_tishi.setVisibility(View.VISIBLE);
+                        }else{
+                            double_tishi.setVisibility(View.GONE);
+                        }
+                    }
+                });
+                mBeautifySettingDialog.setFontColorChange(new BeautifySettingDialog.FontColorChange() {
+                    @Override
+                    public void onColorChange(int color) {
+                        TerminalRenderer.COLOR_TEXT = color;
+                        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
+                        mTerminalView.invalidate();
+                        mExtraKeysView.setColorButton();
+                        mExtraKeysView.invalidate();
+                    }
+
+                    @Override
+                    public void onColorApChange(int color) {
+                        TerminalRenderer.COLOR_TEXT = color;
+                        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
+                        mTerminalView.invalidate();
+                        mExtraKeysView.setColorButton();
+                        mExtraKeysView.invalidate();
+                    }
+                });
+
+                mBeautifySettingDialog.show();
+
+                mBeautifySettingDialog.setCancelable(true);
+
 
                 break;
 

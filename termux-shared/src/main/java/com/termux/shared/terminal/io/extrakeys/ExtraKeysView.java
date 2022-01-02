@@ -106,7 +106,7 @@ public final class ExtraKeysView extends GridLayout {
 
 
     /** Defines the default value for {@link #mButtonTextColor}. */
-    public static final int DEFAULT_BUTTON_TEXT_COLOR = 0xFFFFFFFF;
+    public static int DEFAULT_BUTTON_TEXT_COLOR = 0xFFFFFFFF;
     /** Defines the default value for {@link #mButtonActiveTextColor}. */
     public static final int DEFAULT_BUTTON_ACTIVE_TEXT_COLOR = 0xFF80DEEA;
     /** Defines the default value for {@link #mButtonBackgroundColor}. */
@@ -651,6 +651,16 @@ public final class ExtraKeysView extends GridLayout {
         for (Object[] row : matrix)
             m = Math.max(m, row.length);
         return m;
+    }
+    //初始化颜色
+    public void setColorButton() {
+
+        for (int i = 0; i < getChildCount(); i++) {
+
+            Button childAt = (Button) getChildAt(i);
+            childAt.setTextColor(DEFAULT_BUTTON_TEXT_COLOR);
+        }
+
     }
 
 }

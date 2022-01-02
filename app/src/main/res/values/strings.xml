@@ -1,28 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!DOCTYPE resources [
-    <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
-    <!ENTITY TERMUX_APP_NAME "ZeroTermux">
-    <!ENTITY TERMUX_API_APP_NAME "Termux:API">
-    <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
-    <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
-    <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
-    <!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker">
-    <!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget">
-    <!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">
-    ]>
+<!DOCTYPE resources [<!ENTITY TERMUX_PACKAGE_NAME "com.termux"><!ENTITY TERMUX_APP_NAME "ZeroTermux"><!ENTITY TERMUX_API_APP_NAME "Termux:API"><!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot"><!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float"><!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling"><!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker"><!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget"><!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">]>
 
 <resources>
     <string name="application_name">&TERMUX_APP_NAME;</string>
     <string name="shared_user_label">&TERMUX_APP_NAME; 用户</string>
 
 
-
     <!-- Termux RUN_COMMAND permission -->
     <string name="permission_run_command_label">运行命令 &TERMUX_APP_NAME; 环境</string>
-    <string name="permission_run_command_description">内执行任意命令 &TERMUX_APP_NAME;
-        环境</string>
-
+    <string name="permission_run_command_description">内执行任意命令 &TERMUX_APP_NAME; 环境</string>
 
 
     <!-- Termux Bootstrap Packages Installation -->
@@ -31,8 +18,8 @@
     <string name="bootstrap_error_body">&TERMUX_APP_NAME;无法安装引导程序包。</string>
     <string name="bootstrap_error_abort">中止</string>
     <string name="bootstrap_error_try_again">重试</string>
-    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 %1$s.</string>
-
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME;
+        有硬编码 $PREFIX 路径，不能安装在任何路径下 %1$s.</string>
 
 
     <!-- Terminal Sidebar and Shortcuts -->
@@ -50,7 +37,6 @@
 
     <string name="msg_enabling_terminal_toolbar">启用终端工具栏</string>
     <string name="msg_disabling_terminal_toolbar">禁用终端工具栏</string>
-
 
 
     <!-- Terminal Popup -->
@@ -83,12 +69,10 @@
     <string name="action_styling_install">安装</string>
 
 
-
     <!-- Termux Notifications -->
     <string name="notification_action_exit">退出</string>
     <string name="notification_action_wake_lock">获取唤醒锁</string>
     <string name="notification_action_wake_unlock">释放唤醒锁</string>
-
 
 
     <!-- Termux RunCommandService -->
@@ -98,11 +82,9 @@
     <string name="error_run_command_service_api_help">访问 %1$s 有关 RUN_COMMAND 意图用法的更多信息。</string>
 
 
-
     <!-- Termux Execution Commands -->
     <string name="msg_executable_absolute_path">可执行绝对路径： \"%1$s\"</string>
     <string name="msg_working_directory_absolute_path">工作目录绝对路径： \"%1$s\"</string>
-
 
 
     <!-- Termux Report And ShareUtils -->
@@ -113,18 +95,15 @@
     <string name="title_report_text">报告文本</string>
 
 
-
     <!-- Termux File Receiver -->
     <string name="title_file_received">将文件保存在 ~/downloads/</string>
     <string name="action_file_received_edit">编辑</string>
     <string name="action_file_received_open_directory">打开目录</string>
 
 
-
     <!-- Miscellaneous -->
     <string name="error_allow_external_apps_ungranted">%1$s requires `allow-external-apps`
         property to be set to `true` in `%2$s` file.</string>
-
 
 
     <!-- Termux Settings -->
@@ -134,48 +113,48 @@
     <string name="termux_preferences_title">&TERMUX_APP_NAME;</string>
     <string name="termux_preferences_summary">配置文件在 &TERMUX_APP_NAME; app</string>
 
-        <!-- Debugging Preferences -->
-        <string name="termux_debugging_preferences_title">调试</string>
-        <string name="termux_debugging_preferences_summary">调试首选项</string>
+    <!-- Debugging Preferences -->
+    <string name="termux_debugging_preferences_title">调试</string>
+    <string name="termux_debugging_preferences_summary">调试首选项</string>
 
-            <!-- Logging Category -->
-            <string name="termux_logging_header">日志记录</string>
+    <!-- Logging Category -->
+    <string name="termux_logging_header">日志记录</string>
 
-                <!-- Log Level -->
-                <string name="termux_log_level_title">日志等级</string>
+    <!-- Log Level -->
+    <string name="termux_log_level_title">日志等级</string>
 
-                <!-- Terminal View Key Logging -->
-                <string name="termux_terminal_view_key_logging_enabled_title">终端视图键记录</string>
-                <string name="termux_terminal_view_key_logging_enabled_off">日志将没有终端视图键的条目。 （默认）</string>
-                <string name="termux_terminal_view_key_logging_enabled_on">Logcat 日志将包含终端视图键的条目。这些非常冗长，在正常情况下应该禁用，否则会导致性能问题。</string>
+    <!-- Terminal View Key Logging -->
+    <string name="termux_terminal_view_key_logging_enabled_title">终端视图键记录</string>
+    <string name="termux_terminal_view_key_logging_enabled_off">日志将没有终端视图键的条目。 （默认）</string>
+    <string name="termux_terminal_view_key_logging_enabled_on">Logcat 日志将包含终端视图键的条目。这些非常冗长，在正常情况下应该禁用，否则会导致性能问题。</string>
 
-                <!-- Plugin Error Notifications -->
-                <string name="termux_plugin_error_notifications_enabled_title">插件错误通知</string>
-                <string name="termux_plugin_error_notifications_enabled_off">禁用插件错误的闪烁和通知。</string>
-                <string name="termux_plugin_error_notifications_enabled_on">显示插件错误的闪烁和通知。 （默认）</string>
+    <!-- Plugin Error Notifications -->
+    <string name="termux_plugin_error_notifications_enabled_title">插件错误通知</string>
+    <string name="termux_plugin_error_notifications_enabled_off">禁用插件错误的闪烁和通知。</string>
+    <string name="termux_plugin_error_notifications_enabled_on">显示插件错误的闪烁和通知。 （默认）</string>
 
-                <!-- Crash Report Notifications -->
-                <string name="termux_crash_report_notifications_enabled_title">崩溃报告通知</string>
-                <string name="termux_crash_report_notifications_enabled_off">禁用崩溃报告的通知。</string>
-                <string name="termux_crash_report_notifications_enabled_on">显示崩溃报告的通知。 （默认）</string>
+    <!-- Crash Report Notifications -->
+    <string name="termux_crash_report_notifications_enabled_title">崩溃报告通知</string>
+    <string name="termux_crash_report_notifications_enabled_off">禁用崩溃报告的通知。</string>
+    <string name="termux_crash_report_notifications_enabled_on">显示崩溃报告的通知。 （默认）</string>
 
 
-        <!-- Terminal IO Preferences -->
-        <string name="termux_terminal_io_preferences_title">终端输入/输出</string>
-        <string name="termux_terminal_io_preferences_summary">终端 I/O 的首选项</string>
+    <!-- Terminal IO Preferences -->
+    <string name="termux_terminal_io_preferences_title">终端输入/输出</string>
+    <string name="termux_terminal_io_preferences_summary">终端 I/O 的首选项</string>
 
-            <!-- Keyboard Category -->
-            <string name="termux_keyboard_header">键盘</string>
+    <!-- Keyboard Category -->
+    <string name="termux_keyboard_header">键盘</string>
 
-                <!-- Soft Keyboard -->
-                <string name="termux_soft_keyboard_enabled_title">软键盘已启用</string>
-                <string name="termux_soft_keyboard_enabled_off">软键盘将被禁用。</string>
-                <string name="termux_soft_keyboard_enabled_on">软键盘将被启用。（默认）</string>
+    <!-- Soft Keyboard -->
+    <string name="termux_soft_keyboard_enabled_title">软键盘已启用</string>
+    <string name="termux_soft_keyboard_enabled_off">软键盘将被禁用。</string>
+    <string name="termux_soft_keyboard_enabled_on">软键盘将被启用。（默认）</string>
 
-                <!-- Soft Keyboard Only If No Hardware-->
-                <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">无硬件时仅软键盘</string>
-                <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">即使连接了硬件键盘，也将启用软键盘。 （默认）</string>
-                <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">只有在没有连接硬件键盘时才会启用软键盘。</string>
+    <!-- Soft Keyboard Only If No Hardware-->
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">无硬件时仅软键盘</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">即使连接了硬件键盘，也将启用软键盘。 （默认）</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">只有在没有连接硬件键盘时才会启用软键盘。</string>
 
 
     <!-- Termux Tasker App Preferences -->
@@ -479,8 +458,6 @@
     <string name="termux_x11">termux-x11</string>
 
 
-
-
     <string name="本机IP">本机IP</string>
 
     <string name="Zero功能">Zero功能</string>
@@ -500,8 +477,6 @@
     <string name="开启成功">服务开启成功!</string>
 
 
-
-
     <string name="软件开发">软件开发分类</string>
     <string name="MyServer">MyServer</string>
     <string name="Termux_ADB">Termux-ADB</string>
@@ -513,7 +488,6 @@
     <string name="运行完成">命令执行完成,请确保在Root下执行\n请使用:\n \n adb.exe connect</string>
     <string name="网络ADBClose">关闭ADB(ROOT)</string>
     <string name="关闭成功">ADB命令关闭成功</string>
-
 
 
     <string name="欢迎来到windows模拟器页面">欢迎来到windows模拟器页面</string>
@@ -636,7 +610,8 @@
     <string name="termux_api_preferences_title">&TERMUX_API_APP_NAME;</string>
     <string name="termux_api_preferences_summary">偏好 &TERMUX_API_APP_NAME; 应用</string>
     <!-- TermuxService -->
-    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME; 需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME; -> 先进的</string>
+    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME;
+        需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME; -> 先进的</string>
     <string name="选择方式">选择方式</string>
     <string name="要获取最新版本">要获取最新版本，你需要在线下载，旧版本可以选择本地脚本</string>
     <string name="获取线上">获取线上</string>
@@ -655,4 +630,14 @@
     <string name="当前文件下载已被禁止">当前文件下载已被禁止</string>
     <string name="此脚本数据错误">此脚本数据错误,请尝试联系管理员</string>
 
+    <string name="美化设置">美化设置</string>
+    <string name="字体颜色">字体颜色</string>
+    <string name="背景颜色">背景颜色</string>
+    <string name="字体颜色透明度">字体颜色透明度</string>
+    <string name="背景颜色透明度">背景颜色透明度</string>
+    <string name="背景颜色半透明">背景颜色半透明(可与背景图片叠加)</string>
+    <string name="背景图片">背景图片</string>
+    <string name="显示背景字体">显示背景字体</string>
+    <string name="重置">重置</string>
+    <string name="如果看到该页面">如果看到该页面，请按下返回键退出</string>
 </resources>

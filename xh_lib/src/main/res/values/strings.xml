@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BiometricLib</string>
+    <string name="app_name">ZeroTermux</string>
     <string name="biometric_dialog_cancel">返回</string>
     <string name="biometric_dialog_title">验证</string>
     <string name="biometric_dialog_subtitle">验证指纹</string>

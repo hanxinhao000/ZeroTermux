@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -71,7 +72,7 @@ public class UUtils {
     private static final SimpleDateFormat format = new SimpleDateFormat();
     public static final String DATE_FORMAT_YMD = "yyyy-MM-dd";
     public static final String DATE_FORMAT_YMDHM = "yyyy-MM-dd HH:mm";
-
+    private static final String LOG_TAG = "Termux--Apk:UUtils";
     private static Context mContext;
     private static Handler mHandler;
 
@@ -805,16 +806,15 @@ public class UUtils {
 
     //写出文件
     public static void writerFileRawInput(File mFile,InputStream open) {
-
+        Log.e(LOG_TAG, "writerFileRawInput: start");
         try {
-
             int len = 0;
             byte[] lll = new byte[1024];
 
             if (!mFile.exists()) {
                 mFile.createNewFile();
+                Log.e(LOG_TAG, "writerFileRawInput: createNewFile");
             }
-
             FileOutputStream fileOutputStream = new FileOutputStream(mFile);
 
             while ((len = open.read(lll)) != -1) {
@@ -824,8 +824,10 @@ public class UUtils {
             fileOutputStream.flush();
             open.close();
             fileOutputStream.close();
+            Log.e(LOG_TAG, "writerFileRawInput: deon"  );
         } catch (Exception e) {
-
+            Log.e(LOG_TAG, "writerFileRawInput: " + e.toString() );
+            e.printStackTrace();
         }
 
     }
@@ -971,5 +973,14 @@ public class UUtils {
             UUtils.showMsg(UUtils.getString(R.string.复制失败));
         }
 
+    }
+
+    public static int calculateAlphaValue(int color,int ap){
+
+        int red = (color & 0xff0000) >> 16;
+        int green = (color & 0x00ff00) >> 8;
+        int blue = (color & 0x0000ff);
+
+        return Color.argb( red , green , blue ,ap);
     }
 }
