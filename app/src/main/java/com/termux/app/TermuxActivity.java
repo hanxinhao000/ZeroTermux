@@ -257,7 +257,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
 
     private static final String ARG_TERMINAL_TOOLBAR_TEXT_INPUT = "terminal_toolbar_text_input";
 
-    private static final String LOG_TAG = "TermuxActivity";
+    private static final String LOG_TAG = "Termux--Apk:TermuxActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -979,16 +979,16 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
             intent.removeExtra(TERMUX_ACTIVITY.EXTRA_RELOAD_STYLE);
             intent.setAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
         }
+        resBroadcastReceiever(extraReloadStyle);
     }
 
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent == null) return;
-
+            Logger.logDebug(LOG_TAG, "TermuxActivityBroadcastReceiver start:" + intent.getAction());
             if (mIsVisible) {
                 fixTermuxActivityBroadcastReceieverIntent(intent);
-
                 switch (intent.getAction()) {
                     case TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS:
                         Logger.logDebug(LOG_TAG, "Received intent to request storage permissions");
@@ -2169,7 +2169,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private boolean isPhoneRun = false;
 
     private void resBroadcastReceiever(String msg){
-
+        Logger.logDebug(LOG_TAG, "resBroadcastReceiever start:" + msg);
         if(msg == null){
             return;
         }

@@ -52,6 +52,7 @@ public class Logger {
 
 
     public static void logMessage(int logPriority, String tag, String message) {
+        Log.e(getFullTag(tag), message);
         if (logPriority == Log.ERROR && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
             Log.e(getFullTag(tag), message);
         else if (logPriority == Log.WARN && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)

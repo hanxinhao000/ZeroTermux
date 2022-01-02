@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/data/data/com.termux/files/usr/bin/sh
 am broadcast --user 0 \
 		 --es com.termux.app.reload_style contactperson \
 		 -a com.termux.app.reload_style com.termux > /dev/null

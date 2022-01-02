@@ -261,7 +261,7 @@ public final class TermuxInstaller {
     }
 
     static void setupStorageSymlinks(final Context context) {
-        final String LOG_TAG = "termux-storage";
+        final String LOG_TAG = "Termux--Apk:termux-storage";
 
         Logger.logInfo(LOG_TAG, "Setting up storage symlinks.");
 

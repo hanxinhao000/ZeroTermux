@@ -90,7 +90,7 @@ public final class ExtraKeysView extends GridLayout {
 
         /**
          * This is called by {@link ExtraKeysView} when a button is clicked so that the client
-         * can perform any hepatic feedback. This is only called in the {@link OnClickListener}
+         * can perform any hepatic feedback. This is only called in the {@link Button.OnClickListener}
          * and not for every repeat. Its also called for {@link #mSpecialButtons}.
          *
          * @param view The view that was clicked.
@@ -448,7 +448,7 @@ public final class ExtraKeysView extends GridLayout {
                     }
                 });
 
-                LayoutParams param = new LayoutParams();
+                LayoutParams param = new GridLayout.LayoutParams();
                 param.width = 0;
                 param.height = 0;
                 param.setMargins(0, 0, 0, 0);
