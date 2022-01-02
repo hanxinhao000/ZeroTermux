@@ -635,11 +635,19 @@ Reset successfully</string>
 
     <string name="Win7模拟">Win7 simulation</string>
 
-    <string name="选择方式">选择方式</string>
-    <string name="要获取最新版本">要获取最新版本，你需要在线下载，旧版本可以选择本地脚本</string>
-    <string name="获取线上">获取线上</string>
-    <string name="线上脚本">线上脚本</string>
-    <string name="本地脚本">本地脚本</string>
-    <string name="请双击命令窗口试试">ZeroTermux\n请双击命令窗口试试</string>
+    <string name="选择方式">options</string>
+    <string name="要获取最新版本">To get the latest version, you need to download it online, the old version can choose a local script</string>
+    <string name="获取线上">Get online</string>
+    <string name="线上脚本">Online script</string>
+    <string name="本地脚本">Local script</string>
+    <string name="请双击命令窗口试试">ZeroTermux\nPlease double-click the command window to try</string>
     <string name="Zero论坛">Zero BBS</string>
+
+    <string name="在线脚本">Online script</string>
+    <string name="在线脚本服务器名称">Server Name</string>
+    <string name="数据载入中">Data loading</string>
+    <string name="服务器已离线">Server is offline</string>
+    <string name="服务器在线但数据格式出错">The server is online, but the data format is wrong</string>
+    <string name="当前文件下载已被禁止">The current file download has been forbidden</string>
+    <string name="此脚本数据错误">The script data is wrong, please try to contact the administrator</string>
 </resources>
