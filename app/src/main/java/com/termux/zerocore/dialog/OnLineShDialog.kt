@@ -29,6 +29,7 @@ class OnLineShDialog : BaseDialogDown {
     private var recycler_view:RecyclerView? = null
     private var loading_data:LinearLayout? = null
     private var show_data: RelativeLayout? = null
+    private var service_name: TextView? = null
     private var mOnItemClickListener:OnItemClickListener? = null
     private val LOG_TAG = "Termux--Apk:OnLineShDialog"
     constructor(context: Context) : super(context)
@@ -39,6 +40,7 @@ class OnLineShDialog : BaseDialogDown {
         recycler_view = mView.findViewById(R.id.recycler_view)
         loading_data = mView.findViewById(R.id.loading_data)
         show_data = mView.findViewById(R.id.show_data)
+        service_name = mView.findViewById(R.id.service_name)
 
         downloadHttpData()
     }
@@ -55,6 +57,7 @@ class OnLineShDialog : BaseDialogDown {
                     show_data?.visibility = View.VISIBLE
                     loading_data?.visibility = View.GONE
                     recycler_view?.layoutManager = LinearLayoutManager(this@OnLineShDialog.mContext)
+                    service_name?.text = fromJson.serviceName
                     val data = fromJson.data
                     val onLineShDialogAdapter = OnLineShDialogAdapter(data,fromJson.ip)
                     recycler_view?.adapter = onLineShDialogAdapter
