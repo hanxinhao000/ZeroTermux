@@ -646,4 +646,13 @@
     <string name="ZeroTermux论坛">ZeroTermux论坛</string>
     <string name="Zero论坛">Zero论坛</string>
 
+
+    <string name="在线脚本">在线脚本</string>
+    <string name="在线脚本服务器名称">Server Name</string>
+    <string name="数据载入中">数据载入中</string>
+    <string name="服务器已离线">服务器已离线</string>
+    <string name="服务器在线但数据格式出错">服务器在线,但数据格式出错</string>
+    <string name="当前文件下载已被禁止">当前文件下载已被禁止</string>
+    <string name="此脚本数据错误">此脚本数据错误,请尝试联系管理员</string>
+
 </resources>

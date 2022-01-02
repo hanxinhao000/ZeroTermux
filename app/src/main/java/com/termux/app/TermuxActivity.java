@@ -106,6 +106,7 @@ import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
 import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
+import com.termux.zerocore.dialog.OnLineShDialog;
 import com.termux.zerocore.dialog.ProtocolDialog;
 import com.termux.zerocore.dialog.SYFunBoomDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
@@ -1089,6 +1090,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
     private TextView double_tishi;
     private TextView xue_hua_start;
     private FrameLayout xue_fragment;
+    private LinearLayout online_sh;
 
     /**
      *
@@ -1133,6 +1135,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         zero_fun = findViewById(R.id.zero_fun);
         shiyan_fun = findViewById(R.id.shiyan_fun);
         double_tishi = findViewById(R.id.double_tishi);
+        online_sh = findViewById(R.id.online_sh);
 
         try{
             double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
@@ -1149,6 +1152,7 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
         cmd_command.setOnClickListener(this);
         moe.setOnClickListener(this);
         msg.setOnClickListener(this);
+        online_sh.setOnClickListener(this);
         zerotermux_bbs.setOnClickListener(this);
         files_mulu.setOnClickListener(this);
         github.setOnClickListener(this);
@@ -1612,6 +1616,26 @@ public final class TermuxActivity extends Activity implements ServiceConnection,
                 SYFunBoomDialog syFunBoomDialog = new SYFunBoomDialog(this);
                 syFunBoomDialog.show();
                 syFunBoomDialog.setCancelable(true);
+
+                break;
+
+            case R.id.online_sh:
+
+                getDrawer().close();
+
+                OnLineShDialog mOnLineShDialog = new OnLineShDialog(this);
+
+                mOnLineShDialog.setOnItemClickListener(new OnLineShDialog.OnItemClickListener() {
+                    @Override
+                    public void click(@NotNull String msg) {
+                        mTerminalView.sendTextToTerminal(msg + "\n");
+                        mOnLineShDialog.dismiss();
+                    }
+                });
+
+                mOnLineShDialog.show();
+
+                mOnLineShDialog.setCancelable(true);
 
                 break;
 
