@@ -4,7 +4,7 @@
 <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg"  height="720" width="360">
 
 # DOWNLOAD APK
-## 不想自行编译的小伙版可下载已经编译好的版本：
+## 不想自行编译的小伙版可下载已经编译好的版本(不要直接点击,复制地址在浏览器地址栏打开)：
 
 https://od.ixcmstudio.cn/repository/main/ZeroTermux/
 
