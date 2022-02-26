@@ -15,6 +15,16 @@ public object CodeString {
         "sed -i 's@^\\(deb.*games stable\\)$@#\\1\\ndeb https://mirrors.bfsu.edu.cn/termux/game-packages-24 games stable@' \$PREFIX/etc/apt/sources.list.d/game.list &&" +
         "sed -i 's@^\\(deb.*science stable\\)$@#\\1\\ndeb https://mirrors.bfsu.edu.cn/termux/science-packages-24 science stable@' \$PREFIX/etc/apt/sources.list.d/science.list &&" +
         "apt update && apt upgrade \n"
+    public val NJU:String = "sed -i 's@^\\(deb.*stable main\\)\$@#\\1\\ndeb https://mirror.nju.edu.cn/termux/termux-packages-24 stable main@' \$PREFIX/etc/apt/sources.list &&" +
+        "sed -i 's@^\\(deb.*games stable\\)\$@#\\1\\ndeb https://mirror.nju.edu.cn/termux/game-packages-24 games stable@' \$PREFIX/etc/apt/sources.list.d/game.list &&" +
+        "sed -i 's@^\\(deb.*science stable\\)\$@#\\1\\ndeb https://mirror.nju.edu.cn/termux/science-packages-24 science stable@' \$PREFIX/etc/apt/sources.list.d/science.list &&" +
+        "apt update && apt upgrade \n"
+    public val USTC:String = "sed -i 's@packages.termux.org@mirrors.ustc.edu.cn/termux@' \$PREFIX/etc/apt/sources.list &&" +
+        "pkg up \n"
+    public val HEB:String = "sed -i 's@^\\(deb.*stable main\\)\$@#\\1\\ndeb https://mirrors.hit.edu.cn/termux/termux-packages-24 stable main@' \$PREFIX/etc/apt/sources.list &&" +
+        "sed -i 's@^\\(deb.*games stable\\)\$@#\\1\\ndeb https://mirrors.hit.edu.cn/termux/game-packages-24 games stable@' \$PREFIX/etc/apt/sources.list.d/game.list &&" +
+        "sed -i 's@^\\(deb.*science stable\\)\$@#\\1\\ndeb https://mirrors.hit.edu.cn/termux/science-packages-24 science stable@' \$PREFIX/etc/apt/sources.list.d/science.list &&" +
+        "apt update && apt upgrade \n"
     public val UpDate:String = "pkg update -y \n"
     public val runLinuxSh:String = "cd ~ && cd ~ && chmod 777 linux.sh && ./linux.sh \n"
     public val runQemuSh:String = "cd ~ && cd ~ && chmod 777 utqemu.sh && ./utqemu.sh \n"

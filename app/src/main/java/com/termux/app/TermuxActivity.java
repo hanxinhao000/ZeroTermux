@@ -1368,6 +1368,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 //官方
                 MenuLeftPopuListWindow.MenuLeftPopuListData guanfang = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.guanfang, UUtils.getString(R.string.官方源), 3);
                 menuLeftPopuListData.add(guanfang);
+                //NJU
+                MenuLeftPopuListWindow.MenuLeftPopuListData nju = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.nju_ico, UUtils.getString(R.string.nju), 496);
+                menuLeftPopuListData.add(nju);
+                //ustc
+                MenuLeftPopuListWindow.MenuLeftPopuListData ustc = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.mingl_ico, UUtils.getString(R.string.ustc), 4666);
+                menuLeftPopuListData.add(ustc);
+                //哈尔滨
+                MenuLeftPopuListWindow.MenuLeftPopuListData heb = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.mingl_ico, UUtils.getString(R.string.hit), 46667);
+                menuLeftPopuListData.add(heb);
 
                 showMenuDialog(menuLeftPopuListData,code_ll);
 
@@ -1917,6 +1926,68 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 });
 
 
+                break;
+
+            //NJU
+            case 496:
+
+                SwitchDialog switchDialog15 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作会覆盖您的文件记录));
+
+                switchDialog15.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog15.dismiss();
+
+                    }
+                });
+                switchDialog15.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switchDialog15.dismiss();
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getNJU());
+                    }
+                });
+                break;
+
+            //USTC
+            case 4666:
+
+                SwitchDialog ustc = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作会覆盖您的文件记录));
+
+                ustc.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ustc.dismiss();
+
+                    }
+                });
+                ustc.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ustc.dismiss();
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getUSTC());
+                    }
+                });
+                break;
+            //heb
+            case 46667:
+
+                SwitchDialog heb = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作会覆盖您的文件记录));
+
+                heb.getCancel().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        heb.dismiss();
+
+                    }
+                });
+                heb.getOk().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        heb.dismiss();
+                        mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getHEB());
+                    }
+                });
                 break;
             //qemu
             case 5:

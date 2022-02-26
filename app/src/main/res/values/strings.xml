@@ -640,4 +640,7 @@
     <string name="显示背景字体">显示背景字体</string>
     <string name="重置">重置</string>
     <string name="如果看到该页面">如果看到该页面，请按下返回键退出</string>
+    <string name="nju">NJU</string>
+    <string name="ustc">USTC</string>
+    <string name="hit">HIT</string>
 </resources>
