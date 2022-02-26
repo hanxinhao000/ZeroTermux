@@ -68,6 +68,7 @@
 
         <activity
             android:name=".app.TermuxActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
             android:label="@string/application_name"
             android:launchMode="singleTask"
@@ -90,6 +91,7 @@
 
         <activity-alias
             android:name=".HomeActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:targetActivity=".app.TermuxActivity">
 
             <!-- Launch activity automatically on boot on Android Things devices -->

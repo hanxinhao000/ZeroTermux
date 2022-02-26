@@ -11,9 +11,10 @@ import com.lzy.okgo.OkGo;
 import com.mallotec.reb.localeplugin.LocaleConstant;
 import com.mallotec.reb.localeplugin.LocalePlugin;
 import com.termux.shared.crash.CrashHandler;
-import com.termux.shared.crash.TermuxCrashUtils;
-import com.termux.shared.settings.preferences.TermuxAppSharedPreferences;
+
 import com.termux.shared.logger.Logger;
+import com.termux.shared.termux.crash.TermuxCrashUtils;
+import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 
 import java.io.ByteArrayOutputStream;

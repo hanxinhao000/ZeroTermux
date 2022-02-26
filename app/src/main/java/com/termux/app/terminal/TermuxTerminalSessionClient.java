@@ -12,15 +12,18 @@ import android.media.SoundPool;
 import android.text.TextUtils;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.termux.R;
-import com.termux.shared.shell.TermuxSession;
-import com.termux.shared.interact.TextInputDialogUtils;
+import com.termux.shared.termux.shell.command.runner.terminal.TermuxSession;
+import com.termux.shared.termux.interact.TextInputDialogUtils;
 import com.termux.app.TermuxActivity;
-import com.termux.shared.terminal.TermuxTerminalSessionClientBase;
+import com.termux.shared.termux.terminal.TermuxTerminalSessionClientBase;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.app.TermuxService;
-import com.termux.shared.settings.properties.TermuxPropertyConstants;
-import com.termux.shared.terminal.io.BellHandler;
+import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
+import com.termux.shared.termux.terminal.io.BellHandler;
 import com.termux.shared.logger.Logger;
 import com.termux.terminal.TerminalColors;
 import com.termux.terminal.TerminalSession;
@@ -79,7 +82,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
         // Just initialize the mBellSoundPool and load the sound, otherwise bell might not run
         // the first time bell key is pressed and play() is called, since sound may not be loaded
         // quickly enough before the call to play(). https://stackoverflow.com/questions/35435625
-        getBellSoundPool();
+        loadBellSoundPool();
     }
 
     /**
@@ -108,14 +111,14 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
 
     @Override
-    public void onTextChanged(TerminalSession changedSession) {
+    public void onTextChanged(@NonNull TerminalSession changedSession) {
         if (!mActivity.isVisible()) return;
 
         if (mActivity.getCurrentSession() == changedSession) mActivity.getTerminalView().onScreenUpdated();
     }
 
     @Override
-    public void onTitleChanged(TerminalSession updatedSession) {
+    public void onTitleChanged(@NonNull TerminalSession updatedSession) {
         if (!mActivity.isVisible()) return;
 
         if (updatedSession != mActivity.getCurrentSession()) {
@@ -129,7 +132,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     @Override
-    public void onSessionFinished(final TerminalSession finishedSession) {
+    public void onSessionFinished(@NonNull TerminalSession finishedSession) {
         TermuxService service = mActivity.getTermuxService();
 
         if (service == null || service.wantsToStop()) {
@@ -174,7 +177,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     @Override
-    public void onCopyTextToClipboard(TerminalSession session, String text) {
+    public void onCopyTextToClipboard(@NonNull TerminalSession session, String text) {
         if (!mActivity.isVisible()) return;
 
         ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -182,7 +185,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     @Override
-    public void onPasteTextFromClipboard(TerminalSession session) {
+    public void onPasteTextFromClipboard(@Nullable TerminalSession session) {
         if (!mActivity.isVisible()) return;
 
         ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -194,7 +197,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     @Override
-    public void onBell(TerminalSession session) {
+    public void onBell(@NonNull TerminalSession session) {
         if (!mActivity.isVisible()) return;
 
         switch (mActivity.getProperties().getBellBehaviour()) {
@@ -202,7 +205,9 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
                 BellHandler.getInstance(mActivity).doBell();
                 break;
             case TermuxPropertyConstants.IVALUE_BELL_BEHAVIOUR_BEEP:
-                getBellSoundPool().play(mBellSoundId, 1.f, 1.f, 1, 0, 1.f);
+                loadBellSoundPool();
+                if (mBellSoundPool != null)
+                    mBellSoundPool.play(mBellSoundId, 1.f, 1.f, 1, 0, 1.f);
                 break;
             case TermuxPropertyConstants.IVALUE_BELL_BEHAVIOUR_IGNORE:
                 // Ignore the bell character.
@@ -211,7 +216,7 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
     }
 
     @Override
-    public void onColorsChanged(TerminalSession changedSession) {
+    public void onColorsChanged(@NonNull TerminalSession changedSession) {
         if (mActivity.getCurrentSession() == changedSession)
             updateBackgroundColor();
     }
@@ -228,6 +233,17 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
         // otherwise stop cursor blinking
         mActivity.getTerminalView().setTerminalCursorBlinkerState(enabled, false);
     }
+
+    @Override
+    public void setTerminalShellPid(@NonNull TerminalSession terminalSession, int pid) {
+        TermuxService service = mActivity.getTermuxService();
+        if (service == null) return;
+
+        TermuxSession termuxSession = service.getTermuxSessionForTerminalSession(terminalSession);
+        if (termuxSession != null)
+            termuxSession.getExecutionCommand().mPid = pid;
+    }
+
 
     /**
      * Should be called when mActivity.onResetTerminalSession() is called
@@ -247,17 +263,20 @@ public class TermuxTerminalSessionClient extends TermuxTerminalSessionClientBase
 
 
 
-    /** Initialize and get mBellSoundPool */
-    private synchronized SoundPool getBellSoundPool() {
+    /** Load mBellSoundPool */
+    private synchronized void loadBellSoundPool() {
         if (mBellSoundPool == null) {
             mBellSoundPool = new SoundPool.Builder().setMaxStreams(1).setAudioAttributes(
                 new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION).build()).build();
 
-            mBellSoundId = mBellSoundPool.load(mActivity, R.raw.bell, 1);
+            try {
+                mBellSoundId = mBellSoundPool.load(mActivity, R.raw.bell, 1);
+            } catch (Exception e){
+                // Catch java.lang.RuntimeException: Unable to resume activity {com.termux/com.termux.app.TermuxActivity}: android.content.res.Resources$NotFoundException: File res/raw/bell.ogg from drawable resource ID
+                Logger.logStackTraceWithMessage(LOG_TAG, "Failed to load bell sound pool", e);
+            }
         }
-
-        return mBellSoundPool;
     }
 
     /** Release mBellSoundPool resources */

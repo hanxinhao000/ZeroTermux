@@ -11,11 +11,11 @@ import com.termux.R;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.interact.MessageDialogUtils;
-import com.termux.shared.interact.TextInputDialogUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_SERVICE;
 import com.termux.app.TermuxService;
 import com.termux.shared.logger.Logger;
+import com.termux.shared.termux.interact.TextInputDialogUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

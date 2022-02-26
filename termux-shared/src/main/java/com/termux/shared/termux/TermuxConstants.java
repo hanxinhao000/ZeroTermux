@@ -2,17 +2,14 @@ package com.termux.shared.termux;
 
 import android.annotation.SuppressLint;
 
-import com.termux.shared.models.ResultConfig;
-import com.termux.shared.models.errors.Errno;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Formatter;
-import java.util.IllegalFormatException;
 import java.util.List;
 
 /*
- * Version: v0.32.0
+ * Version: v0.35.0
+ * SPDX-License-Identifier: MIT
  *
  * Changelog
  *
@@ -211,6 +208,15 @@ import java.util.List;
  * - 0.32.0 (2021-09-23)
  *      - Added `TERMUX_API.TERMUX_API_ACTIVITY_NAME`, `TERMUX_TASKER.TERMUX_TASKER_ACTIVITY_NAME`
  *          and `TERMUX_WIDGET.TERMUX_WIDGET_ACTIVITY_NAME`.
+ *
+ * - 0.33.0 (2021-10-08)
+ *      - Added `TERMUX_PROPERTIES_FILE_PATHS_LIST` and `TERMUX_FLOAT_PROPERTIES_FILE_PATHS_LIST`.
+ *
+ * - 0.34.0 (2021-10-26)
+ *  - Move `RESULT_SENDER` to `com.termux.shared.shell.command.ShellCommandConstants`.
+ *
+ * - 0.35.0 (2022-01-28)
+ *  - Add `TERMUX_APP.TERMUX_ACTIVITY.EXTRA_RECREATE_ACTIVITY`.
  */
 
 /**
@@ -653,26 +659,45 @@ public final class TermuxConstants {
     public static final String TERMUX_WIDGET_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION = TERMUX_WIDGET_PACKAGE_NAME + "_preferences"; // Default: "com.termux.widget_preferences"
 
 
-    /** Termux app termux.properties primary file path */
+
+    /** Termux app properties primary file path */
     public static final String TERMUX_PROPERTIES_PRIMARY_FILE_PATH = TERMUX_DATA_HOME_DIR_PATH + "/termux.properties"; // Default: "/data/data/com.termux/files/home/.termux/termux.properties"
-    /** Termux app termux.properties primary file */
+    /** Termux app properties primary file */
     public static final File TERMUX_PROPERTIES_PRIMARY_FILE = new File(TERMUX_PROPERTIES_PRIMARY_FILE_PATH);
 
-    /** Termux app termux.properties secondary file path */
+    /** Termux app properties secondary file path */
     public static final String TERMUX_PROPERTIES_SECONDARY_FILE_PATH = TERMUX_CONFIG_HOME_DIR_PATH + "/termux.properties"; // Default: "/data/data/com.termux/files/home/.config/termux/termux.properties"
-    /** Termux app termux.properties secondary file */
+    /** Termux app properties secondary file */
     public static final File TERMUX_PROPERTIES_SECONDARY_FILE = new File(TERMUX_PROPERTIES_SECONDARY_FILE_PATH);
 
+    /** Termux app properties file paths list. **DO NOT** allow these files to be modified by
+     * {@link android.content.ContentProvider} exposed to external apps, since they may silently
+     * modify the values for security properties like {@link #PROP_ALLOW_EXTERNAL_APPS} set by users
+     * without their explicit consent. */
+    public static final List<String> TERMUX_PROPERTIES_FILE_PATHS_LIST = Arrays.asList(
+        TERMUX_PROPERTIES_PRIMARY_FILE_PATH,
+        TERMUX_PROPERTIES_SECONDARY_FILE_PATH);
 
-    /** Termux:Float app termux.properties primary file path */
+
+
+    /** Termux:Float app properties primary file path */
     public static final String TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE_PATH = TERMUX_DATA_HOME_DIR_PATH + "/termux.float.properties"; // Default: "/data/data/com.termux/files/home/.termux/termux.float.properties"
-    /** Termux:Float app termux.properties primary file */
+    /** Termux:Float app properties primary file */
     public static final File TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE = new File(TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE_PATH);
 
-    /** Termux:Float app termux.properties secondary file path */
+    /** Termux:Float app properties secondary file path */
     public static final String TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE_PATH = TERMUX_CONFIG_HOME_DIR_PATH + "/termux.float.properties"; // Default: "/data/data/com.termux/files/home/.config/termux/termux.float.properties"
-    /** Termux:Float app termux.properties secondary file */
+    /** Termux:Float app properties secondary file */
     public static final File TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE = new File(TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE_PATH);
+
+    /** Termux:Float app properties file paths list. **DO NOT** allow these files to be modified by
+     * {@link android.content.ContentProvider} exposed to external apps, since they may silently
+     * modify the values for security properties like {@link #PROP_ALLOW_EXTERNAL_APPS} set by users
+     * without their explicit consent. */
+    public static final List<String> TERMUX_FLOAT_PROPERTIES_FILE_PATHS_LIST = Arrays.asList(
+        TERMUX_FLOAT_PROPERTIES_PRIMARY_FILE_PATH,
+        TERMUX_FLOAT_PROPERTIES_SECONDARY_FILE_PATH);
+
 
 
     /** Termux app and Termux:Styling colors.properties file path */
@@ -841,6 +866,9 @@ public final class TermuxConstants {
             /** Intent {@code String} extra for what to reload for the TERMUX_ACTIVITY.ACTION_RELOAD_STYLE intent. This has been deperecated. */
             @Deprecated
             public static final String EXTRA_RELOAD_STYLE = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.reload_style"; // Default: "com.termux.app.reload_style"
+
+            /**  Intent {@code boolean} extra for whether to recreate activity for the TERMUX_ACTIVITY.ACTION_RELOAD_STYLE intent. */
+            public static final String EXTRA_RECREATE_ACTIVITY = TERMUX_APP.TERMUX_ACTIVITY_NAME + ".EXTRA_RECREATE_ACTIVITY"; // Default: "com.termux.app.TermuxActivity.EXTRA_RECREATE_ACTIVITY"
 
         }
 
@@ -1054,77 +1082,6 @@ public final class TermuxConstants {
 
         }
     }
-
-
-
-
-
-    /**
-     * Termux class to send back results of commands to their callers like plugin or 3rd party apps.
-     */
-    public static final class RESULT_SENDER {
-
-        /*
-         * The default `Formatter` format strings to use for `ResultConfig#resultFileBasename`
-         * if `ResultConfig#resultSingleFile` is `true`.
-         */
-
-        /** The {@link Formatter} format string for success if only `stdout` needs to be written to
-         * {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s`.
-         * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is empty
-         * and `exit_code` equals `0` and {@link ResultConfig#resultFileOutputFormat} is not passed. */
-        public static final String FORMAT_SUCCESS_STDOUT = "%1$s%n";
-        /** The {@link Formatter} format string for success if `stdout` and `exit_code` need to be written to
-         * {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s` and `exit_code` to `%2$s`.
-         * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is empty
-         * and `exit_code` does not equal `0` and {@link ResultConfig#resultFileOutputFormat} is not passed.
-         * The exit code will be placed in a markdown inline code. */
-        public static final String FORMAT_SUCCESS_STDOUT__EXIT_CODE = "%1$s%n%n%n%nexit_code=%2$s%n";
-        /** The {@link Formatter} format string for success if `stdout`, `stderr` and `exit_code` need to be
-         * written to {@link ResultConfig#resultFileBasename} where `stdout` maps to `%1$s`, `stderr`
-         * maps to `%2$s` and `exit_code` to `%3$s`.
-         * This is used when `err` equals {@link Errno#ERRNO_SUCCESS} (-1) and `stderr` is not empty
-         * and {@link ResultConfig#resultFileOutputFormat} is not passed.
-         * The stdout and stderr will be placed in a markdown code block. The exit code will be placed
-         * in a markdown inline code. The surrounding backticks will be 3 more than the consecutive
-         * backticks in any parameter itself for code blocks. */
-        public static final String FORMAT_SUCCESS_STDOUT__STDERR__EXIT_CODE = "stdout=%n%1$s%n%n%n%nstderr=%n%2$s%n%n%n%nexit_code=%3$s%n";
-        /** The {@link Formatter} format string for failure if `err`, `errmsg`(`error`), `stdout`,
-         * `stderr` and `exit_code` need to be written to {@link ResultConfig#resultFileBasename} where
-         * `err` maps to `%1$s`, `errmsg` maps to `%2$s`, `stdout` maps
-         * to `%3$s`, `stderr` to `%4$s` and `exit_code` maps to `%5$s`.
-         * Do not define an argument greater than `5`, like `%6$s` if you change this value since it will
-         * raise {@link IllegalFormatException}.
-         * This is used when `err` does not equal {@link Errno#ERRNO_SUCCESS} (-1) and
-         * {@link ResultConfig#resultFileErrorFormat} is not passed.
-         * The errmsg, stdout and stderr will be placed in a markdown code block. The err and exit code
-         * will be placed in a markdown inline code. The surrounding backticks will be 3 more than
-         * the consecutive backticks in any parameter itself for code blocks. The stdout, stderr
-         * and exit code may be empty without any surrounding backticks if not set. */
-        public static final String FORMAT_FAILED_ERR__ERRMSG__STDOUT__STDERR__EXIT_CODE = "err=%1$s%n%n%n%nerrmsg=%n%2$s%n%n%n%nstdout=%n%3$s%n%n%n%nstderr=%n%4$s%n%n%n%nexit_code=%5$s%n";
-
-
-
-        /*
-         * The default prefixes to use for result files under `ResultConfig#resultDirectoryPath`
-         * if `ResultConfig#resultSingleFile` is `false`.
-         */
-
-        /** The prefix for the err result file. */
-        public static final String RESULT_FILE_ERR_PREFIX = "err";
-        /** The prefix for the errmsg result file. */
-        public static final String RESULT_FILE_ERRMSG_PREFIX = "errmsg";
-        /** The prefix for the stdout result file. */
-        public static final String RESULT_FILE_STDOUT_PREFIX = "stdout";
-        /** The prefix for the stderr result file. */
-        public static final String RESULT_FILE_STDERR_PREFIX = "stderr";
-        /** The prefix for the exitCode result file. */
-        public static final String RESULT_FILE_EXIT_CODE_PREFIX = "exit_code";
-
-    }
-
-
-
 
 
     /**

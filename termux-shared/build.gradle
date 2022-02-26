@@ -14,7 +14,8 @@ android {
         implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
         implementation "io.noties.markwon:linkify:$markwonVersion"
         implementation "io.noties.markwon:recycler:$markwonVersion"
-
+        implementation "com.google.android.material:material:1.4.0"
+        implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:2.0'
         // Do not increment version higher than 2.5 or there
         // will be runtime exceptions on android < 8
         // due to missing classes like java.nio.file.Path.

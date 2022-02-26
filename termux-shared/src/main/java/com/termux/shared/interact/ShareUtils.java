@@ -18,8 +18,8 @@ import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.models.errors.Error;
-import com.termux.shared.packages.PermissionUtils;
+import com.termux.shared.errors.Error;
+import com.termux.shared.android.PermissionUtils;
 
 import java.nio.charset.Charset;
 
@@ -34,7 +34,7 @@ public class ShareUtils {
      * @param intent The intent that describes the choices that should be shown.
      * @param title The title for choose menu.
      */
-    private static void openSystemAppChooser(final Context context, final Intent intent, final String title) {
+    public static void openSystemAppChooser(final Context context, final Intent intent, final String title) {
         if (context == null) return;
 
         final Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
@@ -92,7 +92,7 @@ public class ShareUtils {
      * @param context The context for operations.
      * @param url The url to open.
      */
-    public static void openURL(final Context context, final String url) {
+    public static void openUrl(final Context context, final String url) {
         if (context == null || url == null || url.isEmpty()) return;
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -141,7 +141,7 @@ public class ShareUtils {
             return;
         }
 
-        Error error = FileUtils.writeStringToFile(label, filePath,
+        Error error = FileUtils.writeTextToFile(label, filePath,
             Charset.defaultCharset(), text, false);
         if (error != null) {
             Logger.logErrorExtended(LOG_TAG, error.toString());

@@ -6,8 +6,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.termux.shared.R;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.data.DataUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class Logger {
 
-    public static final String DEFAULT_LOG_TAG = TermuxConstants.TERMUX_APP_NAME;
+    private static String DEFAULT_LOG_TAG = "Logger";
 
     public static final int LOG_LEVEL_OFF = 0; // log nothing
     public static final int LOG_LEVEL_NORMAL = 1; // start logging error, warn and info messages and stacktraces
@@ -52,7 +54,6 @@ public class Logger {
 
 
     public static void logMessage(int logPriority, String tag, String message) {
-        Log.e(getFullTag(tag), message);
         if (logPriority == Log.ERROR && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
             Log.e(getFullTag(tag), message);
         else if (logPriority == Log.WARN && CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL)
@@ -195,9 +196,20 @@ public class Logger {
 
 
 
-    public static void logErrorAndShowToast(Context context, String tag, String message) {
-        if (context == null) return;
+    public static void logInfoAndShowToast(Context context, String tag, String message) {
+        if (CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL) {
+            logInfo(tag, message);
+            showToast(context, message, true);
+        }
+    }
 
+    public static void logInfoAndShowToast(Context context, String message) {
+        logInfoAndShowToast(context, DEFAULT_LOG_TAG, message);
+    }
+
+
+
+    public static void logErrorAndShowToast(Context context, String tag, String message) {
         if (CURRENT_LOG_LEVEL >= LOG_LEVEL_NORMAL) {
             logError(tag, message);
             showToast(context, message, true);
@@ -211,8 +223,6 @@ public class Logger {
 
 
     public static void logDebugAndShowToast(Context context, String tag, String message) {
-        if (context == null) return;
-
         if (CURRENT_LOG_LEVEL >= LOG_LEVEL_DEBUG) {
             logDebug(tag, message);
             showToast(context, message, true);
@@ -364,7 +374,7 @@ public class Logger {
 
 
     public static void showToast(final Context context, final String toastText, boolean longDuration) {
-        if (context == null) return;
+        if (context == null || DataUtils.isNullOrEmpty(toastText)) return;
 
         new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, toastText, longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show());
     }
@@ -410,6 +420,20 @@ public class Logger {
 
 
 
+    @NonNull
+    public static String getDefaultLogTag() {
+        return DEFAULT_LOG_TAG;
+    }
+
+    /**
+     * IllegalArgumentException will be thrown if tag.length() > 23 for Nougat (7.0) and prior releases.
+     * https://developer.android.com/reference/android/util/Log#isLoggable(java.lang.String,%20int) */
+    public static void setDefaultLogTag(@NonNull String defaultLogTag) {
+        DEFAULT_LOG_TAG = defaultLogTag.length() >= 23 ? defaultLogTag.substring(0, 22) : defaultLogTag;
+    }
+
+
+
     public static int getLogLevel() {
         return CURRENT_LOG_LEVEL;
     }
@@ -426,11 +450,17 @@ public class Logger {
         return CURRENT_LOG_LEVEL;
     }
 
+    /** The colon character ":" must not exist inside the tag, otherwise the `logcat` command
+     * filterspecs arguments `<tag>[:priority]` will not work and will throw `Invalid filter expression`
+     * error.
+     * https://cs.android.com/android/platform/superproject/+/android-12.0.0_r4:system/logging/liblog/logprint.cpp;l=363
+     * https://cs.android.com/android/platform/superproject/+/android-12.0.0_r4:system/logging/logcat/logcat.cpp;l=884
+     * */
     public static String getFullTag(String tag) {
         if (DEFAULT_LOG_TAG.equals(tag))
             return tag;
         else
-            return DEFAULT_LOG_TAG + ":" + tag;
+            return DEFAULT_LOG_TAG + "." + tag;
     }
 
     public static boolean isLogLevelValid(Integer logLevel) {
@@ -440,7 +470,9 @@ public class Logger {
     /** Check if custom log level is valid and >= {@link #CURRENT_LOG_LEVEL}. If custom log level is
      * not valid then {@link #LOG_LEVEL_VERBOSE} must be >= {@link #CURRENT_LOG_LEVEL}. */
     public static boolean shouldEnableLoggingForCustomLogLevel(Integer customLogLevel) {
-        if (customLogLevel == null || CURRENT_LOG_LEVEL <= LOG_LEVEL_OFF || customLogLevel <= LOG_LEVEL_OFF) return false;
+        if (CURRENT_LOG_LEVEL <= LOG_LEVEL_OFF) return false;
+        if (customLogLevel == null) return CURRENT_LOG_LEVEL >= LOG_LEVEL_VERBOSE; // Use default app log level
+        if (customLogLevel <= LOG_LEVEL_OFF) return false;
         customLogLevel = Logger.isLogLevelValid(customLogLevel) ? customLogLevel: Logger.LOG_LEVEL_VERBOSE;
         return (customLogLevel >= CURRENT_LOG_LEVEL);
     }

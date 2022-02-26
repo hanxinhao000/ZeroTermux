@@ -4,16 +4,16 @@ import android.os.Build;
 import android.system.Os;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.io.RecursiveDeleteOption;
 import com.termux.shared.file.filesystem.FileType;
 import com.termux.shared.file.filesystem.FileTypes;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.models.errors.Errno;
-import com.termux.shared.models.errors.Error;
-import com.termux.shared.models.errors.FileUtilsErrno;
-import com.termux.shared.models.errors.FunctionErrno;
+import com.termux.shared.errors.Errno;
+import com.termux.shared.errors.Error;
+import com.termux.shared.errors.FunctionErrno;
 
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -98,6 +98,7 @@ public class FileUtils {
      * @param path The {@code path} to convert.
      * @return Returns the {@code normalized path}.
      */
+    @Nullable
     public static String normalizePath(String path) {
         if (path == null) return null;
 
@@ -105,7 +106,7 @@ public class FileUtils {
         path = path.replaceAll("\\./", "");
 
         if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
+            path = path.replaceAll("/+$", "");
         }
 
         return path;
@@ -117,7 +118,7 @@ public class FileUtils {
      * @param fileName The name to sanitize.
      * @param sanitizeWhitespaces If set to {@code true}, then white space characters ` \t\n` will be
      *                            converted.
-     * @param sanitizeWhitespaces If set to {@code true}, then file name will be converted to lowe case.
+     * @param toLower If set to {@code true}, then file name will be converted to lower case.
      * @return Returns the {@code sanitized name}.
      */
     public static String sanitizeFileName(String fileName, boolean sanitizeWhitespaces, boolean toLower) {
@@ -145,7 +146,7 @@ public class FileUtils {
      * @return Returns {@code true} if path in {@code dirPath}, otherwise returns {@code false}.
      */
     public static boolean isPathInDirPath(String path, final String dirPath, final boolean ensureUnder) {
-       return isPathInDirPaths(path, Collections.singletonList(dirPath), ensureUnder);
+        return isPathInDirPaths(path, Collections.singletonList(dirPath), ensureUnder);
     }
 
     /**
@@ -221,6 +222,20 @@ public class FileUtils {
     }
 
     /**
+     * Checks whether a regular or directory file exists at {@code filePath}.
+     *
+     * @param filePath The {@code path} for regular file to check.
+     * @param followLinks The {@code boolean} that decides if symlinks will be followed while
+     *                       finding if file exists. Check {@link #getFileType(String, boolean)}
+     *                       for details.
+     * @return Returns {@code true} if regular or directory file exists, otherwise {@code false}.
+     */
+    public static boolean regularOrDirectoryFileExists(final String filePath, final boolean followLinks) {
+        FileType fileType = getFileType(filePath, followLinks);
+        return fileType == FileType.REGULAR || fileType == FileType.DIRECTORY;
+    }
+
+    /**
      * Checks whether any file exists at {@code filePath}.
      *
      * @param filePath The {@code path} for file to check.
@@ -234,7 +249,7 @@ public class FileUtils {
     }
 
     /**
-     * Checks the type of file that exists at {@code filePath}.
+     * Get the type of file that exists at {@code filePath}.
      *
      * This function is a wrapper for
      * {@link FileTypes#getFileType(String, boolean)}
@@ -247,6 +262,7 @@ public class FileUtils {
      *                       returned.
      * @return Returns the {@link FileType} of file.
      */
+    @NonNull
     public static FileType getFileType(final String filePath, final boolean followLinks) {
         return FileTypes.getFileType(filePath, followLinks);
     }
@@ -275,9 +291,9 @@ public class FileUtils {
      * failed, otherwise {@code null}.
      */
     public static Error validateRegularFileExistenceAndPermissions(String label, final String filePath, final String parentDirPath,
-                                                                    final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly,
-                                                                    final boolean ignoreErrorsIfPathIsUnderParentDirPath) {
-        label = (label == null ? "" : label + " ");
+                                                                   final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly,
+                                                                   final boolean ignoreErrorsIfPathIsUnderParentDirPath) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "regular file path", "validateRegularFileExistenceAndPermissions");
 
         try {
@@ -356,9 +372,9 @@ public class FileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error validateDirectoryFileExistenceAndPermissions(String label, final String filePath, final String parentDirPath, final boolean createDirectoryIfMissing,
-                                                                      final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly,
-                                                                      final boolean ignoreErrorsIfPathIsInParentDirPath, final boolean ignoreIfNotExecutable) {
-        label = (label == null ? "" : label + " ");
+                                                                     final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly,
+                                                                     final boolean ignoreErrorsIfPathIsInParentDirPath, final boolean ignoreIfNotExecutable) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "directory file path", "validateDirectoryExistenceAndPermissions");
 
         try {
@@ -471,8 +487,8 @@ public class FileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error createRegularFile(String label, final String filePath,
-                                           final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly) {
-        label = (label == null ? "" : label + " ");
+                                          final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "createRegularFile");
 
         Error error;
@@ -583,7 +599,7 @@ public class FileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error createDirectoryFile(final String label, final String filePath,
-                                             final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly) {
+                                            final String permissionsToCheck, final boolean setPermissions, final boolean setMissingPermissionsOnly) {
         return validateDirectoryFileExistenceAndPermissions(label, filePath,
             null, true,
             permissionsToCheck, setPermissions, setMissingPermissionsOnly,
@@ -648,8 +664,8 @@ public class FileUtils {
      * or validating permissions failed, otherwise {@code null}.
      */
     public static Error createSymlinkFile(String label, final String targetFilePath, final String destFilePath,
-                                           final boolean allowDangling, final boolean overwrite, final boolean overwriteOnlyIfDestIsASymlink) {
-        label = (label == null ? "" : label + " ");
+                                          final boolean allowDangling, final boolean overwrite, final boolean overwriteOnlyIfDestIsASymlink) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (targetFilePath == null || targetFilePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "target file path", "createSymlinkFile");
         if (destFilePath == null || destFilePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "destination file path", "createSymlinkFile");
 
@@ -920,9 +936,9 @@ public class FileUtils {
      * @return Returns the {@code error} if copy or move was not successful, otherwise {@code null}.
      */
     public static Error copyOrMoveFile(String label, final String srcFilePath, final String destFilePath,
-                                        final boolean moveFile, final boolean ignoreNonExistentSrcFile, int allowedFileTypeFlags,
-                                        final boolean overwrite, final boolean overwriteOnlyIfDestSameFileTypeAsSrc) {
-        label = (label == null ? "" : label + " ");
+                                       final boolean moveFile, final boolean ignoreNonExistentSrcFile, int allowedFileTypeFlags,
+                                       final boolean overwrite, final boolean overwriteOnlyIfDestSameFileTypeAsSrc) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (srcFilePath == null || srcFilePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "source file path", "copyOrMoveFile");
         if (destFilePath == null || destFilePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "destination file path", "copyOrMoveFile");
 
@@ -1137,7 +1153,7 @@ public class FileUtils {
      * @return Returns the {@code error} if deletion was not successful, otherwise {@code null}.
      */
     public static Error deleteFile(String label, final String filePath, final boolean ignoreNonExistentFile, final boolean ignoreWrongFileType, int allowedFileTypeFlags) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "deleteFile");
 
         try {
@@ -1151,7 +1167,7 @@ public class FileUtils {
                 // If delete is to be ignored if file does not exist
                 if (ignoreNonExistentFile)
                     return null;
-                // Else return with error
+                    // Else return with error
                 else {
                     label += "file meant to be deleted";
                     return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
@@ -1244,7 +1260,7 @@ public class FileUtils {
      * @return Returns the {@code error} if clearing was not successful, otherwise {@code null}.
      */
     public static Error clearDirectory(String label, final String filePath) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "clearDirectory");
 
         Error error;
@@ -1307,7 +1323,7 @@ public class FileUtils {
      * @return Returns the {@code error} if deleting was not successful, otherwise {@code null}.
      */
     public static Error deleteFilesOlderThanXDays(String label, final String filePath, final IOFileFilter dirFilter, int days, final boolean ignoreNonExistentFile, int allowedFileTypeFlags) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "deleteFilesOlderThanXDays");
         if (days < 0) return FunctionErrno.ERRNO_INVALID_PARAMETER.getError(label + "days", "deleteFilesOlderThanXDays", " It must be >= 0.");
 
@@ -1361,22 +1377,22 @@ public class FileUtils {
 
 
     /**
-     * Read a {@link String} from file at path with a specific {@link Charset} into {@code dataString}.
+     * Read a text {@link String} from file at path with a specific {@link Charset} into {@code dataString}.
      *
      * @param label The optional label for file to read. This can optionally be {@code null}.
      * @param filePath The {@code path} for file to read.
      * @param charset The {@link Charset} of the file. If this is {@code null},
-     *      *                then default {@link Charset} will be used.
+     *                then default {@link Charset} will be used.
      * @param dataStringBuilder The {@code StringBuilder} to read data into.
      * @param ignoreNonExistentFile The {@code boolean} that decides if it should be considered an
      *                              error if file to read doesn't exist.
      * @return Returns the {@code error} if reading was not successful, otherwise {@code null}.
      */
-    public static Error readStringFromFile(String label, final String filePath, Charset charset, @NonNull final StringBuilder dataStringBuilder, final boolean ignoreNonExistentFile) {
-        label = (label == null ? "" : label + " ");
+    public static Error readTextFromFile(String label, final String filePath, Charset charset, @NonNull final StringBuilder dataStringBuilder, final boolean ignoreNonExistentFile) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "readStringFromFile");
 
-        Logger.logVerbose(LOG_TAG, "Reading string from " + label + "file at path \"" + filePath + "\"");
+        Logger.logVerbose(LOG_TAG, "Reading text from " + label + "file at path \"" + filePath + "\"");
 
         Error error;
 
@@ -1409,7 +1425,7 @@ public class FileUtils {
         FileInputStream fileInputStream = null;
         BufferedReader bufferedReader = null;
         try {
-            // Read string from file
+            // Read text from file
             fileInputStream = new FileInputStream(filePath);
             bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, charset));
 
@@ -1423,7 +1439,7 @@ public class FileUtils {
 
             Logger.logVerbose(LOG_TAG, Logger.getMultiLineLogStringEntry("String", DataUtils.getTruncatedCommandOutput(dataStringBuilder.toString(), Logger.LOGGER_ENTRY_MAX_SAFE_PAYLOAD, true, false, true), "-"));
         } catch (Exception e) {
-            return FileUtilsErrno.ERRNO_READING_STRING_TO_FILE_FAILED_WITH_EXCEPTION.getError(e, label + "file", filePath, e.getMessage());
+            return FileUtilsErrno.ERRNO_READING_TEXT_FROM_FILE_FAILED_WITH_EXCEPTION.getError(e, label + "file", filePath, e.getMessage());
         } finally {
             closeCloseable(fileInputStream);
             closeCloseable(bufferedReader);
@@ -1433,8 +1449,8 @@ public class FileUtils {
     }
 
     public static class ReadSerializableObjectResult {
-        public Error error;
-        public Serializable serializableObject;
+        public final Error error;
+        public final Serializable serializableObject;
 
         ReadSerializableObjectResult(Error error, Serializable serializableObject) {
             this.error = error;
@@ -1454,7 +1470,7 @@ public class FileUtils {
      */
     @NonNull
     public static <T extends Serializable> ReadSerializableObjectResult readSerializableObjectFromFile(String label, final String filePath, Class<T> readObjectType, final boolean ignoreNonExistentFile) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return new ReadSerializableObjectResult(FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "readSerializableObjectFromFile"), null);
 
         Logger.logVerbose(LOG_TAG, "Reading serializable object from " + label + "file at path \"" + filePath + "\"");
@@ -1483,7 +1499,7 @@ public class FileUtils {
         FileInputStream fileInputStream = null;
         ObjectInputStream objectInputStream = null;
         try {
-            // Read string from file
+            // Read serializable object from file
             fileInputStream = new FileInputStream(filePath);
             objectInputStream = new ObjectInputStream(fileInputStream);
             //serializableObject = (T) objectInputStream.readObject();
@@ -1501,7 +1517,7 @@ public class FileUtils {
     }
 
     /**
-     * Write the {@link String} {@code dataString} with a specific {@link Charset} to file at path.
+     * Write text {@code dataString} with a specific {@link Charset} to file at path.
      *
      * @param label The optional label for file to write. This can optionally be {@code null}.
      * @param filePath The {@code path} for file to write.
@@ -1511,11 +1527,11 @@ public class FileUtils {
      * @param append The {@code boolean} that decides if file should be appended to or not.
      * @return Returns the {@code error} if writing was not successful, otherwise {@code null}.
      */
-    public static Error writeStringToFile(String label, final String filePath, Charset charset, final String dataString, final boolean append) {
-        label = (label == null ? "" : label + " ");
+    public static Error writeTextToFile(String label, final String filePath, Charset charset, final String dataString, final boolean append) {
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "writeStringToFile");
 
-        Logger.logVerbose(LOG_TAG, Logger.getMultiLineLogStringEntry("Writing string to " + label + "file at path \"" + filePath + "\"", DataUtils.getTruncatedCommandOutput(dataString, Logger.LOGGER_ENTRY_MAX_SAFE_PAYLOAD, true, false, true), "-"));
+        Logger.logVerbose(LOG_TAG, Logger.getMultiLineLogStringEntry("Writing text to " + label + "file at path \"" + filePath + "\"", DataUtils.getTruncatedCommandOutput(dataString, Logger.LOGGER_ENTRY_MAX_SAFE_PAYLOAD, true, false, true), "-"));
 
         Error error;
 
@@ -1533,14 +1549,14 @@ public class FileUtils {
         FileOutputStream fileOutputStream = null;
         BufferedWriter bufferedWriter = null;
         try {
-            // Write string to file
+            // Write text to file
             fileOutputStream = new FileOutputStream(filePath, append);
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream, charset));
 
             bufferedWriter.write(dataString);
             bufferedWriter.flush();
         } catch (Exception e) {
-            return FileUtilsErrno.ERRNO_WRITING_STRING_TO_FILE_FAILED_WITH_EXCEPTION.getError(e, label + "file", filePath, e.getMessage());
+            return FileUtilsErrno.ERRNO_WRITING_TEXT_TO_FILE_FAILED_WITH_EXCEPTION.getError(e, label + "file", filePath, e.getMessage());
         } finally {
             closeCloseable(fileOutputStream);
             closeCloseable(bufferedWriter);
@@ -1558,7 +1574,7 @@ public class FileUtils {
      * @return Returns the {@code error} if writing was not successful, otherwise {@code null}.
      */
     public static <T extends Serializable> Error writeSerializableObjectToFile(String label, final String filePath, final T serializableObject) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "writeSerializableObjectToFile");
 
         Logger.logVerbose(LOG_TAG, "Writing serializable object to " + label + "file at path \"" + filePath + "\"");
@@ -1572,7 +1588,7 @@ public class FileUtils {
         FileOutputStream fileOutputStream = null;
         ObjectOutputStream objectOutputStream = null;
         try {
-            // Write object to file
+            // Write serializable object to file
             fileOutputStream = new FileOutputStream(filePath);
             objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
@@ -1668,7 +1684,7 @@ public class FileUtils {
      * @param permissionsToSet The 3 character string that contains the "r", "w", "x" or "-" in-order.
      */
     public static void setFilePermissions(String label, final String filePath, final String permissionsToSet) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return;
 
         if (!isValidPermissionString(permissionsToSet)) {
@@ -1739,7 +1755,7 @@ public class FileUtils {
      * @param permissionsToSet The 3 character string that contains the "r", "w", "x" or "-" in-order.
      */
     public static void setMissingFilePermissions(String label, final String filePath, final String permissionsToSet) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return;
 
         if (!isValidPermissionString(permissionsToSet)) {
@@ -1791,7 +1807,7 @@ public class FileUtils {
      * @return Returns the {@code error} if validating permissions failed, otherwise {@code null}.
      */
     public static Error checkMissingFilePermissions(String label, final String filePath, final String permissionsToCheck, final boolean ignoreIfNotExecutable) {
-        label = (label == null ? "" : label + " ");
+        label = (label == null || label.isEmpty() ? "" : label + " ");
         if (filePath == null || filePath.isEmpty()) return FunctionErrno.ERRNO_NULL_OR_EMPTY_PARAMETER.getError(label + "file path", "checkMissingFilePermissions");
 
         if (!isValidPermissionString(permissionsToCheck)) {
@@ -1853,6 +1869,44 @@ public class FileUtils {
             return shortErrno.getError(DataUtils.getDefaultIfNull(error.getLabel(), "file"));
         else
             return shortErrno.getError(throwables, error.getLabel(), "file");
+    }
+
+
+    /**
+     * Get file dirname for file at {@code filePath}.
+     *
+     * @param filePath The {@code path} for file.
+     * @return Returns the file dirname if not {@code null}.
+     */
+    public static String getFileDirname(String filePath) {
+        if (DataUtils.isNullOrEmpty(filePath)) return null;
+        int lastSlash = filePath.lastIndexOf('/');
+        return (lastSlash == -1) ? null : filePath.substring(0, lastSlash);
+    }
+
+    /**
+     * Get file basename for file at {@code filePath}.
+     *
+     * @param filePath The {@code path} for file.
+     * @return Returns the file basename if not {@code null}.
+     */
+    public static String getFileBasename(String filePath) {
+        if (DataUtils.isNullOrEmpty(filePath)) return null;
+        int lastSlash = filePath.lastIndexOf('/');
+        return (lastSlash == -1) ? filePath : filePath.substring(lastSlash + 1);
+    }
+
+    /**
+     * Get file basename for file at {@code filePath} without extension.
+     *
+     * @param filePath The {@code path} for file.
+     * @return Returns the file basename without extension if not {@code null}.
+     */
+    public static String getFileBasenameWithoutExtension(String filePath) {
+        String fileBasename = getFileBasename(filePath);
+        if (DataUtils.isNullOrEmpty(fileBasename)) return null;
+        int lastDot = fileBasename.lastIndexOf('.');
+        return (lastDot == -1) ? fileBasename : fileBasename.substring(0, lastDot);
     }
 
 }

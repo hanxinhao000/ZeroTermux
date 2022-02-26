@@ -5,12 +5,12 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.termux.app.terminal.io.KeyboardShortcut;
-import com.termux.shared.terminal.io.extrakeys.ExtraKeysConstants;
-import com.termux.shared.terminal.io.extrakeys.ExtraKeysConstants.EXTRA_KEY_DISPLAY_MAPS;
-import com.termux.shared.terminal.io.extrakeys.ExtraKeysInfo;
+import com.termux.shared.termux.extrakeys.ExtraKeysConstants;
+import com.termux.shared.termux.extrakeys.ExtraKeysConstants.EXTRA_KEY_DISPLAY_MAPS;
+import com.termux.shared.termux.extrakeys.ExtraKeysInfo;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.settings.properties.TermuxPropertyConstants;
-import com.termux.shared.settings.properties.TermuxSharedProperties;
+import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
+import com.termux.shared.termux.settings.properties.TermuxSharedProperties;
 import com.termux.shared.termux.TermuxConstants;
 
 import org.json.JSONException;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class TermuxAppSharedProperties extends TermuxSharedProperties {
 
     private ExtraKeysInfo mExtraKeysInfo;
-    private List<KeyboardShortcut> mSessionShortcuts = new ArrayList<>();
+    private List<KeyboardShortcut> mSessionShortcuts;
 
     private static final String LOG_TAG = "TermuxAppSharedProperties";
 
@@ -80,10 +80,7 @@ public class TermuxAppSharedProperties extends TermuxSharedProperties {
      * Set the terminal sessions shortcuts.
      */
     private void setSessionShortcuts() {
-        if (mSessionShortcuts == null)
-            mSessionShortcuts = new ArrayList<>();
-        else
-            mSessionShortcuts.clear();
+        mSessionShortcuts = new ArrayList<>();
 
         // The {@link TermuxPropertyConstants#MAP_SESSION_SHORTCUTS} stores the session shortcut key and action pair
         for (Map.Entry<String, Integer> entry : TermuxPropertyConstants.MAP_SESSION_SHORTCUTS.entrySet()) {
@@ -112,8 +109,8 @@ public class TermuxAppSharedProperties extends TermuxSharedProperties {
      * Load the {@link TermuxPropertyConstants#KEY_TERMINAL_TRANSCRIPT_ROWS} value from termux properties file on disk.
      */
     public static int getTerminalTranscriptRows(Context context) {
-        return  (int) TermuxSharedProperties.getInternalPropertyValue(context, TermuxPropertyConstants.getTermuxPropertiesFile(),
-            TermuxPropertyConstants.KEY_TERMINAL_TRANSCRIPT_ROWS, new SharedPropertiesParserClient());
+        return (int) TermuxSharedProperties.getTermuxInternalPropertyValue(context,
+            TermuxPropertyConstants.KEY_TERMINAL_TRANSCRIPT_ROWS);
     }
 
 }

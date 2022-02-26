@@ -13,12 +13,12 @@ import android.view.WindowManager;
 import com.termux.R;
 import com.termux.app.utils.CrashUtils;
 import com.termux.shared.file.FileUtils;
-import com.termux.shared.file.TermuxFileUtils;
+import com.termux.shared.termux.file.TermuxFileUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-import com.termux.shared.models.errors.Error;
-import com.termux.shared.packages.PackageUtils;
+import com.termux.shared.errors.Error;
+import com.termux.shared.android.PackageUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxUtils;
 
@@ -254,14 +254,19 @@ public final class TermuxInstaller {
     }
 
     private static void sendBootstrapCrashReportNotification(Activity activity, String message) {
+        final String title = TermuxConstants.TERMUX_APP_NAME + " Bootstrap Error";
+
+        // Add info of all install Termux plugin apps as well since their target sdk or installation
+        // on external/portable sd card can affect Termux app files directory access or exec.
         CrashUtils.sendCrashReportNotification(activity, LOG_TAG,
-            "## Bootstrap Error\n\n" + message + "\n\n" +
+            title, null, "## " + title + "\n\n" + message + "\n\n" +
                 TermuxUtils.getTermuxDebugMarkdownString(activity),
-            true, true);
+            true, false, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES, true);
     }
 
     static void setupStorageSymlinks(final Context context) {
-        final String LOG_TAG = "Termux--Apk:termux-storage";
+        final String LOG_TAG = "termux-storage";
+        final String title = TermuxConstants.TERMUX_APP_NAME + " Setup Storage Error";
 
         Logger.logInfo(LOG_TAG, "Setting up storage symlinks.");
 
@@ -275,7 +280,9 @@ public final class TermuxInstaller {
                     if (error != null) {
                         Logger.logErrorAndShowToast(context, LOG_TAG, error.getMessage());
                         Logger.logErrorExtended(LOG_TAG, "Setup Storage Error\n" + error.toString());
-                        CrashUtils.sendCrashReportNotification(context, LOG_TAG, "## Setup Storage Error\n\n" + Error.getErrorMarkdownString(error), true, true);
+                        CrashUtils.sendCrashReportNotification(context, LOG_TAG, title, null,
+                            "## " + title + "\n\n" + Error.getErrorMarkdownString(error),
+                            true, false, TermuxUtils.AppInfoMode.TERMUX_PACKAGE, true);
                         return;
                     }
 
@@ -314,7 +321,9 @@ public final class TermuxInstaller {
                 } catch (Exception e) {
                     Logger.logErrorAndShowToast(context, LOG_TAG, e.getMessage());
                     Logger.logStackTraceWithMessage(LOG_TAG, "Setup Storage Error: Error setting up link", e);
-                    CrashUtils.sendCrashReportNotification(context, LOG_TAG, "## Setup Storage Error\n\n" + Logger.getStackTracesMarkdownString(null, Logger.getStackTracesStringArray(e)), true, true);
+                    CrashUtils.sendCrashReportNotification(context, LOG_TAG, title, null,
+                        "## " + title + "\n\n" + Logger.getStackTracesMarkdownString(null, Logger.getStackTracesStringArray(e)),
+                        true, false, TermuxUtils.AppInfoMode.TERMUX_PACKAGE, true);
                 }
             }
         }.start();
