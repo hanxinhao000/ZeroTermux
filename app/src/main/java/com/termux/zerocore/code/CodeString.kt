@@ -26,7 +26,7 @@ public object CodeString {
         "sed -i 's@^\\(deb.*science stable\\)\$@#\\1\\ndeb https://mirrors.hit.edu.cn/termux/science-packages-24 science stable@' \$PREFIX/etc/apt/sources.list.d/science.list &&" +
         "apt update && apt upgrade \n"
     public val UpDate:String = "pkg update -y \n"
-    public val runLinuxSh:String = "cd ~ && cd ~ && chmod 777 linux.sh && ./linux.sh \n"
+    public val runLinuxSh:String = "pkg update -y && cd ~ && cd ~ && chmod 777 linux.sh && ./linux.sh \n"
     public val runQemuSh:String = "cd ~ && cd ~ && chmod 777 utqemu.sh && ./utqemu.sh \n"
     public val runWin7Sh:String = "cd ~ && cd ~ && chmod 777 qemu_win7.sh && ./qemu_win7.sh \n"
     public val runWinXPSh:String = "cd ~ && cd ~ && chmod 777 qemu_winxp.sh && ./qemu_winxp.sh \n"
