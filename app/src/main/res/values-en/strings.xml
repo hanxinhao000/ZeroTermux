@@ -652,5 +652,14 @@ Reset successfully</string>
     <string name="当前文件下载已被禁止">The current file download has been forbidden</string>
     <string name="此脚本数据错误">The script data is wrong, please try to contact the administrator</string>
 
+    <string name="美化设置">Beautify settings</string>
+    <string name="字体颜色">Font color</string>
+    <string name="背景颜色">Background color</string>
+    <string name=“字体颜色透明度">Font color transparency</string>
+    <string name="背景颜色透明度">Background color transparency</string>
+    <string name="背景颜色半透明">background color translucent</string>
+    <string name="背景图片">Background picture</string>
+    <string name="显示背景字体">Show background font</string>
+    <string name="重置">Reset</string>
 
 </resources>
