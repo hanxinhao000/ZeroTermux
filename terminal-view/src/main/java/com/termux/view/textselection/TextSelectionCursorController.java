@@ -1,6 +1,6 @@
 package com.termux.view.textselection;
 
-import android.content.ClipData;
+
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Rect;
@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.termux.terminal.TerminalBuffer;
 import com.termux.terminal.WcWidth;
+
 import com.termux.view.R;
 import com.termux.view.TerminalView;
 
