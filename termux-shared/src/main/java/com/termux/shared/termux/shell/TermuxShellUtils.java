@@ -1,6 +1,7 @@
 package com.termux.shared.termux.shell;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
@@ -64,6 +65,10 @@ public class TermuxShellUtils {
         environment.add("BOOTCLASSPATH=" + System.getenv("BOOTCLASSPATH"));
         environment.add("ANDROID_ROOT=" + System.getenv("ANDROID_ROOT"));
         environment.add("ANDROID_DATA=" + System.getenv("ANDROID_DATA"));
+        String stringOther = getKey(currentPackageContext, "new_old");
+        if (!(stringOther == null || stringOther.isEmpty() || "def".equals(stringOther))) {
+            environment.add("LD_LIBRARY_PATH=" + TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/lib");
+        }
         // EXTERNAL_STORAGE is needed for /system/bin/am to work on at least
         // Samsung S7 - see https://plus.google.com/110070148244138185604/posts/gp8Lk3aCGp3.
         environment.add("EXTERNAL_STORAGE=" + System.getenv("EXTERNAL_STORAGE"));
@@ -200,6 +205,12 @@ public class TermuxShellUtils {
             if (termuxAPIPackageContext != null)
                 TERMUX_API_VERSION_NAME = PackageUtils.getVersionNameForPackage(termuxAPIPackageContext);
         }
+    }
+
+    //ZeroTermux
+    private static String getKey(Context mContext,String key) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("start_flash", Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, "def");
     }
 
 }

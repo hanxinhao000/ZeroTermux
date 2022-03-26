@@ -646,4 +646,28 @@
     <string name="此脚本数据错误">此脚本数据错误,请尝试联系管理员</string>
 
     <string name="ZeroTermux论坛">ZeroTermux论坛</string>
-    <string name="Zero论坛">Zero论坛</string></resources>
+    <string name="Zero论坛">Zero论坛</string>
+
+    <string name="美化设置">美化设置</string>
+    <string name="字体颜色">字体颜色</string>
+    <string name="背景颜色">背景颜色</string>
+    <string name="字体颜色透明度">字体颜色透明度</string>
+    <string name="背景颜色透明度">背景颜色透明度</string>
+    <string name="背景颜色半透明">背景颜色半透明(可与背景图片叠加)</string>
+    <string name="背景图片">背景图片</string>
+    <string name="显示背景字体">显示背景字体</string>
+    <string name="重置">重置</string>
+    <string name="如果看到该页面">如果看到该页面，请按下返回键退出</string>
+    <string name="nju">NJU</string>
+    <string name="ustc">USTC</string>
+    <string name="hit">HIT</string>
+
+    <string name="启动器新">启动器[新]</string>
+    <string name="启动器旧">启动器[旧]</string>
+    <string name="系统切换成功">启动器切换成功,重启之后生效</string>
+
+
+</resources>
+
+
+

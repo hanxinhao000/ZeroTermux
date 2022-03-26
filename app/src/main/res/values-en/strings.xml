@@ -652,5 +652,22 @@ Reset successfully</string>
     <string name="当前文件下载已被禁止">The current file download has been forbidden</string>
     <string name="此脚本数据错误">The script data is wrong, please try to contact the administrator</string>
 
+    <string name="美化设置">Beautify settings</string>
+    <string name="字体颜色">Font Color</string>
+    <string name="背景颜色">Back Color</string>
+    <string name="字体颜色透明度">Font Color transparency</string>
+    <string name="背景颜色透明度">Back Color transparency</string>
+    <string name="背景颜色半透明">Font Color transparency up pic</string>
+    <string name="背景图片">Back PIC</string>
+    <string name="显示背景字体">Show Back Font</string>
+    <string name="重置">Reset</string>
+    <string name="如果看到该页面">If you see this page, press the back key to exit</string>
+    <string name="nju">NJU</string>
+    <string name="ustc">USTC</string>
+    <string name="hit">HIT</string>
+
+    <string name="启动器新">Launcher[new]</string>
+    <string name="启动器旧">Launcher[old]</string>
+    <string name="系统切换成功">The launcher is switched successfully, and it will take effect after restarting</string>
 
 </resources>

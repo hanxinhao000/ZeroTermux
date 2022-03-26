@@ -643,4 +643,8 @@
     <string name="nju">NJU</string>
     <string name="ustc">USTC</string>
     <string name="hit">HIT</string>
+
+    <string name="启动器新">启动器[新]</string>
+    <string name="启动器旧">启动器[旧]</string>
+    <string name="系统切换成功">启动器切换成功,重启之后生效</string>
 </resources>
