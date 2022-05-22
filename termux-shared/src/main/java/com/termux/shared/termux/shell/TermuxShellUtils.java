@@ -1,16 +1,20 @@
 package com.termux.shared.termux.shell;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
 import com.termux.shared.errors.Error;
+import com.termux.shared.file.filesystem.FileTypes;
+import com.termux.shared.termux.TermuxBootstrap;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.termux.TermuxUtils;
+import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
+
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,8 +29,12 @@ public class TermuxShellUtils {
     public static String TERMUX_IS_DEBUGGABLE_BUILD;
     public static String TERMUX_APP_PID;
     public static String TERMUX_APK_RELEASE;
+    public static Boolean TERMUX_APP_AM_SOCKET_SERVER_ENABLED;
 
     public static String TERMUX_API_VERSION_NAME;
+
+
+    private static final String LOG_TAG = "TermuxShellUtils";
 
     public static String getDefaultWorkingDirectoryPath() {
         return TermuxConstants.TERMUX_HOME_DIR_PATH;
@@ -54,6 +62,12 @@ public class TermuxShellUtils {
             environment.add("TERMUX_APP_PID=" + TERMUX_APP_PID);
         if (TERMUX_APK_RELEASE != null)
             environment.add("TERMUX_APK_RELEASE=" + TERMUX_APK_RELEASE);
+        if (TermuxBootstrap.TERMUX_APP_PACKAGE_MANAGER != null)
+            environment.add("TERMUX_APP_PACKAGE_MANAGER=" + TermuxBootstrap.TERMUX_APP_PACKAGE_MANAGER.getName());
+        if (TermuxBootstrap.TERMUX_APP_PACKAGE_VARIANT != null)
+            environment.add("TERMUX_APP_PACKAGE_VARIANT=" + TermuxBootstrap.TERMUX_APP_PACKAGE_VARIANT.getName());
+        if (TERMUX_APP_AM_SOCKET_SERVER_ENABLED != null)
+            environment.add("TERMUX_APP_AM_SOCKET_SERVER_ENABLED=" + TERMUX_APP_AM_SOCKET_SERVER_ENABLED);
 
         if (TERMUX_API_VERSION_NAME != null)
             environment.add("TERMUX_API_VERSION=" + TERMUX_API_VERSION_NAME);
@@ -65,10 +79,6 @@ public class TermuxShellUtils {
         environment.add("BOOTCLASSPATH=" + System.getenv("BOOTCLASSPATH"));
         environment.add("ANDROID_ROOT=" + System.getenv("ANDROID_ROOT"));
         environment.add("ANDROID_DATA=" + System.getenv("ANDROID_DATA"));
-        String stringOther = getKey(currentPackageContext, "new_old");
-        if (!(stringOther == null || stringOther.isEmpty() || "def".equals(stringOther))) {
-            environment.add("LD_LIBRARY_PATH=" + TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/lib");
-        }
         // EXTERNAL_STORAGE is needed for /system/bin/am to work on at least
         // Samsung S7 - see https://plus.google.com/110070148244138185604/posts/gp8Lk3aCGp3.
         environment.add("EXTERNAL_STORAGE=" + System.getenv("EXTERNAL_STORAGE"));
@@ -164,9 +174,29 @@ public class TermuxShellUtils {
             return;
 
         Error error;
-        error = FileUtils.clearDirectory("$TMPDIR", FileUtils.getCanonicalPath(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, null));
-        if (error != null) {
-            Logger.logErrorExtended(error.toString());
+
+        TermuxAppSharedProperties properties = TermuxAppSharedProperties.getProperties();
+        int days = properties.getDeleteTMPDIRFilesOlderThanXDaysOnExit();
+
+        // Disable currently until FileUtils.deleteFilesOlderThanXDays() is fixed.
+        if (days > 0)
+            days = 0;
+
+        if (days < 0) {
+            Logger.logInfo(LOG_TAG, "Not clearing termux $TMPDIR");
+        } else if (days == 0) {
+            error = FileUtils.clearDirectory("$TMPDIR",
+                FileUtils.getCanonicalPath(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, null));
+            if (error != null) {
+                Logger.logErrorExtended(LOG_TAG, "Failed to clear termux $TMPDIR\n" + error);
+            }
+        } else {
+            error = FileUtils.deleteFilesOlderThanXDays("$TMPDIR",
+                FileUtils.getCanonicalPath(TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH, null),
+                TrueFileFilter.INSTANCE, days, true, FileTypes.FILE_TYPE_ANY_FLAGS);
+            if (error != null) {
+                Logger.logErrorExtended(LOG_TAG, "Failed to delete files from termux $TMPDIR older than " + days + " days\n" + error);
+            }
         }
     }
 
@@ -205,12 +235,6 @@ public class TermuxShellUtils {
             if (termuxAPIPackageContext != null)
                 TERMUX_API_VERSION_NAME = PackageUtils.getVersionNameForPackage(termuxAPIPackageContext);
         }
-    }
-
-    //ZeroTermux
-    private static String getKey(Context mContext,String key) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("start_flash", Context.MODE_PRIVATE);
-        return sharedPreferences.getString(key, "def");
     }
 
 }

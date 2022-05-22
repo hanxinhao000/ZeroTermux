@@ -21,6 +21,7 @@ android {
         // due to missing classes like java.nio.file.Path.
         implementation "commons-io:commons-io:2.5"
 
+        implementation 'com.github.termux:termux-am-library:1.0'
         implementation project(":terminal-view")
     }
 

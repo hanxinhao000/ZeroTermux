@@ -59,6 +59,7 @@ import com.lzy.okgo.model.Response;
 import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
+import com.termux.app.terminal.io.TermuxTerminalExtraKeys;
 import com.termux.shared.activities.ReportActivity;
 
 import com.termux.shared.activity.media.AppCompatActivityUtils;
@@ -73,19 +74,18 @@ import com.termux.app.terminal.io.TerminalToolbarViewPager;
 import com.termux.app.terminal.TermuxTerminalSessionClient;
 import com.termux.app.terminal.TermuxTerminalViewClient;
 
-import com.termux.app.settings.properties.TermuxAppSharedProperties;
-
 import com.termux.shared.logger.Logger;
 import com.termux.shared.termux.TermuxUtils;
+import com.termux.shared.termux.crash.TermuxCrashUtils;
 import com.termux.shared.termux.extrakeys.ExtraKeysView;
 import com.termux.shared.termux.interact.TextInputDialogUtils;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
+import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.shared.theme.NightMode;
 import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
-import com.termux.app.utils.CrashUtils;
 import com.termux.view.TerminalRenderer;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
@@ -185,6 +185,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TermuxAppSharedProperties mProperties;
 
     /**
+     * The client for the {@link #mExtraKeysView}.
+     */
+    TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
+
+    /**
      * The root view of the {@link TermuxActivity}.
      */
     TermuxActivityRootView mTermuxActivityRootView;
@@ -271,13 +276,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         // Check if a crash happened on last run of the app and show a
         // notification with the crash details if it did
-        CrashUtils.notifyAppCrashOnLastRun(this, LOG_TAG);
 
         // Delete ReportInfo serialized object files from cache older than 14 days
         ReportActivity.deleteReportInfoFilesOlderThanXDays(this, 14, false);
 
         // Load termux shared properties
-        mProperties = new TermuxAppSharedProperties(this);
+        mProperties =  TermuxAppSharedProperties.getProperties();
 
         setActivityTheme();
 
@@ -341,6 +345,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initZeroView();
         initStatue();
         initColorConfig();
+    }
+
+    public TermuxTerminalExtraKeys getTermuxTerminalExtraKeys() {
+        return mTermuxTerminalExtraKeys;
     }
 
 
@@ -632,34 +640,32 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
     private void setTerminalToolbarView(Bundle savedInstanceState) {
+        mTermuxTerminalExtraKeys = new TermuxTerminalExtraKeys(this, mTerminalView,
+            mTermuxTerminalViewClient, mTermuxTerminalSessionClient);
+
         final ViewPager terminalToolbarViewPager = getTerminalToolbarViewPager();
         if (mPreferences.shouldShowTerminalToolbar()) terminalToolbarViewPager.setVisibility(View.VISIBLE);
 
-        UUtils.showLog("配置文件载入:1");
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
         mTerminalToolbarDefaultHeight = layoutParams.height;
-        UUtils.showLog("配置文件载入:2");
+
         setTerminalToolbarHeight();
 
         String savedTextInput = null;
         if (savedInstanceState != null)
             savedTextInput = savedInstanceState.getString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT);
-        UUtils.showLog("配置文件载入:3");
-        TerminalToolbarViewPager.PageAdapter pageAdapter = new TerminalToolbarViewPager.PageAdapter(this, savedTextInput);
-        terminalToolbarViewPager.setAdapter(pageAdapter);
+
+        terminalToolbarViewPager.setAdapter(new TerminalToolbarViewPager.PageAdapter(this, savedTextInput));
         terminalToolbarViewPager.addOnPageChangeListener(new TerminalToolbarViewPager.OnPageChangeListener(this, terminalToolbarViewPager));
-
-        terminalToolbarViewPager.setCurrentItem(0);
-
-        UUtils.showLog("配置文件载入:4");
     }
 
     private void setTerminalToolbarHeight() {
         final ViewPager terminalToolbarViewPager = getTerminalToolbarViewPager();
         if (terminalToolbarViewPager == null) return;
+
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
         layoutParams.height = (int) Math.round(mTerminalToolbarDefaultHeight *
-            (mProperties.getExtraKeysInfo() == null ? 0 : mProperties.getExtraKeysInfo().getMatrix().length) *
+            (mTermuxTerminalExtraKeys.getExtraKeysInfo() == null ? 0 : mTermuxTerminalExtraKeys.getExtraKeysInfo().getMatrix().length) *
             mProperties.getTerminalToolbarHeightScaleFactor());
         terminalToolbarViewPager.setLayoutParams(layoutParams);
     }
@@ -1037,14 +1043,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (mIsVisible) {
                 fixTermuxActivityBroadcastReceieverIntent(intent);
                 switch (intent.getAction()) {
-                    case TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS:
-                        Logger.logDebug(LOG_TAG, "Received intent to request storage permissions");
-                        if (ensureStoragePermissionGranted())
-                            TermuxInstaller.setupStorageSymlinks(TermuxActivity.this);
+                    case TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH:
+                        Logger.logDebug(LOG_TAG, "Received intent to notify app crash");
+                        TermuxCrashUtils.notifyAppCrashFromCrashLogFile(context, LOG_TAG);
                         return;
                     case TERMUX_ACTIVITY.ACTION_RELOAD_STYLE:
                         Logger.logDebug(LOG_TAG, "Received intent to reload styling");
-                        reloadActivityStyling();
+                        reloadActivityStyling(intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_RECREATE_ACTIVITY, true));
+                        return;
+                    case TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS:
+                        Logger.logDebug(LOG_TAG, "Received intent to request storage permissions");
+                        requestStoragePermission(false);
                         return;
                     default:
                 }
@@ -1052,38 +1061,73 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    private void reloadActivityStyling() {
-        if (mProperties!= null) {
-            mProperties.loadTermuxPropertiesFromDisk();
+    /**
+     * For processes to access primary external storage (/sdcard, /storage/emulated/0, ~/storage/shared),
+     * termux needs to be granted legacy WRITE_EXTERNAL_STORAGE or MANAGE_EXTERNAL_STORAGE permissions
+     * if targeting targetSdkVersion 30 (android 11) and running on sdk 30 (android 11) and higher.
+     */
+    public void requestStoragePermission(boolean isPermissionCallback) {
+        new Thread() {
+            @Override
+            public void run() {
+                // Do not ask for permission again
+                int requestCode = isPermissionCallback ? -1 : PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION;
+
+                // If permission is granted, then also setup storage symlinks.
+                if(PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
+                    TermuxActivity.this, requestCode, !isPermissionCallback)) {
+                    if (isPermissionCallback)
+                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
+                            getString(com.termux.shared.R.string.msg_storage_permission_granted_on_request));
+
+                    TermuxInstaller.setupStorageSymlinks(TermuxActivity.this);
+                } else {
+                    if (isPermissionCallback)
+                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
+                            getString(com.termux.shared.R.string.msg_storage_permission_not_granted_on_request));
+                }
+            }
+        }.start();
+    }
+
+    private void reloadActivityStyling(boolean recreateActivity) {
+        if (mProperties != null) {
+            reloadProperties();
 
             if (mExtraKeysView != null) {
                 mExtraKeysView.setButtonTextAllCaps(mProperties.shouldExtraKeysTextBeAllCaps());
-                mExtraKeysView.reload(mProperties.getExtraKeysInfo());
+                mExtraKeysView.reload(mTermuxTerminalExtraKeys.getExtraKeysInfo());
             }
+
+            // Update NightMode.APP_NIGHT_MODE
+            TermuxThemeUtils.setAppNightMode(mProperties.getNightMode());
         }
 
         setMargins();
         setTerminalToolbarHeight();
 
         if (mTermuxTerminalSessionClient != null)
-            mTermuxTerminalSessionClient.onReload();
+            mTermuxTerminalSessionClient.onReloadActivityStyling();
 
         if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onReload();
-
-        if (mTermuxService != null)
-            mTermuxService.setTerminalTranscriptRows();
+            mTermuxTerminalViewClient.onReloadActivityStyling();
 
         // To change the activity and drawer theme, activity needs to be recreated.
-        // But this will destroy the activity, and will call the onCreate() again.
-        // We need to investigate if enabling this is wise, since all stored variables and
-        // views will be destroyed and bindService() will be called again. Extra keys input
-        // text will we restored since that has already been implemented. Terminal sessions
-        // and transcripts are also already preserved. Theme does change properly too.
-        // TermuxActivity.this.recreate();
+        // It will destroy the activity, including all stored variables and views, and onCreate()
+        // will be called again. Extra keys input text, terminal sessions and transcripts will be preserved.
+        if (recreateActivity) {
+            Logger.logDebug(LOG_TAG, "Recreating activity");
+            TermuxActivity.this.recreate();
+        }
     }
 
 
+    private void reloadProperties() {
+        mProperties.loadTermuxPropertiesFromDisk();
+
+        if (mTermuxTerminalViewClient != null)
+            mTermuxTerminalViewClient.onReloadProperties();
+    }
 
     public static void startTermuxActivity(@NonNull final Context context) {
         context.startActivity(newInstance(context));

@@ -15,6 +15,7 @@ import com.termux.shared.crash.CrashHandler;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.termux.crash.TermuxCrashUtils;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
+import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 
 import java.io.ByteArrayOutputStream;
@@ -34,6 +35,9 @@ public class TermuxApplication extends XHApplication {
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxSpeed(0);
         Aria.get(this).getDownloadConfig().setConvertSpeed(true);
+
+        // Init app wide SharedProperties loaded from termux.properties
+        TermuxAppSharedProperties properties = TermuxAppSharedProperties.init(this);
         // Set log level for the app
         setLogLevel();
         LocalePlugin.INSTANCE.init(this, LocaleConstant.RECREATE_CURRENT_ACTIVITY);

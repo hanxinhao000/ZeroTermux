@@ -1117,6 +1117,21 @@ public class FileUtils {
     }
 
     /**
+     * Delete socket file at path.
+     *
+     * This function is a wrapper for {@link #deleteFile(String, String, boolean, boolean, int)}.
+     *
+     * @param label The optional label for file to delete. This can optionally be {@code null}.
+     * @param filePath The {@code path} for file to delete.
+     * @param ignoreNonExistentFile The {@code boolean} that decides if it should be considered an
+     *                              error if file to deleted doesn't exist.
+     * @return Returns the {@code error} if deletion was not successful, otherwise {@code null}.
+     */
+    public static Error deleteSocketFile(String label, final String filePath, final boolean ignoreNonExistentFile) {
+        return deleteFile(label, filePath, ignoreNonExistentFile, false, FileType.SOCKET.getValue());
+    }
+
+    /**
      * Delete regular, directory or symlink file at path.
      *
      * This function is a wrapper for {@link #deleteFile(String, String, boolean, boolean, int)}.
@@ -1178,12 +1193,12 @@ public class FileUtils {
             if ((allowedFileTypeFlags & fileType.getValue()) <= 0) {
                 // If wrong file type is to be ignored
                 if (ignoreWrongFileType) {
-                    Logger.logVerbose(LOG_TAG, "Ignoring deletion of " + label + "file at path \"" + filePath + "\" not matching allowed file types: " + FileTypes.convertFileTypeFlagsToNamesString(allowedFileTypeFlags));
+                    Logger.logVerbose(LOG_TAG, "Ignoring deletion of " + label + "file at path \"" + filePath + "\" of type \"" + fileType.getName() + "\" not matching allowed file types: " + FileTypes.convertFileTypeFlagsToNamesString(allowedFileTypeFlags));
                     return null;
                 }
 
                 // Else return with error
-                return FileUtilsErrno.ERRNO_FILE_NOT_AN_ALLOWED_FILE_TYPE.getError(label + "file meant to be deleted", filePath, FileTypes.convertFileTypeFlagsToNamesString(allowedFileTypeFlags));
+                return FileUtilsErrno.ERRNO_FILE_NOT_AN_ALLOWED_FILE_TYPE.getError(label + "file meant to be deleted", filePath, fileType.getName(), FileTypes.convertFileTypeFlagsToNamesString(allowedFileTypeFlags));
             }
 
             Logger.logVerbose(LOG_TAG, "Deleting " + label + "file at path \"" + filePath + "\"");
@@ -1351,6 +1366,10 @@ public class FileUtils {
                     return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError(label, filePath).setLabel(label);
                 }
             }
+
+            // TODO: Use FileAttributes with support for atime (default), mtime, ctime. Add regex for ignoring file and dir absolute paths.
+            // FIXME: iterateFiles() does not return subdirectories even with TrueFileFilter for file and dir.
+            // FIXME: Empty directories remain
 
             // If directory exists, delete its contents
             Calendar calendar = Calendar.getInstance();

@@ -1,21 +1,25 @@
 package com.termux.filepicker;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.util.Patterns;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.termux.R;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
+import com.termux.shared.net.uri.UriUtils;
 import com.termux.shared.interact.MessageDialogUtils;
+import com.termux.shared.net.uri.UriScheme;
+import com.termux.shared.termux.interact.TextInputDialogUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_SERVICE;
 import com.termux.app.TermuxService;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.termux.interact.TextInputDialogUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,7 +31,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-public class TermuxFileReceiverActivity extends Activity {
+public class TermuxFileReceiverActivity extends AppCompatActivity {
 
     static final String TERMUX_RECEIVEDIR = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home/downloads";
     static final String EDITOR_PROGRAM = TermuxConstants.TERMUX_HOME_DIR_PATH + "/bin/termux-file-editor";
@@ -89,11 +93,13 @@ public class TermuxFileReceiverActivity extends Activity {
                 return;
             }
 
-            if ("content".equals(scheme)) {
+            if (UriScheme.SCHEME_CONTENT.equals(scheme)) {
                 handleContentUri(dataUri, sharedTitle);
-            } else if ("file".equals(scheme)) {
-                // When e.g. clicking on a downloaded apk:
-                String path = dataUri.getPath();
+            } else if (UriScheme.SCHEME_FILE.equals(scheme)) {
+                Logger.logVerbose(LOG_TAG, "uri: \"" + dataUri + "\", path: \"" + dataUri.getPath() + "\", fragment: \"" + dataUri.getFragment() + "\"");
+
+                // Get full path including fragment (anything after last "#")
+                String path = UriUtils.getUriFilePathWithFragment(dataUri);
                 if (DataUtils.isNullOrEmpty(path)) {
                     showErrorDialogAndQuit("File path from data uri is null, empty or invalid.");
                     return;
@@ -121,8 +127,10 @@ public class TermuxFileReceiverActivity extends Activity {
             dialog -> finish());
     }
 
-    void handleContentUri(final Uri uri, String subjectFromIntent) {
+    void handleContentUri(@NonNull final Uri uri, String subjectFromIntent) {
         try {
+            Logger.logVerbose(LOG_TAG, "uri: \"" + uri + "\", path: \"" + uri.getPath() + "\", fragment: \"" + uri.getFragment() + "\"");
+
             String attachmentFileName = null;
 
             String[] projection = new String[]{OpenableColumns.DISPLAY_NAME};
@@ -134,6 +142,7 @@ public class TermuxFileReceiverActivity extends Activity {
             }
 
             if (attachmentFileName == null) attachmentFileName = subjectFromIntent;
+            if (attachmentFileName == null) attachmentFileName = UriUtils.getUriFileBasename(uri, true);
 
             InputStream in = getContentResolver().openInputStream(uri);
             promptNameAndSave(in, attachmentFileName);
@@ -144,29 +153,30 @@ public class TermuxFileReceiverActivity extends Activity {
     }
 
     void promptNameAndSave(final InputStream in, final String attachmentFileName) {
-        TextInputDialogUtils.textInput(this, R.string.title_file_received, attachmentFileName, R.string.action_file_received_edit, text -> {
-            File outFile = saveStreamWithName(in, text);
-            if (outFile == null) return;
+        TextInputDialogUtils.textInput(this, R.string.title_file_received, attachmentFileName,
+            R.string.action_file_received_edit, text -> {
+                File outFile = saveStreamWithName(in, text);
+                if (outFile == null) return;
 
-            final File editorProgramFile = new File(EDITOR_PROGRAM);
-            if (!editorProgramFile.isFile()) {
-                showErrorDialogAndQuit("The following file does not exist:\n$HOME/bin/termux-file-editor\n\n"
-                    + "Create this file as a script or a symlink - it will be called with the received file as only argument.");
-                return;
-            }
+                final File editorProgramFile = new File(EDITOR_PROGRAM);
+                if (!editorProgramFile.isFile()) {
+                    showErrorDialogAndQuit("The following file does not exist:\n$HOME/bin/termux-file-editor\n\n"
+                        + "Create this file as a script or a symlink - it will be called with the received file as only argument.");
+                    return;
+                }
 
-            // Do this for the user if necessary:
-            //noinspection ResultOfMethodCallIgnored
-            editorProgramFile.setExecutable(true);
+                // Do this for the user if necessary:
+                //noinspection ResultOfMethodCallIgnored
+                editorProgramFile.setExecutable(true);
 
-            final Uri scriptUri = new Uri.Builder().scheme("file").path(EDITOR_PROGRAM).build();
+                final Uri scriptUri = UriUtils.getFileUri(EDITOR_PROGRAM);
 
-            Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, scriptUri);
-            executeIntent.setClass(TermuxFileReceiverActivity.this, TermuxService.class);
-            executeIntent.putExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS, new String[]{outFile.getAbsolutePath()});
-            startService(executeIntent);
-            finish();
-        },
+                Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, scriptUri);
+                executeIntent.setClass(TermuxFileReceiverActivity.this, TermuxService.class);
+                executeIntent.putExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS, new String[]{outFile.getAbsolutePath()});
+                startService(executeIntent);
+                finish();
+            },
             R.string.action_file_received_open_directory, text -> {
                 if (saveStreamWithName(in, text) == null) return;
 
@@ -223,7 +233,7 @@ public class TermuxFileReceiverActivity extends Activity {
         //noinspection ResultOfMethodCallIgnored
         urlOpenerProgramFile.setExecutable(true);
 
-        final Uri urlOpenerProgramUri = new Uri.Builder().scheme("file").path(URL_OPENER_PROGRAM).build();
+        final Uri urlOpenerProgramUri = UriUtils.getFileUri(URL_OPENER_PROGRAM);
 
         Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, urlOpenerProgramUri);
         executeIntent.setClass(TermuxFileReceiverActivity.this, TermuxService.class);

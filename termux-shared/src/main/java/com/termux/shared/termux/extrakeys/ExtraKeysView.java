@@ -32,7 +32,6 @@ import android.widget.PopupWindow;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
 import com.google.android.material.button.MaterialButton;
 import com.termux.shared.R;
 import com.termux.shared.termux.terminal.io.TerminalExtraKeys;

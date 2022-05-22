@@ -15,6 +15,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -133,9 +134,9 @@ public class PermissionUtils {
 
                 try {
                     if (context instanceof AppCompatActivity)
-                        ((AppCompatActivity) context).requestPermissions(new String[]{permission}, requestCode);
+                        ((AppCompatActivity) context).requestPermissions(permissions, requestCode);
                     else if (context instanceof Activity)
-                        ((Activity) context).requestPermissions(new String[]{permission}, requestCode);
+                        ((Activity) context).requestPermissions(permissions, requestCode);
                     else {
                         Error.logErrorAndShowToast(context, LOG_TAG,
                             FunctionErrno.ERRNO_PARAMETER_NOT_INSTANCE_OF.getError("context", "requestPermissions", "Activity or AppCompatActivity"));
@@ -147,6 +148,8 @@ public class PermissionUtils {
                     Logger.showToast(context, errmsg + "\n" + e.getMessage(), true);
                     return false;
                 }
+
+                break;
             }
         }
 
@@ -279,7 +282,7 @@ public class PermissionUtils {
         if (requestCode < 0)
             return false;
 
-        if (requestLegacyStoragePermission) {
+        if (requestLegacyStoragePermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             requestLegacyStorageExternalPermission(context, requestCode);
         } else {
             requestManageStorageExternalPermission(context, requestCode);
@@ -301,7 +304,7 @@ public class PermissionUtils {
      * @return Returns {@code true} if permission is granted, otherwise {@code false}.
      */
     public static boolean checkStoragePermission(@NonNull Context context, boolean checkLegacyStoragePermission) {
-        if (checkLegacyStoragePermission) {
+        if (checkLegacyStoragePermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             return checkPermissions(context,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE});
@@ -326,6 +329,7 @@ public class PermissionUtils {
     }
 
     /** Wrapper for {@link #requestManageStorageExternalPermission(Context, int)}. */
+    @RequiresApi(api = Build.VERSION_CODES.R)
     public static Error requestManageStorageExternalPermission(@NonNull Context context) {
         return requestManageStorageExternalPermission(context, -1);
     }
@@ -341,13 +345,13 @@ public class PermissionUtils {
      *                    result it required.
      * @return Returns the {@code error} if requesting the permission was not successful, otherwise {@code null}.
      */
+    @RequiresApi(api = Build.VERSION_CODES.R)
     public static Error requestManageStorageExternalPermission(@NonNull Context context, int requestCode) {
         Logger.logInfo(LOG_TAG, "Requesting manage external storage permission");
 
         Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
         intent.addCategory("android.intent.category.DEFAULT");
         intent.setData(Uri.parse("package:" + context.getPackageName()));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         Error error;
         if (requestCode >=0)
@@ -374,8 +378,8 @@ public class PermissionUtils {
      * https://developer.android.com/training/data-storage/use-cases#opt-out-scoped-storage
      */
     public static boolean isLegacyExternalStoragePossible(@NonNull Context context) {
-        return !(PackageUtils.getTargetSDKForPackage(context) >= Build.VERSION_CODES.R &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R);
+        return !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+            PackageUtils.getTargetSDKForPackage(context) >= Build.VERSION_CODES.R);
     }
 
     /**
@@ -459,7 +463,6 @@ public class PermissionUtils {
 
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
         intent.setData(Uri.parse("package:" + context.getPackageName()));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (requestCode >=0)
             return ActivityUtils.startActivityForResult(context, requestCode, intent);
@@ -529,7 +532,6 @@ public class PermissionUtils {
 
         Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
         intent.setData(Uri.parse("package:" + context.getPackageName()));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (requestCode >=0)
             return ActivityUtils.startActivityForResult(context, requestCode, intent);

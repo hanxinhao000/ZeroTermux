@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.shell.command.result.ResultConfig;
@@ -13,6 +14,7 @@ import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.shell.command.runner.app.AppShell;
+import com.termux.terminal.TerminalSession;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,8 +54,91 @@ public class ExecutionCommand {
             return value;
         }
 
+
     }
 
+    public enum Runner {
+
+        /** Run command in {@link TerminalSession}. */
+        TERMINAL_SESSION("terminal-session"),
+
+        /** Run command in {@link AppShell}. */
+        APP_SHELL("app-shell");
+
+        ///** Run command in {@link AdbShell}. */
+        //ADB_SHELL("adb-shell"),
+
+        ///** Run command in {@link RootShell}. */
+        //ROOT_SHELL("root-shell");
+
+        private final String name;
+
+        Runner(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean equalsRunner(String runner) {
+            return runner != null && runner.equals(this.name);
+        }
+
+        /** Get {@link Runner} for {@code name} if found, otherwise {@code null}. */
+        @Nullable
+        public static Runner runnerOf(String name) {
+            for (Runner v : Runner.values()) {
+                if (v.name.equals(name)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+        /** Get {@link Runner} for {@code name} if found, otherwise {@code def}. */
+        @NonNull
+        public static Runner runnerOf(@Nullable String name, @NonNull Runner def) {
+            Runner runner = runnerOf(name);
+            return runner != null ? runner : def;
+        }
+
+    }
+
+    public enum SessionCreateMode {
+
+        /** Always create {@link TerminalSession}. */
+        ALWAYS("always"),
+
+        /** Create session only if no session with {@link #sessionName} found. */
+        NO_SESSION_WITH_NAME("no-session-with-name");
+
+        private final String mode;
+
+        SessionCreateMode(final String mode) {
+            this.mode = mode;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+
+        public boolean equalsMode(String sessionCreateMode) {
+            return sessionCreateMode != null && sessionCreateMode.equals(this.mode);
+        }
+
+        /** Get {@link SessionCreateMode} for {@code mode} if found, otherwise {@code null}. */
+        @Nullable
+        public static SessionCreateMode modeOf(String mode) {
+            for (SessionCreateMode v : SessionCreateMode.values()) {
+                if (v.mode.equals(mode)) {
+                    return v;
+                }
+            }
+            return null;
+        }
+
+    }
 
     /** The optional unique id for the {@link ExecutionCommand}. */
     public Integer id;
@@ -83,8 +168,9 @@ public class ExecutionCommand {
     public Integer terminalTranscriptRows;
 
 
-    /** If the {@link ExecutionCommand} is a background or a foreground terminal session command. */
-    public boolean inBackground;
+    /** The {@link Runner} for the {@link ExecutionCommand}. */
+    public String runner;
+
     /** If the {@link ExecutionCommand} is meant to start a failsafe terminal session. */
     public boolean isFailsafe;
 
@@ -97,8 +183,16 @@ public class ExecutionCommand {
      */
     public Integer backgroundCustomLogLevel;
 
-    /** The session action of foreground commands. */
+
+    /** The session action of {@link Runner#TERMINAL_SESSION} commands. */
     public String sessionAction;
+
+    /** The session name of {@link Runner#TERMINAL_SESSION} commands. */
+    public String sessionName;
+
+    /** The {@link SessionCreateMode} of session for {@link Runner#TERMINAL_SESSION} commands. */
+    public String sessionCreateMode;
+
 
 
     /** The command label for the {@link ExecutionCommand}. */
@@ -145,13 +239,13 @@ public class ExecutionCommand {
         this.id = id;
     }
 
-    public ExecutionCommand(Integer id, String executable, String[] arguments, String stdin, String workingDirectory, boolean inBackground, boolean isFailsafe) {
+    public ExecutionCommand(Integer id, String executable, String[] arguments, String stdin, String workingDirectory, String runner, boolean isFailsafe) {
         this.id = id;
         this.executable = executable;
         this.arguments = arguments;
         this.stdin = stdin;
         this.workingDirectory = workingDirectory;
-        this.inBackground = inBackground;
+        this.runner = runner;
         this.isFailsafe = isFailsafe;
     }
 
@@ -278,10 +372,10 @@ public class ExecutionCommand {
         logString.append("\n").append(executionCommand.getExecutableLogString());
         logString.append("\n").append(executionCommand.getArgumentsLogString());
         logString.append("\n").append(executionCommand.getWorkingDirectoryLogString());
-        logString.append("\n").append(executionCommand.getInBackgroundLogString());
+        logString.append("\n").append(executionCommand.getRunnerLogString());
         logString.append("\n").append(executionCommand.getIsFailsafeLogString());
 
-        if (executionCommand.inBackground) {
+        if (Runner.APP_SHELL.equalsRunner(executionCommand.runner)) {
             if (logStdin && (!ignoreNull || !DataUtils.isNullOrEmpty(executionCommand.stdin)))
                 logString.append("\n").append(executionCommand.getStdinLogString());
 
@@ -291,6 +385,14 @@ public class ExecutionCommand {
 
         if (!ignoreNull || executionCommand.sessionAction != null)
             logString.append("\n").append(executionCommand.getSessionActionLogString());
+
+        if (!ignoreNull || executionCommand.sessionName != null) {
+            logString.append("\n").append(executionCommand.getSessionNameLogString());
+        }
+
+        if (!ignoreNull || executionCommand.sessionCreateMode != null) {
+            logString.append("\n").append(executionCommand.getSessionCreateModeLogString());
+        }
 
         if (!ignoreNull || executionCommand.commandIntent != null)
             logString.append("\n").append(executionCommand.getCommandIntentLogString());
@@ -370,12 +472,12 @@ public class ExecutionCommand {
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Current State", executionCommand.currentState.getName(), "-"));
 
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Executable", executionCommand.executable, "-"));
-        markdownString.append("\n").append(getArgumentsMarkdownString(executionCommand.arguments));
+        markdownString.append("\n").append(getArgumentsMarkdownString("Arguments", executionCommand.arguments));
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Working Directory", executionCommand.workingDirectory, "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("inBackground", executionCommand.inBackground, "-"));
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Runner", executionCommand.runner, "-"));
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("isFailsafe", executionCommand.isFailsafe, "-"));
 
-        if (executionCommand.inBackground) {
+        if (Runner.APP_SHELL.equalsRunner(executionCommand.runner)) {
             if (!DataUtils.isNullOrEmpty(executionCommand.stdin))
                 markdownString.append("\n").append(MarkdownUtils.getMultiLineMarkdownStringEntry("Stdin", executionCommand.stdin, "-"));
             if (executionCommand.backgroundCustomLogLevel != null)
@@ -383,6 +485,8 @@ public class ExecutionCommand {
         }
 
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Session Action", executionCommand.sessionAction, "-"));
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Session Name", executionCommand.sessionName, "-"));
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Session Create Mode", executionCommand.sessionCreateMode, "-"));
 
 
         markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("isPluginExecutionCommand", executionCommand.isPluginExecutionCommand, "-"));
@@ -443,15 +547,15 @@ public class ExecutionCommand {
     }
 
     public String getArgumentsLogString() {
-        return getArgumentsLogString(arguments);
+        return getArgumentsLogString("Arguments", arguments);
     }
 
     public String getWorkingDirectoryLogString() {
         return "Working Directory: `" + workingDirectory + "`";
     }
 
-    public String getInBackgroundLogString() {
-        return "inBackground: `" + inBackground + "`";
+    public String getRunnerLogString() {
+        return Logger.getSingleLineLogStringEntry("Runner", runner, "-");
     }
 
     public String getIsFailsafeLogString() {
@@ -471,6 +575,14 @@ public class ExecutionCommand {
 
     public String getSessionActionLogString() {
         return Logger.getSingleLineLogStringEntry("Session Action", sessionAction, "-");
+    }
+
+    public String getSessionNameLogString() {
+        return Logger.getSingleLineLogStringEntry("Session Name", sessionName, "-");
+    }
+
+    public String getSessionCreateModeLogString() {
+        return Logger.getSingleLineLogStringEntry("Session Create Mode", sessionCreateMode, "-");
     }
 
     public String getCommandDescriptionLogString() {
@@ -511,8 +623,8 @@ public class ExecutionCommand {
      * @param argumentsArray The {@link String[]} argumentsArray to convert.
      * @return Returns the log friendly {@link String}.
      */
-    public static String getArgumentsLogString(final String[] argumentsArray) {
-        StringBuilder argumentsString = new StringBuilder("Arguments:");
+    public static String getArgumentsLogString(String label, final String[] argumentsArray) {
+        StringBuilder argumentsString = new StringBuilder(label + ":");
 
         if (argumentsArray != null && argumentsArray.length != 0) {
             argumentsString.append("\n```\n");
@@ -548,8 +660,8 @@ public class ExecutionCommand {
      * @param argumentsArray The {@link String[]} argumentsArray to convert.
      * @return Returns the markdown {@link String}.
      */
-    public static String getArgumentsMarkdownString(final String[] argumentsArray) {
-        StringBuilder argumentsString = new StringBuilder("**Arguments:**");
+    public static String getArgumentsMarkdownString(String label, final String[] argumentsArray) {
+        StringBuilder argumentsString = new StringBuilder("**" + label + ":**");
 
         if (argumentsArray != null && argumentsArray.length != 0) {
             argumentsString.append("\n");

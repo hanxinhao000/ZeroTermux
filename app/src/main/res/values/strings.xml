@@ -647,4 +647,15 @@
     <string name="启动器新">启动器[新]</string>
     <string name="启动器旧">启动器[旧]</string>
     <string name="系统切换成功">启动器切换成功,重启之后生效</string>
+    <!-- TermuxService -->
+
+    <string name="error_termux_service_invalid_execution_command_runner">Invalid execution command runner to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_runner">Unsupported execution command runner to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_session_create_mode">Unsupported execution command session create mode to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_execution_command_session_name_unset">Session name not set but `%1$s` session create mode passed</string>
+
+    <!-- Termux RunCommandService -->
+    <string name="error_run_command_service_invalid_execution_command_runner">Invalid execution command runner to RunCommandService: `%1$s`</string>
+
+
 </resources>

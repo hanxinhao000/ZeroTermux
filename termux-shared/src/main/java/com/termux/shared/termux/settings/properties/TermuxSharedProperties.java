@@ -8,6 +8,7 @@ import com.termux.shared.logger.Logger;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.settings.properties.SharedProperties;
 import com.termux.shared.settings.properties.SharedPropertiesParser;
+import com.termux.shared.termux.TermuxConstants;
 
 import java.io.File;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public abstract class TermuxSharedProperties {
 
     public TermuxSharedProperties(@NonNull Context context, @NonNull String label, File propertiesFile,
                                   @NonNull Set<String> propertiesList, @NonNull SharedPropertiesParser sharedPropertiesParser) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         mLabel = label;
         mPropertiesFile = propertiesFile;
         mSharedProperties = new SharedProperties(context, mPropertiesFile, propertiesList, sharedPropertiesParser);
@@ -246,6 +247,8 @@ public abstract class TermuxSharedProperties {
             /* int */
             case TermuxPropertyConstants.KEY_BELL_BEHAVIOUR:
                 return (int) getBellBehaviourInternalPropertyValueFromValue(value);
+            case TermuxPropertyConstants.KEY_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT:
+                return (int) getDeleteTMPDIRFilesOlderThanXDaysOnExitInternalPropertyValueFromValue(value);
             case TermuxPropertyConstants.KEY_TERMINAL_CURSOR_BLINK_RATE:
                 return (int) getTerminalCursorBlinkRateInternalPropertyValueFromValue(value);
             case TermuxPropertyConstants.KEY_TERMINAL_CURSOR_STYLE:
@@ -291,13 +294,13 @@ public abstract class TermuxSharedProperties {
                 // default true boolean behaviour
                 if (TermuxPropertyConstants.TERMUX_DEFAULT_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
                     return (boolean) SharedProperties.getBooleanValueForStringValue(key, value, true, true, LOG_TAG);
-                // default inverted false boolean behaviour
-                //else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
-                //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, false, true, LOG_TAG);
-                // default inverted true boolean behaviour
-                // else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
-                //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, true, true, LOG_TAG);
-                // just use String object as is (may be null)
+                    // default inverted false boolean behaviour
+                    //else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_FALSE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
+                    //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, false, true, LOG_TAG);
+                    // default inverted true boolean behaviour
+                    // else if (TermuxPropertyConstants.TERMUX_DEFAULT_INVERETED_TRUE_BOOLEAN_BEHAVIOUR_PROPERTIES_LIST.contains(key))
+                    //    return (boolean) SharedProperties.getInvertedBooleanValueForStringValue(key, value, true, true, LOG_TAG);
+                    // just use String object as is (may be null)
                 else
                     return value;
         }
@@ -317,6 +320,24 @@ public abstract class TermuxSharedProperties {
      */
     public static int getBellBehaviourInternalPropertyValueFromValue(String value) {
         return (int) SharedProperties.getDefaultIfNotInMap(TermuxPropertyConstants.KEY_BELL_BEHAVIOUR, TermuxPropertyConstants.MAP_BELL_BEHAVIOUR, SharedProperties.toLowerCase(value), TermuxPropertyConstants.DEFAULT_IVALUE_BELL_BEHAVIOUR, true, LOG_TAG);
+    }
+
+    /**
+     * Returns the int for the value if its not null and is between
+     * {@link TermuxPropertyConstants#IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MIN} and
+     * {@link TermuxPropertyConstants#IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MAX},
+     * otherwise returns {@link TermuxPropertyConstants#DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT}.
+     *
+     * @param value The {@link String} value to convert.
+     * @return Returns the internal value for value.
+     */
+    public static int getDeleteTMPDIRFilesOlderThanXDaysOnExitInternalPropertyValueFromValue(String value) {
+        return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT,
+            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT),
+            TermuxPropertyConstants.DEFAULT_IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT,
+            TermuxPropertyConstants.IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MIN,
+            TermuxPropertyConstants.IVALUE_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT_MAX,
+            true, true, LOG_TAG);
     }
 
     /**
@@ -353,15 +374,15 @@ public abstract class TermuxSharedProperties {
      * Returns the int for the value if its not null and is between
      * {@link TermuxPropertyConstants#IVALUE_TERMINAL_MARGIN_HORIZONTAL_MIN} and
      * {@link TermuxPropertyConstants#IVALUE_TERMINAL_MARGIN_HORIZONTAL_MAX},
-     * otherwise returns {@link TermuxPropertyConstants#DEFAULT_IVALUE_TERMINAL_HORIZONTAL_MARGIN}.
+     * otherwise returns {@link TermuxPropertyConstants#DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL}.
      *
      * @param value The {@link String} value to convert.
      * @return Returns the internal value for value.
      */
     public static int getTerminalMarginHorizontalInternalPropertyValueFromValue(String value) {
         return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_MARGIN_HORIZONTAL,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_HORIZONTAL_MARGIN),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_HORIZONTAL_MARGIN,
+            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL),
+            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_HORIZONTAL,
             TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_HORIZONTAL_MIN,
             TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_HORIZONTAL_MAX,
             true, true, LOG_TAG);
@@ -371,15 +392,15 @@ public abstract class TermuxSharedProperties {
      * Returns the int for the value if its not null and is between
      * {@link TermuxPropertyConstants#IVALUE_TERMINAL_MARGIN_VERTICAL_MIN} and
      * {@link TermuxPropertyConstants#IVALUE_TERMINAL_MARGIN_VERTICAL_MAX},
-     * otherwise returns {@link TermuxPropertyConstants#DEFAULT_IVALUE_TERMINAL_VERTICAL_MARGIN}.
+     * otherwise returns {@link TermuxPropertyConstants#DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL}.
      *
      * @param value The {@link String} value to convert.
      * @return Returns the internal value for value.
      */
     public static int getTerminalMarginVerticalInternalPropertyValueFromValue(String value) {
         return SharedProperties.getDefaultIfNotInRange(TermuxPropertyConstants.KEY_TERMINAL_MARGIN_VERTICAL,
-            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_VERTICAL_MARGIN),
-            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_VERTICAL_MARGIN,
+            DataUtils.getIntFromString(value, TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL),
+            TermuxPropertyConstants.DEFAULT_IVALUE_TERMINAL_MARGIN_VERTICAL,
             TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_VERTICAL_MIN,
             TermuxPropertyConstants.IVALUE_TERMINAL_MARGIN_VERTICAL_MAX,
             true, true, LOG_TAG);
@@ -539,6 +560,9 @@ public abstract class TermuxSharedProperties {
 
 
 
+    public boolean shouldAllowExternalApps() {
+        return (boolean) getInternalPropertyValue(TermuxConstants.PROP_ALLOW_EXTERNAL_APPS, true);
+    }
     public boolean areHardwareKeyboardShortcutsDisabled() {
         return (boolean) getInternalPropertyValue(TermuxPropertyConstants.KEY_DISABLE_HARDWARE_KEYBOARD_SHORTCUTS, true);
     }
@@ -559,6 +583,10 @@ public abstract class TermuxSharedProperties {
         return (boolean) getInternalPropertyValue(TermuxPropertyConstants.KEY_HIDE_SOFT_KEYBOARD_ON_STARTUP, true);
     }
 
+    public boolean shouldRunTermuxAmSocketServer() {
+        return (boolean) getInternalPropertyValue(TermuxPropertyConstants.KEY_RUN_TERMUX_AM_SOCKET_SERVER, true);
+    }
+
     public boolean shouldOpenTerminalTranscriptURLOnClick() {
         return (boolean) getInternalPropertyValue(TermuxPropertyConstants.KEY_TERMINAL_ONCLICK_URL_OPEN, true);
     }
@@ -577,6 +605,10 @@ public abstract class TermuxSharedProperties {
 
     public int getBellBehaviour() {
         return (int) getInternalPropertyValue(TermuxPropertyConstants.KEY_BELL_BEHAVIOUR, true);
+    }
+
+    public int getDeleteTMPDIRFilesOlderThanXDaysOnExit() {
+        return (int) getInternalPropertyValue(TermuxPropertyConstants.KEY_DELETE_TMPDIR_FILES_OLDER_THAN_X_DAYS_ON_EXIT, true);
     }
 
     public int getTerminalCursorBlinkRate() {

@@ -2,13 +2,16 @@ package com.termux.shared.termux;
 
 import android.annotation.SuppressLint;
 
+import com.termux.shared.shell.command.ExecutionCommand;
+import com.termux.shared.shell.command.ExecutionCommand.Runner;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 
 /*
- * Version: v0.35.0
+ * Version: v0.41.0
  * SPDX-License-Identifier: MIT
  *
  * Changelog
@@ -213,10 +216,29 @@ import java.util.List;
  *      - Added `TERMUX_PROPERTIES_FILE_PATHS_LIST` and `TERMUX_FLOAT_PROPERTIES_FILE_PATHS_LIST`.
  *
  * - 0.34.0 (2021-10-26)
- *  - Move `RESULT_SENDER` to `com.termux.shared.shell.command.ShellCommandConstants`.
+ *      - Move `RESULT_SENDER` to `com.termux.shared.shell.command.ShellCommandConstants`.
  *
  * - 0.35.0 (2022-01-28)
- *  - Add `TERMUX_APP.TERMUX_ACTIVITY.EXTRA_RECREATE_ACTIVITY`.
+ *      - Add `TERMUX_APP.TERMUX_ACTIVITY.EXTRA_RECREATE_ACTIVITY`.
+ *
+ * - 0.36.0 (2022-03-10)
+ *      - Added `TERMUX_APP.TERMUX_SERVICE.EXTRA_RUNNER` and `TERMUX_APP.RUN_COMMAND_SERVICE.EXTRA_RUNNER`
+ *
+ * - 0.37.0 (2022-03-15)
+ *  - Added `TERMUX_API_APT_*`.
+ *
+ * - 0.38.0 (2022-03-16)
+ *      - Added `TERMUX_APP.TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH`.
+ *
+ * - 0.39.0 (2022-03-18)
+ *      - Added `TERMUX_APP.TERMUX_SERVICE.EXTRA_SESSION_NAME`, `TERMUX_APP.RUN_COMMAND_SERVICE.EXTRA_SESSION_NAME`,
+ *          `TERMUX_APP.TERMUX_SERVICE.EXTRA_SESSION_CREATE_MODE` and `TERMUX_APP.RUN_COMMAND_SERVICE.EXTRA_SESSION_CREATE_MODE`.
+ *
+ * - 0.40.0 (2022-04-17)
+ *      - Added `TERMUX_APPS_DIR_PATH` and `TERMUX_APP.APPS_DIR_PATH`.
+ *
+ * - 0.41.0 (2022-04-17)
+ *      - Added `TERMUX_APP.TERMUX_AM_SOCKET_FILE_PATH`.
  */
 
 /**
@@ -484,6 +506,16 @@ public final class TermuxConstants {
     public static final String TERMUX_X11_PACKAGES_GITHUB_ISSUES_REPO_URL = TERMUX_X11_PACKAGES_GITHUB_REPO_URL + "/issues"; // Default: "https://github.com/termux/x11-packages/issues"
 
 
+    /** Termux API apt package name */
+    public static final String TERMUX_API_APT_PACKAGE_NAME = "termux-api"; // Default: "termux-api"
+    /** Termux API apt Github repo name */
+    public static final String TERMUX_API_APT_GITHUB_REPO_NAME = "termux-api-package"; // Default: "termux-api-package"
+    /** Termux API apt Github repo url */
+    public static final String TERMUX_API_APT_GITHUB_REPO_URL = TERMUX_GITHUB_ORGANIZATION_URL + "/" + TERMUX_API_APT_GITHUB_REPO_NAME; // Default: "https://github.com/termux/termux-api-package"
+    /** Termux API apt Github issues repo url */
+    public static final String TERMUX_API_APT_GITHUB_ISSUES_REPO_URL = TERMUX_API_APT_GITHUB_REPO_URL + "/issues"; // Default: "https://github.com/termux/termux-api-package/issues"
+
+
 
 
 
@@ -630,6 +662,11 @@ public final class TermuxConstants {
     public static final File TERMUX_STORAGE_HOME_DIR = new File(TERMUX_STORAGE_HOME_DIR_PATH);
 
 
+
+    /** Termux and plugin apps directory path */
+    public static final String TERMUX_APPS_DIR_PATH = TERMUX_FILES_DIR_PATH + "/apps"; // Default: "/data/data/com.termux/files/apps"
+    /** Termux and plugin apps directory */
+    public static final File TERMUX_APPS_DIR = new File(TERMUX_APPS_DIR_PATH);
 
 
 
@@ -846,6 +883,13 @@ public final class TermuxConstants {
      */
     public static final class TERMUX_APP {
 
+        /** Termux apps directory path */
+        public static final String APPS_DIR_PATH = TERMUX_APPS_DIR_PATH + "/termux-app"; // Default: "/data/data/com.termux/files/apps/termux-app"
+
+        /** termux-am socket file path */
+        public static final String TERMUX_AM_SOCKET_FILE_PATH = APPS_DIR_PATH + "/termux-am/am.sock"; // Default: "/data/data/com.termux/files/apps/termux-app/termux-am/am.sock"
+
+
         /** Termux app core activity name. */
         public static final String TERMUX_ACTIVITY_NAME = TERMUX_PACKAGE_NAME + ".app.TermuxActivity"; // Default: "com.termux.app.TermuxActivity"
 
@@ -858,8 +902,9 @@ public final class TermuxConstants {
             public static final String EXTRA_FAILSAFE_SESSION = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.failsafe_session"; // Default: "com.termux.app.failsafe_session"
 
 
-            /** Intent action to make termux request storage permissions */
-            public static final String ACTION_REQUEST_PERMISSIONS = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.request_storage_permissions"; // Default: "com.termux.app.request_storage_permissions"
+            /** Intent action to make termux app notify user that a crash happened. */
+            public static final String ACTION_NOTIFY_APP_CRASH = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.notify_app_crash"; // Default: "com.termux.app.notify_app_crash"
+
 
             /** Intent action to make termux reload its termux session styling */
             public static final String ACTION_RELOAD_STYLE = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.reload_style"; // Default: "com.termux.app.reload_style"
@@ -870,6 +915,9 @@ public final class TermuxConstants {
             /**  Intent {@code boolean} extra for whether to recreate activity for the TERMUX_ACTIVITY.ACTION_RELOAD_STYLE intent. */
             public static final String EXTRA_RECREATE_ACTIVITY = TERMUX_APP.TERMUX_ACTIVITY_NAME + ".EXTRA_RECREATE_ACTIVITY"; // Default: "com.termux.app.TermuxActivity.EXTRA_RECREATE_ACTIVITY"
 
+
+            /** Intent action to make termux request storage permissions */
+            public static final String ACTION_REQUEST_PERMISSIONS = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.request_storage_permissions"; // Default: "com.termux.app.request_storage_permissions"
         }
 
 
@@ -914,12 +962,19 @@ public final class TermuxConstants {
             public static final String EXTRA_STDIN = TERMUX_PACKAGE_NAME + ".execute.stdin"; // Default: "com.termux.execute.stdin"
             /** Intent {@code String} extra for command current working directory for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
             public static final String EXTRA_WORKDIR = TERMUX_PACKAGE_NAME + ".execute.cwd"; // Default: "com.termux.execute.cwd"
-            /** Intent {@code boolean} extra for command background mode for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
+            /** Intent {@code boolean} extra for whether to run command in background {@link Runner#APP_SHELL} or foreground {@link Runner#TERMINAL_SESSION} for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
+            @Deprecated
             public static final String EXTRA_BACKGROUND = TERMUX_PACKAGE_NAME + ".execute.background"; // Default: "com.termux.execute.background"
+            /** Intent {@code String} extra for command the {@link Runner} for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
+            public static final String EXTRA_RUNNER = TERMUX_PACKAGE_NAME + ".execute.runner"; // Default: "com.termux.execute.runner"
             /** Intent {@code String} extra for custom log level for background commands defined by {@link com.termux.shared.logger.Logger} for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
             public static final String EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL = TERMUX_PACKAGE_NAME + ".execute.background_custom_log_level"; // Default: "com.termux.execute.background_custom_log_level"
-            /** Intent {@code String} extra for session action for foreground commands for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
+            /** Intent {@code String} extra for session action for {@link Runner#TERMINAL_SESSION} commands for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
             public static final String EXTRA_SESSION_ACTION = TERMUX_PACKAGE_NAME + ".execute.session_action"; // Default: "com.termux.execute.session_action"
+            /** Intent {@code String} extra for session name for {@link Runner#TERMINAL_SESSION} commands for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
+            public static final String EXTRA_SESSION_NAME = TERMUX_PACKAGE_NAME + ".execute.session_name"; // Default: "com.termux.execute.session_name"
+            /** Intent {@code String} extra for the {@link ExecutionCommand.SessionCreateMode}  for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent. */
+            public static final String EXTRA_SESSION_CREATE_MODE = TERMUX_PACKAGE_NAME + ".execute.session_create_mode"; // Default: "com.termux.execute.session_create_mode"
             /** Intent {@code String} extra for label of the command for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
             public static final String EXTRA_COMMAND_LABEL = TERMUX_PACKAGE_NAME + ".execute.command_label"; // Default: "com.termux.execute.command_label"
             /** Intent markdown {@code String} extra for description of the command for the TERMUX_SERVICE.ACTION_SERVICE_EXECUTE intent */
@@ -955,20 +1010,23 @@ public final class TermuxConstants {
 
 
 
-            /** The value for {@link #EXTRA_SESSION_ACTION} extra that will set the new session as
+            /**
+             * The value for {@link #EXTRA_SESSION_ACTION} extra that will set the new session as
              * the current session and will start {@link TERMUX_ACTIVITY} if its not running to bring
              * the new session to foreground.
              */
             public static final int VALUE_EXTRA_SESSION_ACTION_SWITCH_TO_NEW_SESSION_AND_OPEN_ACTIVITY = 0;
 
-            /** The value for {@link #EXTRA_SESSION_ACTION} extra that will keep any existing session
+            /**
+             * The value for {@link #EXTRA_SESSION_ACTION} extra that will keep any existing session
              * as the current session and will start {@link TERMUX_ACTIVITY} if its not running to
              * bring the existing session to foreground. The new session will be added to the left
              * sidebar in the sessions list.
              */
             public static final int VALUE_EXTRA_SESSION_ACTION_KEEP_CURRENT_SESSION_AND_OPEN_ACTIVITY = 1;
 
-            /** The value for {@link #EXTRA_SESSION_ACTION} extra that will set the new session as
+            /**
+             * The value for {@link #EXTRA_SESSION_ACTION} extra that will set the new session as
              * the current session but will not start {@link TERMUX_ACTIVITY} if its not running
              * and session(s) will be seen in Termux notification and can be clicked to bring new
              * session to foreground. If the {@link TERMUX_ACTIVITY} is already running, then this
@@ -976,7 +1034,8 @@ public final class TermuxConstants {
              */
             public static final int VALUE_EXTRA_SESSION_ACTION_SWITCH_TO_NEW_SESSION_AND_DONT_OPEN_ACTIVITY = 2;
 
-            /** The value for {@link #EXTRA_SESSION_ACTION} extra that will keep any existing session
+            /**
+             * The value for {@link #EXTRA_SESSION_ACTION} extra that will keep any existing session
              * as the current session but will not start {@link TERMUX_ACTIVITY} if its not running
              * and session(s) will be seen in Termux notification and can be clicked to bring
              * existing session to foreground. If the {@link TERMUX_ACTIVITY} is already running,
@@ -1044,12 +1103,19 @@ public final class TermuxConstants {
             public static final String EXTRA_STDIN = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_STDIN"; // Default: "com.termux.RUN_COMMAND_STDIN"
             /** Intent {@code String} extra for current working directory of command for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
             public static final String EXTRA_WORKDIR = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_WORKDIR"; // Default: "com.termux.RUN_COMMAND_WORKDIR"
-            /** Intent {@code boolean} extra for whether to run command in background or foreground terminal session for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
+            /** Intent {@code boolean} extra for whether to run command in background {@link Runner#APP_SHELL} or foreground {@link Runner#TERMINAL_SESSION} for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
+            @Deprecated
             public static final String EXTRA_BACKGROUND = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_BACKGROUND"; // Default: "com.termux.RUN_COMMAND_BACKGROUND"
+            /** Intent {@code String} extra for command the {@link Runner} for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
+            public static final String EXTRA_RUNNER = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_RUNNER"; // Default: "com.termux.RUN_COMMAND_RUNNER"
             /** Intent {@code String} extra for custom log level for background commands defined by {@link com.termux.shared.logger.Logger} for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
             public static final String EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_BACKGROUND_CUSTOM_LOG_LEVEL"; // Default: "com.termux.RUN_COMMAND_BACKGROUND_CUSTOM_LOG_LEVEL"
-            /** Intent {@code String} extra for session action of foreground commands for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
+            /** Intent {@code String} extra for session action of {@link Runner#TERMINAL_SESSION} commands for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
             public static final String EXTRA_SESSION_ACTION = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_SESSION_ACTION"; // Default: "com.termux.RUN_COMMAND_SESSION_ACTION"
+            /** Intent {@code String} extra for session name of {@link Runner#TERMINAL_SESSION} commands for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
+            public static final String EXTRA_SESSION_NAME = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_SESSION_NAME"; // Default: "com.termux.RUN_COMMAND_SESSION_NAME"
+            /** Intent {@code String} extra for the {@link ExecutionCommand.SessionCreateMode}  for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent. */
+            public static final String EXTRA_SESSION_CREATE_MODE = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_SESSION_CREATE_MODE"; // Default: "com.termux.RUN_COMMAND_SESSION_CREATE_MODE"
             /** Intent {@code String} extra for label of the command for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */
             public static final String EXTRA_COMMAND_LABEL = TERMUX_PACKAGE_NAME + ".RUN_COMMAND_COMMAND_LABEL"; // Default: "com.termux.RUN_COMMAND_COMMAND_LABEL"
             /** Intent markdown {@code String} extra for description of the command for the RUN_COMMAND_SERVICE.ACTION_RUN_COMMAND intent */

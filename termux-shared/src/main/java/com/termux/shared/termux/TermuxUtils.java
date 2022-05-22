@@ -37,6 +37,8 @@ public class TermuxUtils {
     public enum AppInfoMode {
         /** Get info for Termux app only. */
         TERMUX_PACKAGE,
+        /** Get info for Termux app and plugin app if context is of plugin app. */
+        TERMUX_AND_PLUGIN_PACKAGE,
         /** Get info for Termux app and its plugins listed in {@link TermuxConstants#TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST}. */
         TERMUX_AND_PLUGIN_PACKAGES,
         /* Get info for all the Termux app plugins listed in {@link TermuxConstants#TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST}. */
@@ -259,6 +261,9 @@ public class TermuxUtils {
             case TERMUX_PACKAGE:
                 return getAppInfoMarkdownString(currentPackageContext, false);
 
+            case TERMUX_AND_PLUGIN_PACKAGE:
+                return getAppInfoMarkdownString(currentPackageContext, true);
+
             case TERMUX_AND_PLUGIN_PACKAGES:
                 appInfo.append(TermuxUtils.getAppInfoMarkdownString(currentPackageContext, false));
 
@@ -273,11 +278,11 @@ public class TermuxUtils {
             case TERMUX_AND_CALLING_PACKAGE:
                 appInfo.append(TermuxUtils.getAppInfoMarkdownString(currentPackageContext, false));
                 if (!DataUtils.isNullOrEmpty(callingPackageName)) {
-                    String callingPackageAppInfo;
+                    String callingPackageAppInfo = null;
                     if (TermuxConstants.TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST.contains(callingPackageName)) {
                         Context termuxPluginAppContext = PackageUtils.getContextForPackage(currentPackageContext, callingPackageName);
                         if (termuxPluginAppContext != null)
-                            callingPackageAppInfo = getAppInfoMarkdownString(termuxPluginAppContext, false);
+                            appInfo.append(getAppInfoMarkdownString(termuxPluginAppContext, false));
                         else
                             callingPackageAppInfo = AndroidUtils.getAppInfoMarkdownString(currentPackageContext, callingPackageName);
                     } else {
@@ -391,6 +396,11 @@ public class TermuxUtils {
         StringBuilder markdownString = new StringBuilder();
 
         markdownString.append((AndroidUtils.getAppInfoMarkdownString(context)));
+
+        if (context.getPackageName().equals(TermuxConstants.TERMUX_PACKAGE_NAME)) {
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_APP_PACKAGE_MANAGER", TermuxBootstrap.TERMUX_APP_PACKAGE_MANAGER);
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_APP_PACKAGE_VARIANT", TermuxBootstrap.TERMUX_APP_PACKAGE_VARIANT);
+        }
 
         Error error;
         error = TermuxFileUtils.isTermuxFilesDirectoryAccessible(context, true, true);
@@ -520,7 +530,9 @@ public class TermuxUtils {
 
         aptInfoScript = aptInfoScript.replaceAll(Pattern.quote("@TERMUX_PREFIX@"), TermuxConstants.TERMUX_PREFIX_DIR_PATH);
 
-        ExecutionCommand executionCommand = new ExecutionCommand(1, TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash", null, aptInfoScript, null, true, false);
+        ExecutionCommand executionCommand = new ExecutionCommand(1,
+            TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash", null, aptInfoScript,
+            null, ExecutionCommand.Runner.APP_SHELL.getName(), false);
         executionCommand.commandLabel = "APT Info Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);
@@ -578,7 +590,8 @@ public class TermuxUtils {
 
         // Run script
         // Logging must be disabled for output of logcat command itself in StreamGobbler
-        ExecutionCommand executionCommand = new ExecutionCommand(1, "/system/bin/sh", null, logcatScript + "\n", "/", true, true);
+        ExecutionCommand executionCommand = new ExecutionCommand(1, "/system/bin/sh",
+            null, logcatScript + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
         executionCommand.commandLabel = "Logcat dump command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);

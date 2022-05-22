@@ -1,0 +1,4 @@
+https://github.com/termux/termux-packages/releases/download/bootstrap-2022.01.07-r1/bootstrap-aarch64.zip
+https://github.com/termux/termux-packages/releases/download/bootstrap-2022.01.07-r1/bootstrap-arm.zip
+https://github.com/termux/termux-packages/releases/download/bootstrap-2022.01.07-r1/bootstrap-i686zip
+https://github.com/termux/termux-packages/releases/download/bootstrap-2022.01.07-r1/bootstrap-x86_64.zip
