@@ -294,33 +294,33 @@
 
 
                           <LinearLayout
-                              android:layout_width="match_parent"
-                              android:orientation="vertical"
-                              android:layout_gravity="center"
                               android:id="@+id/start_new_old"
+                              android:layout_width="match_parent"
+                              android:layout_height="match_parent"
+                              android:layout_gravity="center"
                               android:gravity="center"
-                              android:layout_height="match_parent">
+                              android:orientation="vertical">
 
                               <ImageView
                                   android:layout_width="40dp"
-                                  android:src="@mipmap/qidong_new_old"
-                                  android:layout_height="40dp"/>
+                                  android:layout_height="40dp"
+                                  android:src="@mipmap/qidong_new_old" />
 
                               <TextView
+                                  android:id="@+id/text_new_old"
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
+                                  android:layout_alignParentRight="true"
                                   android:layout_marginTop="5dp"
                                   android:layout_marginBottom="5dp"
                                   android:padding="2dp"
                                   android:paddingLeft="10dp"
-                                  android:textStyle="bold"
                                   android:paddingTop="10dp"
-                                  android:id="@+id/text_new_old"
                                   android:paddingBottom="10dp"
                                   android:text="@string/启动器新"
-                                  android:layout_alignParentRight="true"
                                   android:textColor="@color/color_ffffff"
-                                  android:textSize="10sp" />
+                                  android:textSize="10sp"
+                                  android:textStyle="bold" />
 
 
                           </LinearLayout>

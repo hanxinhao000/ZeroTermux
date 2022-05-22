@@ -1,6 +1,7 @@
 package com.termux.shared.termux.shell;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
@@ -68,7 +69,10 @@ public class TermuxShellUtils {
             environment.add("TERMUX_APP_PACKAGE_VARIANT=" + TermuxBootstrap.TERMUX_APP_PACKAGE_VARIANT.getName());
         if (TERMUX_APP_AM_SOCKET_SERVER_ENABLED != null)
             environment.add("TERMUX_APP_AM_SOCKET_SERVER_ENABLED=" + TERMUX_APP_AM_SOCKET_SERVER_ENABLED);
-
+        String stringOther = getKey(currentPackageContext, "new_old");
+        if (!(stringOther == null || stringOther.isEmpty() || "def".equals(stringOther))) {
+            environment.add("LD_LIBRARY_PATH=" + TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/lib");
+        }
         if (TERMUX_API_VERSION_NAME != null)
             environment.add("TERMUX_API_VERSION=" + TERMUX_API_VERSION_NAME);
 
@@ -237,4 +241,9 @@ public class TermuxShellUtils {
         }
     }
 
+    //ZeroTermux
+    private static String getKey(Context mContext,String key) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("start_flash", Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, "def");
+    }
 }

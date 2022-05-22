@@ -363,8 +363,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 TerminalRenderer.COLOR_TEXT = color;
                 ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
                 mTerminalView.invalidate();
-                mExtraKeysView.setColorButton();
-                mExtraKeysView.invalidate();
+                UUtils.showLog("Test:111111");
+                if(mExtraKeysView != null) {
+                    mExtraKeysView.setColorButton();
+                    mExtraKeysView.invalidate();
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -1024,8 +1027,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         unregisterReceiver(mTermuxActivityBroadcastReceiver);
     }
 
-    private void fixTermuxActivityBroadcastReceieverIntent(Intent intent) {
-        if (intent == null) return;
+    private boolean fixTermuxActivityBroadcastReceieverIntent(Intent intent) {
+        if (intent == null) return false;
 
         String extraReloadStyle = intent.getStringExtra(TERMUX_ACTIVITY.EXTRA_RELOAD_STYLE);
         if ("storage".equals(extraReloadStyle)) {
@@ -1033,6 +1036,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             intent.setAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
         }
         resBroadcastReceiever(extraReloadStyle);
+
+        if ("readsms".equals(extraReloadStyle) || "contactperson".equals(extraReloadStyle)) {
+            return true;
+        }
+
+        return false;
     }
 
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
@@ -1041,7 +1050,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (intent == null) return;
             Logger.logDebug(LOG_TAG, "TermuxActivityBroadcastReceiver start:" + intent.getAction());
             if (mIsVisible) {
-                fixTermuxActivityBroadcastReceieverIntent(intent);
+                if(fixTermuxActivityBroadcastReceieverIntent(intent)) {
+                    return;
+                }
                 switch (intent.getAction()) {
                     case TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH:
                         Logger.logDebug(LOG_TAG, "Received intent to notify app crash");
@@ -1800,6 +1811,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         TerminalRenderer.COLOR_TEXT = color;
                         ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
                         mTerminalView.invalidate();
+                        UUtils.showLog("Test:22222");
                         mExtraKeysView.setColorButton();
                         mExtraKeysView.invalidate();
                     }
@@ -1809,6 +1821,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         TerminalRenderer.COLOR_TEXT = color;
                         ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
                         mTerminalView.invalidate();
+                        UUtils.showLog("Test:333333");
                         mExtraKeysView.setColorButton();
                         mExtraKeysView.invalidate();
                     }
