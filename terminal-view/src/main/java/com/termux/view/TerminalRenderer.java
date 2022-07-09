@@ -22,9 +22,7 @@ public final class TerminalRenderer {
     final int mTextSize;
     final Typeface mTypeface;
     private final Paint mTextPaint = new Paint();
-
     public static int COLOR_TEXT = Color.parseColor("#ffffff");
-
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
     /** The {@link Paint#getFontSpacing()}. See http://www.fampennings.nl/maarten/android/08numgrid/font.png */
@@ -37,7 +35,6 @@ public final class TerminalRenderer {
     private final float[] asciiMeasures = new float[127];
 
     public TerminalRenderer(int textSize, Typeface typeface) {
-        initColor();
         mTextSize = textSize;
         mTypeface = typeface;
 

@@ -61,7 +61,7 @@ import com.termux.shared.theme.ThemeUtils;
  * in {@link ExtraKeysView#ExtraKeysView(Context, AttributeSet)} by calling the respective functions.
  * If you extend {@link ExtraKeysView}, you can also set them in the constructor, but do call super().
  *
- * After this you will have to make a call to {@link ExtraKeysView#reload(ExtraKeysInfo) and pass
+ * After this you will have to make a call to {@link ExtraKeysView#reload(ExtraKeysInfo, float) and pass
  * it the {@link ExtraKeysInfo} to load and display the extra keys. Read its class javadocs for more
  * info on how to create it.
  *
@@ -120,7 +120,7 @@ public final class ExtraKeysView extends GridLayout {
     public static final int ATTR_BUTTON_ACTIVE_BACKGROUND_COLOR = R.attr.extraKeysButtonActiveBackgroundColor;
 
     /** Defines the default fallback value for {@link #mButtonTextColor} if {@link #ATTR_BUTTON_TEXT_COLOR} is undefined. */
-    public static  int DEFAULT_BUTTON_TEXT_COLOR = 0xFFFFFFFF;
+    public static int DEFAULT_BUTTON_TEXT_COLOR = 0xFFFFFFFF;
     /** Defines the default fallback value for {@link #mButtonActiveTextColor} if {@link #ATTR_BUTTON_ACTIVE_TEXT_COLOR} is undefined. */
     public static final int DEFAULT_BUTTON_ACTIVE_TEXT_COLOR = 0xFF80DEEA;
     /** Defines the default fallback value for {@link #mButtonBackgroundColor} if {@link #ATTR_BUTTON_BACKGROUND_COLOR} is undefined. */
@@ -380,9 +380,11 @@ public final class ExtraKeysView extends GridLayout {
      * Reload this instance of {@link ExtraKeysView} with the info passed in {@code extraKeysInfo}.
      *
      * @param extraKeysInfo The {@link ExtraKeysInfo} that defines the necessary info for the extra keys.
+     * @param heightPx The height in pixels of the parent surrounding the {@link ExtraKeysView}. It must
+     *                 be a single child.
      */
     @SuppressLint("ClickableViewAccessibility")
-    public void reload(ExtraKeysInfo extraKeysInfo) {
+    public void reload(ExtraKeysInfo extraKeysInfo, float heightPx) {
         if (extraKeysInfo == null)
             return;
 
@@ -470,7 +472,11 @@ public final class ExtraKeysView extends GridLayout {
 
                 LayoutParams param = new GridLayout.LayoutParams();
                 param.width = 0;
-                param.height = 0;
+                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) {
+                   param.height = (int)(heightPx + 0.5);
+                } else {
+                    param.height = 0;
+                }
                 param.setMargins(0, 0, 0, 0);
                 param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
                 param.rowSpec = GridLayout.spec(row, GridLayout.FILL, 1.f);
@@ -675,14 +681,9 @@ public final class ExtraKeysView extends GridLayout {
 
     //初始化颜色
     public void setColorButton() {
-
         for (int i = 0; i < getChildCount(); i++) {
-
             Button childAt = (Button) getChildAt(i);
             childAt.setTextColor(DEFAULT_BUTTON_TEXT_COLOR);
         }
-
     }
-
-
 }

@@ -126,6 +126,10 @@ public final class TerminalEmulator {
     private String mTitle;
     private final Stack<String> mTitleStack = new Stack<>();
 
+    /** If processing first character of first parameter of {@link #ESC_CSI}. */
+    private boolean mIsCSIStart;
+    /** The last character processed of a parameter of {@link #ESC_CSI}. */
+    private Integer mLastCSIArg;
 
     /** The cursor position. Between (0,0) and (mRows-1, mColumns-1). */
     private int mCursorRow, mCursorCol;
@@ -247,6 +251,9 @@ public final class TerminalEmulator {
      * with the scrolling text.
      */
     private int mScrollCounter = 0;
+
+    /** If automatic scrolling of terminal is disabled */
+    private boolean mAutoScrollDisabled;
 
     private byte mUtf8ToFollow, mUtf8Index;
     private final byte[] mUtf8InputBuffer = new byte[4];
@@ -796,7 +803,6 @@ public final class TerminalEmulator {
                             int columnsToDelete = Math.min(getArg0(1), columnsAfterCursor);
                             int columnsToMove = columnsAfterCursor - columnsToDelete;
                             mScreen.blockCopy(mCursorCol + columnsToDelete, 0, columnsToMove, mRows, mCursorCol, 0);
-                            blockClear(mCursorRow + columnsToMove, 0, columnsToDelete, mRows);
                         } else {
                             unknownSequence(b);
                         }
@@ -825,7 +831,7 @@ public final class TerminalEmulator {
                                 if (internalBit != -1) {
                                     value = isDecsetInternalBitSet(internalBit) ? 1 : 2; // 1=set, 2=reset.
                                 } else {
-                                    mClient.logError(LOG_TAG, "Got DECRQM for unrecognized private DEC mode=" + mode);
+                                    Logger.logError(mClient, LOG_TAG, "Got DECRQM for unrecognized private DEC mode=" + mode);
                                     value = 0; // 0=not recognized, 3=permanently set, 4=permanently reset
                                 }
                             }
@@ -936,10 +942,17 @@ public final class TerminalEmulator {
                     for (String part : dcs.substring(2).split(";")) {
                         if (part.length() % 2 == 0) {
                             StringBuilder transBuffer = new StringBuilder();
+                            char c;
                             for (int i = 0; i < part.length(); i += 2) {
-                                char c = (char) Long.decode("0x" + part.charAt(i) + "" + part.charAt(i + 1)).longValue();
+                                try {
+                                    c = (char) Long.decode("0x" + part.charAt(i) + "" + part.charAt(i + 1)).longValue();
+                                } catch (NumberFormatException e) {
+                                    Logger.logStackTraceWithMessage(mClient, LOG_TAG, "Invalid device termcap/terminfo encoded name \"" + part + "\"", e);
+                                    continue;
+                                }
                                 transBuffer.append(c);
                             }
+
                             String trans = transBuffer.toString();
                             String responseValue;
                             switch (trans) {
@@ -962,7 +975,7 @@ public final class TerminalEmulator {
                                     case "&8": // Undo key - ignore.
                                         break;
                                     default:
-                                        mClient.logWarn(LOG_TAG, "Unhandled termcap/terminfo name: '" + trans + "'");
+                                        Logger.logWarn(mClient, LOG_TAG, "Unhandled termcap/terminfo name: '" + trans + "'");
                                 }
                                 // Respond with invalid request:
                                 mSession.write("\033P0+r" + part + "\033\\");
@@ -974,12 +987,12 @@ public final class TerminalEmulator {
                                 mSession.write("\033P1+r" + part + "=" + hexEncoded + "\033\\");
                             }
                         } else {
-                            mClient.logError(LOG_TAG, "Invalid device termcap/terminfo name of odd length: " + part);
+                            Logger.logError(mClient, LOG_TAG, "Invalid device termcap/terminfo name of odd length: " + part);
                         }
                     }
                 } else {
                     if (LOG_ESCAPE_SEQUENCES)
-                        mClient.logError(LOG_TAG, "Unrecognized device control string: " + dcs);
+                        Logger.logError(mClient, LOG_TAG, "Unrecognized device control string: " + dcs);
                 }
                 finishSequence();
             }
@@ -1069,7 +1082,7 @@ public final class TerminalEmulator {
                     int externalBit = mArgs[i];
                     int internalBit = mapDecSetBitToInternalBit(externalBit);
                     if (internalBit == -1) {
-                        mClient.logWarn(LOG_TAG, "Ignoring request to save/recall decset bit=" + externalBit);
+                        Logger.logWarn(mClient, LOG_TAG, "Ignoring request to save/recall decset bit=" + externalBit);
                     } else {
                         if (b == 's') {
                             mSavedDecSetFlags |= internalBit;
@@ -1259,7 +1272,7 @@ public final class TerminalEmulator {
                 // (1) enables this feature for keys except for those with well-known behavior, e.g., Tab, Backarrow and
                 // some special control character cases, e.g., Control-Space to make a NUL.
                 // (2) enables this feature for keys including the exceptions listed.
-                mClient.logError(LOG_TAG, "(ignored) CSI > MODIFY RESOURCE: " + getArg0(-1) + " to " + getArg1(-1));
+                Logger.logError(mClient, LOG_TAG, "(ignored) CSI > MODIFY RESOURCE: " + getArg0(-1) + " to " + getArg1(-1));
                 break;
             default:
                 parseArg(b);
@@ -1380,6 +1393,8 @@ public final class TerminalEmulator {
                 break;
             case '[':
                 continueSequence(ESC_CSI);
+                mIsCSIStart = true;
+                mLastCSIArg = null;
                 break;
             case '=': // DECKPAM
                 setDecsetinternalBit(DECSET_BIT_APPLICATION_KEYPAD, true);
@@ -1806,7 +1821,7 @@ public final class TerminalEmulator {
                 int firstArg = mArgs[i + 1];
                 if (firstArg == 2) {
                     if (i + 4 > mArgIndex) {
-                        mClient.logWarn(LOG_TAG, "Too few CSI" + code + ";2 RGB arguments");
+                        Logger.logWarn(mClient, LOG_TAG, "Too few CSI" + code + ";2 RGB arguments");
                     } else {
                         int red = mArgs[i + 2], green = mArgs[i + 3], blue = mArgs[i + 4];
                         if (red < 0 || green < 0 || blue < 0 || red > 255 || green > 255 || blue > 255) {
@@ -1831,7 +1846,7 @@ public final class TerminalEmulator {
                             mBackColor = color;
                         }
                     } else {
-                        if (LOG_ESCAPE_SEQUENCES) mClient.logWarn(LOG_TAG, "Invalid color index: " + color);
+                        if (LOG_ESCAPE_SEQUENCES) Logger.logWarn(mClient, LOG_TAG, "Invalid color index: " + color);
                     }
                 } else {
                     finishSequenceAndLogError("Invalid ISO-8613-3 SGR first argument: " + firstArg);
@@ -1848,7 +1863,7 @@ public final class TerminalEmulator {
                 mBackColor = code - 100 + 8;
             } else {
                 if (LOG_ESCAPE_SEQUENCES)
-                    mClient.logWarn(LOG_TAG, String.format("SGR unknown code %d", code));
+                    Logger.logWarn(mClient, LOG_TAG, String.format("SGR unknown code %d", code));
             }
         }
     }
@@ -1982,7 +1997,7 @@ public final class TerminalEmulator {
                     String clipboardText = new String(Base64.decode(textParameter.substring(startIndex), 0), StandardCharsets.UTF_8);
                     mSession.onCopyTextToClipboard(clipboardText);
                 } catch (Exception e) {
-                    mClient.logError(LOG_TAG, "OSC Manipulate selection, invalid string '" + textParameter + "");
+                    Logger.logError(mClient, LOG_TAG, "OSC Manipulate selection, invalid string '" + textParameter + "");
                 }
                 break;
             case 104:
@@ -2087,28 +2102,57 @@ public final class TerminalEmulator {
         }
     }
 
-    /** Process the next ASCII character of a parameter. */
-    private void parseArg(int b) {
-        if (b >= '0' && b <= '9') {
-            if (mArgIndex < mArgs.length) {
-                int oldValue = mArgs[mArgIndex];
-                int thisDigit = b - '0';
-                int value;
-                if (oldValue >= 0) {
-                    value = oldValue * 10 + thisDigit;
-                } else {
-                    value = thisDigit;
+    /**
+     * Process the next ASCII character of a parameter.
+     *
+     * Parameter characters modify the action or interpretation of the sequence. You can use up to
+     * 16 parameters per sequence. You must use the ; character to separate parameters.
+     * All parameters are unsigned, positive decimal integers, with the most significant
+     * digit sent first. Any parameter greater than 9999 (decimal) is set to 9999
+     * (decimal). If you do not specify a value, a 0 value is assumed. A 0 value
+     * or omitted parameter indicates a default value for the sequence. For most
+     * sequences, the default value is 1.
+     *
+     * https://vt100.net/docs/vt510-rm/chapter4.html#S4.3.3
+     * */
+    private void parseArg(int inputByte) {
+        int[] bytes = new int[]{inputByte};
+        // Only doing this for ESC_CSI and not for other ESC_CSI_* since they seem to be using their
+        // own defaults with getArg*() calls, but there may be missed cases
+        if (mEscapeState == ESC_CSI) {
+            if ((mIsCSIStart && inputByte == ';') || // If sequence starts with a ; character, like \033[;m
+                (!mIsCSIStart && mLastCSIArg != null && mLastCSIArg == ';'  && inputByte == ';')) {  // If sequence contains sequential ; characters, like \033[;;m
+                bytes = new int[]{'0', ';'}; // Assume 0 was passed
+            }
+        }
+
+        mIsCSIStart = false;
+
+        for (int b : bytes) {
+            if (b >= '0' && b <= '9') {
+                if (mArgIndex < mArgs.length) {
+                    int oldValue = mArgs[mArgIndex];
+                    int thisDigit = b - '0';
+                    int value;
+                    if (oldValue >= 0) {
+                        value = oldValue * 10 + thisDigit;
+                    } else {
+                        value = thisDigit;
+                    }
+                    if (value > 9999)
+                        value = 9999;
+                    mArgs[mArgIndex] = value;
                 }
-                mArgs[mArgIndex] = value;
+                continueSequence(mEscapeState);
+            } else if (b == ';') {
+                if (mArgIndex < mArgs.length) {
+                    mArgIndex++;
+                }
+                continueSequence(mEscapeState);
+            } else {
+                unknownSequence(b);
             }
-            continueSequence(mEscapeState);
-        } else if (b == ';') {
-            if (mArgIndex < mArgs.length) {
-                mArgIndex++;
-            }
-            continueSequence(mEscapeState);
-        } else {
-            unknownSequence(b);
+            mLastCSIArg = b;
         }
     }
 
@@ -2178,7 +2222,7 @@ public final class TerminalEmulator {
     }
 
     private void finishSequenceAndLogError(String error) {
-        if (LOG_ESCAPE_SEQUENCES) mClient.logWarn(LOG_TAG, error);
+        if (LOG_ESCAPE_SEQUENCES) Logger.logWarn(mClient, LOG_TAG, error);
         finishSequence();
     }
 
@@ -2326,7 +2370,14 @@ public final class TerminalEmulator {
         }
 
         int offsetDueToCombiningChar = ((displayWidth <= 0 && mCursorCol > 0 && !mAboutToAutoWrap) ? 1 : 0);
-        mScreen.setChar(mCursorCol - offsetDueToCombiningChar, mCursorRow, codePoint, getStyle());
+        int column = mCursorCol - offsetDueToCombiningChar;
+
+        // Fix TerminalRow.setChar() ArrayIndexOutOfBoundsException index=-1 exception reported
+        // The offsetDueToCombiningChar would never be 1 if mCursorCol was 0 to get column/index=-1,
+        // so was mCursorCol changed after the offsetDueToCombiningChar conditional by another thread?
+        // TODO: Check if there are thread synchronization issues with mCursorCol and mCursorRow, possibly causing others bugs too.
+        if (column < 0) column = 0;
+        mScreen.setChar(column, mCursorRow, codePoint, getStyle());
 
         if (autoWrap && displayWidth > 0)
             mAboutToAutoWrap = (mCursorCol == mRightMargin - displayWidth);
@@ -2363,6 +2414,15 @@ public final class TerminalEmulator {
     public void clearScrollCounter() {
         mScrollCounter = 0;
     }
+
+    public boolean isAutoScrollDisabled() {
+        return mAutoScrollDisabled;
+    }
+
+    public void toggleAutoScrollDisabled() {
+        mAutoScrollDisabled = !mAutoScrollDisabled;
+    }
+
 
     /** Reset terminal state so user can interact with it regardless of present state. */
     public void reset() {

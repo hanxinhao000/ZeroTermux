@@ -1,5 +1,5 @@
 plugins {
-  id "com.android.application"
+    id "com.android.application"
 
 }
 apply plugin: 'kotlin-android'
@@ -36,17 +36,17 @@ android {
         }
     }
 
-  /*  sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }*/
+    /*  sourceSets {
+          main {
+              jniLibs.srcDirs = ['libs']
+          }
+      }*/
 
 
     dependencies {
         implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation "androidx.annotation:annotation:1.2.0"
-        implementation "androidx.core:core:1.5.0-rc01"
+        implementation "androidx.core:core:1.9.0-alpha05"
         implementation "androidx.drawerlayout:drawerlayout:1.1.1"
         implementation "androidx.preference:preference:1.1.1"
         implementation "androidx.viewpager:viewpager:1.0.0"
@@ -180,14 +180,14 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
-    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.8.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 task versionName {
-  doLast {
-    print android.defaultConfig.versionName
-  }
+    doLast {
+        print android.defaultConfig.versionName
+    }
 }
 
 def downloadBootstrap(String arch, String expectedChecksum, String version) {
@@ -241,19 +241,19 @@ clean {
 
 task downloadBootstraps() {
     doLast {
-        def version = "2022.01.07-r1"
-        downloadBootstrap("aarch64", "fe6d0159d12fcb8baf7750ce9072b9b36f742662b02ad4da145ab85873614cd", version)
-        downloadBootstrap("arm",     "a6014e2ec3b7079524fee3caabd02be05bcb4add3c6cd9e5ad98408b428c717", version)
-        downloadBootstrap("i686",    "c55369a9af1316dc3d99457aa23cce64b29c1e60e375159352c0d4b9cfed4ac6", version)
-        downloadBootstrap("x86_64",  "e93a7c66d15edb7d1b5ceca906255c85ead35a8b6a52f93524e117cfb07e6778", version)
+        def version = "2022.04.28-r5+apt-android-7"
+        downloadBootstrap("aarch64", "4a51a7eb209fe82efc24d52e3cccc13165f27377290687cb82038cbd8e948430", version)
+        downloadBootstrap("arm", "6459a786acbae50d4c8a36fa1c3de6a4dd2d482572f6d54f73274709bd627325", version)
+        downloadBootstrap("i686", "919d212b2f19e08600938db4079e794e947365022dbfd50ac342c50fcedcd7be", version)
+        downloadBootstrap("x86_64", "61b02fdc03ea4f5d9da8d8cf018013fdc6659e6da6cbf44e9b24d1c623580b89", version)
     }
 }
 
 
 afterEvaluate {
-  android.applicationVariants.all { variant ->
-    variant.javaCompileProvider.get().dependsOn(downloadBootstraps)
-  }
+    android.applicationVariants.all { variant ->
+        variant.javaCompileProvider.get().dependsOn(downloadBootstraps)
+    }
 }
 repositories {
     mavenCentral()

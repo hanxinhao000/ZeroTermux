@@ -1,12 +1,11 @@
 package com.termux.view.textselection;
 
-
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.ActionMode;
-import android.view.InputDevice;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -14,7 +13,6 @@ import android.view.View;
 
 import com.termux.terminal.TerminalBuffer;
 import com.termux.terminal.WcWidth;
-
 import com.termux.view.R;
 import com.termux.view.TerminalView;
 
@@ -90,14 +88,9 @@ public class TextSelectionCursorController implements CursorController {
     }
 
     public void setInitialTextSelectionPosition(MotionEvent event) {
-        int cx = (int) (event.getX() / terminalView.mRenderer.getFontWidth());
-        final boolean eventFromMouse = event.isFromSource(InputDevice.SOURCE_MOUSE);
-        // Offset for finger:
-        final int SELECT_TEXT_OFFSET_Y = eventFromMouse ? 0 : -40;
-        int cy = (int) ((event.getY() + SELECT_TEXT_OFFSET_Y) / terminalView.mRenderer.getFontLineSpacing()) + terminalView.getTopRow();
-
-        mSelX1 = mSelX2 = cx;
-        mSelY1 = mSelY2 = cy;
+        int[] columnAndRow = terminalView.getColumnAndRow(event, true);
+        mSelX1 = mSelX2 = columnAndRow[0];
+        mSelY1 = mSelY2 = columnAndRow[1];
 
         TerminalBuffer screen = terminalView.mEmulator.getScreen();
         if (!" ".equals(screen.getSelectedText(mSelX1, mSelY1, mSelX1, mSelY1))) {
@@ -161,6 +154,12 @@ public class TextSelectionCursorController implements CursorController {
 
         };
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            mActionMode = terminalView.startActionMode(callback);
+            return;
+        }
+
+        //noinspection NewApi
         mActionMode = terminalView.startActionMode(new ActionMode.Callback2() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -189,14 +188,19 @@ public class TextSelectionCursorController implements CursorController {
                 int y1 = Math.round((mSelY1 - 1 - terminalView.getTopRow()) * terminalView.mRenderer.getFontLineSpacing());
                 int y2 = Math.round((mSelY2 + 1 - terminalView.getTopRow()) * terminalView.mRenderer.getFontLineSpacing());
 
-
                 if (x1 > x2) {
                     int tmp = x1;
                     x1 = x2;
                     x2 = tmp;
                 }
 
-                outRect.set(x1, y1 + mHandleHeight, x2, y2 + mHandleHeight);
+                int terminalBottom = terminalView.getBottom();
+                int top = y1 + mHandleHeight;
+                int bottom = y2 + mHandleHeight;
+                if (top > terminalBottom) top = terminalBottom;
+                if (bottom > terminalBottom) bottom = terminalBottom;
+
+                outRect.set(x1, top, x2, bottom);
             }
         }, ActionMode.TYPE_FLOATING);
     }
