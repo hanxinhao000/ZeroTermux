@@ -1,10 +1,12 @@
 package com.termux.shared.shell.command.environment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 
 import com.termux.shared.shell.command.ExecutionCommand;
+import com.termux.shared.termux.TermuxConstants;
 
 import java.io.File;
 import java.util.HashMap;
@@ -36,6 +38,11 @@ public class AndroidShellEnvironment extends UnixShellEnvironment {
         environment.put(ENV_LANG, "en_US.UTF-8");
         environment.put(ENV_PATH, System.getenv(ENV_PATH));
         environment.put(ENV_TMPDIR, "/data/local/tmp");
+
+        String stringOther = getKey(currentPackageContext, "new_old");
+        if (!(stringOther == null || stringOther.isEmpty() || "def".equals(stringOther))) {
+                environment.put("LD_LIBRARY_PATH" , TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/lib");
+            }
 
         environment.put(ENV_COLORTERM, "truecolor");
         environment.put(ENV_TERM, "xterm-256color");
@@ -97,4 +104,9 @@ public class AndroidShellEnvironment extends UnixShellEnvironment {
         return environment;
     }
 
+
+    private static String getKey(Context mContext,String key) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("start_flash", Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, "def");
+    }
 }

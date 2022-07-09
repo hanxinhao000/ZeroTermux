@@ -1335,6 +1335,7 @@ public final class TerminalView extends View {
      *
      */
 
+
     public void sendTextToTerminal(String text) {
         stopTextSelectionMode();
         final int textLengthInChars = text.length();
@@ -1351,6 +1352,10 @@ public final class TerminalView extends View {
             } else {
                 codePoint = firstChar;
             }
+
+            // Check onKeyDown() for details.
+            if (mClient.readShiftKey())
+                codePoint = Character.toUpperCase(codePoint);
 
             boolean ctrlHeld = false;
             if (codePoint <= 31 && codePoint != 27) {
@@ -1383,7 +1388,7 @@ public final class TerminalView extends View {
                 }
             }
 
-            inputCodePoint(KEY_EVENT_SOURCE_SOFT_KEYBOARD, codePoint, false,false);
+            inputCodePoint(KEY_EVENT_SOURCE_SOFT_KEYBOARD, codePoint, ctrlHeld, false);
         }
     }
 
@@ -1408,6 +1413,10 @@ public final class TerminalView extends View {
                 codePoint = firstChar;
             }
 
+            // Check onKeyDown() for details.
+            if (mClient.readShiftKey())
+                codePoint = Character.toUpperCase(codePoint);
+
             boolean ctrlHeld = false;
             if (codePoint <= 31 && codePoint != 27) {
                 if (codePoint == '\n') {
@@ -1439,7 +1448,7 @@ public final class TerminalView extends View {
                 }
             }
 
-            inputCodePoint(KEY_EVENT_SOURCE_SOFT_KEYBOARD, codePoint, false, isCtrl);
+            inputCodePoint(KEY_EVENT_SOURCE_SOFT_KEYBOARD, codePoint, isCtrl, false);
         }
     }
 
