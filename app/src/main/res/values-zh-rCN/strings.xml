@@ -635,7 +635,7 @@
     <string name="获取线上">获取线上</string>
     <string name="线上脚本">线上脚本</string>
     <string name="本地脚本">本地脚本</string>
-    <string name="请双击命令窗口试试">ZeroTermux\n请双击命令窗口试试</string>
+    <string name="请双击命令窗口试试">ZeroTermux\n双击命令窗口打开快捷栏\n双击最左/右打开菜单会话栏</string>
 
     <string name="在线脚本">在线脚本</string>
     <string name="在线脚本服务器名称">Server Name</string>
