@@ -2398,58 +2398,55 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             getDrawer().openDrawer(Gravity.RIGHT);
             return;
         }
+        BoomWindow.SWITCH = false;
+        showBoomDialog(false);
+    }
 
-
-
-        PopupWindow popupWindow = new PopupWindow();
+    private void showBoomDialog(boolean bln) {
+        final PopupWindow[] popupWindow = {new PopupWindow()};
         final BoomWindow[] boomWindow = {new BoomWindow()};
-
-
-
-        popupWindow.setContentView(boomWindow[0].getView(new BoomMinLAdapter.CloseLiftListener() {
+        boomWindow[0].setCalculateWindows(new BoomWindow.CalculateWindows() {
+            @Override
+            public void windowsVariety(boolean bln) {
+                popupWindow[0].dismiss();
+                popupWindow[0] = null;
+                showBoomDialog(bln);
+            }
+        });
+        popupWindow[0].setContentView(boomWindow[0].getView(new BoomMinLAdapter.CloseLiftListener() {
             @Override
             public void close() {
-                popupWindow.dismiss();
+                popupWindow[0].dismiss();
             }
-        },TermuxActivity.this,popupWindow));
-
-
-        popupWindow.setOutsideTouchable(true);
+        },TermuxActivity.this, popupWindow[0]));
+        popupWindow[0].setOutsideTouchable(true);
         //  popupWindow.setAnimationStyle(R.style.Animation);
-        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.showAsDropDown(mTerminalView,0,- boomWindow[0].getHigh());
-        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+        popupWindow[0].setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+        popupWindow[0].setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow[0].showAsDropDown(mTerminalView,0,- boomWindow[0].getHigh(bln));
+        popupWindow[0].setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 boomWindow[0] = null;
             }
         });
-
-
         boomWindow[0].popu_windows_huihua.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mTermuxTerminalSessionActivityClient.addNewSession(false, null);
-                popupWindow.dismiss();
+                popupWindow[0].dismiss();
 
             }
         });
         boomWindow[0].popu_windows_jianpan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                 getDrawer().closeDrawers();
-
-                popupWindow.dismiss();
-
-
+                popupWindow[0].dismiss();
             }
         });
-
     }
 
     //判断短消息是否正在读取
