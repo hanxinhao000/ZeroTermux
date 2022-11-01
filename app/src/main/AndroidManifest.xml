@@ -110,7 +110,7 @@
             android:label="@string/application_name"
             android:parentActivityName=".app.TermuxActivity"
             android:resizeableActivity="true"
-            android:theme="@android:style/Theme.Material.Light.DarkActionBar" />
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".zerocore.activity.UncaughtExceptionHandlerActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
