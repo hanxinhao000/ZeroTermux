@@ -686,6 +686,9 @@
         \nBootstrap binaries compiled for &TERMUX_APP_NAME; have hardcoded $PREFIX path and cannot be installed
         under any path other than:\n%1$s.</string>
 
+    <string name="title_share_selected_text">终端文本</string>
+    <string name="title_share_selected_text_with">发送选择文本到:</string>
+
 </resources>
 
 
