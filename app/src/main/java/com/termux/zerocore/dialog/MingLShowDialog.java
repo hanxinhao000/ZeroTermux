@@ -14,6 +14,7 @@ import com.example.xh_lib.utils.UUtils;
 import com.google.gson.Gson;
 import com.termux.R;
 import com.termux.zerocore.bean.MinLBean;
+import com.termux.zerocore.utils.FileIOUtils;
 import com.termux.zerocore.utils.SaveData;
 
 import java.util.ArrayList;
@@ -108,17 +109,13 @@ public class MingLShowDialog extends BaseDialogCentre {
                     data.list = arrayList;
 
                     String s = new Gson().toJson(minLBean);
-                    UUtils.showLog("添加命令1:" + s);
                     SaveData.saveData("commi22",s);
                     UUtils.showMsg(UUtils.getString(R.string.添加成功));
                     if(mAddCommitListener!= null){
                         mAddCommitListener.commit();
                     }
                     dismiss();
-
-
                 }else{
-
                     try {
                         MinLBean minLBean = new Gson().fromJson(commi22, MinLBean.class);
                         List<MinLBean.DataNum> list = minLBean.data.list;
@@ -128,10 +125,8 @@ public class MingLShowDialog extends BaseDialogCentre {
                         dataNum.value = commitString;
                         dataNum.isChecked = isChecked;
                         list.add(dataNum);
-
                         String s = new Gson().toJson(minLBean);
                         SaveData.saveData("commi22", s);
-
                         if(mAddCommitListener!= null){
                             mAddCommitListener.commit();
                         }
@@ -177,14 +172,9 @@ public class MingLShowDialog extends BaseDialogCentre {
                                 textShowDialog.dismiss();
                             }
                         });
-
                     }
-
-
                     dismiss();
                 }
-
-
             }
         });
 
@@ -196,8 +186,6 @@ public class MingLShowDialog extends BaseDialogCentre {
     }
 
     public interface AddCommitListener{
-
         void commit();
-
     }
 }

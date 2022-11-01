@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -89,6 +90,7 @@ import com.termux.terminal.TerminalSessionClient;
 import com.termux.view.TerminalRenderer;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
+import com.termux.view.textselection.TextSelectionCursorController;
 import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.FontActivity;
 import com.termux.zerocore.activity.SwitchActivity;
@@ -113,6 +115,7 @@ import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
+import com.termux.zerocore.utils.FileIOUtils;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SmsUtils;
@@ -347,6 +350,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initZeroView();
         initStatue();
         initColorConfig();
+        initListener();
     }
 
     public TermuxTerminalExtraKeys getTermuxTerminalExtraKeys() {
@@ -354,6 +358,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
+    private void initListener() {
+        mTerminalView.getTextSelectionCursorControllerView().setAddCommend(new TextSelectionCursorController.AddCommend() {
+            @Override
+            public void editCommend(String edit) {
+                if (!TextUtils.isEmpty(edit)){
+                    UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_ok));
+                    FileIOUtils.INSTANCE.commendSave(edit, edit, false);
+                } else {
+                    UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_fail));
+                }
+
+            }
+        });
+    }
     public void initColorConfig(){
         String font_color = SaveData.INSTANCE.getStringOther("font_color");
         String back_color = SaveData.INSTANCE.getStringOther("back_color");
@@ -731,7 +749,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return true;
         });
     }
-
 
 
 

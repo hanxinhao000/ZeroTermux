@@ -2,4 +2,5 @@
   <string name="paste_text">Paste</string>
   <string name="copy_text">copy</string>
   <string name="text_selection_more">More…</string>
+  <string name="add_text">Add Command</string>
 </resources>

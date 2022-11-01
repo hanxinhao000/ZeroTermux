@@ -668,5 +668,7 @@
 
     <string name="title_share_selected_text">Terminal Text</string>
     <string name="title_share_selected_text_with">Send selected text to:</string>
+    <string name="add_commend_msg_fail">"Can't add empty commands"</string>
+    <string name="add_commend_msg_ok">"The addition is successful. For details, please set the \"Command Definition\" function"</string>
 
 </resources>

@@ -24,6 +24,7 @@ import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.bean.MinLBean;
 import com.termux.zerocore.dialog.CommandDialog;
 import com.termux.zerocore.utils.SaveData;
+import com.termux.zerocore.utils.WindowsUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class BoomWindow {
 
     public int getHigh(boolean bln){
         LogUtils.d(TAG, "getHigh bln:" + bln);
-            return dp2px(UUtils.getContext(),bln?DiaLogData.BOOM_WINDOWS_OPEN_HEIGHT: DiaLogData.BOOM_WINDOWS_CLOSE_HEIGHT);
+            return WindowsUtils.INSTANCE.dp2px(UUtils.getContext(),bln?DiaLogData.BOOM_WINDOWS_OPEN_HEIGHT: DiaLogData.BOOM_WINDOWS_CLOSE_HEIGHT);
     }
 
     public View getView(BoomMinLAdapter.CloseLiftListener closeLiftListener, TermuxActivity termuxActivity, PopupWindow popupWindow){
@@ -171,7 +172,7 @@ public class BoomWindow {
                             title.setVisibility(View.GONE);
                             recyclerView.setVisibility(View.GONE);
                             recyclerView_bag.setVisibility(View.VISIBLE);
-                            GridLayoutManager linearLayoutManager = new GridLayoutManager(UUtils.getContext(), DiaLogData.BOOM_WINDOWS_GRID_LAYOUT_MANAGER_NUMBER);
+                            GridLayoutManager linearLayoutManager = new GridLayoutManager(UUtils.getContext(), WindowsUtils.INSTANCE.getGridNumber());
                             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                             recyclerView_bag.setLayoutManager(linearLayoutManager);
                             BoomMinLAdapter boomMinLAdapter = new BoomMinLAdapter(minLBean.data.list, null);
@@ -219,10 +220,7 @@ public class BoomWindow {
         return (int) (pxValue / scale + 0.5f);
     }
 
-    public  int dp2px(Context context, int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-            context.getResources().getDisplayMetrics());
-    }
+
 
     public interface CalculateWindows {
         public void windowsVariety(boolean bln);

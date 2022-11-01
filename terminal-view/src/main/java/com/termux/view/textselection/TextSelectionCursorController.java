@@ -31,8 +31,14 @@ public class TextSelectionCursorController implements CursorController {
 
     private ActionMode mActionMode;
     public final int ACTION_COPY = 1;
-    public final int ACTION_PASTE = 2;
-    public final int ACTION_MORE = 3;
+    public final int ACTION_ADD = 2;
+    public final int ACTION_PASTE = 3;
+    public final int ACTION_MORE = 4;
+    /**
+     *  Zerotermux hanxinhao000
+     * @return
+     */
+    private AddCommend mAddCommend;
 
     public TextSelectionCursorController(TerminalView terminalView) {
         this.terminalView = terminalView;
@@ -115,6 +121,7 @@ public class TextSelectionCursorController implements CursorController {
 
                 ClipboardManager clipboard = (ClipboardManager) terminalView.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 menu.add(Menu.NONE, ACTION_COPY, Menu.NONE, R.string.copy_text).setShowAsAction(show);
+                menu.add(Menu.NONE, ACTION_ADD, Menu.NONE, R.string.add_text).setShowAsAction(show);
                 menu.add(Menu.NONE, ACTION_PASTE, Menu.NONE, R.string.paste_text).setEnabled(clipboard != null && clipboard.hasPrimaryClip()).setShowAsAction(show);
                 menu.add(Menu.NONE, ACTION_MORE, Menu.NONE, R.string.text_selection_more);
                 return true;
@@ -151,6 +158,12 @@ public class TextSelectionCursorController implements CursorController {
                         // otherwise handles will show above popup
                         terminalView.stopTextSelectionMode();
                         terminalView.showContextMenu();
+                        break;
+                    case ACTION_ADD:
+                        if (mAddCommend != null) {
+                            mAddCommend.editCommend(getSelectedText());
+                        }
+                        terminalView.stopTextSelectionMode();
                         break;
                 }
 
@@ -404,4 +417,19 @@ public class TextSelectionCursorController implements CursorController {
         return mEndHandle.isDragging();
     }
 
+    /**
+     *  Zerotermux hanxinhao000
+     * @return
+     */
+    public AddCommend getAddCommend() {
+        return mAddCommend;
+    }
+
+    public void setAddCommend(AddCommend mAddCommend) {
+        this.mAddCommend = mAddCommend;
+    }
+
+    public interface AddCommend {
+        void editCommend(String edit);
+    }
 }

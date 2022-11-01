@@ -1228,6 +1228,10 @@ public final class TerminalView extends View {
         return getTextSelectionCursorController().hide();
     }
 
+    public TextSelectionCursorController getTextSelectionCursorControllerView() {
+        return getTextSelectionCursorController();
+    }
+
     private void renderTextSelection() {
         if (mTextSelectionCursorController != null)
             mTextSelectionCursorController.render();

@@ -2,4 +2,5 @@
   <string name="paste_text">粘贴</string>
   <string name="copy_text">复制</string>
   <string name="text_selection_more">更多…</string>
+  <string name="add_text">添加命令</string>
 </resources>
