@@ -59,7 +59,7 @@
     <string name="title_select_url_none_found">在终端中找不到 URL。</string>
     <string name="msg_select_url_copied_to_clipboard">网址已复制到剪贴板</string>
 
-    <string name="action_share_transcript">分享成绩单</string>
+    <string name="action_share_transcript">分享终端内容</string>
     <string name="title_share_transcript">终端转录本</string>
     <string name="title_share_transcript_with">将成绩单发送至：</string>
 
@@ -589,10 +589,10 @@
     <string name="termux_terminal_view_view_header">视图</string>
 
     <!-- Terminal View Margin Adjustment -->
-    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端保证金调整</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端距离调整</string>
     <string name="termux_terminal_view_terminal_margin_adjustment_off">
 终端保证金调整将被禁用。</string>
-    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端保证金调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端距离调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
 
     <string name="VSCODE">VSCODE</string>
     <string name="X86_Alpine">X86_Alpine</string>
@@ -635,7 +635,7 @@
     <string name="获取线上">获取线上</string>
     <string name="线上脚本">线上脚本</string>
     <string name="本地脚本">本地脚本</string>
-    <string name="请双击命令窗口试试">ZeroTermux\n双击命令窗口打开快捷栏\n双击最左/右打开菜单会话栏</string>
+    <string name="请双击命令窗口试试">ZeroTermux\n双击命令窗口打开快捷栏\n双击最左/右打开菜单/会话栏</string>
 
     <string name="在线脚本">在线脚本</string>
     <string name="在线脚本服务器名称">Server Name</string>

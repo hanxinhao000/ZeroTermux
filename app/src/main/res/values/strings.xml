@@ -45,7 +45,7 @@
     <string name="title_select_url_none_found">在终端中找不到 URL。</string>
     <string name="msg_select_url_copied_to_clipboard">网址已复制到剪贴板</string>
 
-    <string name="action_share_transcript">分享成绩单</string>
+    <string name="action_share_transcript">分享终端内容</string>
     <string name="title_share_transcript">终端转录本</string>
     <string name="title_share_transcript_with">将成绩单发送至：</string>
 
@@ -573,10 +573,10 @@
     <string name="termux_terminal_view_view_header">视图</string>
 
     <!-- Terminal View Margin Adjustment -->
-    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端保证金调整</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端距离调整</string>
     <string name="termux_terminal_view_terminal_margin_adjustment_off">
 终端保证金调整将被禁用。</string>
-    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端保证金调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端距离调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
     <string name="VSCODE">VSCODE</string>
     <string name="X86_Alpine">X86_Alpine</string>
     <string name="请在下载站下载Alpine插件">请在下载站下载Alpine插件</string>

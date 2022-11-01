@@ -640,7 +640,7 @@ Reset successfully</string>
     <string name="获取线上">Get online</string>
     <string name="线上脚本">Online script</string>
     <string name="本地脚本">Local script</string>
-    <string name="请双击命令窗口试试">ZeroTermux\nDouble-click the command window to open the shortcut bar\nDouble-click the far left/right to open the menu session bar</string>
+    <string name="请双击命令窗口试试">ZeroTermux\nDouble-click the command window to open the shortcut bar\nDouble-click the far left/right to open the menu/session bar</string>
     <string name="Zero论坛">Zero BBS</string>
     <string name="ZeroTermux论坛">ZeroTermux bbs</string>
 
