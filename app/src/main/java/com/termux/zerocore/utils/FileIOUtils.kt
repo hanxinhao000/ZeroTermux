@@ -7,6 +7,7 @@ import com.termux.R
 import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
+import java.util.Collections
 
 object FileIOUtils {
 
@@ -41,7 +42,7 @@ object FileIOUtils {
             dataNum.name = nameString
             dataNum.value = commitString
             dataNum.isChecked = isChecked
-            list.add(dataNum)
+            list.add(0, dataNum)
             val s = Gson().toJson(minLBean)
             SaveData.saveData(COMMEND_KEY, s)
             UUtils.showMsg(UUtils.getString(R.string.添加成功))
@@ -106,7 +107,7 @@ object FileIOUtils {
                 val dataNum = ClipboardBean.Clipboard()
                 dataNum.name = value
                 dataNum.index = list.size
-                list.add(dataNum)
+                list.add(0, dataNum)
                 val s = Gson().toJson(mClipboardBean)
                 SaveData.saveData(CLIP_BOARD_KEY, s)
                 LogUtils.d(TAG, "setClipBoardString ClipBoard save data :$s")

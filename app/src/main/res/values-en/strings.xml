@@ -702,9 +702,12 @@ Reset successfully</string>
     <string name="font_instance">fontInstance:</string>
     <string name="font_path">fontPath:</string>
     <string name="instance_zero">ZeroTermux|ABCD</string>
+
     <string name="clipboard_text">Note: This clipboard will only record the content within the APP</string>
     <string name="clipboard_title">Clipboard Title:</string>
     <string name="clipboard_msg">Clipboard Msg:</string>
     <string name="clipboard_note">delete</string>
     <string name="clipboard_empty">no data</string>
+    <string name="clipboard_empty_copy">no data copy</string>
+
 </resources>

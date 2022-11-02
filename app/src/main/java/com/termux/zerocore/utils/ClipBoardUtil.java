@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
+import com.termux.R;
 
 public class ClipBoardUtil {
      private static final String TAG = "ClipBoardUtil";
@@ -40,6 +41,10 @@ public class ClipBoardUtil {
                         }
                     }
                     timeMillis = System.currentTimeMillis();
+                    if (TextUtils.isEmpty(content)){
+                        UUtils.showMsg(UUtils.getString(R.string.clipboard_empty_copy));
+                        return;
+                    }
                     FileIOUtils.INSTANCE.setClipBoardString(content.toString());
 
                 }

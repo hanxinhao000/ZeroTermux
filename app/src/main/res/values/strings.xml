@@ -677,10 +677,12 @@
     <string name="font_instance">字体示例:</string>
     <string name="font_path">字体路径:</string>
     <string name="instance_zero">ZeroTermux|中文字体</string>
+
     <string name="clipboard_text">注意：此剪贴板只会记录APP内的内容</string>
     <string name="clipboard_title">剪贴板标题:</string>
     <string name="clipboard_msg">剪贴板内容:</string>
     <string name="clipboard_note">删除此记录</string>
     <string name="clipboard_empty">剪贴板没有使用内容</string>
+    <string name="clipboard_empty_copy">复制内容不能为空噢</string>
 
 </resources>

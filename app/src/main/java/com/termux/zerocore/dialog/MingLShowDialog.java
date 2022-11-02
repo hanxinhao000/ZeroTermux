@@ -124,7 +124,7 @@ public class MingLShowDialog extends BaseDialogCentre {
                         dataNum.name = nameString;
                         dataNum.value = commitString;
                         dataNum.isChecked = isChecked;
-                        list.add(dataNum);
+                        list.add(0, dataNum);
                         String s = new Gson().toJson(minLBean);
                         SaveData.saveData("commi22", s);
                         if(mAddCommitListener!= null){
