@@ -167,6 +167,7 @@
 
                     <LinearLayout
                         android:layout_width="80dp"
+                        android:id="@+id/layout_update"
                         android:background="@drawable/shape_line_2e84e6"
                         android:gravity="center"
                         android:layout_marginRight="10dp"

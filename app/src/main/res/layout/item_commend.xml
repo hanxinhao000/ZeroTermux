@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_10202f"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textColor="#fff"
+        style="@style/textEllipsis"
+        android:text="@string/clipboard_title"
+        android:id="@+id/clip_name"
+        android:textSize="10sp"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:textColor="#fff"
+        android:visibility="gone"
+        android:text="@string/clipboard_msg"
+        android:id="@+id/clip_msg"
+        android:layout_marginTop="7dp"
+        android:textSize="10sp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textColor="#fff"
+        android:text="TEXT"
+        android:gravity="center"
+        android:id="@+id/clip_commend"
+        style="@style/textEllipsis"
+        android:layout_marginTop="7dp"
+        android:textSize="17sp"
+        android:layout_height="wrap_content"/>
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="@color/color_50b397"
+        android:text="@string/clipboard_note"
+        android:id="@+id/delete"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="7dp"
+        android:textSize="10sp"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@color/color_48baf3"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/line_tv"
+        android:layout_marginRight="20dp"
+        android:layout_height="1px"/>
+</LinearLayout>

@@ -27,6 +27,7 @@ import com.termux.shared.termux.shell.am.TermuxAmSocketServer;
 import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
+import com.termux.zerocore.utils.ClipBoardUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -38,6 +39,7 @@ import okhttp3.OkHttpClient;
 
 public class TermuxApplication extends XHApplication {
     private static final String LOG_TAG = "TermuxApplication";
+
 
     public void onCreate() {
         super.onCreate();
@@ -122,6 +124,8 @@ public class TermuxApplication extends XHApplication {
             }
         });
 
+        new ClipBoardUtil().registerClipEvents();
+
     }
 
     public static void setLogConfig(Context context) {
@@ -150,5 +154,7 @@ public class TermuxApplication extends XHApplication {
         }
         return "are.you.kidding.me.NoExceptionFoundException: This is a bug, please contact developers!";
     }
+
+
 }
 

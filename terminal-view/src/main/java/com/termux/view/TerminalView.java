@@ -579,13 +579,19 @@ public final class TerminalView extends View {
 
 
         //判断双击
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if((System.currentTimeMillis() - doubleClick) < 260){
                 if(mDoubleClickListener != null){
                     mDoubleClickListener.doubleClicke(event.getX());
                 }
             }
             doubleClick = System.currentTimeMillis();
+        }
+        //判断双指单机
+        if (event.getAction() == MotionEvent.ACTION_POINTER_2_DOWN) {
+            if (mActionPointer2ClickListener != null) {
+                mActionPointer2ClickListener.pointer2Click();
+            }
         }
 
 
@@ -1496,12 +1502,19 @@ public final class TerminalView extends View {
      */
 
     private  DoubleClickListener mDoubleClickListener;
+    private  ActionPointer2ClickListener mActionPointer2ClickListener;
     public void setDoubleClickListener(DoubleClickListener mDoubleClickListener){
         this.mDoubleClickListener = mDoubleClickListener;
+    }
+    public void setActionPointer2ClickListener(ActionPointer2ClickListener mActionPointer2ClickListener){
+        this.mActionPointer2ClickListener = mActionPointer2ClickListener;
     }
     public interface DoubleClickListener{
         void doubleClicke(float x);
 
+    }
+    public interface ActionPointer2ClickListener{
+        void pointer2Click();
     }
 
     public String getText555(){

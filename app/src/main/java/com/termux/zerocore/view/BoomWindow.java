@@ -49,6 +49,7 @@ public class BoomWindow {
     public RelativeLayout up_window;
     public LinearLayout search123456;
     public LinearLayout popu_windows_jianpan;
+    public LinearLayout layout_update;
     public LinearLayout popu_windows_huihua;
     public ImageView up_dialog_iv;
     private View mView;
@@ -68,6 +69,7 @@ public class BoomWindow {
         mView = UUtils.getViewLay(R.layout.dialog_boom);
         calculateViewMeasure(mView);
         title = mView.findViewById(R.id.title);
+        layout_update = mView.findViewById(R.id.layout_update);
         recyclerView = mView.findViewById(R.id.recyclerView);
         qiehuan_mingl_zidong = mView.findViewById(R.id.qiehuan_mingl_zidong);
         qie_huan_string = mView.findViewById(R.id.qie_huan_string);
@@ -160,13 +162,16 @@ public class BoomWindow {
             if (commi22 == null || commi22.isEmpty() || commi22.equals("def")) {
                 title.setVisibility(View.VISIBLE);
                 title.setText(UUtils.getString(R.string.没有找到命令));
+                layout_update.setVisibility(View.GONE);
             }else{
                 try {
                     MinLBean minLBean = new Gson().fromJson(commi22, MinLBean.class);
                     if(minLBean.data.list.size() == 0){
                         title.setVisibility(View.VISIBLE);
                         title.setText(UUtils.getString(R.string.没有找到命令));
+                        layout_update.setVisibility(View.GONE);
                     }else {
+                        layout_update.setVisibility(View.VISIBLE);
                         if (isShowView) {
                             LogUtils.d(TAG, "showBoomView minLBean.size:" + minLBean.data.list.size());
                             title.setVisibility(View.GONE);

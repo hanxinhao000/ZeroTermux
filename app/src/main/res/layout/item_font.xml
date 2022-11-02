@@ -9,14 +9,14 @@
     <TextView
         android:layout_width="match_parent"
         android:textColor="#fff"
-        android:text="字体名称:"
+        android:text="@string/font_name"
         android:id="@+id/font_name"
         android:textSize="14sp"
         android:layout_height="wrap_content"/>
     <TextView
         android:layout_width="match_parent"
         android:textColor="#fff"
-        android:text="字体示例:"
+        android:text="@string/font_instance"
         android:layout_marginTop="7dp"
         android:textSize="14sp"
         android:layout_height="wrap_content"/>
@@ -24,7 +24,7 @@
     <TextView
         android:layout_width="match_parent"
         android:textColor="#fff"
-        android:text="ZeroTermux|中文字体"
+        android:text="@string/instance_zero"
         android:gravity="center"
         android:id="@+id/font_st"
         android:layout_marginTop="7dp"
@@ -34,7 +34,7 @@
     <TextView
         android:layout_width="match_parent"
         android:textColor="#fff"
-        android:text="字体路径:"
+        android:text="@string/font_path"
         android:id="@+id/font_lujin"
         android:layout_marginTop="7dp"
         android:textSize="14sp"

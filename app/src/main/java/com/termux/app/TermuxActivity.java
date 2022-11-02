@@ -103,6 +103,7 @@ import com.termux.zerocore.data.UsbFileData;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
 import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
+import com.termux.zerocore.dialog.CommonCommandsDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
 import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
@@ -369,6 +370,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_fail));
                 }
 
+            }
+        });
+
+        mTerminalView.setActionPointer2ClickListener(new TerminalView.ActionPointer2ClickListener() {
+            @Override
+            public void pointer2Click() {
+                CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
+                mCommonCommandsDialog.show();
+                mCommonCommandsDialog.setCancelable(true);
             }
         });
     }

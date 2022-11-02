@@ -291,7 +291,7 @@
     <string name="自动出错">自动出错</string>
     <string name="当前目录不在">当前目录不在</string>
     <string name="会话">会话</string>
-    <string name="自动命令">自动命令</string>
+    <string name="自动命令">帮助</string>
     <string name="搜索文件">搜索文件</string>
     <string name="再次输入您要搜索的文件">再次输入您要搜索的文件</string>
     <string name="请输入您要查找的命令">请输入您要查找的命令</string>
@@ -635,7 +635,7 @@
     <string name="获取线上">获取线上</string>
     <string name="线上脚本">线上脚本</string>
     <string name="本地脚本">本地脚本</string>
-    <string name="请双击命令窗口试试">ZeroTermux\n双击命令窗口打开快捷栏\n双击最左/右打开菜单/会话栏</string>
+    <string name="请双击命令窗口试试">ZeroTermux\n双击命令窗口打开快捷栏\n双击最左/右打开菜单/会话栏\n双指单击打开 工具箱</string>
 
     <string name="在线脚本">在线脚本</string>
     <string name="在线脚本服务器名称">Server Name</string>
@@ -690,7 +690,18 @@
     <string name="title_share_selected_text_with">发送选择文本到:</string>
     <string name="add_commend_msg_fail">不能添加空的命令</string>
     <string name="add_commend_msg_ok">"添加成功,详细请在\"命令定义\"功能设置"</string>
-
+    <string name="tool_cent">工具箱</string>
+    <string name="linux_commend">常用命令</string>
+    <string name="linux_clipboard">剪贴板</string>
+    <string name="font_name">字体名称:</string>
+    <string name="font_instance">字体示例:</string>
+    <string name="font_path">字体路径:</string>
+    <string name="instance_zero">ZeroTermux|中文字体</string>
+    <string name="clipboard_text">注意：此剪贴板只会记录APP内的内容</string>
+    <string name="clipboard_title">剪贴板标题:</string>
+    <string name="clipboard_msg">剪贴板内容:</string>
+    <string name="clipboard_note">删除此记录</string>
+    <string name="clipboard_empty">剪贴板没有使用内容</string>
 </resources>
 
 
