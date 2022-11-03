@@ -1,72 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:ignore="MissingDefaultResource">
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@drawable/shape_line_2e84e6"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:alpha="0.9"
-        android:layout_marginRight="10dp"
-        android:layout_height="wrap_content">
+        android:background="@drawable/shape_line_2e84e6">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
-                android:text="@string/tool_cent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="13sp"
+                android:text="@string/tool_cent"
                 android:textColor="@color/color_ffffff"
-                android:layout_height="wrap_content"/>
+                android:textSize="13sp" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:scrollbars="none"
-                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
                 android:alpha="0.9"
-                android:layout_height="wrap_content">
+                android:scrollbars="none">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
                     <LinearLayout
+                        android:id="@+id/select_1_ll"
                         android:layout_width="80dp"
-                        android:background="@drawable/shape_line_8cff5a"
-                        android:gravity="center"
+                        android:layout_height="30dp"
                         android:layout_marginRight="10dp"
-                        android:layout_height="30dp">
+                        android:background="@drawable/shape_line_8cff5a"
+                        android:gravity="center">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            app:cardElevation="1dp"
                             android:layout_gravity="center"
                             app:cardBackgroundColor="@color/color_553E3E3E"
                             app:cardCornerRadius="3dp"
-                            android:layout_height="match_parent">
+                            app:cardElevation="1dp">
 
                             <TextView
                                 android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
                                 android:paddingLeft="6dp"
                                 android:paddingRight="6dp"
-                                android:gravity="center"
-                                android:layout_height="match_parent"
                                 android:text="@string/linux_clipboard"
                                 android:textColor="@color/color_FFFFFF"
                                 android:textSize="10sp" />
@@ -75,106 +78,103 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/select_2_ll"
                         android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:layout_marginRight="10dp"
                         android:background="@drawable/shape_line_2e84e6"
                         android:gravity="center"
-                        android:visibility="gone"
-                        android:layout_marginRight="10dp"
-                        android:layout_height="30dp">
+                        android:visibility="visible">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            app:cardElevation="1dp"
                             android:layout_gravity="center"
                             app:cardBackgroundColor="@color/color_553E3E3E"
                             app:cardCornerRadius="3dp"
-                            android:layout_height="match_parent">
+                            app:cardElevation="1dp">
 
                             <TextView
                                 android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
                                 android:paddingLeft="6dp"
                                 android:paddingRight="6dp"
-                                android:gravity="center"
-                                android:layout_height="match_parent"
-                                android:text="@string/linux_commend"
+                                android:text="@string/tool_other"
                                 android:textColor="@color/color_FFFFFF"
                                 android:textSize="10sp" />
 
                         </androidx.cardview.widget.CardView>
-
                     </LinearLayout>
-
-
-
                 </LinearLayout>
-
-
             </HorizontalScrollView>
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_height="450dp">
+                android:layout_height="450dp"
+                android:layout_marginTop="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:id="@+id/clipboard_container"
+                    android:visibility="visible"
+                    android:orientation="vertical">
 
-             <RelativeLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content">
-                 <TextView
-                     android:layout_width="match_parent"
-                     android:text="@string/clipboard_text"
-                     android:textSize="10sp"
-                     android:layout_marginLeft="5dp"
-                     android:textColor="@color/color_ffffff"
-                     android:layout_height="wrap_content"/>
-                 <TextView
-                     android:layout_width="wrap_content"
-                     android:textSize="10sp"
-                     android:text="@string/清空"
-                     android:id="@+id/clear_text"
-                     android:layout_alignParentRight="true"
-                     android:layout_marginRight="5dp"
-                     android:textColor="@color/color_48baf3"
-                     android:layout_height="wrap_content"/>
-             </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:text="@string/clipboard_text"
+                            android:textColor="@color/color_ffffff"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:id="@+id/clear_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="5dp"
+                            android:text="@string/清空"
+                            android:textColor="@color/color_48baf3"
+                            android:textSize="10sp" />
+                    </RelativeLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
-
                         <androidx.recyclerview.widget.RecyclerView
-                            android:layout_marginTop="5dp"
-                            android:layout_width="match_parent"
                             android:id="@+id/recycler_view"
-                            android:visibility="invisible"
-                            android:layout_height="match_parent"/>
-                        <TextView
                             android:layout_width="match_parent"
-                            android:gravity="center"
-                            android:textSize="15sp"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="5dp"
+                            android:visibility="invisible" />
+                        <TextView
                             android:id="@+id/clipboard_note"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
                             android:text="@string/clipboard_empty"
                             android:textColor="@color/color_ffffff"
-                            android:layout_height="match_parent"/>
-
+                            android:textSize="15sp" />
                     </RelativeLayout>
-
-
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/other_container"
+                    android:orientation="vertical">
+                    <include layout="@layout/dialog_item_other"/>
+                </LinearLayout>
 
             </RelativeLayout>
-
-
         </LinearLayout>
-
     </RelativeLayout>
-
 </LinearLayout>

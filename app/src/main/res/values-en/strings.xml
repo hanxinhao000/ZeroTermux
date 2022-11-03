@@ -709,5 +709,11 @@ Reset successfully</string>
     <string name="clipboard_note">delete</string>
     <string name="clipboard_empty">no data</string>
     <string name="clipboard_empty_copy">no data copy</string>
+    <string name="tool_other">other</string>
+    <string name="vedio_select_name">video back</string>
+    <string name="keyboard_select_name">keyboard</string>
+
+    <string name="image_size_error">file too large</string>
+
 
 </resources>

@@ -7,6 +7,7 @@ import com.termux.R
 import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
+import java.io.File
 import java.util.Collections
 
 object FileIOUtils {
@@ -16,6 +17,13 @@ object FileIOUtils {
 
     public const val CLIP_BOARD_KEY = "ClipBoardKey"
     public const val TAG = "FileIOUtils"
+
+    //VIDEO
+    public const val VIDEO_KEY = "videoPath"
+    public const val IMAGE_KEY = "videoPath"
+
+    public const val MB5 = 1024 * 1024 * 5
+    public const val MB100 = 1024 * 1024 * 100
 
     public fun commendSave(nameString:String, commitString:String, isChecked:Boolean) {
         val commi22 = SaveData.getData(COMMEND_KEY)
@@ -120,4 +128,28 @@ object FileIOUtils {
         return text == null || text.isEmpty() || text == COMMEND_DEF
     }
 
+    public fun isFileSize5Mb(file: File) :Boolean{
+        return file.length() > MB5
+    }
+
+    public fun isFileSize100Mb(file: File) :Boolean{
+        return file.length() > MB100
+    }
+
+    public fun setPathVideo(file: File) {
+        SaveData.saveData(VIDEO_KEY, file.absolutePath)
+    }
+
+    public fun clearPathVideo() {
+        SaveData.saveData(VIDEO_KEY, COMMEND_DEF)
+    }
+
+    public fun getPathVideo() :String {
+        return SaveData.getData(VIDEO_KEY)
+    }
+
+    public fun isPathVideo() :Boolean {
+        val data = SaveData.getData(VIDEO_KEY)
+        return !isEmpty(data)
+    }
 }

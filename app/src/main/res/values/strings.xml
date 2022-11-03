@@ -685,4 +685,11 @@
     <string name="clipboard_empty">剪贴板没有使用内容</string>
     <string name="clipboard_empty_copy">复制内容不能为空噢</string>
 
+    <string name="tool_other">其他选项</string>
+
+    <string name="vedio_select_name">视频背景</string>
+    <string name="keyboard_select_name">内置键盘</string>
+
+    <string name="image_size_error">文件过大</string>
+
 </resources>

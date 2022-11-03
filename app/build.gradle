@@ -80,8 +80,8 @@ android {
         //颜色取色器
         implementation 'com.github.rtugeek:colorseekbar:2.0.3'
 
-        //选取图片
-        implementation 'com.zzti.fengyongge:imagepicker:1.4.5'
+        //图片/视频选择器
+        implementation 'com.lcw.library:imagepicker:2.2.7'
 
         //glide
         implementation 'com.github.bumptech.glide:glide:4.8.0'

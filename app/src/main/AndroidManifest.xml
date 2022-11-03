@@ -160,7 +160,12 @@
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name="com.zzti.fengyongge.imagepicker.PhotoSelectorActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
-
+        <activity android:name="com.lcw.library.imagepicker.activity.ImagePickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name="com.lcw.library.imagepicker.activity.ImagePreActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name="com.lcw.library.imagepicker.activity.BaseActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".shared.activities.ReportActivity"
             android:documentLaunchMode="intoExisting"

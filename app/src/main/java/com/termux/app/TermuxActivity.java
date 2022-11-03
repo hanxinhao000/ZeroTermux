@@ -40,11 +40,13 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.blockchain.ub.utils.httputils.BaseHttpUtils;
 import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
 import com.example.xh_lib.utils.UUtils2;
@@ -112,6 +114,7 @@ import com.termux.zerocore.dialog.ProtocolDialog;
 import com.termux.zerocore.dialog.SYFunBoomDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.dialog.VNCConnectionDialog;
+import com.termux.zerocore.dialog.adapter.ItemMenuAdapter;
 import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
@@ -122,6 +125,7 @@ import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.StartRunCommandUtils;
 import com.termux.zerocore.utils.UUUtils;
+import com.termux.zerocore.utils.VideoUtils;
 import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
 import com.termux.zerocore.view.xuehua.SnowView;
@@ -270,6 +274,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private static final String ARG_ACTIVITY_RECREATED = "activity_recreated";
 
     private static final String LOG_TAG = "Termux--Apk:TermuxActivity";
+    private static final String TAG = "TermuxActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -379,6 +384,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
                 mCommonCommandsDialog.show();
                 mCommonCommandsDialog.setCancelable(true);
+                mCommonCommandsDialog.setCommonDialogListener(new ItemMenuAdapter.CommonDialogListener() {
+                    @Override
+                    public void video(@NonNull File file) {
+                        VideoUtils.getInstance().setVideoView(back_video);
+                        VideoUtils.getInstance().start(file);
+                        back_video.setVisibility(View.VISIBLE);
+                        back_img.setVisibility(View.GONE);
+                        LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
+                    }
+                });
             }
         });
     }
@@ -421,9 +436,26 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }else{
             double_tishi.setVisibility(View.GONE);
         }
-        File file = new File(FileUrl.INSTANCE.getMainConfigImg() + "/back.jpg");
-        if(file.exists()) {
-            Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
+        if (FileIOUtils.INSTANCE.isPathVideo()) {
+            //有视频
+            String pathVideo = FileIOUtils.INSTANCE.getPathVideo();
+            if (!TextUtils.isEmpty(pathVideo)) {
+                File file = new File(pathVideo);
+                if (file.exists()) {
+                    VideoUtils.getInstance().setVideoView(back_video);
+                    VideoUtils.getInstance().start(file);
+                    back_video.setVisibility(View.VISIBLE);
+                    back_img.setVisibility(View.GONE);
+                }
+            }
+        } else {
+            //没有视频
+            File file = new File(FileUrl.INSTANCE.getMainConfigImg() + "/back.jpg");
+            if(file.exists()) {
+                Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
+                back_video.setVisibility(View.GONE);
+                back_img.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -454,6 +486,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         super.onResume();
 
         Logger.logVerbose(LOG_TAG, "onResume");
+
+        VideoUtils.getInstance().onResume();
 
         if (mIsInvalidState) return;
 
@@ -517,6 +551,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         Logger.logDebug(LOG_TAG, "onDestroy");
 
+        VideoUtils.getInstance().onDestroy();
         if (mIsInvalidState) return;
 
         if (mTermuxService != null) {
@@ -1228,6 +1263,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout beautify;
     private View back_color;
     private ImageView back_img;
+    private VideoView back_video;
 
     /**
      *
@@ -1276,6 +1312,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         beautify = findViewById(R.id.beautify);
         back_color = findViewById(R.id.back_color);
         back_img = findViewById(R.id.back_img);
+        back_video = findViewById(R.id.back_video);
 
         try{
             double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
@@ -1812,6 +1849,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 mBeautifySettingDialog.setOnChangeImageFile(new BeautifySettingDialog.OnChangeImageFile() {
                     @Override
                     public void onChangImage(@NotNull File mFile) {
+                        back_video.setVisibility(View.GONE);
+                        back_img.setVisibility(View.VISIBLE);
                         Glide.with(TermuxActivity.this).load(mFile).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
                     }
                 });
@@ -1912,8 +1951,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     protected void onPause() {
         super.onPause();
-
-
+        VideoUtils.getInstance().pause();
         title_mb.setVisibility(View.GONE);
         getDrawer().close();
 

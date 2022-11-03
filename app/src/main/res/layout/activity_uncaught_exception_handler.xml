@@ -22,7 +22,7 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:id="@+id/error_text"
-            android:text="程序出错,请将以下信息传递给开发者[截图]\n开发者群一(QQ):714730084\n开发者群二(QQ):463233836\n开发者群三(QQ):878847174\n"
+            android:text="程序出错,请将以下信息传递给开发者[截图]\n开发者群一(QQ):878847174"
             android:layout_height="match_parent" />
 
 

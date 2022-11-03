@@ -22,6 +22,7 @@ import com.termux.shared.logger.Logger
 import com.termux.zerocore.activity.ImageActivity
 import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.url.FileUrl
+import com.termux.zerocore.utils.FileIOUtils
 import java.io.File
 import java.io.FileInputStream
 
@@ -161,7 +162,9 @@ class BeautifySettingDialog : BaseDialogDown {
         }
 
         img_rl?.setOnClickListener {
-            mContext.startActivity(Intent(mContext as Activity,ImageActivity::class.java))
+            val intent = Intent(mContext as Activity, ImageActivity::class.java)
+            intent.action = ImageActivity.ImageActivityFlgh.IMAGE_FLGH
+            mContext.startActivity(intent)
         }
         def_tv?.setOnClickListener {
 
@@ -184,6 +187,7 @@ class BeautifySettingDialog : BaseDialogDown {
                 UUtils.runOnThread {
                     Log.e(LOG_TAG, "setImageFileCheckListener: start Writer")
                     UUtils.writerFileRawInput(fileImg,FileInputStream(file))
+                    FileIOUtils.clearPathVideo()
                     Log.e(LOG_TAG, "setImageFileCheckListener: end Writer")
                     UUtils.runOnUIThread {
                         Log.e(LOG_TAG, "setImageFileCheckListener: setting Glide")
