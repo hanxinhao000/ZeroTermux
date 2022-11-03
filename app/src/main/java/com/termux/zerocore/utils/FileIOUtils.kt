@@ -29,11 +29,10 @@ object FileIOUtils {
             dataNum.name = nameString
             dataNum.value = commitString
             dataNum.isChecked = isChecked
-            arrayList.add(dataNum)
+            arrayList.add(0, dataNum)
             data.list = arrayList
             val s = Gson().toJson(minLBean)
             SaveData.saveData(COMMEND_KEY, s)
-            UUtils.showMsg(UUtils.getString(R.string.添加成功))
         } else {
             val minLBean = Gson().fromJson(commi22, MinLBean::class.java)
             val list = minLBean.data.list
