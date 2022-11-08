@@ -24,6 +24,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val VIDEO_KEY = 1000
         public val KEYBOARD_KEY = 1001
         public val X86_ALPINE_KEY = 1002
+        public val CLEAR_STYLE = 1003
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -41,6 +42,7 @@ class CommonCommandsDialog : BaseDialogDown {
     private var mCommonDialogListener: ItemMenuAdapter.CommonDialogListener? = null
     private var mVShellDialogListener: ItemMenuAdapter.VShellDialogListener? = null
     private var mKeyViewListener: ItemMenuAdapter.KeyViewListener? = null
+    private var mClearStyleListener: ItemMenuAdapter.ClearStyleListener? = null
 
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
@@ -75,6 +77,16 @@ class CommonCommandsDialog : BaseDialogDown {
         mVideoBackData.key = CommonCommandsDialogConstant.VIDEO_KEY
         mList.add(mVideoBackData)
 
+        /**
+         * 清空美化
+         */
+        var mClearStyleBackData: ItemMenuBean.Data = ItemMenuBean.Data()
+        mClearStyleBackData.title = UUtils.getString(R.string.clear_style_dialog)
+        mClearStyleBackData.id = R.mipmap.clear_style
+        mClearStyleBackData.isEg = false
+        mClearStyleBackData.key = CommonCommandsDialogConstant.CLEAR_STYLE
+        mList.add(mClearStyleBackData)
+
      /*   *
          * 内置键盘*/
 
@@ -102,6 +114,7 @@ class CommonCommandsDialog : BaseDialogDown {
         mItemMenuAdapter?.setCommonDialogListener(mCommonDialogListener)
         mItemMenuAdapter?.setVShellDialogListener(mVShellDialogListener)
         mItemMenuAdapter?.setKeyViewListener(mKeyViewListener)
+        mItemMenuAdapter?.setClearStyleListener(mClearStyleListener)
         val gridLayoutManager = GridLayoutManager(UUtils.getContext(), getGridNumber())
         item_menu_rec?.layoutManager = gridLayoutManager
         item_menu_rec?.adapter = mItemMenuAdapter
@@ -116,6 +129,9 @@ class CommonCommandsDialog : BaseDialogDown {
     }
     public fun setKeyViewListener( mKeyViewListener: ItemMenuAdapter.KeyViewListener?) {
         this.mKeyViewListener = mKeyViewListener
+    }
+    public fun setClearStyleListener(mClearStyleListener: ItemMenuAdapter.ClearStyleListener?) {
+        this.mClearStyleListener = mClearStyleListener
     }
     private fun initClick() {
         select_1_ll?.setOnClickListener {

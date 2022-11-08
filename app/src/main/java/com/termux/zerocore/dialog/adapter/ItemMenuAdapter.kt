@@ -34,6 +34,7 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
     private var mCommonCommandsDialog:CommonCommandsDialog? = null
     private var mCommonDialogListener: CommonDialogListener? = null
     private var mVShellDialogListener: VShellDialogListener? = null
+    private var mClearStyleListener: ClearStyleListener? = null
     private var mKeyViewListener: KeyViewListener? = null
     constructor(mList:ArrayList<ItemMenuBean.Data>?, mContext: Context, mCommonCommandsDialog:CommonCommandsDialog) : super() {
         this.mList = mList
@@ -92,6 +93,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
             CommonCommandsDialog.CommonCommandsDialogConstant.X86_ALPINE_KEY -> {
                 runQemuOs(mContext)
             }
+            CommonCommandsDialog.CommonCommandsDialogConstant.CLEAR_STYLE -> {
+                FileIOUtils.clearStyle()
+                mClearStyleListener?.clear()
+            }
         }
     }
 
@@ -101,6 +106,9 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
 
     public fun setVShellDialogListener(mVShellDialogListener: VShellDialogListener?) {
         this.mVShellDialogListener = mVShellDialogListener
+    }
+    public fun setClearStyleListener(mClearStyleListener: ClearStyleListener?) {
+        this.mClearStyleListener = mClearStyleListener
     }
 
     public fun setKeyViewListener(mKeyViewListener: KeyViewListener?) {
@@ -118,6 +126,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
 
     public interface KeyViewListener {
         fun view(mView: View?)
+    }
+
+    public interface ClearStyleListener {
+        fun clear()
     }
 
     private fun runQemuOs(mContext: Context?) {

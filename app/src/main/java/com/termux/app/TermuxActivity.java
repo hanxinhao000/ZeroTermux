@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
@@ -396,6 +397,25 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         back_video.setVisibility(View.VISIBLE);
                         back_img.setVisibility(View.GONE);
                         LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
+                    }
+                });
+                mCommonCommandsDialog.setClearStyleListener(new ItemMenuAdapter.ClearStyleListener() {
+                    @Override
+                    public void clear() {
+                        VideoUtils.getInstance().onDestroy();
+                        back_video.setVisibility(View.GONE);
+                        back_img.setVisibility(View.GONE);
+                        back_color.setVisibility(View.GONE);
+                        TerminalRenderer.COLOR_TEXT =  Color.parseColor("#ffffff");
+                        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR =  Color.parseColor("#ffffff");
+                        mTerminalView.invalidate();
+                        if(mExtraKeysView != null) {
+                            mExtraKeysView.setColorButton();
+                            mExtraKeysView.invalidate();
+                        }
+                        if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
+                            mCommonCommandsDialog.dismiss();
+                        }
                     }
                 });
                 mCommonCommandsDialog.setKeyViewListener(new ItemMenuAdapter.KeyViewListener() {

@@ -7,6 +7,7 @@ import com.termux.R
 import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
+import com.termux.zerocore.url.FileUrl
 import java.io.File
 
 object FileIOUtils {
@@ -163,5 +164,23 @@ object FileIOUtils {
         val fileWget = File(TERMUX_WGET)
         val fileQemu = File(TERMUX_QEMU)
         return !(fileProot.exists()) || !(fileWget.exists()) || !(fileQemu.exists())
+    }
+
+    public fun clearStyle() {
+        com.example.xh_lib.utils.SaveData.saveStringOther("font_color_progress", "def")
+        com.example.xh_lib.utils.SaveData.saveStringOther("font_color", "def")
+
+        com.example.xh_lib.utils.SaveData.saveStringOther("back_color", "def")
+        com.example.xh_lib.utils.SaveData.saveStringOther("back_color_progress", "def")
+
+        com.example.xh_lib.utils.SaveData.saveStringOther("change_text_show", "def")
+        com.example.xh_lib.utils.SaveData.saveStringOther("change_text", "def")
+
+
+        val fileImg = File("${FileUrl.mainConfigImg}/back.jpg")
+        if(fileImg.exists()){
+            fileImg.delete()
+        }
+        clearPathVideo()
     }
 }
