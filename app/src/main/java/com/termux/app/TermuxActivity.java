@@ -1313,6 +1313,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout msg;
     private LinearLayout files_mulu;
     private TextView version;
+    private TextView eg_tv;
     private TextView text_start;
     private LinearLayout title_mb;
     private LinearLayout github;
@@ -1364,6 +1365,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         msg = findViewById(R.id.msg);
         files_mulu = findViewById(R.id.files_mulu);
         version = findViewById(R.id.version);
+        eg_tv = findViewById(R.id.eg_tv);
         title_mb = findViewById(R.id.title_mb);
         github = findViewById(R.id.github);
         start_command = findViewById(R.id.start_command);
@@ -1438,7 +1440,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
-        version.setText(UUtils.getString(R.string.版本) + ":" + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
 
         String xieyi = SaveData.INSTANCE.getStringOther("xieyi");
 
@@ -1458,29 +1459,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         getDrawer().addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull @NotNull View drawerView, float slideOffset) {
-
-
-
-
-                    int i = (int) (slideOffset * 100);
-                  /*  UUtils.showLog("状态变换[isDrawerVisible]:" + getDrawer().isDrawerVisible(Gravity.LEFT));
-                    UUtils.showLog("状态变换[isDrawerOpen]:" + getDrawer().isDrawerOpen(Gravity.LEFT));*/
+                int i = (int) (slideOffset * 100);
                 if(getDrawer().isDrawerVisible(Gravity.LEFT)){
                     if(i < 50){
                         title_mb.setVisibility(View.GONE);
                     }else{
                         title_mb.setVisibility(View.VISIBLE);
                         ip_status.setText(UUtils.getHostIP());
-
                     }
-
                 }
-
-
-
-
-                UUtils.showLog("状态变换:" + slideOffset);
-
+                version.setText(UUtils.getString(R.string.版本) + " : " + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
+                String versionName = ZeroCoreManage.getVersionName();
+                if (!TextUtils.isEmpty(versionName)) {
+                    eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + versionName );
+                } else {
+                    eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + UUtils.getString(R.string.engine_not_install) );
+                }
             }
 
             @Override

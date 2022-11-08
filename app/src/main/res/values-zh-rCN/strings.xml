@@ -717,6 +717,10 @@
     <string name="x86_alpine_run">X86 Alpine</string>
 
     <string name="clear_style_dialog">清空美化</string>
+
+    <string name="engine_vision">引擎</string>
+
+    <string name="engine_not_install">未安装</string>
 </resources>
 
 

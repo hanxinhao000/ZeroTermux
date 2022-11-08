@@ -202,7 +202,7 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/color_161823"
                     app:cardCornerRadius="3dp"
-                    android:layout_height="80dp">
+                    android:layout_height="113dp">
 
 
                     <LinearLayout
@@ -265,6 +265,17 @@
                                 android:textStyle="bold"
                                 android:textSize="15sp"
                                 android:id="@+id/version"
+                                android:layout_marginTop="10dp"
+                                android:layout_alignParentRight="true"
+                                android:text="@string/版本"
+                                android:layout_height="wrap_content"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_below="@+id/version"
+                                android:textColor="@color/color_ffffff"
+                                android:textStyle="bold"
+                                android:id="@+id/eg_tv"
+                                android:textSize="15sp"
                                 android:layout_marginTop="10dp"
                                 android:layout_alignParentRight="true"
                                 android:text="@string/版本"

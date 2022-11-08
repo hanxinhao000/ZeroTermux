@@ -723,7 +723,9 @@ Reset successfully</string>
 
     <string name="clear_style_dialog">clear Style</string>
 
+    <string name="engine_vision">Engine</string>
 
+    <string name="engine_not_install">Not Install</string>
 
 
 </resources>
