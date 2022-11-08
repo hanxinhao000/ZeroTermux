@@ -23,6 +23,7 @@ class CommonCommandsDialog : BaseDialogDown {
     object CommonCommandsDialogConstant{
         public val VIDEO_KEY = 1000
         public val KEYBOARD_KEY = 1001
+        public val X86_ALPINE_KEY = 1002
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -38,6 +39,8 @@ class CommonCommandsDialog : BaseDialogDown {
     private var other_container: LinearLayout? = null
     private var mItemMenuAdapter: ItemMenuAdapter? = null
     private var mCommonDialogListener: ItemMenuAdapter.CommonDialogListener? = null
+    private var mVShellDialogListener: ItemMenuAdapter.VShellDialogListener? = null
+    private var mKeyViewListener: ItemMenuAdapter.KeyViewListener? = null
 
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
@@ -68,21 +71,37 @@ class CommonCommandsDialog : BaseDialogDown {
         var mVideoBackData: ItemMenuBean.Data = ItemMenuBean.Data()
         mVideoBackData.title = UUtils.getString(R.string.vedio_select_name)
         mVideoBackData.id = R.mipmap.video_img_menu
+        mVideoBackData.isEg = false
         mVideoBackData.key = CommonCommandsDialogConstant.VIDEO_KEY
         mList.add(mVideoBackData)
 
-/*        *//**
-         * 内置键盘
-         *//*
+     /*   *
+         * 内置键盘*/
+
 
         var mKeyData: ItemMenuBean.Data = ItemMenuBean.Data()
         mKeyData.title = UUtils.getString(R.string.keyboard_select_name)
         mKeyData.id = R.mipmap.keyboard_img_menu
+        mKeyData.isEg = true
         mKeyData.key = CommonCommandsDialogConstant.KEYBOARD_KEY
-        mList.add(mKeyData)*/
+        mList.add(mKeyData)
 
-        mItemMenuAdapter = ItemMenuAdapter(mList, mContext)
+        /**
+         * X86 系统
+         *
+         */
+        var mX86AlpineData: ItemMenuBean.Data = ItemMenuBean.Data()
+        mX86AlpineData.title = UUtils.getString(R.string.x86_alpine_run)
+        mX86AlpineData.id = R.mipmap.alpine_run
+        mX86AlpineData.isEg = true
+        mX86AlpineData.key = CommonCommandsDialogConstant.X86_ALPINE_KEY
+        mList.add(mX86AlpineData)
+
+
+        mItemMenuAdapter = ItemMenuAdapter(mList, mContext, this)
         mItemMenuAdapter?.setCommonDialogListener(mCommonDialogListener)
+        mItemMenuAdapter?.setVShellDialogListener(mVShellDialogListener)
+        mItemMenuAdapter?.setKeyViewListener(mKeyViewListener)
         val gridLayoutManager = GridLayoutManager(UUtils.getContext(), getGridNumber())
         item_menu_rec?.layoutManager = gridLayoutManager
         item_menu_rec?.adapter = mItemMenuAdapter
@@ -91,6 +110,12 @@ class CommonCommandsDialog : BaseDialogDown {
 
     public fun setCommonDialogListener(mCommonDialogListener: ItemMenuAdapter.CommonDialogListener) {
         this.mCommonDialogListener = mCommonDialogListener
+    }
+    public fun setVShellDialogListener(mVShellDialogListener: ItemMenuAdapter.VShellDialogListener) {
+        this.mVShellDialogListener = mVShellDialogListener
+    }
+    public fun setKeyViewListener( mKeyViewListener: ItemMenuAdapter.KeyViewListener?) {
+        this.mKeyViewListener = mKeyViewListener
     }
     private fun initClick() {
         select_1_ll?.setOnClickListener {

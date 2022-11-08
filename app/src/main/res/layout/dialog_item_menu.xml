@@ -49,6 +49,15 @@
                             android:textColor="@color/color_ffffff"
                             android:textSize="10sp" />
                     </LinearLayout>
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_marginTop="2dp"
+                        android:src="@mipmap/install_eg"
+                        android:id="@+id/eg_install_tv"
+                        android:visibility="invisible"
+                        android:layout_marginRight="2dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_height="15dp"/>
                 </RelativeLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

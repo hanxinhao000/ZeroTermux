@@ -709,6 +709,12 @@
     <string name="vedio_select_name">视频背景</string>
     <string name="keyboard_select_name">内置键盘</string>
     <string name="image_size_error">文件过大</string>
+
+    <string name="zero_eg_not_install">没有安装零引擎，请点击"引擎安装" </string>
+
+    <string name="install_environment">安装所需环境?</string>
+
+    <string name="x86_alpine_run">X86 Alpine</string>
 </resources>
 
 

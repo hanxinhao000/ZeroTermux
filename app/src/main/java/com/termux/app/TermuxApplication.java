@@ -1,8 +1,8 @@
 package com.termux.app;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.widget.Toast;
 
 import com.arialyy.aria.core.Aria;
@@ -11,8 +11,6 @@ import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.OkGo;
 import com.mallotec.reb.localeplugin.LocaleConstant;
 import com.mallotec.reb.localeplugin.LocalePlugin;
-import com.termux.BuildConfig;
-import com.termux.shared.crash.CrashHandler;
 
 import com.termux.shared.errors.Error;
 import com.termux.shared.logger.Logger;
@@ -28,6 +26,7 @@ import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 import com.termux.zerocore.utils.ClipBoardUtil;
+import com.termux.zerocore.zero.engine.ZeroCoreManage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

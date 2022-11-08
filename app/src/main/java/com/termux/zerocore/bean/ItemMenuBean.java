@@ -8,5 +8,6 @@ public class ItemMenuBean {
         public String title;
         public int id;
         public int key;
+        public boolean isEg = false;
     }
 }

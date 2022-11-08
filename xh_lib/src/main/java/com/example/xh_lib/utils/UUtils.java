@@ -880,7 +880,7 @@ public class UUtils {
 
         try {
             Os.chmod(file.getAbsolutePath(), 0700);
-        } catch (ErrnoException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -982,5 +982,14 @@ public class UUtils {
         int blue = (color & 0x0000ff);
 
         return Color.argb( red , green , blue ,ap);
+    }
+
+    //处理shell文本
+    public static String arrayListToStringShell(ArrayList<String> list) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            stringBuilder.append(list.get(i)).append(" ");
+        }
+        return stringBuilder.toString();
     }
 }

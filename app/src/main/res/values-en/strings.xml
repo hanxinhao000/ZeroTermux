@@ -715,5 +715,13 @@ Reset successfully</string>
 
     <string name="image_size_error">file too large</string>
 
+    <string name="zero_eg_not_install">ZeroTermux Engine not install. pls click "Install Engine"</string>
+
+    <string name="install_environment">Install the required environment?</string>
+
+    <string name="x86_alpine_run">X86 Alpine</string>
+
+
+
 
 </resources>

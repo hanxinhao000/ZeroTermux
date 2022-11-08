@@ -63,6 +63,7 @@ import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.app.terminal.TermuxTerminalSessionActivityClient;
+import com.termux.app.terminal.TermuxTerminalSessionServiceClient;
 import com.termux.app.terminal.io.TermuxTerminalExtraKeys;
 import com.termux.shared.activities.ReportActivity;
 
@@ -86,6 +87,7 @@ import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.shared.theme.NightMode;
+import com.termux.shared.view.KeyboardUtils;
 import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
@@ -129,6 +131,7 @@ import com.termux.zerocore.utils.VideoUtils;
 import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
 import com.termux.zerocore.view.xuehua.SnowView;
+import com.termux.zerocore.zero.engine.ZeroCoreManage;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -190,7 +193,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     /**
      * The client for the {@link #mExtraKeysView}.
      */
-    TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
+    public static TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
 
     /**
      * The root view of the {@link TermuxActivity}.
@@ -381,6 +384,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTerminalView.setActionPointer2ClickListener(new TerminalView.ActionPointer2ClickListener() {
             @Override
             public void pointer2Click() {
+                final LoadingDialog[] loadingDialog = {null};
                 CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
                 mCommonCommandsDialog.show();
                 mCommonCommandsDialog.setCancelable(true);
@@ -392,6 +396,58 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         back_video.setVisibility(View.VISIBLE);
                         back_img.setVisibility(View.GONE);
                         LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
+                    }
+                });
+                mCommonCommandsDialog.setKeyViewListener(new ItemMenuAdapter.KeyViewListener() {
+                    @Override
+                    public void view(@NonNull View mView) {
+                        if (mView == null) {
+                            LogUtils.d(TAG, "key View is null, return.");
+                            return;
+                        }
+                        if (key_bord.getChildCount() > 0) {
+                            key_bord.removeAllViews();
+                            getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
+                            mTerminalView.stopTextSelectionMode();
+
+                            KeyboardUtils.clearDisableSoftKeyboardFlags(TermuxActivity.this);
+                            KeyboardUtils.toggleSoftKeyboard(TermuxActivity.this);
+                        } else {
+                            mPreferences.setSoftKeyboardEnabled(false);
+                            key_bord.addView(mView);
+                            getTerminalToolbarViewPager().setVisibility(View.GONE);
+
+                            KeyboardUtils.disableSoftKeyboard(TermuxActivity.this, mTerminalView);
+                        }
+                        if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
+                            mCommonCommandsDialog.dismiss();
+                        }
+
+                    }
+                });
+                mCommonCommandsDialog.setVShellDialogListener(new ItemMenuAdapter.VShellDialogListener() {
+                    @Override
+                    public void showDialog(boolean b) {
+                        if (b) {
+                            loadingDialog[0] = new LoadingDialog(TermuxActivity.this);
+                            loadingDialog[0].show();
+                        } else {
+                            if (loadingDialog[0] != null && loadingDialog[0].isShowing()) {
+                                loadingDialog[0].dismiss();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void vShell(@NonNull ArrayList<String> environment, @NonNull ArrayList<String> processArgs) {
+                        if (environment == null || processArgs == null) {
+                            return;
+                        }
+                        mTerminalView.sendTextToTerminal(UUtils.arrayListToStringShell(processArgs) + "\n");
+                        if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
+                            mCommonCommandsDialog.dismiss();
+                        }
+
                     }
                 });
             }
@@ -484,6 +540,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public void onResume() {
         super.onResume();
+        //初始化ZeroTermux 引擎
+        ZeroCoreManage.initEngineManage();
 
         Logger.logVerbose(LOG_TAG, "onResume");
 
@@ -1253,6 +1311,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout yuyan;
     private LinearLayout shiyan_fun;
     private LinearLayout zerotermux_bbs;
+    private LinearLayout key_bord;
     private TextView service_status;
     private TextView msg_tv;
     private TextView ip_status;
@@ -1292,6 +1351,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         text_start = findViewById(R.id.text_start);
         xuanfu = findViewById(R.id.xuanfu);
         ziti = findViewById(R.id.ziti);
+        key_bord = findViewById(R.id.key_bord);
         service_status = findViewById(R.id.service_status);
         zero_tier = findViewById(R.id.zero_tier);
         download_http = findViewById(R.id.download_http);

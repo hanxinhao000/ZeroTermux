@@ -32,4 +32,12 @@ class SwitchDialog : BaseDialogCentre {
         return R.layout.dialog_switch
 
     }
+
+    public fun createSwitchDialog(msg: String): SwitchDialog {
+        title?.visibility = View.GONE
+        other?.visibility = View.GONE
+        this.msg?.text = msg
+        return this
+    }
+
 }

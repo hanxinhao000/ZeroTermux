@@ -54,17 +54,31 @@
 
                 android:layout_height="match_parent">
 
-                <com.termux.view.TerminalView
-                    android:id="@+id/terminal_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginLeft="3dp"
-                    android:focusableInTouchMode="true"
-                    android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
-                    android:scrollbars="vertical"
-                    android:importantForAutofill="no"
-                    android:autofillHints="password" />
+             <RelativeLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+
+                 <com.termux.view.TerminalView
+                     android:id="@+id/terminal_view"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_marginRight="3dp"
+                     android:layout_marginLeft="3dp"
+                     android:layout_above="@+id/key_bord"
+                     android:focusableInTouchMode="true"
+                     android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
+                     android:scrollbars="vertical"
+                     android:importantForAutofill="no"
+                     android:autofillHints="password" />
+
+                 <LinearLayout
+                     android:layout_width="match_parent"
+                     android:id="@+id/key_bord"
+                     android:layout_alignParentBottom="true"
+                     android:orientation="vertical"
+                     android:layout_height="wrap_content"/>
+
+             </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/left_drawer"

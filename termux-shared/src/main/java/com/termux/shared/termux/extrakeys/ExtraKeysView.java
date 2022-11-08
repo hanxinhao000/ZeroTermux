@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import android.view.HapticFeedbackConstants;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +37,8 @@ import com.google.android.material.button.MaterialButton;
 import com.termux.shared.R;
 import com.termux.shared.termux.terminal.io.TerminalExtraKeys;
 import com.termux.shared.theme.ThemeUtils;
+import com.termux.terminal.TerminalSession;
+import com.termux.view.TerminalView;
 
 /**
  * A {@link View} showing extra keys (such as Escape, Ctrl, Alt) not normally available on an Android soft

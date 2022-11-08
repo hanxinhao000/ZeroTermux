@@ -3,29 +3,42 @@ package com.termux.zerocore.dialog.adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Message
+import android.text.TextUtils
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.app.TermuxActivity
 import com.termux.zerocore.activity.ImageActivity
-import com.termux.zerocore.bean.Data
 import com.termux.zerocore.bean.ItemMenuBean
 import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.dialog.CommonCommandsDialog
+import com.termux.zerocore.dialog.SwitchDialog
 import com.termux.zerocore.dialog.view_holder.ItemMenuViewHolder
+import com.termux.zerocore.keybord.KeyBordManage
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.FileIOUtils
+import com.termux.zerocore.zero.engine.ZeroCoreManage
 import java.io.File
+
 
 class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
     private val TAG:String = "ItemMenuAdapter"
     private var mList:ArrayList<ItemMenuBean.Data>? = null
     private var mContext: Context? = null
+    private var mCommonCommandsDialog:CommonCommandsDialog? = null
     private var mCommonDialogListener: CommonDialogListener? = null
-    constructor(mList:ArrayList<ItemMenuBean.Data>?, mContext: Context) : super() {
+    private var mVShellDialogListener: VShellDialogListener? = null
+    private var mKeyViewListener: KeyViewListener? = null
+    constructor(mList:ArrayList<ItemMenuBean.Data>?, mContext: Context, mCommonCommandsDialog:CommonCommandsDialog) : super() {
         this.mList = mList
         this.mContext = mContext
+        this.mCommonCommandsDialog = mCommonCommandsDialog
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemMenuViewHolder {
@@ -35,6 +48,11 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
     override fun onBindViewHolder(holder: ItemMenuViewHolder, position: Int) {
         holder.menu_image?.setImageResource(mList!![position].id)
         holder.menu_name?.text = mList!![position].title
+        if (TextUtils.isEmpty(ZeroCoreManage.getVersionName()) && mList!![position].isEg) {
+            holder.eg_install_tv?.visibility = View.VISIBLE
+        } else {
+            holder.eg_install_tv?.visibility = View.INVISIBLE
+        }
         holder.itemView.setOnClickListener {
             LogUtils.d(TAG, "onBindViewHolder itemView click key is:${mList!![position].key}")
             clickItem(mList!![position].key)
@@ -69,7 +87,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 mContext?.startActivity(intent)
             }
             CommonCommandsDialog.CommonCommandsDialogConstant.KEYBOARD_KEY -> {
-
+                keyBord()
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.X86_ALPINE_KEY -> {
+                runQemuOs(mContext)
             }
         }
     }
@@ -78,7 +99,120 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
         this.mCommonDialogListener = mCommonDialogListener
     }
 
+    public fun setVShellDialogListener(mVShellDialogListener: VShellDialogListener?) {
+        this.mVShellDialogListener = mVShellDialogListener
+    }
+
+    public fun setKeyViewListener(mKeyViewListener: KeyViewListener?) {
+        this.mKeyViewListener = mKeyViewListener
+    }
+
     public interface CommonDialogListener {
         fun video(file: File)
+    }
+
+    public interface VShellDialogListener {
+        fun vShell(environment: ArrayList<String>?, processArgs: ArrayList<String>?)
+        fun showDialog(boolean: Boolean)
+    }
+
+    public interface KeyViewListener {
+        fun view(mView: View?)
+    }
+
+    private fun runQemuOs(mContext: Context?) {
+        if (mContext == null) {
+            LogUtils.d(TAG, "runQemuOs mContext is null return")
+            return
+        }
+        val versionName = ZeroCoreManage.getVersionName()
+        if (TextUtils.isEmpty(versionName)) {
+            UUtils.showMsg(UUtils.getString(R.string.zero_eg_not_install))
+            return
+        }
+        if (FileIOUtils.isProotQemu()) {
+            val switchDialog = SwitchDialog(mContext as Activity)
+            switchDialog.createSwitchDialog(UUtils.getString(R.string.install_environment))
+            switchDialog.ok?.text = UUtils.getString(R.string.确定)
+            switchDialog.cancel?.text = UUtils.getString(R.string.取消)
+            switchDialog.ok?.setOnClickListener {
+                switchDialog.dismiss()
+                mCommonCommandsDialog?.dismiss()
+                TermuxActivity.mTerminalView.sendTextToTerminal("pkg update -y && pkg in wget proot -y && pkg install x11-repo unstable-repo -y && pkg install qemu-utils qemu-system-x86_64-headless  qemu-system-i386-headless -y &&  termux-setup-storage\n")
+                Toast.makeText(
+                    UUtils.getContext(),
+                    UUtils.getString(R.string.请等待安装完成在进入),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            switchDialog.cancel?.setOnClickListener {
+                switchDialog.dismiss()
+            }
+            switchDialog.setCancelable(false)
+            switchDialog.show()
+            return
+        }
+
+
+        val handler = object : Handler() {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                when (msg.what) {
+                    ZeroCoreManage.INSTALLING -> {
+                        LogUtils.d(TAG, "INSTALLING System os install....")
+                        mVShellDialogListener?.showDialog(true)
+                    }
+                    ZeroCoreManage.INSTALL_COMPLETE -> {
+                        LogUtils.d(TAG, "INSTALL_COMPLETE System os install complete.")
+                        mVShellDialogListener?.showDialog(false)
+                        mVShellDialogListener?.vShell(ZeroCoreManage.getEnvironment(), ZeroCoreManage.getProcessArgs())
+                    }
+                }
+            }
+        }
+        ZeroCoreManage.install(handler)
+    }
+
+    private fun keyBord() {
+        val versionName = ZeroCoreManage.getVersionName()
+        if (TextUtils.isEmpty(versionName)) {
+            UUtils.showMsg(UUtils.getString(R.string.zero_eg_not_install))
+            return
+        }
+        val handler = object : Handler() {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                when (msg.what) {
+                    KeyBordManage.KEY_DEF -> {
+                        LogUtils.d(TAG, "handleMessage DEF:${msg.obj}")
+                        if (msg.obj != null) {
+                            TermuxActivity.mTerminalView.sendTextToTerminal(msg.obj as String?)
+                        }
+                    }
+                    KeyBordManage.KEY_ALT -> {
+                        LogUtils.d(TAG, "handleMessage ALT:${msg.obj}")
+                        if (msg.obj != null) {
+                            TermuxActivity.mTerminalView.sendTextToTerminalAlt(msg.obj as String?, true)
+                        }
+                    }
+                    KeyBordManage.KEY_CTRL -> {
+                        LogUtils.d(TAG, "handleMessage CTRL:${msg.obj}")
+                        if (msg.obj != null) {
+                            TermuxActivity.mTerminalView.sendTextToTerminalCtrl(msg.obj as String?, true)
+                        }
+                    }
+                    KeyBordManage.KEY_OTHER -> {
+                        LogUtils.d(TAG, "handleMessage OTHER:${msg.obj}")
+                        if (msg.obj != null) {
+                            TermuxActivity.mTermuxTerminalExtraKeys.onTerminalExtraKeyButtonClick(null, msg.obj as String?, false ,false ,false , false)
+                        }
+                    }
+                }
+
+
+            }
+        }
+        KeyBordManage.getInstance().initKeyBord(handler)
+        mKeyViewListener?.view(KeyBordManage.getInstance().keyBordView)
     }
 }

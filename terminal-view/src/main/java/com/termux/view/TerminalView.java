@@ -1436,6 +1436,61 @@ public final class TerminalView extends View {
 
 
 
+    public void sendTextToTerminalAlt(CharSequence text, boolean isAlt) {
+        stopTextSelectionMode();
+        final int textLengthInChars = text.length();
+        for (int i = 0; i < textLengthInChars; i++) {
+            char firstChar = text.charAt(i);
+            int codePoint;
+            if (Character.isHighSurrogate(firstChar)) {
+                if (++i < textLengthInChars) {
+                    codePoint = Character.toCodePoint(firstChar, text.charAt(i));
+                } else {
+                    // At end of string, with no low surrogate following the high:
+                    codePoint = TerminalEmulator.UNICODE_REPLACEMENT_CHAR;
+                }
+            } else {
+                codePoint = firstChar;
+            }
+
+            // Check onKeyDown() for details.
+            if (mClient.readShiftKey())
+                codePoint = Character.toUpperCase(codePoint);
+
+            boolean ctrlHeld = false;
+            if (codePoint <= 31 && codePoint != 27) {
+                if (codePoint == '\n') {
+                    // The AOSP keyboard and descendants seems to send \n as text when the enter key is pressed,
+                    // instead of a key event like most other keyboard apps. A terminal expects \r for the enter
+                    // key (although when icrnl is enabled this doesn't make a difference - run 'stty -icrnl' to
+                    // check the behaviour).
+                    codePoint = '\r';
+                }
+
+                // E.g. penti keyboard for ctrl input.
+                ctrlHeld = true;
+                switch (codePoint) {
+                    case 31:
+                        codePoint = '_';
+                        break;
+                    case 30:
+                        codePoint = '^';
+                        break;
+                    case 29:
+                        codePoint = ']';
+                        break;
+                    case 28:
+                        codePoint = '\\';
+                        break;
+                    default:
+                        codePoint += 96;
+                        break;
+                }
+            }
+
+            inputCodePoint(KEY_EVENT_SOURCE_SOFT_KEYBOARD, codePoint, false, isAlt);
+        }
+    }
 
 
     public void sendTextToTerminalCtrl(CharSequence text, boolean isCtrl) {

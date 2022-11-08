@@ -8,7 +8,6 @@ import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
 import java.io.File
-import java.util.Collections
 
 object FileIOUtils {
 
@@ -17,6 +16,11 @@ object FileIOUtils {
 
     public const val CLIP_BOARD_KEY = "ClipBoardKey"
     public const val TAG = "FileIOUtils"
+
+    //环境
+    public const val TERMUX_CHROOT = "/data/data/com.termux/files/usr/bin/termux-chroot"
+    public const val TERMUX_WGET = "/data/data/com.termux/files/usr/bin/wget"
+    public const val TERMUX_QEMU = "/data/data/com.termux/files/usr/bin/qemu-system-x86_64"
 
     //VIDEO
     public const val VIDEO_KEY = "videoPath"
@@ -151,5 +155,13 @@ object FileIOUtils {
     public fun isPathVideo() :Boolean {
         val data = SaveData.getData(VIDEO_KEY)
         return !isEmpty(data)
+    }
+
+
+    public fun isProotQemu() :Boolean {
+        val fileProot = File(TERMUX_CHROOT)
+        val fileWget = File(TERMUX_WGET)
+        val fileQemu = File(TERMUX_QEMU)
+        return !(fileProot.exists()) || !(fileWget.exists()) || !(fileQemu.exists())
     }
 }
