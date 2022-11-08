@@ -715,7 +715,7 @@ Reset successfully</string>
 
     <string name="image_size_error">file too large</string>
 
-    <string name="zero_eg_not_install">ZeroTermux Engine not install. pls click "Install Engine"</string>
+    <string name="zero_eg_not_install">ZeroTermux Engine not install. Please download the engine at the download site</string>
 
     <string name="install_environment">Install the required environment?</string>
 
