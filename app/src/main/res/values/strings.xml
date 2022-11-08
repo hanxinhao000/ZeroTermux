@@ -323,7 +323,7 @@
     </string>
     <string name="版本">版本</string>
     <string name="会话窗口在右侧">提示:会话窗口在右侧\n双击命令窗口打开快捷命令\n使用许可:学习交流</string>
-    <string name="开源地址">开源地址</string>
+    <string name="开源地址">开源地址\n鸣谢</string>
     <string name="已打开开机启动命令">已打开开机启动命令,重启APP生效</string>
     <string name="已关闭开机启动命令">已关闭开机启动命令,重启后生效</string>
     <string name="悬浮窗口">悬浮窗口</string>

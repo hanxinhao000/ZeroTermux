@@ -342,7 +342,7 @@ error</string>
     </string>
     <string name="版本">version</string>
     <string name="会话窗口在右侧">Tip: The session window is on the right side\nDouble-click the command window to open the shortcut command\nLicense: Learn to communicate</string>
-    <string name="开源地址">Open source address</string>
+    <string name="开源地址">Open source address \n thank</string>
     <string name="已打开开机启动命令">The boot command has been opened, restart the APP to take effect</string>
     <string name="已关闭开机启动命令">The boot command has been turned off and will take effect after restart</string>
     <string name="悬浮窗口">Floating window</string>
@@ -726,6 +726,5 @@ Reset successfully</string>
     <string name="engine_vision">Engine</string>
 
     <string name="engine_not_install">Not Install</string>
-
 
 </resources>

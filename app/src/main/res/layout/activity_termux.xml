@@ -304,7 +304,7 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/color_161823"
                     app:cardCornerRadius="3dp"
-                    android:layout_height="80dp">
+                    android:layout_height="113dp">
 
 
                     <LinearLayout
@@ -339,6 +339,18 @@
                                 android:textStyle="bold"
                                 android:textSize="15sp"
                                 android:id="@+id/service_status"
+                                android:layout_marginTop="15dp"
+                                android:layout_alignParentRight="true"
+                                android:text="@string/正在连接"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textColor="@color/color_ffffff"
+                                android:textStyle="bold"
+                                android:textSize="15sp"
+                                android:layout_below="@+id/service_status"
+                                android:id="@+id/service_eg"
                                 android:layout_marginTop="15dp"
                                 android:layout_alignParentRight="true"
                                 android:text="@string/正在连接"

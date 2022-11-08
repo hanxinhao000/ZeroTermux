@@ -1333,6 +1333,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout zerotermux_bbs;
     private LinearLayout key_bord;
     private TextView service_status;
+    private TextView service_eg;
     private TextView msg_tv;
     private TextView ip_status;
     private TextView double_tishi;
@@ -1374,6 +1375,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         ziti = findViewById(R.id.ziti);
         key_bord = findViewById(R.id.key_bord);
         service_status = findViewById(R.id.service_status);
+        service_eg = findViewById(R.id.service_eg);
         zero_tier = findViewById(R.id.zero_tier);
         download_http = findViewById(R.id.download_http);
         vnc_start = findViewById(R.id.vnc_start);
@@ -3206,6 +3208,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
 
                     service_status.setText(zdyDataBean.getVersionName());
+                    service_eg.setText(zdyDataBean.getEngineName());
 
                     if(zdyDataBean.getMsg() == null || zdyDataBean.getMsg().isEmpty()){
 
