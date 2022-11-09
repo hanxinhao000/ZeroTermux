@@ -6,6 +6,7 @@
     <string name="application_name">&TERMUX_APP_NAME;</string>
     <string name="shared_user_label">&TERMUX_APP_NAME; 用户</string>
 
+    <string name="app_name">ZeroTermux</string>
 
     <!-- Termux RUN_COMMAND permission -->
     <string name="permission_run_command_label">运行命令 &TERMUX_APP_NAME; 环境</string>

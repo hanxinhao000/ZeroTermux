@@ -71,7 +71,7 @@
             android:name=".app.TermuxActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
-            android:label="@string/application_name"
+            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:resizeableActivity="true">
             <intent-filter>
@@ -107,7 +107,7 @@
         <activity
             android:name=".app.activities.HelpActivity"
             android:exported="false"
-            android:label="@string/application_name"
+            android:label="@string/app_name"
             android:parentActivityName=".app.TermuxActivity"
             android:resizeableActivity="true"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -173,7 +173,7 @@
         <activity
             android:name=".filepicker.TermuxFileReceiverActivity"
             android:excludeFromRecents="true"
-            android:label="@string/application_name"
+            android:label="@string/app_name"
             android:noHistory="true"
             android:resizeableActivity="true"
             android:taskAffinity="${TERMUX_PACKAGE_NAME}.filereceiver">
