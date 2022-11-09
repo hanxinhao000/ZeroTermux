@@ -25,6 +25,11 @@ import com.termux.zerocore.keybord.KeyBordManage
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.FileIOUtils
 import com.termux.zerocore.zero.engine.ZeroCoreManage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.selects.whileSelect
+import kotlinx.coroutines.withContext
 import java.io.File
 
 
@@ -115,6 +120,9 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 }
                 switchDialog.show()
             }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_FILE_BROWSER -> {
+                installFileBrowser();
+            }
         }
     }
 
@@ -156,6 +164,45 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
 
     public interface CommonCommandsDialogDismissListener {
         fun dismiss()
+    }
+
+    private fun installFileBrowser() {
+        val versionName = ZeroCoreManage.getVersionName()
+        if (TextUtils.isEmpty(versionName)) {
+            UUtils.showMsg(UUtils.getString(R.string.zero_eg_not_install))
+            return
+        }
+
+        val mHandler = object :Handler() {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                LogUtils.d(TAG, "handleMessage handler what: ${msg.what}")
+                if (msg.what == ZeroCoreManage.INSTALL_COMPLETE) {
+                    val smsBashrcFile = File(FileUrl.smsBashrcFile)
+                    var fileString = UUtils.getFileString(smsBashrcFile)
+                    if(!fileString.contains("filebrowser")){
+                        fileString += "\n cd ~ > /dev/null && ./.filebrowser/filebrowser -a 0.0.0.0 -p 19951 -r "+FileUrl.mainFilesUrl+" & > /dev/null"
+                        fileString += "\n echo '" + UUtils.getString(R.string.filebrowser已运行) + "'"
+                        UUtils.setFileString(smsBashrcFile,fileString)
+                    }
+                    if (msg?.obj != null) {
+                        TermuxActivity.mTerminalView.sendTextToTerminal(msg!!.obj as String?)
+                    }
+                }
+            }
+        }
+        GlobalScope.launch {
+            installFileBrowserIo(mHandler)
+        }
+    }
+
+    private suspend fun installFileBrowserIo(mHandler: Handler) {
+        withContext(Dispatchers.IO) {
+            ZeroCoreManage.installFileBrowser(mHandler)
+        }
+        withContext(Dispatchers.Main) {
+            mCommonCommandsDialogDismissListener?.dismiss()
+        }
     }
 
     private fun runQemuOs(mContext: Context?) {

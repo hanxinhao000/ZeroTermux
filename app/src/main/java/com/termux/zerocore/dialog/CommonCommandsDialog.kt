@@ -26,6 +26,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val X86_ALPINE_KEY = 1002
         public val CLEAR_STYLE = 1003
         public val WEB_LINUX = 1004
+        public val ITEM_CLICK_FILE_BROWSER = 1005
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -108,6 +109,16 @@ class CommonCommandsDialog : BaseDialogDown {
         mWebData.isEg = true
         mWebData.key = CommonCommandsDialogConstant.WEB_LINUX
         mList.add(mWebData)
+
+        /**
+         * 文件网络浏览器
+         */
+        var mFileBrowser: ItemMenuBean.Data = ItemMenuBean.Data()
+        mFileBrowser.title = UUtils.getString(R.string.网络访问linux目录)
+        mFileBrowser.id = R.mipmap.filebrowser_ico
+        mFileBrowser.isEg = true
+        mFileBrowser.key = CommonCommandsDialogConstant.ITEM_CLICK_FILE_BROWSER
+        mList.add(mFileBrowser)
 
         /**
          * X86 系统

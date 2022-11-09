@@ -93,6 +93,8 @@ android {
         implementation "io.noties.markwon:linkify:$markwonVersion"
         implementation "io.noties.markwon:recycler:$markwonVersion"
 
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+
 
         implementation project(":terminal-view")
         implementation project(":termux-shared")

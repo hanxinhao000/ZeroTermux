@@ -136,6 +136,19 @@ public class ZeroCoreManage {
         }
     }
 
+
+    public static void installFileBrowser(Handler mInstallHandler) {
+        try {
+            Object object = ZERO_ENGINE_CLASS.newInstance();
+            Method mMethod = object.getClass().getMethod("installFileBrowser", Context.class, Context.class, Handler.class);
+            mMethod.invoke(object, UUtils.getContext(), mContext, mInstallHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtils.e(TAG, "installFileBrowser error:" + e);
+        }
+    }
+
+
     public static void initKeyView() {
         try {
             Object object = ZERO_ENGINE_CLASS.newInstance();
