@@ -727,4 +727,8 @@ Reset successfully</string>
 
     <string name="engine_not_install">Not Install</string>
 
+    <string name="web_linux">Web Linux</string>
+
+    <string name="ttyd_install_complete">Please wait for the run to finish，\nIP:0.0.0.0\nport:7681</string>
+
 </resources>

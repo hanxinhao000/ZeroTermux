@@ -16,6 +16,7 @@ import com.termux.R
 import com.termux.app.TermuxActivity
 import com.termux.zerocore.activity.ImageActivity
 import com.termux.zerocore.bean.ItemMenuBean
+import com.termux.zerocore.data.CommendShellData
 import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.dialog.CommonCommandsDialog
 import com.termux.zerocore.dialog.SwitchDialog
@@ -35,6 +36,7 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
     private var mCommonDialogListener: CommonDialogListener? = null
     private var mVShellDialogListener: VShellDialogListener? = null
     private var mClearStyleListener: ClearStyleListener? = null
+    private var mCommonCommandsDialogDismissListener: CommonCommandsDialogDismissListener? = null
     private var mKeyViewListener: KeyViewListener? = null
     constructor(mList:ArrayList<ItemMenuBean.Data>?, mContext: Context, mCommonCommandsDialog:CommonCommandsDialog) : super() {
         this.mList = mList
@@ -97,6 +99,22 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 FileIOUtils.clearStyle()
                 mClearStyleListener?.clear()
             }
+            CommonCommandsDialog.CommonCommandsDialogConstant.WEB_LINUX -> {
+                TermuxActivity.mTerminalView.sendTextToTerminal(CommendShellData.SHELL_DATA_WEB_LINUX)
+                val switchDialog = SwitchDialog(mContext as Activity)
+                val replace = UUtils.getString(R.string.ttyd_install_complete)
+                    .replace("0.0.0.0", UUtils.getHostIP())
+                switchDialog.createSwitchDialog(replace)
+                switchDialog.ok?.setOnClickListener {
+                    switchDialog.dismiss()
+                    mCommonCommandsDialogDismissListener?.dismiss()
+                }
+                switchDialog.cancel?.setOnClickListener {
+                    switchDialog.dismiss()
+                    mCommonCommandsDialogDismissListener?.dismiss()
+                }
+                switchDialog.show()
+            }
         }
     }
 
@@ -115,6 +133,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
         this.mKeyViewListener = mKeyViewListener
     }
 
+    public fun setCommonCommandsDialogDismissListener(mCommonCommandsDialogDismissListener: CommonCommandsDialogDismissListener?) {
+        this.mCommonCommandsDialogDismissListener = mCommonCommandsDialogDismissListener
+    }
+
     public interface CommonDialogListener {
         fun video(file: File)
     }
@@ -130,6 +152,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
 
     public interface ClearStyleListener {
         fun clear()
+    }
+
+    public interface CommonCommandsDialogDismissListener {
+        fun dismiss()
     }
 
     private fun runQemuOs(mContext: Context?) {

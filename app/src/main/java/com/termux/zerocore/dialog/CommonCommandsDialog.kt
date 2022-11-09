@@ -25,6 +25,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val KEYBOARD_KEY = 1001
         public val X86_ALPINE_KEY = 1002
         public val CLEAR_STYLE = 1003
+        public val WEB_LINUX = 1004
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -99,6 +100,16 @@ class CommonCommandsDialog : BaseDialogDown {
         mList.add(mKeyData)
 
         /**
+         * WEB终端
+         */
+        var mWebData: ItemMenuBean.Data = ItemMenuBean.Data()
+        mWebData.title = UUtils.getString(R.string.web_linux)
+        mWebData.id = R.mipmap.web_linux
+        mWebData.isEg = true
+        mWebData.key = CommonCommandsDialogConstant.WEB_LINUX
+        mList.add(mWebData)
+
+        /**
          * X86 系统
          *
          */
@@ -115,6 +126,12 @@ class CommonCommandsDialog : BaseDialogDown {
         mItemMenuAdapter?.setVShellDialogListener(mVShellDialogListener)
         mItemMenuAdapter?.setKeyViewListener(mKeyViewListener)
         mItemMenuAdapter?.setClearStyleListener(mClearStyleListener)
+        mItemMenuAdapter?.setCommonCommandsDialogDismissListener(object :ItemMenuAdapter.CommonCommandsDialogDismissListener {
+            override fun dismiss() {
+                this@CommonCommandsDialog.dismiss()
+            }
+
+        })
         val gridLayoutManager = GridLayoutManager(UUtils.getContext(), getGridNumber())
         item_menu_rec?.layoutManager = gridLayoutManager
         item_menu_rec?.adapter = mItemMenuAdapter
