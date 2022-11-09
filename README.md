@@ -111,6 +111,8 @@ https://github.com/bumptech/glide
 
 https://github.com/tsl0922/ttyd
 
+https://github.com/filebrowser/filebrowser
+
 https://www.iconfont.cn/
 
 ## ZeroTermux鸣谢所有在此项目当中引用的作者，项目展示可能不完全，请谅解。
