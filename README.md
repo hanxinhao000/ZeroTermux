@@ -81,19 +81,33 @@ https://od.ixcmstudio.cn/repository/main/ZeroTermux/
 
 # 使用项目:
 https://github.com/termux/termux-app
+
 https://github.com/termux/termux-tasker
+
 https://github.com/termux/termux-api
+
 https://github.com/termux/termux-styling
+
 https://github.com/termux/termux-packages
+
 https://github.com/termux/termux-styling
+
 https://github.com/Lichenwei-Dev/ImagePicker
+
 https://github.com/BryleHelll/android-vshell
+
 https://github.com/Justson/AgentWeb
+
 https://github.com/getActivity/XXPermissions
+
 https://github.com/magnusja/libaums
+
 https://github.com/rtugeek/ColorSeekBar
+
 https://github.com/jeasonlzy/ImagePicker
+
 https://github.com/bumptech/glide
+
 https://www.iconfont.cn/
 
 ## ZeroTermux鸣谢所有在此项目当中引用的作者，项目展示可能不完全，请谅解。
