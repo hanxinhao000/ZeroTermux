@@ -79,7 +79,8 @@ https://od.ixcmstudio.cn/repository/main/ZeroTermux/
         7. Thanks to all the authors of the functions applied to this project. 
         8.Using ZeroTermux will directly or indirectly damage your equipment. If there is any irreparable loss, the user shall bear the responsibility of the software and the author."
 
-# 使用项目:
+## 使用项目:
+## use item:
 https://github.com/termux/termux-app
 
 https://github.com/termux/termux-tasker
