@@ -433,8 +433,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             KeyboardUtils.clearDisableSoftKeyboardFlags(TermuxActivity.this);
                             KeyboardUtils.toggleSoftKeyboard(TermuxActivity.this);
                         } else {
-                            key_bord.addView(mView);
-                            getTerminalToolbarViewPager().setVisibility(View.GONE);
+                            try {
+                                key_bord.addView(mView);
+                                getTerminalToolbarViewPager().setVisibility(View.GONE);
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                                key_bord.removeAllViews();
+                            }
 
                             KeyboardUtils.disableSoftKeyboard(TermuxActivity.this, mTerminalView);
                         }
