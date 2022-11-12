@@ -176,6 +176,7 @@
             android:label="@string/app_name"
             android:noHistory="true"
             android:resizeableActivity="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:taskAffinity="${TERMUX_PACKAGE_NAME}.filereceiver">
 
             <!-- Accept multiple file types when sending. -->
