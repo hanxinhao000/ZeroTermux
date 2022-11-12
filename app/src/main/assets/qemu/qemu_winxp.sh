@@ -32,7 +32,7 @@ pkg update -y
 
 pkg install wget proot git -y
 
-wget http://od.ixcmstudio.cn/repository/main/windows/winxp.tar.gz
+wget https://od.ixcmstudio.cn/repository/main/windows/winxp.tar.gz
 
 tar zxvf winxp.tar.gz
 
