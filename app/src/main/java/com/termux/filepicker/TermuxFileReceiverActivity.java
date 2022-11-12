@@ -164,11 +164,11 @@ public class TermuxFileReceiverActivity extends AppCompatActivity {
                 if (outFile == null) return;
 
                 final File editorProgramFile = new File(EDITOR_PROGRAM);
-                if (!editorProgramFile.isFile()) {
+              /*  if (!editorProgramFile.isFile()) {
                     showErrorDialogAndQuit("The following file does not exist:\n$HOME/bin/termux-file-editor\n\n"
                         + "Create this file as a script or a symlink - it will be called with the received file as only argument.");
                     return;
-                }
+                }*/
 
                 // Do this for the user if necessary:
                 //noinspection ResultOfMethodCallIgnored

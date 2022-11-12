@@ -612,7 +612,7 @@
     <string name="termux_api_preferences_summary">偏好 &TERMUX_API_APP_NAME; 应用</string>
     <!-- TermuxService -->
     <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME;
-        需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME; -> 先进的</string>
+        需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME; -> 选中</string>
     <string name="选择方式">选择方式</string>
     <string name="要获取最新版本">要获取最新版本，你需要在线下载，旧版本可以选择本地脚本</string>
     <string name="获取线上">获取线上</string>
