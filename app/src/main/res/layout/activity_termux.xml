@@ -202,7 +202,7 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/color_161823"
                     app:cardCornerRadius="3dp"
-                    android:layout_height="113dp">
+                    android:layout_height="90dp">
 
 
                     <LinearLayout
@@ -265,7 +265,6 @@
                                 android:textStyle="bold"
                                 android:textSize="15sp"
                                 android:id="@+id/version"
-                                android:layout_marginTop="10dp"
                                 android:layout_alignParentRight="true"
                                 android:text="@string/版本"
                                 android:layout_height="wrap_content"/>
@@ -276,7 +275,7 @@
                                 android:textStyle="bold"
                                 android:id="@+id/eg_tv"
                                 android:textSize="15sp"
-                                android:layout_marginTop="10dp"
+                                android:layout_marginTop="5dp"
                                 android:layout_alignParentRight="true"
                                 android:text="@string/版本"
                                 android:layout_height="wrap_content"/>
@@ -304,7 +303,7 @@
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/color_161823"
                     app:cardCornerRadius="3dp"
-                    android:layout_height="113dp">
+                    android:layout_height="90dp">
 
 
                     <LinearLayout
@@ -339,7 +338,6 @@
                                 android:textStyle="bold"
                                 android:textSize="15sp"
                                 android:id="@+id/service_status"
-                                android:layout_marginTop="15dp"
                                 android:layout_alignParentRight="true"
                                 android:text="@string/正在连接"
                                 android:layout_height="wrap_content"/>
@@ -351,7 +349,7 @@
                                 android:textSize="15sp"
                                 android:layout_below="@+id/service_status"
                                 android:id="@+id/service_eg"
-                                android:layout_marginTop="15dp"
+                                android:layout_marginTop="5dp"
                                 android:layout_alignParentRight="true"
                                 android:text="@string/正在连接"
                                 android:layout_height="wrap_content"/>
