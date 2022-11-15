@@ -1,5 +1,6 @@
 package com.termux.zerocore.utils
 
+import android.content.Context
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.google.gson.Gson
@@ -9,6 +10,7 @@ import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
 import com.termux.zerocore.url.FileUrl
 import java.io.File
+import java.text.DecimalFormat
 
 object FileIOUtils {
 
@@ -166,6 +168,46 @@ object FileIOUtils {
         return !(fileProot.exists()) || !(fileWget.exists()) || !(fileQemu.exists())
     }
 
+    public fun getLengthToMb(mFile: File): String? {
+        return formatFileSize(mFile.length())
+    }
+
+    public fun getExtension(mFile: File): String {
+        val fileName = mFile.name
+        val contains = mFile.name.contains(".")
+        var extension = ""
+        if (contains) {
+            val i: Int = fileName.lastIndexOf('.')
+            if (i > 0) {
+                return fileName.substring(i + 1)
+            } else {
+                return "N/A"
+            }
+        } else {
+            return "N/A"
+        }
+    }
+
+    fun formatFileSize(fileS: Long): String? {
+        val df = DecimalFormat("#.00")
+        var fileSizeString = ""
+        val wrongSize = "0B"
+        if (fileS == 0L) {
+            return wrongSize
+        }
+        fileSizeString = if (fileS < 1024) {
+            df.format(fileS.toDouble()) + "B"
+        } else if (fileS < 1048576) {
+            df.format(fileS.toDouble() / 1024) + "KB"
+        } else if (fileS < 1073741824) {
+            df.format(fileS.toDouble() / 1048576) + "MB"
+        } else {
+            df.format(fileS.toDouble() / 1073741824) + "GB"
+        }
+        LogUtils.d(TAG, "formatFileSize fileS:$fileS")
+        return fileSizeString
+    }
+
     public fun clearStyle() {
         com.example.xh_lib.utils.SaveData.saveStringOther("font_color_progress", "def")
         com.example.xh_lib.utils.SaveData.saveStringOther("font_color", "def")
@@ -183,4 +225,10 @@ object FileIOUtils {
         }
         clearPathVideo()
     }
+
+    public fun getHomePath(mContext: Context): String {
+        return mContext.filesDir.absolutePath + "/home/"
+    }
+
+
 }

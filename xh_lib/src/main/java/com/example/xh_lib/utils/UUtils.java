@@ -805,7 +805,7 @@ public class UUtils {
     }
 
     //写出文件
-    public static void writerFileRawInput(File mFile,InputStream open) {
+    public static void writerFileRawInput(File mFile, InputStream open) {
         Log.e(LOG_TAG, "writerFileRawInput: start");
         try {
             int len = 0;
@@ -825,6 +825,37 @@ public class UUtils {
             open.close();
             fileOutputStream.close();
             Log.e(LOG_TAG, "writerFileRawInput: deon"  );
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "writerFileRawInput: " + e.toString() );
+            e.printStackTrace();
+        }
+
+    }
+
+    //写出文件
+    public static void writerFileInput(File mFile, InputStream open, WriterFileListener mWriterFileListener) {
+        Log.e(LOG_TAG, "writerFileRawInput: start");
+        try {
+            int len = 0;
+            byte[] lll = new byte[51200];
+            long schedule = 0;
+            if (!mFile.exists()) {
+                mFile.createNewFile();
+                Log.e(LOG_TAG, "writerFileRawInput: createNewFile");
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(mFile);
+
+            while ((len = open.read(lll)) != -1) {
+                fileOutputStream.write(lll,0,len);
+                schedule += lll.length;
+                mWriterFileListener.schedule(schedule, false);
+            }
+
+            fileOutputStream.flush();
+            open.close();
+            fileOutputStream.close();
+            mWriterFileListener.schedule(schedule, true);
+            Log.e(LOG_TAG, "writerFileRawInput: done"  );
         } catch (Exception e) {
             Log.e(LOG_TAG, "writerFileRawInput: " + e.toString() );
             e.printStackTrace();
@@ -991,5 +1022,9 @@ public class UUtils {
             stringBuilder.append(list.get(i)).append(" ");
         }
         return stringBuilder.toString();
+    }
+
+    public static interface WriterFileListener {
+        void schedule(long l, boolean isEnd);
     }
 }

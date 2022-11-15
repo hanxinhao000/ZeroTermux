@@ -173,7 +173,7 @@
         <activity
             android:name=".filepicker.TermuxFileReceiverActivity"
             android:excludeFromRecents="true"
-            android:label="@string/app_name"
+            android:label="@string/opne_in_zerotermux"
             android:noHistory="true"
             android:resizeableActivity="true"
             android:theme="@style/Theme.AppCompat.NoActionBar"
