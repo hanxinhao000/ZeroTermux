@@ -726,6 +726,10 @@
 
     <string name="ttyd_install_complete">请等待运行完成，\nIP:0.0.0.0\n端口:7681</string>
 
+    <string name="qq_group">复制群号</string>
+
+    <string name="telegram_group">Telegram</string>
+
 </resources>
 
 

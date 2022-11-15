@@ -731,4 +731,7 @@ Reset successfully</string>
 
     <string name="ttyd_install_complete">Please wait for the run to finish，\nIP:0.0.0.0\nport:7681</string>
 
+    <string name="qq_group">copy qq number</string>
+
+    <string name="telegram_group">Telegram</string>
 </resources>

@@ -1341,6 +1341,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView service_eg;
     private TextView msg_tv;
     private TextView ip_status;
+    private TextView qq_group_tv;
+    private TextView telegram_group_tv;
     private TextView double_tishi;
     private TextView xue_hua_start;
     private FrameLayout xue_fragment;
@@ -1361,6 +1363,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
         code_ll = findViewById(R.id.code_ll);
+        telegram_group_tv = findViewById(R.id.telegram_group_tv);
+        qq_group_tv = findViewById(R.id.qq_group_tv);
         zerotermux_bbs = findViewById(R.id.zerotermux_bbs);
         rongqi = findViewById(R.id.rongqi);
         back_res = findViewById(R.id.back_res);
@@ -1419,6 +1423,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         msg.setOnClickListener(this);
         online_sh.setOnClickListener(this);
         zerotermux_bbs.setOnClickListener(this);
+        telegram_group_tv.setOnClickListener(this);
+        qq_group_tv.setOnClickListener(this);
         files_mulu.setOnClickListener(this);
         github.setOnClickListener(this);
         start_command.setOnClickListener(this);
@@ -1908,6 +1914,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
 
+            case R.id.qq_group_tv:
+                UUtils.copyToClip("878847174");
+                break;
+            case R.id.telegram_group_tv:
+                Intent intent1 = new Intent();
+                intent1.setData(Uri.parse("https://t.me/ztcommunity"));
+                intent1.setAction(Intent.ACTION_VIEW);
+                this.startActivity(intent1);
+                break;
             case R.id.beautify:
 
                 getDrawer().close();
