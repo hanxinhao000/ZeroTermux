@@ -106,7 +106,7 @@ class CommonCommandsDialog : BaseDialogDown {
         var mWebData: ItemMenuBean.Data = ItemMenuBean.Data()
         mWebData.title = UUtils.getString(R.string.web_linux)
         mWebData.id = R.mipmap.web_linux
-        mWebData.isEg = true
+        mWebData.isEg = false
         mWebData.key = CommonCommandsDialogConstant.WEB_LINUX
         mList.add(mWebData)
 
