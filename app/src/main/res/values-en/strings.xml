@@ -742,4 +742,6 @@ Reset successfully</string>
     <string name="file_name_copy">FileMessage:{file}\n\nSize:{size}\n\nPath:{path}\n\nSuffix:{suffix}\n\ncopyPath:~</string>
 
     <string name="copy_file_to_zt">copy is complete, the copy is in the path:"~"</string>
+
+    <string name="not_file_msg">File error, cannot be copied into ZeroTermux application!</string>
 </resources>

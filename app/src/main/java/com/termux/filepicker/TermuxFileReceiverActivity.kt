@@ -50,6 +50,11 @@ class TermuxFileReceiverActivity : ComponentActivity() {
         }
 
         start_fz.setOnClickListener {
+            if (mFile == null) {
+                UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
+                finish()
+                return@setOnClickListener
+            }
             val file = File(FileIOUtils.getHomePath(UUtils.getContext()), mFile!!.name)
             LogUtils.d(TAG, "onCreate file: ${file.absolutePath}")
             if (!file.exists()) {

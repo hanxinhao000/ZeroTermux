@@ -737,6 +737,8 @@
     <string name="file_name_copy">文件信息:{file}\n\n大小:{size}\n\n路径:{path}\n\n后戳名(文件类型):{suffix}\n\n复制路径:~</string>
 
     <string name="copy_file_to_zt">复制完成，复制在路径在:"~"</string>
+
+    <string name="not_file_msg">文件错误，不能复制到ZeroTermux应用中!</string>
 </resources>
 
 
