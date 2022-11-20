@@ -35,7 +35,7 @@ class SwitchDialog : BaseDialogCentre {
     }
 
     public fun createSwitchDialog(msg: String): SwitchDialog {
-        title?.visibility = View.GONE
+        title?.visibility = View.INVISIBLE
         other?.visibility = View.GONE
         ok?.text = UUtils.getString(R.string.确定)
         cancel?.text = UUtils.getString(R.string.取消)

@@ -707,7 +707,7 @@
 
     <string name="web_linux">浏览器终端</string>
 
-    <string name="ttyd_install_complete">请等待运行完成，\nIP:0.0.0.0\n端口:7681</string>
+    <string name="ttyd_install_complete">IP:0.0.0.0\n端口:7681</string>
 
     <string name="qq_group">复制群号</string>
 
@@ -722,5 +722,7 @@
     <string name="copy_file_to_zt">复制完成，复制在路径在:"~"</string>
 
     <string name="not_file_msg">文件错误，不能复制到ZeroTermux应用中!</string>
+
+    <string name="ttyd_install_msg">当前没有安装当前环境，请等待安装完成之后【再此点击此入口】!</string>
 
 </resources>

@@ -230,5 +230,18 @@ object FileIOUtils {
         return mContext.filesDir.absolutePath + "/home/"
     }
 
+    public fun getBinPath(mContext: Context): String {
+        return mContext.filesDir.absolutePath + "/usr/bin/"
+    }
+
+    public fun isBinFileExists(fileName: String): Boolean {
+        val binPath = getBinPath(UUtils.getContext())
+        val file = File(binPath, fileName)
+        LogUtils.d(TAG, "isBinFileExists file path: ${file.absolutePath}")
+        if (file.exists()) {
+            return true
+        }
+        return false
+    }
 
 }

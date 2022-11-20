@@ -729,7 +729,7 @@ Reset successfully</string>
 
     <string name="web_linux">Web Linux</string>
 
-    <string name="ttyd_install_complete">Please wait for the run to finish，\nIP:0.0.0.0\nport:7681</string>
+    <string name="ttyd_install_complete">IP:0.0.0.0\nport:7681</string>
 
     <string name="qq_group">copy qq number</string>
 
@@ -744,4 +744,6 @@ Reset successfully</string>
     <string name="copy_file_to_zt">copy is complete, the copy is in the path:"~"</string>
 
     <string name="not_file_msg">File error, cannot be copied into ZeroTermux application!</string>
+
+    <string name="ttyd_install_msg">The current environment is not currently installed, please wait for the installation to complete [click this entry again]!</string>
 </resources>
