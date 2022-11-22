@@ -746,4 +746,19 @@ Reset successfully</string>
     <string name="not_file_msg">File error, cannot be copied into ZeroTermux application!</string>
 
     <string name="ttyd_install_msg">The current environment is not currently installed, please wait for the installation to complete [click this entry again]!</string>
+
+    <string name="ftp">FTP server</string>
+
+    <string name="storage_warning">Aviso: Almacenamiento no disponible. Puede que quieras desmontarlo.</string>
+
+    <string name="ftp_title">explanation</string>
+
+    <string name="ftp_msg">Click on this description to jump to the author github, thanks again to the author Pieter Pareit for the FTP core program\nThis FTP core is integrated by swiftp. \nAddress: https://github.com/ppareit/swiftp\nThe function can use FTP to upload files to Zero Home or SDCARD\nWhen changing the path to be accessed, the FTP service will be restarted\nBut changing the user name, password, The port needs to be manually restarted to take effect\nThe changed user name, password, and port data will be saved in real time</string>
+
+    <string name="ftp_error">The file has not been loaded or failed to read, please open it after loading or try again</string>
+
+    <string name="ftp_start_window">Jump to FTP</string>
+
+    <string name="ftp_prot_error">The currently selected port is occupied</string>
+
 </resources>

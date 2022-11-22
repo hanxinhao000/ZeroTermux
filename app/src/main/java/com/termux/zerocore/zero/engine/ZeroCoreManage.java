@@ -1,14 +1,12 @@
 package com.termux.zerocore.zero.engine;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.view.View;
 
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 

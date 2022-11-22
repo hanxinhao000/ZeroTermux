@@ -25,6 +25,7 @@ import com.termux.shared.termux.shell.am.TermuxAmSocketServer;
 import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
+import com.termux.zerocore.bean.SaveDataZeroEngine;
 import com.termux.zerocore.utils.ClipBoardUtil;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
 
@@ -91,12 +92,6 @@ public class TermuxApplication extends XHApplication {
         if (isTermuxFilesDirectoryAccessible) {
             TermuxShellEnvironment.writeEnvironmentToFile(this);
         }
-
-
-
-
-
-
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxSpeed(0);
         Aria.get(this).getDownloadConfig().setConvertSpeed(true);

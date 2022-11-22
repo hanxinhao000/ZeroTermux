@@ -19,6 +19,7 @@ import com.termux.zerocore.bean.ItemMenuBean
 import com.termux.zerocore.data.CommendShellData
 import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.dialog.CommonCommandsDialog
+import com.termux.zerocore.dialog.FtpWindowsDialog
 import com.termux.zerocore.dialog.SwitchDialog
 import com.termux.zerocore.dialog.view_holder.ItemMenuViewHolder
 import com.termux.zerocore.keybord.KeyBordManage
@@ -28,7 +29,6 @@ import com.termux.zerocore.zero.engine.ZeroCoreManage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.whileSelect
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -63,7 +63,7 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
         }
         holder.itemView.setOnClickListener {
             LogUtils.d(TAG, "onBindViewHolder itemView click key is:${mList!![position].key}")
-            clickItem(mList!![position].key)
+            clickItem(mList!![position].key, holder.itemView)
         }
     }
 
@@ -75,7 +75,7 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
         this.mContext = mContext
     }
 
-    private fun clickItem(id: Int) {
+    private fun clickItem(id: Int, itemView: View) {
         when (id) {
             CommonCommandsDialog.CommonCommandsDialogConstant.VIDEO_KEY -> {
                 UsbFileData.get().setImageFileCheckListener(object :UsbFileData.ImageFileCheckListener{
@@ -128,6 +128,9 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
             }
             CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_FILE_BROWSER -> {
                 installFileBrowser();
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_FTP -> {
+                startFTP(itemView)
             }
         }
     }
@@ -209,6 +212,11 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
         withContext(Dispatchers.Main) {
             mCommonCommandsDialogDismissListener?.dismiss()
         }
+    }
+
+    private fun startFTP(itemView: View) {
+        val popupFtpWindows = FtpWindowsDialog(mContext!!)
+        popupFtpWindows.show()
     }
 
     private fun runQemuOs(mContext: Context?) {

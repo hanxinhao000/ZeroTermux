@@ -1,6 +1,7 @@
 package com.termux.zerocore.utils
 
 import android.content.Context
+import android.os.Environment
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.google.gson.Gson
@@ -24,6 +25,8 @@ object FileIOUtils {
     public const val TERMUX_CHROOT = "/data/data/com.termux/files/usr/bin/termux-chroot"
     public const val TERMUX_WGET = "/data/data/com.termux/files/usr/bin/wget"
     public const val TERMUX_QEMU = "/data/data/com.termux/files/usr/bin/qemu-system-x86_64"
+
+    public  val TERMUX_XINHAO_CONFIG = Environment.getExternalStorageDirectory().absolutePath + "/xinhao/config/"
 
     //VIDEO
     public const val VIDEO_KEY = "videoPath"
@@ -230,6 +233,14 @@ object FileIOUtils {
         return mContext.filesDir.absolutePath + "/home/"
     }
 
+    public fun getFilePath(): String {
+        return UUtils.getContext().filesDir.absolutePath
+    }
+
+    public fun getSdcardPath(): String {
+        return Environment.getExternalStorageDirectory().absolutePath
+    }
+
     public fun getBinPath(mContext: Context): String {
         return mContext.filesDir.absolutePath + "/usr/bin/"
     }
@@ -243,5 +254,11 @@ object FileIOUtils {
         }
         return false
     }
+
+    public fun getConfigFilePath() :String {
+        return TERMUX_XINHAO_CONFIG
+    }
+
+
 
 }

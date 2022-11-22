@@ -9,5 +9,6 @@ public class ItemMenuBean {
         public int id;
         public int key;
         public boolean isEg = false;
+        public int backColor = -1;
     }
 }

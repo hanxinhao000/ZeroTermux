@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823_2e"
+    android:padding="10dp"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:id="@+id/title_ftp"
+        android:textColor="@color/color_ffffff"
+        android:text="ZeroFTP"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/ftp"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+
+   <RelativeLayout
+       android:layout_width="wrap_content"
+       android:layout_alignParentRight="true"
+       android:layout_height="wrap_content">
+       <com.github.iielse.switchbutton.SwitchView
+           android:layout_width="35dp"
+           android:id="@+id/switch_btn"
+           android:layout_height="wrap_content"/>
+       <ProgressBar
+           android:id="@+id/pro"
+           android:layout_width="25dp"
+           android:visibility="invisible"
+           android:layout_centerVertical="true"
+           android:layout_centerHorizontal="true"
+           android:layout_height="25dp"/>
+   </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/端口"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_ffffff"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:inputType="number"
+            android:enabled="true"
+            android:gravity="center"
+            android:id="@+id/port_ed"
+            android:textSize="15sp"
+            android:hint="2121"
+            android:textColorHint="@color/color_6d87a8"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/路径"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+ <LinearLayout
+     android:layout_width="wrap_content"
+     android:orientation="horizontal"
+     android:layout_alignParentRight="true"
+     android:layout_height="wrap_content">
+
+     <TextView
+         android:layout_width="80dp"
+         android:layout_marginLeft="10dp"
+         android:textColor="@color/color_ffffff"
+         android:paddingLeft="5dp"
+         android:paddingRight="5dp"
+         android:id="@+id/sdcard"
+         android:gravity="center"
+         android:textSize="13sp"
+         android:text="SDCARD"
+         android:background="@drawable/shape_line_8cff5a"
+         android:layout_height="30dp"/>
+
+     <TextView
+         android:layout_width="80dp"
+         android:layout_marginLeft="10dp"
+         android:textColor="@color/color_ffffff"
+         android:paddingLeft="5dp"
+         android:paddingRight="5dp"
+         android:id="@+id/zero_root"
+         android:gravity="center"
+         android:textSize="13sp"
+         android:text="ZeroFile"
+         android:background="@drawable/shape_r_3dp_161823_232635"
+         android:layout_height="30dp"/>
+
+ </LinearLayout>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="USERNAME"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:textColor="@color/color_ffffff"
+            android:id="@+id/username"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:hint="ftp"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:textColorHint="@color/color_6d87a8"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="PASSWORD"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_ffffff"
+            android:id="@+id/password"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:hint="ftp"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:textColorHint="@color/color_6d87a8"
+            android:layout_alignParentRight="true"
+            android:layout_height="30dp"/>
+
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:layout_centerVertical="true"
+            android:text="@string/ftp_title"
+            android:id="@+id/ftp_title"
+            android:textColor="@color/color_ffffff"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:textColor="@color/color_ffffff"
+            android:layout_toRightOf="@+id/ftp_title"
+            android:textSize="10sp"
+            android:id="@+id/ftp_msg"
+            android:text="@string/ftp_msg"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"/>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp"
+        android:background="@color/color_232635"
+        android:layout_height="1px"/>
+
+</LinearLayout>

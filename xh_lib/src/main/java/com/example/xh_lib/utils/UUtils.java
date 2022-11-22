@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 
 import androidx.annotation.LayoutRes;
@@ -273,6 +275,43 @@ public class UUtils {
         } else {
             return rvZeroAndDot(bd.multiply(bd1).setScale(scale, BigDecimal.ROUND_DOWN).toPlainString());
         }
+    }
+    public static void sleepIgnoreInterrupt(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    public static String getFtpDate(long time) {
+        SimpleDateFormat df = createSimpleDateFormat();
+        return df.format(new Date(time));
+    }
+
+    /**
+     * Creates a SimpleDateFormat in the formatting used by ftp sever/client.
+     */
+    private static SimpleDateFormat createSimpleDateFormat() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return df;
+    }
+
+    public static Date parseDate(String time) throws ParseException {
+        SimpleDateFormat df = createSimpleDateFormat();
+        return df.parse(time);
+    }
+
+    //获取版本号
+    public static String getVersionName(Context mContext) {
+        String versionName = "";
+        try {
+            PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
+            versionName = packageInfo.versionName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return versionName;
     }
 
     //除法
@@ -905,6 +944,14 @@ public class UUtils {
             uri = Uri.fromFile(new File(filePath));
         }
         return uri;
+    }
+
+    public static void startUrl(String url) {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse(url));//Url 就是你要打开的网址
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        UUtils.getContext().startActivity(intent); //启动浏览器
     }
 
     public static void chmod(File file){

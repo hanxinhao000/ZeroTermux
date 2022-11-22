@@ -48,6 +48,7 @@ import com.termux.shared.shell.command.ExecutionCommand.ShellCreateMode;
 import com.termux.terminal.TerminalEmulator;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
+import com.termux.zerocore.bean.SaveDataZeroEngine;
 
 import java.util.ArrayList;
 import java.util.List;

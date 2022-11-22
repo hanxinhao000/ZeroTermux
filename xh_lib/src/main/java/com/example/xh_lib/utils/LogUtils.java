@@ -11,5 +11,8 @@ public class LogUtils {
     public static void d(String tag, String msg) {
         Log.d(TAG + "--" + tag, msg);
     }
+    public static void crawl(String tag, String msg, Exception e) {
+        Log.d(TAG + "--" + tag, msg, e);
+    }
 
 }

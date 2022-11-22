@@ -1,6 +1,7 @@
 package com.termux.zerocore.dialog
 
 import android.content.Context
+import android.graphics.Color
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,6 +28,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val CLEAR_STYLE = 1003
         public val WEB_LINUX = 1004
         public val ITEM_CLICK_FILE_BROWSER = 1005
+        public val ITEM_CLICK_FTP = 1006
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -130,6 +132,19 @@ class CommonCommandsDialog : BaseDialogDown {
         mX86AlpineData.isEg = true
         mX86AlpineData.key = CommonCommandsDialogConstant.X86_ALPINE_KEY
         mList.add(mX86AlpineData)
+
+        /**
+         * FTP
+         *
+         */
+        var mFtpData: ItemMenuBean.Data = ItemMenuBean.Data()
+        mFtpData.title = UUtils.getString(R.string.ftp)
+        mFtpData.id = R.mipmap.ftp_web
+        mFtpData.isEg = false
+        mFtpData.backColor = UUtils.getColor(R.color.color_8850b397)
+        mFtpData.key = CommonCommandsDialogConstant.ITEM_CLICK_FTP
+        mList.add(mFtpData)
+
 
 
         mItemMenuAdapter = ItemMenuAdapter(mList, mContext, this)

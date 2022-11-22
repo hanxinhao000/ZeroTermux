@@ -741,6 +741,20 @@
     <string name="not_file_msg">文件错误，不能复制到ZeroTermux应用中!</string>
 
     <string name="ttyd_install_msg">当前没有安装当前环境，请等待安装完成之后【再此点击此入口】!</string>
+
+    <string name="ftp">FTP服务</string>
+
+    <string name="storage_warning">警告：当前存储暂不可用，您可能需要取消挂载。</string>
+
+    <string name="ftp_title">说明</string>
+
+    <string name="ftp_msg">点击此段说明，跳转到作者github,再次鸣谢作者Pieter Pareit的FTP核心程序\n此FTP核心是由swiftp集成的。\n地址:https://github.com/ppareit/swiftp\n功能可以使用FTP上传文件到Zero Home或者SDCARD\n在更改需要访问的路径是会重启FTP服务\n但是更改用户名、密码、端口需要手动重启服务来生效\n更改用户名、密码、端口数据会实时保存</string>
+
+    <string name="ftp_error">文件未被加载或读取失败, 请加载后打开或重试</string>
+
+    <string name="ftp_start_window">跳转至FTP网页</string>
+
+    <string name="ftp_prot_error">当前所选端口被占用!</string>
 </resources>
 
 
