@@ -137,6 +137,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                 mProgressBar?.visibility = View.INVISIBLE
                 it.isOpened = false
                 mPopupFtpWindowsSwitchBtnListener?.switchBtn(false)
+                initTitleText()
             }
         }
     }
@@ -219,7 +220,14 @@ class FtpWindowsDialog : BaseDialogCentre {
 
     private fun initTitleText() {
         if (FsService.isRunning()) {
-            mTitleFtp?.setText(UUtils.getString(R.string.ftp_start_window))
+            val port =
+                SaveDataZeroEngine.getStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT)
+            val empty = SaveDataZeroEngine.isEmpty(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT)
+            if (empty) {
+                mTitleFtp?.setText(UUtils.getString(R.string.ftp_start_window) + "\nftp://" + UUtils.getHostIP() + ":2121")
+            } else {
+                mTitleFtp?.setText(UUtils.getString(R.string.ftp_start_window) + "\nftp://" + UUtils.getHostIP() + ":" + port)
+            }
             mTitleFtp?.setTextColor(UUtils.getColor(R.color.color_48baf3))
         } else {
             mTitleFtp?.setText("ZeroFTP")

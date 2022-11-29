@@ -262,19 +262,24 @@ public class FsService extends Service implements Runnable {
     public void run() {
         Log.d(TAG, "Server thread running");
 
-        if (!isConnectedToLocalNetwork()) {
+   /*     if (!isConnectedToLocalNetwork()) {
             Log.w(TAG, "run: There is no local network, bailing out");
             stopSelf();
             sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
             return;
         }
-
+*/
         // Initialization of wifi, set up the socket
         try {
             setupListener();
         } catch (IOException e) {
             Log.w(TAG, "run: Unable to open port, bailing out.");
-            UUtils.showMsg(UUtils.getString(R.string.ftp_start_window));
+            UUtils.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    UUtils.showMsg(UUtils.getString(R.string.ftp_start_window));
+                }
+            });
             stopSelf();
             sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
             return;
