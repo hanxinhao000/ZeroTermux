@@ -70,6 +70,7 @@ class TermuxFileReceiverActivity : ComponentActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
+                finish()
             }
         }
     }
