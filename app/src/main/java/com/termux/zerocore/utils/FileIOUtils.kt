@@ -2,7 +2,7 @@ package com.termux.zerocore.utils
 
 import android.content.Context
 import android.os.Environment
-import android.util.Log
+import android.system.Os
 import android.widget.Toast
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
@@ -362,6 +362,34 @@ object FileIOUtils {
 
     public fun isPacketFormat(name: String): Boolean {
         return name.endsWith("tar.gz") || name.endsWith("tar.bz2") || name.endsWith("tar.xz")
+    }
+
+    public fun isXinhaoLinkPath(mContext: Context): Boolean {
+        return File(getXinhaoLinkPath(mContext)).exists()
+    }
+
+    public fun getXinhaoLinkPath(mContext: Context): String {
+        return mContext.filesDir.absolutePath + "/home/xinhaoLink"
+    }
+
+    public fun createXinhaoPath(mContext: Context): Boolean {
+        return File(getXinhaoLinkPath(mContext)).mkdirs()
+    }
+
+    public fun setupFileSymlinks(originalPath: String, linkPath: String) {
+        Os.symlink(originalPath, linkPath)
+    }
+
+    public fun getLogPath(): String {
+        return getSdcardPath() + "/xinhao/ZeroTermuxLog"
+    }
+
+    public fun isLogPath(): Boolean {
+        return File(getLogPath()).exists()
+    }
+
+    public fun createLogPath(): Boolean {
+        return File(getLogPath()).mkdirs()
     }
 
 }

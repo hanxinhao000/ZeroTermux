@@ -119,6 +119,7 @@ import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.dialog.VNCConnectionDialog;
 import com.termux.zerocore.dialog.adapter.ItemMenuAdapter;
 import com.termux.zerocore.http.HTTPIP;
+import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
@@ -279,6 +280,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private static final String LOG_TAG = "Termux--Apk:TermuxActivity";
     private static final String TAG = "TermuxActivity";
+    private OTGManager mOTGManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -317,6 +319,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         mTermuxActivityRootView = findViewById(R.id.activity_termux_root_view);
         mTermuxActivityRootView.setActivity(this);
+        mOTGManager = new OTGManager();
         mTermuxActivityBottomSpaceView = findViewById(R.id.activity_termux_bottom_space_view);
         mTermuxActivityRootView.setOnApplyWindowInsetsListener(new TermuxActivityRootView.WindowInsetsListener());
 
@@ -591,11 +594,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
          *
          */
 
-       /* IntentFilter filter = new IntentFilter();
+        IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(ACTION_USB_PERMISSION);
-        registerReceiver(mUsbReceiver, filter);*/
+        filter.addAction(OTGManager.OTGManagerConstant.INSTANCE.getACTION_USB_PERMISSION());
+        registerReceiver(mUsbReceiver, filter);
 
     }
 
@@ -641,6 +644,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxService.unsetTermuxTerminalSessionClient();
             mTermuxService = null;
         }
+        unregisterReceiver(mUsbReceiver);
 
         try {
             unbindService(this);
@@ -3310,11 +3314,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
 
     }
-
-
-
-    private boolean isTS = true;
-    private static final String ACTION_USB_PERMISSION = "com.androidinspain.otgviewer.USB_PERMISSION";
     /**
      *
      *
@@ -3322,212 +3321,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      *
      *
      */
-
-    private SwitchDialog otgSwitchDialog;
-
     BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                UUtils.showLog("OTG:设备已拔出");
-                if(otgSwitchDialog != null && otgSwitchDialog.isShowing()){
-
-                    try{
-                        otgSwitchDialog.dismiss();
-                        otgSwitchDialog = null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        otgSwitchDialog = null;
-                    } finally {
-                        otgSwitchDialog = null;
-                    }
-
-
-                }
+            if (mOTGManager == null) {
+                mOTGManager = new OTGManager();
             }
-
-            if(UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)){
-                UUtils.showLog("OTG:设备已插入");
-            }
-
-
-            UsbMassStorageDevice[] devices = UsbMassStorageDevice.getMassStorageDevices(TermuxActivity.this);
-
-
-            UUtils.showLog("OTG:集合长度(" + devices.length + ")");
-
-
-            if(UsbFileData.Companion.get().getMRefFileList() != null){
-                try{
-                    UsbFileData.Companion.get().getMRefFileList().ref();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-
-
-            if(devices.length > 0){
-                //获取管理者
-                UsbManager usbManager = (UsbManager) UUtils.getContext().getSystemService(Context.USB_SERVICE);
-                //枚举设备
-                UsbMassStorageDevice[] storageDevices = UsbMassStorageDevice.getMassStorageDevices(UUtils.getContext());//获取存储设备
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(TermuxActivity.this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-                for (UsbMassStorageDevice device : storageDevices) {//可能有几个 一般只有一个 因为大部分手机只有1个otg插口
-
-
-
-                    if (usbManager.hasPermission(device.getUsbDevice())) {//有就直接读取设备是否有权限
-                        read(device);
-                    } else {//没有就去发起意图申请
-
-                        if(isTS){
-
-                            if(otgSwitchDialog != null && otgSwitchDialog.isShowing()){
-
-                                try{
-                                    otgSwitchDialog.dismiss();
-                                    otgSwitchDialog = null;
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                    otgSwitchDialog = null;
-                                } finally {
-                                    otgSwitchDialog = null;
-                                }
-
-
-                            }
-
-                            otgSwitchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.检测到OTG设备));
-
-                            otgSwitchDialog.getCancel().setText(UUtils.getString(R.string.下次提示));
-
-                            otgSwitchDialog.getCancel().setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    isTS = false;
-                                    UUtils.showMsg(UUtils.getString(R.string.如果下次想继续使用OTG设备));
-                                    otgSwitchDialog.dismiss();
-                                }
-                            });
-                            otgSwitchDialog.getOk().setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    usbManager.requestPermission(device.getUsbDevice(), pendingIntent); //该代码执行后，系统弹出一个对话框，
-                                    otgSwitchDialog.dismiss();
-                                }
-                            });
-
-                        }
-
-
-
-
-                    }
-                }
-
-            }
+          //  mOTGManager.initOtg(TermuxActivity.this, intent);
         }
     };
 
-
-    private void read(UsbMassStorageDevice device){
-
-
-        LoadingDialog loadingDialog = new LoadingDialog(this);
-        loadingDialog.show();
-
-        UUtils.runOnThread(new Runnable() {
-              @Override
-              public void run() {
-
-                  try{
-
-                  device.init();
-
-                  Thread.sleep(1000);
-
-                  if(device.getPartitions() == null  || device.getPartitions().isEmpty()){
-                      UUtils.showLog("OTG:目录为空:" + device.getPartitions());
-                      showExceptionDialog(loadingDialog);
-                      return;
-                  }
-
-                  TermuxActivity.this.runOnUiThread(new Runnable() {
-                      @Override
-                      public void run() {
-                          if(loadingDialog != null && loadingDialog.isShowing()){
-
-                              try{
-                                  loadingDialog.dismiss();
-                              }catch (Exception e){
-                                  e.printStackTrace();
-                              }
-
-                          }
-                      }
-                  });
-
-                  Partition partition = device.getPartitions().get(0);
-                  FileSystem fileSystem = partition.getFileSystem();
-                  UsbFile rootDirectory = fileSystem.getRootDirectory();
-                  UsbFileData.Companion.get().setMUsbFile(rootDirectory);
-
-
-              }catch (Exception e){
-                  e.printStackTrace();
-                  UUtils.showLog("OTG:出错:" + e.toString());
-
-
-
-              }
-
-              }
-          });
-
-
-
-
-
-    }
-
-
-    //显示Dialog
-
-    private void showExceptionDialog(LoadingDialog mLoadingDialog){
-
-        if(mLoadingDialog != null && mLoadingDialog.isShowing()){
-
-            try{
-                mLoadingDialog.dismiss();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-        }
-
-
-        TermuxActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                SwitchDialog switchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.OTG设备异常));
-
-                switchDialog.getCancel().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        switchDialog.dismiss();
-                    }
-                });
-                switchDialog.getOk().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        switchDialog.dismiss();
-                    }
-                });
-            }
-        });
-
-    }
 }

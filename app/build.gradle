@@ -72,6 +72,7 @@ android {
         implementation 'me.jahnen:libaums:0.8.0'
         implementation 'me.jahnen:libaums-httpserver:0.5.3'
         implementation 'me.jahnen:libaums-storageprovider:0.5.1'
+        implementation  'uk.co.alt236:usbdeviceenumerator:2.0.0'
 
         //webview框架
         implementation 'com.just.agentweb:agentweb:4.0.2'

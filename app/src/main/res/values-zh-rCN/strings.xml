@@ -600,7 +600,7 @@
     <string name="没有权限">没有内存权限,下载站无法打开!</string>
 
     <string name="可能检测到OTG设备">可能检测到OTG设备,但是读取失败,请拔插设备再试,或者给予读取OTG权限!</string>
-    <string name="检测到OTG设备">检测到OTG设备,即将申请权限[如果权限出现在此会话窗口之前,可能是系统兼容性问题忽略即可]</string>
+    <string name="检测到OTG设备">检测到OTG设备,即将创建OTG映射目录\n~/home/xinhaoLink/</string>
     <string name="下次提示">下次提示</string>
     <string name="如果下次想继续使用OTG设备">如果下次想继续使用OTG设备,请退出APP重新进入,该提示会再次出现</string>
     <string name="OTG设备异常">
@@ -783,6 +783,7 @@
     <string name="system_create_container_fail">系统创建失败!请重试</string>
     <string name="system_restore_success">系统恢复完成,请在切换系统，切换您的系统</string>
     <string name="unrecognized_compression_format">不能识别的数据包!</string>
+    <string name="create_xinhao_path_fail">创建~/xinhaoLink文件夹失败，请手动创建!</string>
 </resources>
 
 

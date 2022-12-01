@@ -606,7 +606,7 @@ Reset successfully</string>
 
 
     <string name="可能检测到OTG设备">The OTG device may be detected, but the reading fails, please unplug the device and try again, or give permission to read OTG!</string>
-    <string name="检测到OTG设备">An OTG device is detected, and permission is about to be applied for [If the permission appears before this session window, it may be a system compatibility issue that can be ignored]</string>
+    <string name="检测到OTG设备">The OTG device is detected, and the OTG mapping directory will be created\n~/home/xinhaoLink/</string>
     <string name="下次提示">下次提示</string>
     <string name="如果下次想继续使用OTG设备">Next time prompt</string>
     <string name="OTG设备异常">
@@ -787,4 +787,5 @@ Reset successfully</string>
     <string name="system_create_container_fail">System creation failed! Please try again</string>
     <string name="system_restore_success">The system recovery is complete, please switch the system, switch your system</string>
     <string name="unrecognized_compression_format">unrecognized packet!</string>
+    <string name="create_xinhao_path_fail">Failed to create ~/xinhaoLink folder, please create it manually!</string>
 </resources>

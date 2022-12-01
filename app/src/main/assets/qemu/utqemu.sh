@@ -6,11 +6,12 @@ cd
 #am start -n com.realvnc.viewer.android/com.realvnc.viewer.android.app.ConnectionChooserActivity
 #am start -n com.google.android.documentsui/com.android.documentsui.files.FilesActivity
 #time echo "scale=5000; 4*a(1)" | bc -l -q
-UPDATE="2022/07/27"
+UPDATE="2022/11/29"
 INFO() {
 	clear
 	printf "${YELLOW}更新日期$UPDATE 更新内容${RES}
 	修复容器的bug
+	不再为qemu版本区分容器
 	仅优化容器
 	为减少安装占用，部分不常用功能参数的默认安装包改为促发安装
 	增加termux环境的qemu本地共享(在termux目录下创建share共享文件夹，模拟系统可同步访问文件夹内容)
@@ -487,22 +488,9 @@ case $(dpkg --print-architecture) in
         echo "nameserver 223.5.5.5
 nameserver 223.6.6.6" >$sys_name/etc/resolv.conf
         echo "export  TZ='Asia/Shanghai'" >> $sys_name/root/.bashrc
-	case $DEBIAN in
-		bullseye)
-echo "${US_URL}/ bullseye ${DEB}
-${US_URL}/ bullseye-updates ${DEB}
-${US_URL}/ bullseye-backports ${DEB}
-${US_URL}-security bullseye-security ${DEB}"|sed 's/https/http/' >$sys_name/etc/apt/sources.list
-
-			;;
-		buster) 
-echo "$US_URL buster ${DEB}
-${US_URL} buster-updates ${DEB}
-${US_URL} buster-backports ${DEB}
-${US_URL}-security buster/updates ${DEB}"|sed 's/https/http/' >$sys_name/etc/apt/sources.list
-esac
+	echo "${US_URL} sid ${DEB}"|sed 's/https/http/' >$sys_name/etc/apt/sources.list
 curl https://mirrors.tuna.tsinghua.edu.cn/debian/pool/main/c/ca-certificates/$(curl https://mirrors.tuna.tsinghua.edu.cn/debian/pool/main/c/ca-certificates/|grep all.deb|awk -F 'href="' '{print $2}'|cut -d '"' -f 1|tail -n 1) -o $sys_name/root/ca.deb
-curl https://mirrors.tuna.tsinghua.edu.cn/debian/pool/main/o/openssl/$(curl https://mirrors.tuna.tsinghua.edu.cn/debian/pool/main/o/openssl/|grep openssl_1.*arm64.deb|awk -F 'href="' '{print $2}'|cut -d '"' -f 1|tail -n 1) -o $sys_name/root/openssl.deb
+curl https://mirrors.tuna.tsinghua.edu.cn/debian/pool/main/o/openssl/$(curl https://mirrors.tuna.tsinghua.edu.cn/debian/pool/main/o/openssl/|grep openssl_3.*arm64.deb|awk -F 'href="' '{print $2}'|cut -d '"' -f 1|tail -n 1) -o $sys_name/root/openssl.deb
 	if [ ! -f $(pwd)/utqemu.sh ]; then
 	curl https://shell.xb6868.com/ut/utqemu.sh -o $sys_name/root/utqemu.sh 2>/dev/null
 	else
@@ -513,23 +501,6 @@ echo 'for i in /var/run/dbus/pid /tmp/.X*-lock /tmp/.X11-unix/X* /tnp/wayland*; 
 
 echo -e "\e[33m优化部分命令\e[0m"
 sleep 1
-find $sys_name/ -name busybox
-if [ $? == 0 ]; then
-mkdir qemu_tmp
-cd qemu_tmp
-curl https://mirrors.tuna.tsinghua.edu.cn/alpine/latest-stable/main/aarch64/$(curl https://mirrors.tuna.tsinghua.edu.cn/alpine/latest-stable/main/aarch64/ | grep busybox | sed -n 1p | awk -F 'href="' '{print $2}' | cut -d '"' -f 1) -o busybox.apk
-tar zxvf busybox.apk bin 2>/dev/null
-mv bin/busybox ../$sys_name/usr/local/bin 2>/dev/null
-curl https://mirrors.tuna.tsinghua.edu.cn/alpine/latest-stable/main/aarch64/$(curl https://mirrors.tuna.tsinghua.edu.cn/alpine/latest-stable/main/aarch64/ | grep musl | sed -n 1p | awk -F 'href="' '{print $2}' | cut -d '"' -f 1) -o musl.apk
-tar zxvf musl.apk lib
-mv lib/* ../$sys_name/usr/lib
-cd -
-rm -rf qemu_tmp
-fi
-case $sys_name in
-bullseye-qemu)
-echo "service dbus start" >>$sys_name/root/.bashrc
-esac
 #伪proc文件
 mkdir $sys_name/etc/proc/ -p
 printf ' 52 memory_bandwidth! 53 network_throughput! 54 network_latency! 55 cpu_dma_latency! 56 xt_qtaguid! 57 vndbinder! 58 hwbinder! 59 binder! 60 ashmem!239 uhid!236 device-mapper!223 uinput!  1 psaux!200 tun!237 loop-control! 61 lightnvm!228 hpet!229 fuse!242 rfkill! 62 ion! 63 vga_arbiter\n' | sed 's/!/\n/g' >$sys_name/etc/proc/misc
@@ -567,6 +538,7 @@ if [ -z $ANDROID_RUNTIME_ROOT ]; then
 export ANDROID_RUNTIME_ROOT=/apex/com.android.runtime
 fi
 cat >>$sys_name/etc/profile<<-EOF
+#THIS IS QEMU CONTAINER
 export ANDROID_ART_ROOT=${ANDROID_ART_ROOT-}
 export ANDROID_DATA=${ANDROID_DATA-}
 export ANDROID_I18N_ROOT=${ANDROID_I18N_ROOT-}
@@ -583,9 +555,6 @@ export TERM=${TERM-xterm-256color}
 export TMPDIR=/tmp
 export PULSE_SERVER=tcp:127.0.0.1:4713
 EOF
-	if [ ! -f "$sys_name/usr/bin/perl" ]; then
-	cp $sys_name/usr/bin/perl* $sys_name/usr/bin/perl
-	fi
 	echo "bash utqemu.sh" >>$sys_name/root/.bashrc
 	echo "$UPDATE" >>$sys_name/root/.utqemu_
 	echo -e "${YELLOW}系统已下载，请登录系统继续完成qemu的安装${RES}"
@@ -601,39 +570,8 @@ SYSTEM_CHECK() {
 	if [ ! -e ${HOME}/storage ]; then
 		termux-setup-storage
 	fi
-	if grep '^[^#]' ${PREFIX}/etc/apt/sources.list | egrep "mirror.iscas.ac.cn|mirror.nyist|aliyun.com|bfsu|cqupt|dgut|hit|nju|njupt|pku|sau|scau|sdu|sustech|tuna.tsinghua|ustc" >/dev/null 2>&1; then
-		echo ""
-	else
-		echo -e "${YELLOW}检测到你使用的可能为非国内源，为保证正常使用，建议切换为国内源(0.73版termux勿更换)${RES}\n  
-		1) 换国内源
-		2) 不换"
-	read -r -p "是否换国内源: " input   
-	case $input in    
-		1|"") echo "换国内源"
-	if [ -d /data/data/com.termux/files/usr/etc/termux/mirrors/china ]; then
-	ln -sf /data/data/com.termux/files/usr/etc/termux/mirrors/china /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
-	fi
-	sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list && yes | pkg update
-	ln -sf /data/data/com.termux/files/usr/etc/termux/mirrors/china /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
-	sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list && yes | pkg update
-	;;
-		*) echo "#utqemucheck" >>${PREFIX}/etc/apt/sources.list ;;  
-	esac                                                    
-		fi
-	for i in curl pulseaudio proot; do if [ ! $(command -v $i) ]; then pkg install $i -y; fi done
-	if [ ! $(command -v ip) ]; then
-		pkg i iproute2
-	fi
-	if grep -q "anonymous" ${PREFIX}/etc/pulse/default.pa ;
-	then
-		echo ""
-	else
-        echo "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" >> ${PREFIX}/etc/pulse/default.pa
-	fi
-	if grep -q "exit-idle" ${PREFIX}/etc/pulse/daemon.conf ; then
-	sed -i '/exit-idle/d' ${PREFIX}/etc/pulse/daemon.conf
-	echo "exit-idle-time = -1" >> ${PREFIX}/etc/pulse/daemon.conf
-	fi
+	for i in curl pulseaudio proot; do if [ ! $(command -v $i) ]; then pkg i $i -y; fi done
+	if [ ! $(command -v ip) ]; then pkg i iproute2 -y; fi
 	fi
 }
 ##################
@@ -673,7 +611,6 @@ echo -e "
 6)  获取最新版termux、aspice与xsdl的安卓版下载地址(非永久有效)
 7)  模拟系统的时间不准
 8)  修改镜像目录
-9)  更新为支持qemu7.0容器
 10) 返回
 0)  退出\n"
 	read -r -p "请选择: " input
@@ -960,18 +897,6 @@ SPI_URL_=`curl --connect-timeout 5 -m 8 https://github.com/iiordanov/remote-desk
 	fi
 	exit 0
 	QEMU_ETC ;;
-	9) echo "${US_URL} sid ${DEB}" >/etc/apt/sources.list && $sudo apt update
-	$sudo apt install qemu-system-x86 xserver-xorg x11-utils pulseaudio curl fonts-wqy-microhei -y
-	if [[ $(qemu-system-i386 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = 7 ]]; then
-	sed -i "/zh_CN.UTF/s/#//" /etc/locale.gen
-	locale-gen
-	echo -e "更新成功"
-	else
-	echo -e "更新失败"
-	fi
-	sleep 2
-	QEMU_ETC
-	;;
 	10) unset FORMAT_ FORMAT
 		QEMU_SYSTEM ;;
 	0) exit 0 ;;
@@ -1059,6 +984,9 @@ MOVE_OUT() {
 
 ##################
 QEMU_SYSTEM() {
+	if [ ! -f "/usr/bin/perl" ]; then
+	ln -sv /usr/bin/perl* /usr/bin/perl
+	fi
 	if [ ! $(command -v curl) ]; then
 		sudo_
 		$sudo apt install curl -y
@@ -1066,13 +994,6 @@ QEMU_SYSTEM() {
 	uname -a | grep 'Android' -q
 	if [ $? != 0 ]; then
 	if ! grep -q https /etc/apt/sources.list; then
-	ln -sf $(command -v busybox) $(command -v ps)
-	ln -sf $(command -v busybox) $(command -v pstree)
-	ln -sf $(command -v busybox) $(command -v pkill)
-	ln -sf $(command -v busybox) $(command -v uptime)
-	ln -sf $(command -v busybox) $(command -v killall)
-	ln -sf $(command -v busybox) $(command -v egrep)
-	ln -sf $(command -v busybox) $(command -v top)
 		if [ -f openssl.deb ]; then
 		$sudo	dpkg -i openssl.deb
 		$sudo	dpkg -i ca.deb
@@ -1080,6 +1001,12 @@ QEMU_SYSTEM() {
 		$sudo apt install apt-transport-https ca-certificates -y
 		fi
 		sed -i "s/http/https/g" /etc/apt/sources.list && $sudo apt update
+	fi
+	if grep -q 'THIS IS QEMU CONTAINER' /etc/profile; then
+	if [ ! $(command -v busybox) ]; then
+	$sudo apt install busybox -y
+	for i in ps uptime killall egrep top; do if [ $(command -v $i) ]; then ln -svf $(command -v busybox) $(command -v $i); else ln -svf $(command -v busybox) /usr/bin/$i; fi done
+	fi
 	fi
 	fi
 	unset hda_name display hdb_name iso_name iso1_name SOUND_MODEL VGA_MODEL CPU_MODEL NET_MODEL SMP URL script_name QEMU_MODE NET_MODEL0 NET_MODEL1 NUM
@@ -1124,6 +1051,7 @@ echo -e "7)  查看日志
 echo "12) 体验dos环境(可运行游戏，需自行下载)"
 	fi
 echo -e "0)  退出\n"
+
 	read -r -p "请选择: " input
 	case $input in
 	1) echo -e "${YELLOW}安装过程中，如遇到询问选择，请输(y)，安装过程容易出错，请重试安装${RES}"
@@ -1137,31 +1065,6 @@ echo -e "0)  退出\n"
 	apt --fix-broken install -y && apt install qemu-system-x86-64-headless qemu-system-i386-headless curl -y
 	fi
 	else
-	sudo_
-	if ! grep -q https /etc/apt/sources.list; then
-	ln -sf $(command -v busybox) $(command -v ps)
-	ln -sf $(command -v busybox) $(command -v pstree)
-	ln -sf $(command -v busybox) $(command -v pkill)
-	ln -sf $(command -v busybox) $(command -v uptime)
-	ln -sf $(command -v busybox) $(command -v killall)
-	ln -sf $(command -v busybox) $(command -v egrep)
-	ln -sf $(command -v busybox) $(command -v top)
-	if [ -f openssl.deb ]; then
-	$sudo	dpkg -i openssl.deb
-	$sudo	dpkg -i ca.deb
-	else
-		$sudo apt install apt-transport-https ca-certificates -y
-		fi
-		sed -i "s/http/https/g" /etc/apt/sources.list
-	fi
-	if grep -q 'bullseye' "/etc/os-release"; then
-		echo -e "\n${YELLOW}debian-sid源地址已有qemu7.0可供安装，是否更新版本？(非本脚本安装的容器慎选)${RES}"
-		read -r -p "1)继续使用qemu5.2系统 2)更新为qemu7.0系统 " input
-		case $input in
-			2) echo 'deb https://mirrors.tuna.tsinghua.edu.cn/debian/ sid main contrib non-free' >/etc/apt/sources.list && $sudo apt update ;;
-			*) ;;
-		esac
-	fi
 	sudo_
        	$sudo apt install qemu-system-x86 xserver-xorg x11-utils pulseaudio curl fonts-wqy-microhei -y
 	if [ ! $(command -v qemu-system-x86_64) ]; then
@@ -1345,7 +1248,11 @@ esac
 		case $input in
 		2)
 		echo -e "${BLUE}请确认qemu已编译sdl模块，否则出现'-sdl: SDL support is disabled'提示${RES}"
+		if [[ $(qemu-system-x86_64 --version | grep version | awk -F "." '{print $1}' | awk '{print $4}') = [1-6] ]]; then
 		set -- "${@}" "-sdl"
+	else
+		set -- "${@}" "-display" "sdl"
+		fi
 		set -- "${@}" "-full-screen" ;;
 		*)
 		echo -e "${BLUE}sdl信号输出，需先打开xsdl再继续此操作${RES}" ;;
@@ -2982,12 +2889,11 @@ echo -e "1) 换源
 LOGIN_() {
 	echo -e "\n\e[33m请选择qemu-system-x86的运行环境\e[0m\n
 	1)  直接运行，termux(utermux)目前版本为7.0以上，由于termux源的qemu编译的功能不全，强烈建议在容器上使用qemu，\e[33m其他系统的版本各不一样，一些功能参数可能没被编译进去${RES}
-	2)  支持qemu5.0以下版本容器(选项内容比较简单，模拟xp建议此版本)
-	3） 支持qemu5.0以上版本容器(选项内容丰富)
-	4)  换源(如果无法安装或登录请尝试此操作)
-	5)  安装linux-bullseye(预安装xfce4 vlc chromium)
-	8)  安装运行轻量版容器+qemu(qemulite)
-	9)  体验box64+box86+wine运行exe(整个容器约2.2g)
+	2)  容器内运行qemu-system-x86
+	3)  换源(如果无法安装或登录请尝试此操作)
+	4)  安装linux-bullseye(预安装xfce4 vlc chromium)
+	5)  安装运行轻量版容器+qemu(qemulite)
+	6)  体验box64+box86+wine运行exe(整个容器约2.2g)
 	10) 下载新版termux
 	0) 退出\n"
 	read -r -p "请选择: " input
@@ -2995,30 +2901,19 @@ LOGIN_() {
 	1) QEMU_SYSTEM ;;
 	2) uname -a | grep 'Android' -q
 	if [ $? == 0 ]; then
-	DEBIAN=buster
-	sys_name=buster-qemu
-	if [ -d $(pwd)/buster-qemu ]; then
+	DEBIAN=sid
+	sys_name=sid-qemu
+	if [ -d $(pwd)/sid-qemu ]; then
 		LOGIN
 	else
 		SYS_DOWN
 		LOGIN
 	fi
 		fi ;;
-	3) uname -a | grep 'Android' -q
-	if [ $? == 0 ]; then
-	DEBIAN=bullseye
-	sys_name=bullseye-qemu
-	if [ -d $(pwd)/bullseye-qemu ]; then
-		LOGIN
-	else
-		SYS_DOWN
-		LOGIN
-	fi
-		fi ;;
-	4) SOURCE ;;
-	5) bash -c "$(curl https://shell.xb6868.com/ut/bullseye.sh)" ;;
-	8) bash -c "$(curl https://shell.xb6868.com/ut/qemulite.sh)" ;;
-	9) bash -c "$(curl https://shell.xb6868.com/wine/boxwine.sh)" ;;
+	3) SOURCE ;;
+	4) bash -c "$(curl https://shell.xb6868.com/ut/bullseye.sh)" ;;
+	5) bash -c "$(curl https://shell.xb6868.com/ut/qemulite.sh)" ;;
+	6) bash -c "$(curl https://shell.xb6868.com/wine/boxwine.sh)" ;;
 	10) echo -e "\n${YELLOW}检测最新版本${RES}"
         VERSION=`curl https://f-droid.org/packages/com.termux/ | grep apk | sed -n 2p | cut -d '_' -f 2 | cut -d '"' -f 1`
         echo -e "\n下载地址\n${GREEN}https://mirrors.tuna.tsinghua.edu.cn/fdroid/repo/com.termux_$VERSION${RES}\n"
