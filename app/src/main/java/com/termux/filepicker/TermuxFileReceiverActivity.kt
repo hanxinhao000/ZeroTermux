@@ -60,11 +60,16 @@ class TermuxFileReceiverActivity : ComponentActivity() {
             if (!file.exists()) {
                 file.createNewFile()
             }
-            val fileInputStream = FileInputStream(mFile!!)
-            image_view.visibility = View.GONE
-            pro.visibility = View.VISIBLE
-            GlobalScope.launch(Dispatchers.IO) {
-                showText(file, fileInputStream)
+            try {
+                val fileInputStream = FileInputStream(mFile!!)
+                image_view.visibility = View.GONE
+                pro.visibility = View.VISIBLE
+                GlobalScope.launch(Dispatchers.IO) {
+                    showText(file, fileInputStream)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
             }
         }
     }
