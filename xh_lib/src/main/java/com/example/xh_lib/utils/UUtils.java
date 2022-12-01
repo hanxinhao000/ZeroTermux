@@ -759,7 +759,7 @@ public class UUtils {
 
 
     public static String getFileString(File file){
-        UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
+      //  UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
         String txt = "";
 
         String temp = "";
@@ -782,7 +782,7 @@ public class UUtils {
             }
             bufferedReader.close();
 
-            Log.e("XINHAO_HAN", "onCreate: " + txt);
+           // Log.e("XINHAO_HAN", "onCreate: " + txt);
 
 
             return txt;
@@ -809,7 +809,7 @@ public class UUtils {
             printWriter.close();
             //  Toast.makeText(getContext(), "OK", Toast.LENGTH_SHORT).show();
         } catch (FileNotFoundException e) {
-            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 

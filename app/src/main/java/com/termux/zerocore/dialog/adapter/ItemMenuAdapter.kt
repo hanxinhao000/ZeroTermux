@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.termux.R
 import com.termux.app.TermuxActivity
 import com.termux.zerocore.activity.ImageActivity
@@ -21,9 +24,24 @@ import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.dialog.CommonCommandsDialog
 import com.termux.zerocore.dialog.FtpWindowsDialog
 import com.termux.zerocore.dialog.SwitchDialog
+import com.termux.zerocore.dialog.YesNoDialog
 import com.termux.zerocore.dialog.view_holder.ItemMenuViewHolder
 import com.termux.zerocore.keybord.KeyBordManage
 import com.termux.zerocore.url.FileUrl
+import com.termux.zerocore.url.FileUrl.zeroTermuxApk
+import com.termux.zerocore.url.FileUrl.zeroTermuxCommand
+import com.termux.zerocore.url.FileUrl.zeroTermuxData
+import com.termux.zerocore.url.FileUrl.zeroTermuxFont
+import com.termux.zerocore.url.FileUrl.zeroTermuxHome
+import com.termux.zerocore.url.FileUrl.zeroTermuxIso
+import com.termux.zerocore.url.FileUrl.zeroTermuxMysql
+import com.termux.zerocore.url.FileUrl.zeroTermuxOnlineSystem
+import com.termux.zerocore.url.FileUrl.zeroTermuxQemu
+import com.termux.zerocore.url.FileUrl.zeroTermuxServer
+import com.termux.zerocore.url.FileUrl.zeroTermuxShare
+import com.termux.zerocore.url.FileUrl.zeroTermuxSystem
+import com.termux.zerocore.url.FileUrl.zeroTermuxWebConfig
+import com.termux.zerocore.url.FileUrl.zeroTermuxWindows
 import com.termux.zerocore.utils.FileIOUtils
 import com.termux.zerocore.zero.engine.ZeroCoreManage
 import kotlinx.coroutines.Dispatchers
@@ -127,10 +145,47 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 switchDialog.show()
             }
             CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_FILE_BROWSER -> {
-                installFileBrowser();
+                installFileBrowser()
             }
             CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_FTP -> {
                 startFTP(itemView)
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_SOFT_LINKS -> {
+                commonShortcuts()
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_MY_SOFT_LINKS -> {
+                val yesNoDialog = YesNoDialog(mContext!!)
+                yesNoDialog.createEditDialog(UUtils.getString(R.string.my_commonly_used_soft_links_path))
+                yesNoDialog.inputSystemName.setHint("/xinhao/data/")
+                yesNoDialog.yesTv.setOnClickListener {
+                    val toString = yesNoDialog.inputSystemName.text.toString()
+                    val file1 = File(FileIOUtils.getXinhaoLinkPath(UUtils.getContext()))
+                    if (!file1.exists()) {
+                        file1.mkdirs()
+                    }
+                    if (TextUtils.isEmpty(toString)) {
+                        FileIOUtils.setupFileSymlinks(
+                            File(FileIOUtils.getSdcardPath(), "/xinhao/data").absolutePath,
+                            "${FileIOUtils.getXinhaoLinkPath(UUtils.getContext())}/xinhao_data")
+                    } else {
+                        val file =
+                            File(FileIOUtils.getSdcardPath(), toString)
+                        if (!file.exists()) {
+                            UUtils.showMsg(UUtils.getString(R.string.my_commonly_used_soft_links_repeat))
+                            LogUtils.d(TAG, "clickItem path is not exists")
+                            return@setOnClickListener
+                        }
+                        yesNoDialog.dismiss()
+                        FileIOUtils.setupFileSymlinks(
+                            File(FileIOUtils.getSdcardPath(), toString).absolutePath,
+                            "${FileIOUtils.getXinhaoLinkPath(UUtils.getContext())}/${toString.replace("/", "_").replace("\\", "_")}")
+                        UUtils.showMsg(UUtils.getString(R.string.成功))
+                    }
+                }
+                yesNoDialog.noTv.setOnClickListener {
+                    yesNoDialog.dismiss()
+                }
+                yesNoDialog.show()
             }
         }
     }
@@ -313,5 +368,48 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
         }
         KeyBordManage.getInstance().initKeyBord(handler)
         mKeyViewListener?.view(KeyBordManage.getInstance().keyBordView)
+    }
+
+    private fun commonShortcuts() {
+
+        val switchDialog = SwitchDialog(mContext!!)
+        switchDialog.createSwitchDialog(UUtils.getString(R.string.create_soft_links))
+        switchDialog.ok?.setOnClickListener {
+            switchDialog.dismiss()
+            XXPermissions.with(mContext)
+                .permission(Permission.WRITE_EXTERNAL_STORAGE)
+                .permission(Permission.READ_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: List<String>, all: Boolean) {
+                        val xinhaoLinkPath = FileIOUtils.getXinhaoLinkPath(UUtils.getContext())
+                        val file = File(xinhaoLinkPath)
+                        if (!file.exists()) {
+                            if (!file.mkdirs()) {
+                                UUtils.showMsg(UUtils.getString(R.string.create_soft_links_fail))
+                                LogUtils.d(TAG, "commonShortcuts file mkdirs fail return")
+                                return
+                            }
+                        }
+
+                        val downLoadPath = FileIOUtils.getDownLoadPath()
+                        val sdcardPath = FileIOUtils.getSdcardPath()
+                        val qqDownloadPath = FileIOUtils.getQQAndroidDownloadPath()
+                        val weiXinPath = FileIOUtils.getWeiXinPath()
+                        val weiXinAndroidPath = FileIOUtils.getWeiXinAndroidPath()
+                        FileIOUtils.setupFileSymlinks(downLoadPath, "$xinhaoLinkPath/download")
+                        FileIOUtils.setupFileSymlinks(sdcardPath, "$xinhaoLinkPath/sdcard")
+                        FileIOUtils.setupFileSymlinks(qqDownloadPath, "$xinhaoLinkPath/QQDownload")
+                        FileIOUtils.setupFileSymlinks(weiXinPath, "$xinhaoLinkPath/WXDownload")
+                        FileIOUtils.setupFileSymlinks(weiXinAndroidPath, "$xinhaoLinkPath/WXAndroidDownload")
+                        UUtils.showMsg(UUtils.getString(R.string.成功))
+                    }
+
+                    override fun onDenied(permissions: List<String>, never: Boolean) {
+
+                    }
+                })
+        }
+        switchDialog.show()
+
     }
 }

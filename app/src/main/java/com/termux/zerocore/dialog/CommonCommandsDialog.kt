@@ -29,6 +29,8 @@ class CommonCommandsDialog : BaseDialogDown {
         public val WEB_LINUX = 1004
         public val ITEM_CLICK_FILE_BROWSER = 1005
         public val ITEM_CLICK_FTP = 1006
+        public val ITEM_CLICK_SOFT_LINKS = 1007
+        public val ITEM_CLICK_MY_SOFT_LINKS = 1008
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -144,6 +146,30 @@ class CommonCommandsDialog : BaseDialogDown {
         mFtpData.backColor = UUtils.getColor(R.color.color_8850b397)
         mFtpData.key = CommonCommandsDialogConstant.ITEM_CLICK_FTP
         mList.add(mFtpData)
+
+        /**
+         * 常用
+         *
+         */
+        var mCommonlyUsedSoftLinksData: ItemMenuBean.Data = ItemMenuBean.Data()
+        mCommonlyUsedSoftLinksData.title = UUtils.getString(R.string.commonly_used_soft_links)
+        mCommonlyUsedSoftLinksData.id = R.mipmap.link_ico
+        mCommonlyUsedSoftLinksData.isEg = false
+        mCommonlyUsedSoftLinksData.backColor = UUtils.getColor(R.color.color_8850b397)
+        mCommonlyUsedSoftLinksData.key = CommonCommandsDialogConstant.ITEM_CLICK_SOFT_LINKS
+        mList.add(mCommonlyUsedSoftLinksData)
+
+        /**
+         * 自定义创建快捷方式
+         *
+         */
+        var mMyUsedSoftLinksData: ItemMenuBean.Data = ItemMenuBean.Data()
+        mMyUsedSoftLinksData.title = UUtils.getString(R.string.my_commonly_used_soft_links)
+        mMyUsedSoftLinksData.id = R.mipmap.link_ico
+        mMyUsedSoftLinksData.isEg = false
+        mMyUsedSoftLinksData.backColor = UUtils.getColor(R.color.color_8850b397)
+        mMyUsedSoftLinksData.key = CommonCommandsDialogConstant.ITEM_CLICK_MY_SOFT_LINKS
+        mList.add(mMyUsedSoftLinksData)
 
 
 

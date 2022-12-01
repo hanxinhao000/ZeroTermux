@@ -784,6 +784,12 @@
     <string name="system_restore_success">系统恢复完成,请在切换系统，切换您的系统</string>
     <string name="unrecognized_compression_format">不能识别的数据包!</string>
     <string name="create_xinhao_path_fail">创建~/xinhaoLink文件夹失败，请手动创建!</string>
+    <string name="commonly_used_soft_links">常用快捷方式</string>
+    <string name="create_soft_links">将创建以下快捷方式:\n内部存储 微信、QQ、下载目录\n内部链接:~/xinhaoLink,由于Android 11+ 限制/内部存储/Android/data/ 目录访问将不能创建 /内部存储/Android/data/ 目录,但是程序还是会强制创建</string>
+    <string name="create_soft_links_fail">创建失败,请重新尝试一下也可以手动创建 ~/xinhaoLink</string>
+    <string name="my_commonly_used_soft_links">自定快捷方式</string>
+    <string name="my_commonly_used_soft_links_path">输入要链接的目录</string>
+    <string name="my_commonly_used_soft_links_repeat">输入的目录不存在!</string>
 </resources>
 
 

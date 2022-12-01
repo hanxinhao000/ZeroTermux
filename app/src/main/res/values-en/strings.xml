@@ -788,4 +788,10 @@ Reset successfully</string>
     <string name="system_restore_success">The system recovery is complete, please switch the system, switch your system</string>
     <string name="unrecognized_compression_format">unrecognized packet!</string>
     <string name="create_xinhao_path_fail">Failed to create ~/xinhaoLink folder, please create it manually!</string>
+    <string name="commonly_used_soft_links">Common shortcuts</string>
+    <string name="create_soft_links">The following shortcuts will be created:\nInternal storage WeChat, QQ, download directory\nInternal links: ~/xinhaoLink, due to Android 11+ restrictions /internal storage/Android/data/ directory access will not be created /internal storage/Android/data / Table of contents,But the program will still force the creation of</string>
+    <string name="create_soft_links_fail">Creation failed, please try again or manually create ~/xinhaoLink</string>
+    <string name="my_commonly_used_soft_links">custom shortcut</string>
+    <string name="my_commonly_used_soft_links_path">Enter the directory to link</string>
+    <string name="my_commonly_used_soft_links_repeat"> entered directory does not exist!</string>
 </resources>

@@ -377,7 +377,16 @@ object FileIOUtils {
     }
 
     public fun setupFileSymlinks(originalPath: String, linkPath: String) {
-        Os.symlink(originalPath, linkPath)
+        LogUtils.d(TAG, "setupFileSymlinks originalPath:${originalPath} linkPath:$linkPath")
+        try {
+            Os.symlink(originalPath, linkPath)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            if (!e.toString().contains("File exists")) {
+                UUtils.showMsg(e.toString())
+            }
+            LogUtils.d(TAG, "setupFileSymlinks error${e.toString()}")
+        }
     }
 
     public fun getLogPath(): String {
@@ -390,6 +399,22 @@ object FileIOUtils {
 
     public fun createLogPath(): Boolean {
         return File(getLogPath()).mkdirs()
+    }
+
+    public fun getQQAndroidDownloadPath(): String {
+        return getSdcardPath() + "/Android/data/com.tencent.mobileqq/Tencent/QQfile_recv"
+    }
+
+    public fun getDownLoadPath(): String {
+        return getSdcardPath() + "/Download"
+    }
+
+    public fun getWeiXinPath(): String {
+        return getSdcardPath() + "/tencent/MicroMsg/WeiXin"
+    }
+
+    public fun getWeiXinAndroidPath(): String {
+        return getSdcardPath() + "/Android/data/com.tencent.mm/MicroMsg/Download"
     }
 
 }
