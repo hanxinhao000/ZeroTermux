@@ -163,10 +163,12 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                     if (!file1.exists()) {
                         file1.mkdirs()
                     }
+                    yesNoDialog.dismiss()
                     if (TextUtils.isEmpty(toString)) {
                         FileIOUtils.setupFileSymlinks(
                             File(FileIOUtils.getSdcardPath(), "/xinhao/data").absolutePath,
                             "${FileIOUtils.getXinhaoLinkPath(UUtils.getContext())}/xinhao_data")
+                        UUtils.showMsg(UUtils.getString(R.string.成功))
                     } else {
                         val file =
                             File(FileIOUtils.getSdcardPath(), toString)
@@ -175,7 +177,6 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                             LogUtils.d(TAG, "clickItem path is not exists")
                             return@setOnClickListener
                         }
-                        yesNoDialog.dismiss()
                         FileIOUtils.setupFileSymlinks(
                             File(FileIOUtils.getSdcardPath(), toString).absolutePath,
                             "${FileIOUtils.getXinhaoLinkPath(UUtils.getContext())}/${toString.replace("/", "_").replace("\\", "_")}")
