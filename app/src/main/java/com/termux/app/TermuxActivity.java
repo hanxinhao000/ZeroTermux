@@ -64,7 +64,6 @@ import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.app.terminal.TermuxTerminalSessionActivityClient;
-import com.termux.app.terminal.TermuxTerminalSessionServiceClient;
 import com.termux.app.terminal.io.TermuxTerminalExtraKeys;
 import com.termux.shared.activities.ReportActivity;
 
@@ -96,11 +95,12 @@ import com.termux.view.TerminalRenderer;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
 import com.termux.view.textselection.TextSelectionCursorController;
-import com.termux.zerocore.activity.BackNewActivity;
 import com.termux.zerocore.activity.FontActivity;
 import com.termux.zerocore.activity.SwitchActivity;
 import com.termux.zerocore.activity.WebViewActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
+import com.termux.zerocore.back.BackRestoreDialog;
+import com.termux.zerocore.back.listener.CreateConversationListener;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.code.CodeString;
@@ -1608,7 +1608,18 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
              */
             case R.id.back_res:
                 getDrawer().closeDrawer(Gravity.LEFT);
-                startActivity(new Intent(this, BackNewActivity.class));
+              //  startActivity(new Intent(this, BackNewActivity.class));
+                BackRestoreDialog backRestoreDialog = new BackRestoreDialog(this);
+                backRestoreDialog.setCreateConversationListener(new CreateConversationListener() {
+                    @Override
+                    public void create() {
+                        mTermuxTerminalSessionActivityClient.addNewSession(false, "Zero session");
+                    }
+                });
+                backRestoreDialog.initData();
+                backRestoreDialog.show();
+                backRestoreDialog.setCancelable(true);
+                backRestoreDialog.createStoragePath();
                 break;
             case R.id.linux_online:
                 getDrawer().closeDrawer(Gravity.LEFT);

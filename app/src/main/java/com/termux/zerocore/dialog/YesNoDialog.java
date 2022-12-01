@@ -47,6 +47,19 @@ public class YesNoDialog extends Dialog {
         this.setContentView(inflate);
     }
 
+    public YesNoDialog createEditDialog(String msg) {
+        dialog_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+        dialog_title.setText(msg);
+        dialog_msg.setVisibility(View.GONE);
+        input_system_name.setVisibility(View.VISIBLE);
+        return this;
+    }
+
     public TextView getTitleTv(){
 
         return dialog_title;

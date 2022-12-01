@@ -13,6 +13,7 @@ public class SaveDataZeroEngine {
     public static int FTP_START_FAIL = 8001;
     public static int FTP_STARTING = 8000;
     public static int FTP_MIN_PORT = 1001;
+    public static int FTP_MAX_PORT = 65534;
     //FTP
     public static String FTP_PASS_WORD = "ftpPassWord";
     public static String FTP_USER_NAME = "ftpUserName";

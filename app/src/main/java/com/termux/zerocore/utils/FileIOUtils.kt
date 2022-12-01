@@ -2,16 +2,21 @@ package com.termux.zerocore.utils
 
 import android.content.Context
 import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.google.gson.Gson
 import com.termux.R
 import com.termux.zerocore.bean.ClipboardBean
+import com.termux.zerocore.bean.CreateSystemBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
 import com.termux.zerocore.url.FileUrl
-import java.io.File
+import java.io.*
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 object FileIOUtils {
 
@@ -233,8 +238,23 @@ object FileIOUtils {
         return mContext.filesDir.absolutePath + "/home/"
     }
 
+    public fun getStoragePath(mContext: Context): String {
+        return mContext.filesDir.absolutePath + "/home/storage"
+    }
+    public fun getTermuxPathFile(mContext: Context): File {
+        return File("/data/data/com.termux/")
+    }
+
+    public fun isStoragePath(mContext: Context): Boolean {
+        return File(getStoragePath(mContext)).exists()
+    }
+
     public fun getFilePath(): String {
         return UUtils.getContext().filesDir.absolutePath
+    }
+
+    public fun getXinHaoDataPathFile(): File {
+        return File(getSdcardPath(), "/xinhao/data/")
     }
 
     public fun getSdcardPath(): String {
@@ -243,6 +263,11 @@ object FileIOUtils {
 
     public fun getBinPath(mContext: Context): String {
         return mContext.filesDir.absolutePath + "/usr/bin/"
+    }
+
+    public fun getTimeFileName(name: String): String {
+        val simpleDateFormat = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
+        return "${simpleDateFormat.format(Date().time)}$name"
     }
 
     public fun isBinFileExists(fileName: String): Boolean {
@@ -259,6 +284,84 @@ object FileIOUtils {
         return TERMUX_XINHAO_CONFIG
     }
 
+    public fun createSystem(mContext: Context, name: String): File? {
+        val mFile = getTermuxPathFile(mContext)
+        var createFile: File? = null
+        val files: Array<File> = mFile.listFiles()
+        if (files.size == 1) {
+            createFile = File(mFile, "files1")
+            createFile.mkdirs()
+            val createSystemBean = CreateSystemBean()
+            createSystemBean.dir = createFile.getAbsolutePath()
+            createSystemBean.systemName = name
+            val s = Gson().toJson(createSystemBean)
+            val fileInfo: File = File(createFile, "/xinhao_system.infoJson")
+            var printWriter: PrintWriter? = null
+            try {
+                fileInfo.createNewFile()
+                printWriter = PrintWriter(OutputStreamWriter(FileOutputStream(fileInfo)))
+                printWriter.print(s)
+                printWriter.flush()
+                printWriter.close()
+            } catch (e: IOException) {
+                Toast.makeText(UUtils.getContext(), UUtils.getString(R.string.system_create_container_fail), Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+                return null
+            } finally {
+                printWriter?.close()
+            }
+        } else {
+            val arrayList = ArrayList<Int>()
+            for (i in files.indices) {
+                if (files[i].name.startsWith("files")) {
+                    val name1 = files[i].name
+                    val substring = name1.substring(5, name1.length)
+                    if (substring.isEmpty()) {
+                        arrayList.add(0)
+                    } else {
+                        arrayList.add(substring.toInt())
+                    }
+                }
+            }
+            val max: Int = getMax(arrayList)
+            LogUtils.d(TAG, "createSystem max:$max")
+            createFile = File(mFile, "files" + (max + 1))
+            createFile.mkdirs()
+            val createSystemBean = CreateSystemBean()
+            createSystemBean.dir = createFile.getAbsolutePath()
+            createSystemBean.systemName = name
+            val s = Gson().toJson(createSystemBean)
+            val fileInfo: File = File(createFile, "/xinhao_system.infoJson")
+            var printWriter: PrintWriter? = null
+            try {
+                fileInfo.createNewFile()
+                printWriter = PrintWriter(OutputStreamWriter(FileOutputStream(fileInfo)))
+                printWriter.print(s)
+                printWriter.flush()
+                printWriter.close()
+            } catch (e: IOException) {
+                Toast.makeText(UUtils.getContext(), UUtils.getString(R.string.system_create_container_fail), Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+                return null
+            } finally {
+                printWriter?.close()
+            }
+        }
+        return createFile
+    }
 
+    public fun getMax(number: ArrayList<Int>): Int {
+        var temp = number[0]
+        for (i in number.indices) {
+            if (number[i] > temp) {
+                temp = number[i]
+            }
+        }
+        return temp
+    }
+
+    public fun isPacketFormat(name: String): Boolean {
+        return name.endsWith("tar.gz") || name.endsWith("tar.bz2") || name.endsWith("tar.xz")
+    }
 
 }

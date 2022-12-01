@@ -27,7 +27,7 @@
     <string name="action_new_session">新会话</string>
     <string name="action_new_session_failsafe">故障安全</string>
     <string name="title_max_terminals_reached">达到最大终端</string>
-    <string name="msg_max_terminals_reached">在创建新的之前关闭现有的。</string>
+    <string name="msg_max_terminals_reached">在创建新的之前关闭现有的,如果在备份或恢复当中请忽略。</string>
 
     <string name="title_rename_session">设置会话名称</string>
     <string name="action_rename_session_confirm">设置</string>
@@ -55,7 +55,7 @@
     <string name="action_reset_terminal">重启</string>
     <string name="msg_terminal_reset">终端复位</string>
 
-    <string name="action_kill_process">杀死进程 (%d)</string>
+    <string name="action_kill_process">关闭当前终端 (%d)</string>
     <string name="title_confirm_kill_process">你确定杀死该会话?</string>
 
     <string name="action_style_terminal">样式</string>
@@ -730,6 +730,7 @@
     <string name="storage_warning">警告：当前存储暂不可用，您可能需要取消挂载。</string>
 
     <string name="ftp_title">说明</string>
+    <string name="ftp_port_msg">端口超出范围!</string>
 
     <string name="ftp_msg">点击此段说明，跳转到作者github,再次鸣谢作者Pieter Pareit的FTP核心程序\n此FTP核心是由swiftp集成的。\n地址:https://github.com/ppareit/swiftp\n功能可以使用FTP上传文件到Zero Home或者SDCARD\n在更改需要访问的路径是会重启FTP服务\n但是更改用户名、密码、端口需要手动重启服务来生效\n更改用户名、密码、端口数据会实时保存</string>
 
@@ -738,4 +739,26 @@
     <string name="ftp_start_window">跳转至FTP网页</string>
 
     <string name="ftp_prot_error">当前所选端口被占用!</string>
+
+    <string name="container_management">容器管理</string>
+
+    <string name="back_message">请选择以下备份格式,一般推荐"tar.gz"格式</string>
+
+    <string name="storage_error">"~/storage"目录在操作过程中目录丢失，请手动termux-setup-storage创建或重新打开"容器管理"让程序自动创建</string>
+    <string name="backup_success">备份完成，备份文件在->内部存储/xinhao/data/|目录下</string>
+    <string name="backup_msg_dialog">开始备份当前容器,系统需要新建一个会话来进行备份操作,点击确定继续</string>
+    <string name="delete_restore_data">删除此数据包</string>
+    <string name="data_file_name">数据包名称:</string>
+    <string name="data_file_size">数据包大小:</string>
+    <string name="data_file_path">数据包路径:</string>
+    <string name="file_delete_msg">确定要永久删除此数据包？删除之后可没有办法恢复噢。</string>
+    <string name="file_delete_fail">无法删除此文件，请在内部存储手动删除!</string>
+    <string name="file_sd_msg">当前程序需要创建内存卡软链接,需要申请SD卡权限，如果拒绝则无法使用容器管理内所有内容!</string>
+    <string name="file_sd_fail">拒绝了内存卡权限,此模块无法工作,退出。。。</string>
+    <string name="file_sd_success">权限获取成功</string>
+    <string name="system_create_container">创建恢复的系统容器</string>
+    <string name="system_create_container_empty">系统容器名称不能为空</string>
+    <string name="system_create_container_fail">系统创建失败!请重试</string>
+    <string name="system_restore_success">系统恢复完成,请在切换系统，切换您的系统</string>
+    <string name="unrecognized_compression_format">不能识别的数据包!</string>
 </resources>

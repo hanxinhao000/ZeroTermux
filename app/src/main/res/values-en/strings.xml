@@ -761,4 +761,30 @@ Reset successfully</string>
 
     <string name="ftp_prot_error">The currently selected port is occupied</string>
 
+    <string name="container_management">Container Management</string>
+
+    <string name="back_message">Please choose the following backup format, generally recommend "tar.gz" format</string>
+
+    <string name="storage_error">The "~/storage" directory is lost during the operation, please manually create termux-setup-storage or reopen "Container Management" to let the program create it automatically</string>
+
+    <string name="backup_success">The backup is complete, and the backup file is in ->internal storage/xinhao/data/|directory</string>
+
+    <string name="backup_msg_dialog">To start backing up the current container, the system needs to create a new session to perform the backup operation, click OK to continue</string>
+    <string name="delete_restore_data">delete</string>
+
+    <string name="ftp_port_msg">port out of range!</string>
+
+    <string name="data_file_name">Data Name:</string>
+    <string name="data_file_size">Data Size:</string>
+    <string name="data_file_path">Data Path:</string>
+    <string name="file_delete_msg">Are you sure you want to permanently delete this data file? There is no way to restore it after deletion.</string>
+    <string name="file_delete_fail">Unable to delete this file, please delete it manually in internal storage!</string>
+    <string name="file_sd_msg">The current program needs to create a memory card soft link, and needs to apply for SD card permission. If you refuse, you will not be able to use all the content in the container management!</string>
+    <string name="file_sd_fail">memory card permission is denied, this module cannot work, exit. . .</string>
+    <string name="file_sd_success">Permissions obtained successfully</string>
+    <string name="system_create_container">Create a recovered system container</string>
+    <string name="system_create_container_empty">System container name cannot be empty</string>
+    <string name="system_create_container_fail">System creation failed! Please try again</string>
+    <string name="system_restore_success">The system recovery is complete, please switch the system, switch your system</string>
+    <string name="unrecognized_compression_format">unrecognized packet!</string>
 </resources>

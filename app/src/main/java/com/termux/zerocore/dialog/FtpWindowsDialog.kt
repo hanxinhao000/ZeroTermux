@@ -157,14 +157,21 @@ class FtpWindowsDialog : BaseDialogCentre {
                     SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT, SaveDataZeroEngine.FTP_DEF_PORT)
                     return
                 }
-                val parseInt = Integer.parseInt(p0!!.toString())
-                if (parseInt < SaveDataZeroEngine.FTP_MIN_PORT) {
-                    mPortEd?.setTextColor(UUtils.getColor(R.color.colorCC5A6B))
-                } else {
-                    mPortEd?.setTextColor(UUtils.getColor(R.color.color_ffffff))
-                    SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT, mPortEd!!.text.toString())
+                try {
+                    val parseInt = Integer.parseInt(p0!!.toString())
+                    if (parseInt < SaveDataZeroEngine.FTP_MIN_PORT) {
+                        mPortEd?.setTextColor(UUtils.getColor(R.color.colorCC5A6B))
+                    } else if(parseInt > SaveDataZeroEngine.FTP_MAX_PORT) {
+                        UUtils.showMsg(UUtils.getString(R.string.ftp_port_msg))
+                        mPortEd?.setText("2121")
+                    } else {
+                        mPortEd?.setTextColor(UUtils.getColor(R.color.color_ffffff))
+                        SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT, mPortEd!!.text.toString())
+                    }
+                } catch (e:Exception) {
+                    UUtils.showMsg(UUtils.getString(R.string.ftp_port_msg))
+                    mPortEd?.setText("2121")
                 }
-
             }
         })
         mPassword?.addTextChangedListener(object :TextWatcher {

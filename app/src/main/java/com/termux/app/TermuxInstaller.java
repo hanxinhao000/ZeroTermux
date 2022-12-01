@@ -275,7 +275,7 @@ public final class TermuxInstaller {
             true, false, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES, true);
     }
 
-    static void setupStorageSymlinks(final Context context) {
+    public static void setupStorageSymlinks(final Context context) {
         final String LOG_TAG = "termux-storage";
         final String title = TermuxConstants.TERMUX_APP_NAME + " Setup Storage Error";
 
