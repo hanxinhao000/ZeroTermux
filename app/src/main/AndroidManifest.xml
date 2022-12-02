@@ -76,7 +76,7 @@
 
         <activity
             android:name=".app.TermuxActivity"
-            android:theme="@style/Theme.Termux2"
+            android:theme="@style/Theme.TermuxActivity.DayNight.NoActionBar"
             android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
             android:label="@string/app_name"
             android:launchMode="singleTask"

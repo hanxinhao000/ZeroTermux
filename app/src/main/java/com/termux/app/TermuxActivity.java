@@ -1529,7 +1529,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void onDrawerOpened(@NonNull @NotNull View drawerView) {
               //  title_mb.setVisibility(View.VISIBLE);
                 WindowUtils.setImmersionBar(TermuxActivity.this, 0.6f);
-                getTerminalToolbarViewPager().setAlpha(0.6f);
                 setEgInstallStatus();
             }
 
