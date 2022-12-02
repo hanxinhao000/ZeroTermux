@@ -3283,6 +3283,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void onSuccessful(@NotNull Message msg, int mWhat) {
 
                 UUtils.showLog("连接成功:" + msg.obj);
+                LogUtils.d(TAG, "getServiceVs onSuccessful connection succeeded");
 
                 try{
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
@@ -3302,6 +3303,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     e.printStackTrace();
                    // UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
                     service_status.setText(UUtils.getString(R.string.未连接));
+                    LogUtils.d(TAG, "getServiceVs connection error:" + e.toString());
                 }
 
             }
@@ -3311,6 +3313,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                // UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
                 service_status.setText(UUtils.getString(R.string.未连接));
+                service_eg.setText(UUtils.getString(R.string.未连接));
+                LogUtils.d(TAG, "getServiceVs data error:" + response.getException());
             }
         },new HashMap<>(),5555);
 
