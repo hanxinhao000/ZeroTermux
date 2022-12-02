@@ -42,20 +42,21 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> 
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".app.TermuxApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:banner="@drawable/banner"
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="false"
-        android:theme="@style/Theme.Termux"
-        android:usesCleartextTraffic="true"
-        tools:replace="android:allowBackup, android:supportsRtl">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TermuxApp.DayNight.DarkActionBar"
+        tools:targetApi="m">
         <activity android:name=".zerocore.activity.ImageActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             />
@@ -66,10 +67,16 @@
         <meta-data
             android:name="android.max_aspect"
             android:value="10.0" />
+        <meta-data
+            android:name="android.notch_support"
+            android:value="true"/>
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
 
         <activity
             android:name=".app.TermuxActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/Theme.Termux2"
             android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
             android:label="@string/app_name"
             android:launchMode="singleTask"
@@ -243,12 +250,20 @@
             android:grantUriPermissions="true"
             android:readPermission="android.permission.permRead" />
 
+        <!-- Version < 3.0. DeX Mode and Screen Mirroring support -->
         <meta-data
-            android:name="com.sec.android.support.multiwindow"
+            android:name="com.samsung.android.keepalive.density"
             android:value="true" />
+
+        <!-- Version >= 3.0. DeX Dual Mode support -->
         <meta-data
             android:name="com.samsung.android.multidisplay.keep_process_alive"
             android:value="true" />
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true" />
+
     </application>
 
 </manifest>

@@ -77,4 +77,26 @@
         <!-- 是否浮现在activity之上 -->
         <item name="android:windowIsFloating">true</item>
     </style>
+
+    <style name="Theme.Termux2" parent="@style/Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorPrimary">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <!-- Seen in buttons on left drawer: -->
+        <item name="android:colorAccent">@android:color/transparent</item>
+        <item name="android:alertDialogTheme">@style/TermuxAlertDialogStyle</item>
+        <!-- Avoid action mode toolbar pushing down terminal content when
+             selecting text on pre-6.0 (non-floating toolbar). -->
+        <item name="android:windowActionModeOverlay">true</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+
+        <!-- https://developer.android.com/training/tv/start/start.html#transition-color -->
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+
+
+    </style>
 </resources>

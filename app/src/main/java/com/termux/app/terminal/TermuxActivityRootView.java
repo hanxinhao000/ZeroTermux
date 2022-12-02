@@ -10,15 +10,20 @@ import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.xh_lib.utils.UUtils;
 import com.termux.app.TermuxActivity;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.view.ViewUtils;
-
+import com.termux.R;
+import com.termux.zerocore.view.ZeroTermuxBackLayout;
 
 /**
  * The {@link TermuxActivity} relies on {@link android.view.WindowManager.LayoutParams#SOFT_INPUT_ADJUST_RESIZE)}
@@ -61,7 +66,7 @@ import com.termux.shared.view.ViewUtils;
  * hidden part equals the `header_height`. The updates to margins may cause a jitter in some cases
  * when the view is redrawn if the margin is incorrect, but logic has been implemented to avoid that.
  */
-public class TermuxActivityRootView extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener {
+public class TermuxActivityRootView extends ZeroTermuxBackLayout implements ViewTreeObserver.OnGlobalLayoutListener {
 
     public TermuxActivity mActivity;
     public Integer marginBottom;
@@ -279,6 +284,18 @@ public class TermuxActivityRootView extends LinearLayout implements ViewTreeObse
             // Let view window handle insets however it wants
             return v.onApplyWindowInsets(insets);
         }
+    }
+
+    public View getBack_color() {
+        return this.getBackColor();
+    }
+
+    public ImageView getBack_img() {
+        return getBackImg();
+    }
+
+    public VideoView getBack_video() {
+        return getBackVideo();
     }
 
 }

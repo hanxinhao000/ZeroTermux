@@ -87,6 +87,9 @@ android {
         //glide
         implementation 'com.github.bumptech.glide:glide:4.8.0'
         annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+        //状态栏
+        //https://github.com/gyf-dev/ImmersionBar
+        implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"

@@ -14,7 +14,7 @@
 
 <resources>
     <string name="application_name">&TERMUX_APP_NAME;</string>
-    <string name="shared_user_label">&TERMUX_APP_NAME; user</string>
+    <string name="shared_user_label">ZeroTermux user</string>
 
     <string name="app_name">ZeroTermux</string>
 
@@ -794,4 +794,5 @@ Reset successfully</string>
     <string name="my_commonly_used_soft_links">custom shortcut</string>
     <string name="my_commonly_used_soft_links_path">Enter the directory to link</string>
     <string name="my_commonly_used_soft_links_repeat"> entered directory does not exist!</string>
+    <string name="action_share_selected_text">Share selected text</string>
 </resources>

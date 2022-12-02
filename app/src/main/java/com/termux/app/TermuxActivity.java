@@ -56,19 +56,24 @@ import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.partition.Partition;
 import com.google.gson.Gson;
+import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.model.Response;
 import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
+import com.termux.app.api.file.FileReceiverActivity;
 import com.termux.app.terminal.TermuxActivityRootView;
 import com.termux.app.terminal.TermuxTerminalSessionActivityClient;
 import com.termux.app.terminal.io.TermuxTerminalExtraKeys;
 import com.termux.shared.activities.ReportActivity;
 
+import com.termux.shared.activity.ActivityUtils;
 import com.termux.shared.activity.media.AppCompatActivityUtils;
 import com.termux.shared.android.PermissionUtils;
+import com.termux.shared.data.DataUtils;
+import com.termux.shared.data.IntentUtils;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY;
 import com.termux.app.activities.HelpActivity;
@@ -85,6 +90,7 @@ import com.termux.shared.termux.extrakeys.ExtraKeysView;
 import com.termux.shared.termux.interact.TextInputDialogUtils;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
+import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.shared.theme.NightMode;
 import com.termux.shared.view.KeyboardUtils;
@@ -147,6 +153,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -265,6 +272,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private static final int CONTEXT_MENU_SELECT_URL_ID = 0;
     private static final int CONTEXT_MENU_SHARE_TRANSCRIPT_ID = 1;
+    private static final int CONTEXT_MENU_SHARE_SELECTED_TEXT = 10;
     private static final int CONTEXT_MENU_AUTOFILL_ID = 2;
     private static final int CONTEXT_MENU_RESET_TERMINAL_ID = 3;
     private static final int CONTEXT_MENU_KILL_PROCESS_ID = 4;
@@ -297,8 +305,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // Delete ReportInfo serialized object files from cache older than 14 days
         ReportActivity.deleteReportInfoFilesOlderThanXDays(this, 14, false);
 
-        // Load termux shared properties
-        mProperties =  TermuxAppSharedProperties.getProperties();
+        // Load Termux app SharedProperties from disk
+        mProperties = TermuxAppSharedProperties.getProperties();
+        reloadProperties();
 
         setActivityTheme();
 
@@ -315,7 +324,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return;
         }
 
-        setMargins();
 
         mTermuxActivityRootView = findViewById(R.id.activity_termux_root_view);
         mTermuxActivityRootView.setActivity(this);
@@ -332,6 +340,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mProperties.isUsingFullScreen()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+        }
+        WindowUtils.setImmersionBar(TermuxActivity.this, 0.1f);
 
         setTermuxTerminalViewAndClients();
 
@@ -366,9 +378,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initListener();
     }
 
-    public TermuxTerminalExtraKeys getTermuxTerminalExtraKeys() {
-        return mTermuxTerminalExtraKeys;
-    }
 
 
     private void initListener() {
@@ -582,6 +591,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mTermuxTerminalViewClient != null)
             mTermuxTerminalViewClient.onResume();
 
+        // Check if a crash happened on last run of the app or if a plugin crashed and show a
+        // notification with the crash details if it did
+        TermuxCrashUtils.notifyAppCrashFromCrashLogFile(this, LOG_TAG);
+
         mIsOnResumeAfterOnCreate = false;
 
 
@@ -626,7 +639,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         removeTermuxActivityRootViewGlobalLayoutListener();
 
-        unregisterTermuxActivityBroadcastReceiever();
+        unregisterTermuxActivityBroadcastReceiver();
         getDrawer().closeDrawers();
     }
 
@@ -664,8 +677,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        Logger.logVerbose(LOG_TAG, "onSaveInstanceState");
+
         super.onSaveInstanceState(savedInstanceState);
         saveTerminalToolbarTextInput(savedInstanceState);
+        savedInstanceState.putBoolean(ARG_ACTIVITY_RECREATED, true);
     }
 
 
@@ -734,6 +750,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
+
+
+
+
+    private void reloadProperties() {
+        mProperties.loadTermuxPropertiesFromDisk();
+
+        if (mTermuxTerminalViewClient != null)
+            mTermuxTerminalViewClient.onReloadProperties();
+    }
 
 
 
@@ -818,7 +844,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (terminalToolbarViewPager == null) return;
 
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
-        layoutParams.height = (int) Math.round(mTerminalToolbarDefaultHeight *
+        layoutParams.height = Math.round(mTerminalToolbarDefaultHeight *
             (mTermuxTerminalExtraKeys.getExtraKeysInfo() == null ? 0 : mTermuxTerminalExtraKeys.getExtraKeysInfo().getMatrix().length) *
             mProperties.getTerminalToolbarHeightScaleFactor());
         terminalToolbarViewPager.setLayoutParams(layoutParams);
@@ -853,7 +879,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private void setSettingsButtonView() {
         ImageButton settingsButton = findViewById(R.id.settings_button);
         settingsButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, SettingsActivity.class));
+            ActivityUtils.startActivity(this, new Intent(this, SettingsActivity.class));
         });
     }
 
@@ -876,7 +902,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         });
 
         findViewById(R.id.toggle_keyboard_button).setOnLongClickListener(v -> {
-            toggleTerminalToolbar();
+            //toggleTerminalToolbar();
             return true;
         });
     }
@@ -927,7 +953,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         menu.add(Menu.NONE, CONTEXT_MENU_SELECT_URL_ID, Menu.NONE, R.string.action_select_url);
         menu.add(Menu.NONE, CONTEXT_MENU_SHARE_TRANSCRIPT_ID, Menu.NONE, R.string.action_share_transcript);
-        if (addAutoFillMenu) menu.add(Menu.NONE, CONTEXT_MENU_AUTOFILL_ID, Menu.NONE, R.string.action_autofill_password);
+        if (!DataUtils.isNullOrEmpty(mTerminalView.getStoredSelectedText()))
+            menu.add(Menu.NONE, CONTEXT_MENU_SHARE_SELECTED_TEXT, Menu.NONE, R.string.action_share_selected_text);
+        if (addAutoFillMenu)
+            menu.add(Menu.NONE, CONTEXT_MENU_AUTOFILL_ID, Menu.NONE, R.string.action_autofill_password);
         menu.add(Menu.NONE, CONTEXT_MENU_RESET_TERMINAL_ID, Menu.NONE, R.string.action_reset_terminal);
         menu.add(Menu.NONE, CONTEXT_MENU_KILL_PROCESS_ID, Menu.NONE, getResources().getString(R.string.action_kill_process, getCurrentSession().getPid())).setEnabled(currentSession.isRunning());
         menu.add(Menu.NONE, CONTEXT_MENU_STYLING_ID, Menu.NONE, R.string.action_style_terminal);
@@ -955,6 +984,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             case CONTEXT_MENU_SHARE_TRANSCRIPT_ID:
                 mTermuxTerminalViewClient.shareSessionTranscript();
                 return true;
+            case CONTEXT_MENU_SHARE_SELECTED_TEXT:
+                mTermuxTerminalViewClient.shareSelectedText();
+                return true;
             case CONTEXT_MENU_AUTOFILL_ID:
                 requestAutoFill();
                 return true;
@@ -971,10 +1003,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 toggleKeepScreenOn();
                 return true;
             case CONTEXT_MENU_HELP_ID:
-                startActivity(new Intent(this, HelpActivity.class));
+                ActivityUtils.startActivity(this, new Intent(this, HelpActivity.class));
                 return true;
             case CONTEXT_MENU_SETTINGS_ID:
-                startActivity(new Intent(this, SettingsActivity.class));
+                ActivityUtils.startActivity(this, new Intent(this, SettingsActivity.class));
                 return true;
             case CONTEXT_MENU_REPORT_ID:
                 mTermuxTerminalViewClient.reportIssueFromTranscript();
@@ -982,6 +1014,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onContextMenuClosed(Menu menu) {
+        super.onContextMenuClosed(menu);
+        // onContextMenuClosed() is triggered twice if back button is pressed to dismiss instead of tap for some reason
+        mTerminalView.onContextMenuClosed(menu);
     }
 
     private void showKillSessionDialog(TerminalSession session) {
@@ -1017,7 +1056,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             // The startActivity() call is not documented to throw IllegalArgumentException.
             // However, crash reporting shows that it sometimes does, so catch it here.
             new AlertDialog.Builder(this).setMessage(getString(R.string.error_styling_not_installed))
-                .setPositiveButton(R.string.action_styling_install, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(TermuxConstants.TERMUX_STYLING_FDROID_PACKAGE_URL)))).setNegativeButton(android.R.string.cancel, null).show();
+                .setPositiveButton(R.string.action_styling_install,
+                    (dialog, which) -> ActivityUtils.startActivity(this, new Intent(Intent.ACTION_VIEW, Uri.parse(TermuxConstants.TERMUX_STYLING_FDROID_PACKAGE_URL))))
+                .setNegativeButton(android.R.string.cancel, null).show();
         }
     }
     private void toggleKeepScreenOn() {
@@ -1042,26 +1083,49 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
     /**
-     * For processes to access shared internal storage (/sdcard) we need this permission.
+     * For processes to access primary external storage (/sdcard, /storage/emulated/0, ~/storage/shared),
+     * termux needs to be granted legacy WRITE_EXTERNAL_STORAGE or MANAGE_EXTERNAL_STORAGE permissions
+     * if targeting targetSdkVersion 30 (android 11) and running on sdk 30 (android 11) and higher.
      */
-    public boolean ensureStoragePermissionGranted() {
-        if (PermissionUtils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            return true;
-        } else {
-            Logger.logInfo(LOG_TAG, "Storage permission not granted, requesting permission.");
-            PermissionUtils.requestPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION);
-            return false;
+    public void requestStoragePermission(boolean isPermissionCallback) {
+        new Thread() {
+            @Override
+            public void run() {
+                // Do not ask for permission again
+                int requestCode = isPermissionCallback ? -1 : PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION;
+
+                // If permission is granted, then also setup storage symlinks.
+                if(PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
+                    TermuxActivity.this, requestCode, !isPermissionCallback)) {
+                    if (isPermissionCallback)
+                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
+                            getString(com.termux.shared.R.string.msg_storage_permission_granted_on_request));
+
+                    TermuxInstaller.setupStorageSymlinks(TermuxActivity.this);
+                } else {
+                    if (isPermissionCallback)
+                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
+                            getString(com.termux.shared.R.string.msg_storage_permission_not_granted_on_request));
+                }
+            }
+        }.start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.logVerbose(LOG_TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: "  + resultCode + ", data: "  + IntentUtils.getIntentString(data));
+        if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
+            requestStoragePermission(true);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Logger.logInfo(LOG_TAG, "Storage permission granted by user on request.");
-            TermuxInstaller.setupStorageSymlinks(this);
-        } else {
-            Logger.logInfo(LOG_TAG, "Storage permission denied by user on request.");
+        Logger.logVerbose(LOG_TAG, "onRequestPermissionsResult: requestCode: " + requestCode + ", permissions: "  + Arrays.toString(permissions) + ", grantResults: "  + Arrays.toString(grantResults));
+        if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
+            requestStoragePermission(true);
         }
     }
 
@@ -1083,6 +1147,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         return mExtraKeysView;
     }
 
+    public TermuxTerminalExtraKeys getTermuxTerminalExtraKeys() {
+        return mTermuxTerminalExtraKeys;
+    }
+
     public void setExtraKeysView(ExtraKeysView extraKeysView) {
         mExtraKeysView = extraKeysView;
     }
@@ -1094,6 +1162,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     public ViewPager getTerminalToolbarViewPager() {
         return (ViewPager) findViewById(R.id.terminal_toolbar_view_pager);
+    }
+
+    public float getTerminalToolbarDefaultHeight() {
+        return mTerminalToolbarDefaultHeight;
     }
 
     public boolean isTerminalViewSelected() {
@@ -1167,17 +1239,18 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void registerTermuxActivityBroadcastReceiver() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
+        intentFilter.addAction(TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH);
         intentFilter.addAction(TERMUX_ACTIVITY.ACTION_RELOAD_STYLE);
+        intentFilter.addAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
 
         registerReceiver(mTermuxActivityBroadcastReceiver, intentFilter);
     }
 
-    private void unregisterTermuxActivityBroadcastReceiever() {
+    private void unregisterTermuxActivityBroadcastReceiver() {
         unregisterReceiver(mTermuxActivityBroadcastReceiver);
     }
 
-    private boolean fixTermuxActivityBroadcastReceieverIntent(Intent intent) {
+    private boolean fixTermuxActivityBroadcastReceiverIntent(Intent intent) {
         if (intent == null) return false;
 
         String extraReloadStyle = intent.getStringExtra(TERMUX_ACTIVITY.EXTRA_RELOAD_STYLE);
@@ -1198,11 +1271,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent == null) return;
-            Logger.logDebug(LOG_TAG, "TermuxActivityBroadcastReceiver start:" + intent.getAction());
+
             if (mIsVisible) {
-                if(fixTermuxActivityBroadcastReceieverIntent(intent)) {
+                if(fixTermuxActivityBroadcastReceiverIntent(intent)) {
                     return;
                 }
+
                 switch (intent.getAction()) {
                     case TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH:
                         Logger.logDebug(LOG_TAG, "Received intent to notify app crash");
@@ -1222,38 +1296,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    /**
-     * For processes to access primary external storage (/sdcard, /storage/emulated/0, ~/storage/shared),
-     * termux needs to be granted legacy WRITE_EXTERNAL_STORAGE or MANAGE_EXTERNAL_STORAGE permissions
-     * if targeting targetSdkVersion 30 (android 11) and running on sdk 30 (android 11) and higher.
-     */
-    public void requestStoragePermission(boolean isPermissionCallback) {
-        new Thread() {
-            @Override
-            public void run() {
-                // Do not ask for permission again
-                int requestCode = isPermissionCallback ? -1 : PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION;
-
-                // If permission is granted, then also setup storage symlinks.
-                if(PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
-                    TermuxActivity.this, requestCode, !isPermissionCallback)) {
-                    if (isPermissionCallback)
-                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
-                            getString(com.termux.shared.R.string.msg_storage_permission_granted_on_request));
-
-                    TermuxInstaller.setupStorageSymlinks(TermuxActivity.this);
-                } else {
-                    if (isPermissionCallback)
-                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
-                            getString(com.termux.shared.R.string.msg_storage_permission_not_granted_on_request));
-                }
-            }
-        }.start();
-    }
-
-    public float getTerminalToolbarDefaultHeight() {
-        return mTerminalToolbarDefaultHeight;
-    }
 
     private void reloadActivityStyling(boolean recreateActivity) {
         if (mProperties != null) {
@@ -1271,6 +1313,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         setMargins();
         setTerminalToolbarHeight();
 
+        FileReceiverActivity.updateFileReceiverActivityComponentsState(this);
+
         if (mTermuxTerminalSessionActivityClient != null)
             mTermuxTerminalSessionActivityClient.onReloadActivityStyling();
 
@@ -1287,15 +1331,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-    private void reloadProperties() {
-        mProperties.loadTermuxPropertiesFromDisk();
-
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onReloadProperties();
-    }
 
     public static void startTermuxActivity(@NonNull final Context context) {
-        context.startActivity(newInstance(context));
+        ActivityUtils.startActivity(context, newInstance(context));
     }
 
     public static Intent newInstance(@NonNull final Context context) {
@@ -1406,9 +1444,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         double_tishi = findViewById(R.id.double_tishi);
         online_sh = findViewById(R.id.online_sh);
         beautify = findViewById(R.id.beautify);
-        back_color = findViewById(R.id.back_color);
-        back_img = findViewById(R.id.back_img);
-        back_video = findViewById(R.id.back_video);
+        back_color = mTermuxActivityRootView.getBack_color();
+        back_img = mTermuxActivityRootView.getBack_img();
+        back_video = mTermuxActivityRootView.getBack_video();
 
         try{
             double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
@@ -1485,23 +1523,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         ip_status.setText(UUtils.getHostIP());
                     }
                 }
-                version.setText(UUtils.getString(R.string.版本) + " : " + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
-                String versionName = ZeroCoreManage.getVersionName();
-                if (!TextUtils.isEmpty(versionName)) {
-                    eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + versionName );
-                } else {
-                    eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + UUtils.getString(R.string.engine_not_install) );
-                }
             }
 
             @Override
             public void onDrawerOpened(@NonNull @NotNull View drawerView) {
               //  title_mb.setVisibility(View.VISIBLE);
+                WindowUtils.setImmersionBar(TermuxActivity.this, 0.6f);
+                getTerminalToolbarViewPager().setAlpha(0.6f);
+                setEgInstallStatus();
             }
 
             @Override
             public void onDrawerClosed(@NonNull @NotNull View drawerView) {
+                WindowUtils.setImmersionBar(TermuxActivity.this, 0.1f);
               //  title_mb.setVisibility(View.GONE);
+                setEgInstallStatus();
             }
 
             @Override
@@ -1511,6 +1547,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         });
 
         refStartCommandStat();
+    }
+
+    private void setEgInstallStatus() {
+        version.setText(UUtils.getString(R.string.版本) + " : " + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
+        String versionName = ZeroCoreManage.getVersionName();
+        if (!TextUtils.isEmpty(versionName)) {
+            eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + versionName );
+        } else {
+            eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + UUtils.getString(R.string.engine_not_install) );
+        }
     }
 
     /**
