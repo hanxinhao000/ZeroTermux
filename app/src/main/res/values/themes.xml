@@ -37,8 +37,8 @@
 
         <!-- Extra keys colors. -->
         <item name="extraKeysButtonTextColor">@color/white</item>
-        <item name="extraKeysButtonActiveTextColor">@color/red_40 0</item>
-        <item name="extraKeysButtonBackgroundColor">@color/black</item>
+        <item name="extraKeysButtonActiveTextColor">@color/color_48baf3</item>
+        <item name="extraKeysButtonBackgroundColor">@color/color_00000000</item>
         <item name="extraKeysButtonActiveBackgroundColor">@color/grey_500</item>
     </style>
 
