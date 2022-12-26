@@ -138,7 +138,7 @@ public class RestoreFragment extends BaseFragment {
 
                                     TermuxActivity.mTerminalView.sendTextToTerminal(UUtils.getString(R.string.这块直接输入回车即可));
 
-                                    TermuxActivity.mTerminalView.sendTextToTerminal("termux-setup-storage ");
+                                    TermuxActivity.mTerminalView.sendTextToTerminal("\ntermux-setup-storage ");
                                     getActivity().finish();
                                 }
                             });
