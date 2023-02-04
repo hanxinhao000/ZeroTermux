@@ -288,7 +288,7 @@
                         app:cardElevation="0dp"
                         app:cardBackgroundColor="@color/color_161823"
                         app:cardCornerRadius="3dp"
-                        android:layout_height="80dp">
+                        android:layout_height="wrap_content">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:orientation="vertical"
@@ -315,11 +315,14 @@
                                     android:textStyle="bold"
                                     android:textSize="15sp"
                                     android:id="@+id/ip_status"
-                                    android:layout_marginTop="15dp"
+                                    android:layout_marginTop="5dp"
                                     android:layout_alignParentRight="true"
                                     android:text="@string/正在连接"
                                     android:layout_height="wrap_content"/>
                             </RelativeLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="5dp"/>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
                     <androidx.cardview.widget.CardView

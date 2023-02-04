@@ -998,8 +998,11 @@ public class UUtils {
                     }
                     String ip = ia.getHostAddress();
                     if (!"127.0.0.1".equals(ip)) {
-                        hostIp = ia.getHostAddress();
-                        break;
+                        if (hostIp != null && !hostIp.isEmpty()) {
+                            hostIp = hostIp + "\n" + ia.getHostAddress();
+                        } else {
+                            hostIp = ia.getHostAddress();
+                        }
                     }
                 }
             }
