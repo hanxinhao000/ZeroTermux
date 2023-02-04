@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -168,7 +169,7 @@ import java.util.Locale;
  * </ul>
  * about memory leaks.
  */
-public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener, TerminalView.DoubleClickListener {
+public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener, TerminalView.DoubleClickListener, View.OnFocusChangeListener {
 
     /**
      * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
@@ -1267,6 +1268,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         return false;
     }
 
+    @Override
+    public void onFocusChange(View view, boolean b) {
+        if (view == null) {
+            LogUtils.e(TAG, "onFocusChange view is null");
+            return;
+        }
+    }
+
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1391,6 +1400,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout online_sh;
     private LinearLayout beautify;
     private View back_color;
+    private View layout_menu;
     private ImageView back_img;
     private VideoView back_video;
 
@@ -1482,6 +1492,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         yuyan.setOnClickListener(this);
         beautify.setOnClickListener(this);
         shiyan_fun.setOnClickListener(this);
+        mTerminalView.setOnFocusChangeListener(this);
         zt_title.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -1530,6 +1541,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
               //  title_mb.setVisibility(View.VISIBLE);
                 WindowUtils.setImmersionBar(TermuxActivity.this, 0.6f);
                 setEgInstallStatus();
+                layout_menu.setFocusable(true);
             }
 
             @Override
@@ -1537,6 +1549,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 WindowUtils.setImmersionBar(TermuxActivity.this, 0.1f);
               //  title_mb.setVisibility(View.GONE);
                 setEgInstallStatus();
+                layout_menu.setFocusable(false);
             }
 
             @Override
@@ -1577,13 +1590,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             xue_fragment.removeAllViews();
             xue_fragment.addView(snowView);
         }
-
-
-
-
-
-
-
     }
 
 
@@ -3335,17 +3341,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             case "2":
             default:
                 return Locale.SIMPLIFIED_CHINESE;
-
-
         }
-
-
     }
-
-
     private void initFiles(){
-
-
         File mainFile = new File(FileUrl.INSTANCE.getMainBinUrl());
         File openLeftFile = new File(FileUrl.INSTANCE.getOpenLeft());
         File openRigthFile = new File(FileUrl.INSTANCE.getOpenRight());
@@ -3379,4 +3377,18 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     };
 
+    //监听菜单键
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_MENU)) {
+            if (getDrawer().isOpen()) {
+                getDrawer().closeDrawers();
+            } else {
+                getDrawer().openDrawer(Gravity.LEFT);
+            }
+            return false;
+        }else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
 }
