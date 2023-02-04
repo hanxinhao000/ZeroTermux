@@ -1419,6 +1419,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         qq_group_tv = findViewById(R.id.qq_group_tv);
         zerotermux_bbs = findViewById(R.id.zerotermux_bbs);
         rongqi = findViewById(R.id.rongqi);
+        layout_menu = findViewById(R.id.layout_menu);
         back_res = findViewById(R.id.back_res);
         linux_online = findViewById(R.id.linux_online);
         qemu = findViewById(R.id.qemu);
