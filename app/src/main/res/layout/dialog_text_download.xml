@@ -18,7 +18,7 @@
            android:textSize="15sp"
            android:textStyle="bold"
            android:id="@+id/service_name"
-           android:textColor="@color/color_ffffff"
+           android:textColor="@color/color_48baf3"
            android:text="@string/服务器"
            android:layout_height="wrap_content"/>
 

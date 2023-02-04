@@ -3,6 +3,7 @@ package com.termux.zerocore.dialog
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Message
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ import com.termux.R
 import com.termux.zerocore.activity.BackNewActivity
 import com.termux.zerocore.bean.Data
 import com.termux.zerocore.bean.ZDYDataBean
+import com.termux.zerocore.http.HTTPIP
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.url.FileUrl.zeroTermuxApk
 import com.termux.zerocore.url.FileUrl.zeroTermuxData
@@ -60,6 +62,12 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
         service_name = mView.findViewById(R.id.service_name)
         chongzhi_img = mView.findViewById(R.id.chongzhi_img)
         pro = mView.findViewById(R.id.pro)
+        service_name?.let {
+            it.paint!!.flags = Paint.UNDERLINE_TEXT_FLAG
+            it.setOnClickListener {
+                UUtils.startUrl(HTTPIP.IP + "/repository/main/")
+            }
+        }
         mDownLoadMuTILS = DownLoadMuTILS()
         mDownLoadMuTILS?.register()
         mDownLoadMuTILS?.setDownLoadMuTILSListener(this)
