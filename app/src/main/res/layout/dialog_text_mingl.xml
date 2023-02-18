@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_marginTop="10dp"
+        android:id="@+id/title_card"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         app:cardElevation="0dp"
@@ -284,7 +285,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             app:cardElevation="0dp"
-
+            android:id="@+id/switch_card"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="10dp"
             app:cardBackgroundColor="@color/color_553E3E3E"

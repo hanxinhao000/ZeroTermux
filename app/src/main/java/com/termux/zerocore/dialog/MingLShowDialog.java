@@ -9,6 +9,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.example.xh_lib.utils.UUtils;
 import com.google.gson.Gson;
@@ -30,6 +31,8 @@ public class MingLShowDialog extends BaseDialogCentre {
     public TextView start;
     public EditText edit_text;
     public EditText name_edit;
+    public CardView mTitleCard;
+    public CardView mSwitchCard;
     public TextView commit;
     public Switch switch_btn;
     public LinearLayout commit_ll;
@@ -54,6 +57,8 @@ public class MingLShowDialog extends BaseDialogCentre {
         commit_ll = mView.findViewById(R.id.commit_ll);
         name_edit = mView.findViewById(R.id.name_edit);
         switch_btn = mView.findViewById(R.id.switch_btn);
+        mTitleCard = mView.findViewById(R.id.title_card);
+        mSwitchCard = mView.findViewById(R.id.switch_card);
 
 
 

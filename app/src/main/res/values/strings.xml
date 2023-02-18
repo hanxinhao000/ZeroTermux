@@ -769,4 +769,8 @@
     <string name="my_commonly_used_soft_links_path">输入要链接的目录</string>
     <string name="my_commonly_used_soft_links_repeat">输入的目录不存在!</string>
     <string name="action_share_selected_text">分享选中文本</string>
+    <string name="data_message">数据包简介:</string>
+    <string name="create_data_message">创建数据包信息</string>
+    <string name="data_message_hint">创建你的数据包信息，对数据包使用进行说明，设置后数据包相关信息会显示在主菜单的最右侧</string>
+    <string name="data_message_empty">数据包简介不能为空</string>
 </resources>

@@ -761,13 +761,9 @@ public class UUtils {
     public static String getFileString(File file){
       //  UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
         String txt = "";
-
         String temp = "";
-
         if (!file.exists()) {
             try {
-
-
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -799,20 +795,19 @@ public class UUtils {
 
     }
 
-    public static void setFileString(File fileString, String msg){
-
-
+    public static boolean setFileString(File fileString, String msg){
         try {
             PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileString)));
             printWriter.print(msg);
             printWriter.flush();
             printWriter.close();
             //  Toast.makeText(getContext(), "OK", Toast.LENGTH_SHORT).show();
+            return true;
         } catch (FileNotFoundException e) {
           //  Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            return false;
         }
-
     }
 
     //写出文件

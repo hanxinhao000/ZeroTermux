@@ -795,4 +795,8 @@ Reset successfully</string>
     <string name="my_commonly_used_soft_links_path">Enter the directory to link</string>
     <string name="my_commonly_used_soft_links_repeat"> entered directory does not exist!</string>
     <string name="action_share_selected_text">Share selected text</string>
+    <string name="data_message">Data Message:</string>
+    <string name="create_data_message">Create Data MSG</string>
+    <string name="data_message_hint">Create your data package information and explain the use of the data package. After setting, the relevant information of the data package will be displayed on the far right of the main menu</string>
+    <string name="data_message_empty">Data Msg Not Empty</string>
 </resources>

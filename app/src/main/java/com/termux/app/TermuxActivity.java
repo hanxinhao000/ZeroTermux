@@ -145,6 +145,7 @@ import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
@@ -1396,6 +1397,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView telegram_group_tv;
     private TextView double_tishi;
     private TextView xue_hua_start;
+    private EditText mDataMessage;
+    private CardView mDataMessageCard;
     private FrameLayout xue_fragment;
     private LinearLayout online_sh;
     private LinearLayout beautify;
@@ -1444,6 +1447,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         zt_title = findViewById(R.id.zt_title);
         msg_tv = findViewById(R.id.msg_tv);
         xue_fragment = findViewById(R.id.xue_fragment);
+        mDataMessage = findViewById(R.id.data_message);
+        mDataMessageCard = findViewById(R.id.data_message_card);
         xue_hua = findViewById(R.id.xue_hua);
         xue_hua_start = findViewById(R.id.xue_hua_start);
         termux_pl = findViewById(R.id.termux_pl);
@@ -1507,21 +1512,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
-
         String xieyi = SaveData.INSTANCE.getStringOther("xieyi");
-
-
         if(xieyi == null || xieyi.isEmpty() || xieyi.equals("def") ){
             ProtocolDialog protocolDialog = new ProtocolDialog(this);
-
             protocolDialog.show();
-
             protocolDialog.setCancelable(false);
         }
-
-
-
-
         getServiceVs();
         getDrawer().addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -1543,6 +1539,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 WindowUtils.setImmersionBar(TermuxActivity.this, 0.6f);
                 setEgInstallStatus();
                 layout_menu.setFocusable(true);
+                dataMessage();
             }
 
             @Override
@@ -1558,8 +1555,32 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             }
         });
-
         refStartCommandStat();
+    }
+
+    private void dataMessage() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String dataMessageFileString = FileIOUtils.INSTANCE.getDataMessageFileString();
+                if (dataMessageFileString != null && !(dataMessageFileString.isEmpty())) {
+                   UUtils.getHandler().post(new Runnable() {
+                       @Override
+                       public void run() {
+                           mDataMessageCard.setVisibility(View.VISIBLE);
+                           mDataMessage.setText(UUtils.getString(R.string.data_message) + "\n\n" + dataMessageFileString);
+                       }
+                   });
+                } else {
+                    UUtils.getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDataMessageCard.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     private void setEgInstallStatus() {
@@ -3040,28 +3061,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     }
                 });
             }else{
-
             }
-
-
-
-
         }
-
-
-
-
-
-
-
-
-
-
-
     }
-
-
-
 
     /**
      *
@@ -3069,15 +3071,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      *
      *
      */
-
-
     private void isShow(){
-
         title_mb.setVisibility(View.GONE);
         getDrawer().close();
-
-
-
     }
 
     /**
@@ -3090,12 +3086,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
 
     public void startHttp(String ip){
-
-
         String ip_save = SaveData.INSTANCE.getStringOther("ip_save");
-
         if(ip_save == null || ip_save.isEmpty() || ip_save.equals("def")){
-
             ArrayList<EditPromptBean.EditPromptData> arrayList = new ArrayList<>();
             EditPromptBean.EditPromptData editPromptData = new EditPromptBean.EditPromptData();
             editPromptData.setIp(ip);
@@ -3103,61 +3095,30 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             arrayList.add(editPromptData);
             EditPromptBean editPromptBean = new EditPromptBean();
             editPromptBean.setArrayList(arrayList);
-
-
             String s = new Gson().toJson(editPromptBean);
-
             UUtils.showLog("编辑框存入[第一次]:" + s);
-
             SaveData.INSTANCE.saveStringOther("ip_save",s);
-
-
         }else{
-
-
             try{
-
                 EditPromptBean editPromptBean = new Gson().fromJson(ip_save, EditPromptBean.class);
-
                 ArrayList<EditPromptBean.EditPromptData> arrayList = editPromptBean.getArrayList();
-
                 EditPromptBean.EditPromptData editPromptData = new EditPromptBean.EditPromptData();
                 editPromptData.setIp(ip);
                 editPromptData.setConnection(0);
                 arrayList.add(editPromptData);
-
                 ArrayList<EditPromptBean.EditPromptData> arrayList1 = UUUtils.removeDuplicate_2(arrayList);
-
                 editPromptBean.setArrayList(arrayList1);
-
                 String s = new Gson().toJson(editPromptBean);
-
                 UUtils.showLog("编辑框存入[多次]:" + s);
-
                 SaveData.INSTANCE.saveStringOther("ip_save",s);
-
-
-
             }catch (Exception e){
                 e.printStackTrace();
                   SaveData.INSTANCE.saveStringOther("ip_save","def");
             }
-
-
-
         }
-
-
-
-
         LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
-
         loadingDialog.getMsg().setText(UUtils.getString(R.string.正在连接到自定义服务器));
-
         loadingDialog.show();
-
-
-
         new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
             @Override
             public void onSuccessful(@NotNull Message msg, int mWhat) {

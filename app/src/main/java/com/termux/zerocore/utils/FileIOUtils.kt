@@ -32,6 +32,10 @@ object FileIOUtils {
     public const val TERMUX_QEMU = "/data/data/com.termux/files/usr/bin/qemu-system-x86_64"
 
     public  val TERMUX_XINHAO_CONFIG = Environment.getExternalStorageDirectory().absolutePath + "/xinhao/config/"
+    //ROM信息文件地址
+    public const val DATA_MESSAGE_PATH = "/ZtInfo/data.config"
+    public const val DATA_MESSAGE_PATH_FOLDER = "/ZtInfo"
+
 
     //VIDEO
     public const val VIDEO_KEY = "videoPath"
@@ -415,6 +419,34 @@ object FileIOUtils {
 
     public fun getWeiXinAndroidPath(): String {
         return getSdcardPath() + "/Android/data/com.tencent.mm/MicroMsg/Download"
+    }
+
+    public fun getDataMessagePathFile(): File {
+        val homePath = getHomePath(UUtils.getContext())
+        val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)
+        if (!file.exists()) {
+            LogUtils.d(TAG, "folder is create")
+            file.mkdirs()
+        }
+        return File(homePath, DATA_MESSAGE_PATH)
+    }
+
+    public fun getDataMessageFileString(): String {
+        val dataMessagePathFile = getDataMessagePathFile()
+        if (!dataMessagePathFile.exists()) {
+            return ""
+        }
+        val dataMessage = UUtils.getFileString(dataMessagePathFile)
+        return if (dataMessage.isNullOrEmpty()) {
+            ""
+        } else {
+            dataMessage
+        }
+    }
+
+    public fun saveDataMessageFileString(msg: String): Boolean {
+        val dataMessagePathFile = getDataMessagePathFile()
+        return UUtils.setFileString(dataMessagePathFile, msg)
     }
 
 }
