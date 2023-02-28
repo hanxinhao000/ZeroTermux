@@ -421,6 +421,14 @@ object FileIOUtils {
         return getSdcardPath() + "/Android/data/com.tencent.mm/MicroMsg/Download"
     }
 
+    public fun getHtmlPath(): String {
+        val file = File(getHomePath(UUtils.getContext()), "/.html")
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+        return file.absolutePath
+    }
+
     public fun getDataMessagePathFile(): File {
         val homePath = getHomePath(UUtils.getContext())
         val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)

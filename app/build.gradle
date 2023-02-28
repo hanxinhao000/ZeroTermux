@@ -98,10 +98,13 @@ android {
         implementation "io.noties.markwon:recycler:$markwonVersion"
 
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-
+        compile('cn.hotapk:fastandrutils:0.8.0') {
+            exclude group: 'com.android.support'
+        }
 
         implementation project(":terminal-view")
         implementation project(":termux-shared")
+        implementation project(":FHttpServer")
     }
 
     defaultConfig {

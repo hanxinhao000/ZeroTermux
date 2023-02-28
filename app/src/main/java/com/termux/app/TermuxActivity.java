@@ -127,6 +127,7 @@ import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.dialog.VNCConnectionDialog;
 import com.termux.zerocore.dialog.adapter.ItemMenuAdapter;
 import com.termux.zerocore.http.HTTPIP;
+import com.termux.zerocore.http_service.HttpServerManager;
 import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
@@ -380,6 +381,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initColorConfig();
         initListener();
         initScrollHandler();
+        testFun();
     }
 
 
@@ -3371,6 +3373,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         });
 
+    }
+    //测试方法
+    private void testFun() {
+        if (!HttpServerManager.isAlive()) {
+            HttpServerManager.startService(19952, FileIOUtils.INSTANCE.getHtmlPath());
+        }
     }
 
 }

@@ -34,6 +34,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.TimeUnit;
 
+import cn.hotapk.fastandrutils.utils.FUtils;
 import okhttp3.OkHttpClient;
 
 
@@ -44,7 +45,7 @@ public class TermuxApplication extends XHApplication {
     public void onCreate() {
         super.onCreate();
 
-
+        FUtils.init(this);
         Context context = getApplicationContext();
 
         // Set crash handler for the app
