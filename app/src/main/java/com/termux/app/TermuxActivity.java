@@ -27,6 +27,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -378,6 +379,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initStatue();
         initColorConfig();
         initListener();
+        initScrollHandler();
     }
 
 
@@ -3353,4 +3355,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return super.onKeyDown(keyCode, event);
         }
     }
+
+    private void initScrollHandler(){
+        mDataMessage.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //canScrollVertically()方法为判断指定方向上是否可以滚动,参数为正数或负数,负数检查向上是否可以滚动,正数为检查向下是否可以滚动
+                if (mDataMessage.canScrollVertically(1) || mDataMessage.canScrollVertically(-1)){
+                    v.getParent().requestDisallowInterceptTouchEvent(true);//requestDisallowInterceptTouchEvent();要求父类布局不在拦截触摸事件
+                    if (event.getAction() == MotionEvent.ACTION_UP){ //判断是否松开
+                        v.getParent().requestDisallowInterceptTouchEvent(false); //requestDisallowInterceptTouchEvent();让父类布局继续拦截触摸事件
+                    }
+                }
+                return false;
+            }
+        });
+
+    }
+
 }

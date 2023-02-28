@@ -217,29 +217,25 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <ScrollView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="150dp">
-                        <LinearLayout
+                        android:orientation="vertical"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:layout_height="match_parent">
+                        <EditText
                             android:layout_width="match_parent"
-                            android:orientation="vertical"
-                            android:paddingLeft="6dp"
-                            android:paddingRight="6dp"
-                            android:paddingTop="6dp"
-                            android:paddingBottom="6dp"
-                            android:layout_height="match_parent">
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:textColor="@color/color_ffffff"
-                                android:textStyle="bold"
-                                android:textSize="12sp"
-                                android:background="@null"
-                                android:id="@+id/data_message"
-                                android:layout_marginTop="5dp"
-                                android:text="@string/data_message"
-                                android:layout_height="match_parent"/>
-                        </LinearLayout>
-                    </ScrollView>
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:background="@null"
+                            android:id="@+id/data_message"
+                            android:layout_marginTop="5dp"
+                            android:text="@string/data_message"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
                     <ImageView
                         android:layout_width="10dp"
                         android:src="@mipmap/up_down"
