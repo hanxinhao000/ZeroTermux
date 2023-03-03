@@ -423,6 +423,7 @@ object FileIOUtils {
 
     public fun getHtmlPath(): String {
         val file = File(getHomePath(UUtils.getContext()), "/.html/index")
+        LogUtils.d(TAG, "getHtmlPath path is:" + file.absolutePath)
         if (!file.exists()) {
             file.mkdirs()
         }
