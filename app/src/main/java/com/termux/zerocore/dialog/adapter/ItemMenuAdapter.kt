@@ -41,6 +41,7 @@ import com.termux.zerocore.url.FileUrl.zeroTermuxSystem
 import com.termux.zerocore.url.FileUrl.zeroTermuxWebConfig
 import com.termux.zerocore.url.FileUrl.zeroTermuxWindows
 import com.termux.zerocore.utils.FileIOUtils
+import com.termux.zerocore.utils.PackageMsg
 import com.termux.zerocore.zero.engine.ZeroCoreManage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -188,6 +189,9 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
             }
             CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_DATA_MSG -> {
                 createDataMessage()
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_UNINSTALL -> {
+                unInstallAll()
             }
         }
     }
@@ -412,6 +416,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 })
         }
         switchDialog.show()
+    }
+
+    private fun unInstallAll() {
+        PackageMsg.unInstallALLApk(mContext as Activity)
     }
 
     private fun createDataMessage() {

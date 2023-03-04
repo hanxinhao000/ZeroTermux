@@ -32,6 +32,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val ITEM_CLICK_SOFT_LINKS = 1007
         public val ITEM_CLICK_MY_SOFT_LINKS = 1008
         public val ITEM_CLICK_DATA_MSG = 1009
+        public val ITEM_CLICK_UNINSTALL = 1010
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -183,6 +184,17 @@ class CommonCommandsDialog : BaseDialogDown {
         mDataMessage.backColor = UUtils.getColor(R.color.color_8850b397)
         mDataMessage.key = CommonCommandsDialogConstant.ITEM_CLICK_DATA_MSG
         mList.add(mDataMessage)
+        /**
+         * 一键卸载ZeroTermux
+         *
+         */
+        var mUnInstall: ItemMenuBean.Data = ItemMenuBean.Data()
+        mUnInstall.title = UUtils.getString(R.string.zero_uninstall)
+        mUnInstall.id = R.mipmap.uninstall
+        mUnInstall.isEg = false
+        mUnInstall.backColor = UUtils.getColor(R.color.color_8850b397)
+        mUnInstall.key = CommonCommandsDialogConstant.ITEM_CLICK_UNINSTALL
+        mList.add(mUnInstall)
 
 
 

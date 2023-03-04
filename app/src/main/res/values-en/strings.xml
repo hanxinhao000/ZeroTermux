@@ -799,4 +799,5 @@ Reset successfully</string>
     <string name="create_data_message">Create Data MSG</string>
     <string name="data_message_hint">Create your data package information and explain the use of the data package. After setting, the relevant information of the data package will be displayed on the far right of the main menu</string>
     <string name="data_message_empty">Data Msg Not Empty</string>
+    <string name="zero_uninstall">unInstall</string>
 </resources>
