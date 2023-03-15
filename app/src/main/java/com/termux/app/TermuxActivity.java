@@ -1567,7 +1567,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void run() {
                 String dataMessageFileString = FileIOUtils.INSTANCE.getDataMessageFileString();
-                if (dataMessageFileString != null && !(dataMessageFileString.isEmpty())) {
+                if (dataMessageFileString != null && !(dataMessageFileString.trim().isEmpty())) {
                    UUtils.getHandler().post(new Runnable() {
                        @Override
                        public void run() {
@@ -3376,9 +3376,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
     //测试方法
     private void testFun() {
-       /* if (!HttpServerManager.isAlive()) {
-            HttpServerManager.startService(19953, FileIOUtils.INSTANCE.getHtmlPath());
-        }*/
+        if (!HttpServerManager.isAlive()) {
+            HttpServerManager.startService(19953, "");
+        }
 
     }
 

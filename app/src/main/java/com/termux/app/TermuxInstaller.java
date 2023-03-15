@@ -10,6 +10,8 @@ import android.system.Os;
 import android.util.Pair;
 import android.view.WindowManager;
 
+import com.example.xh_lib.utils.LogUtils;
+import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.termux.crash.TermuxCrashUtils;
@@ -161,6 +163,7 @@ public final class TermuxInstaller {
                     try (ZipInputStream zipInput = new ZipInputStream(new ByteArrayInputStream(zipBytes))) {
                         ZipEntry zipEntry;
                         while ((zipEntry = zipInput.getNextEntry()) != null) {
+                          //  LogUtils.d(LOG_TAG, "setupBootstrapIfNeeded zipEntryName23:" + zipEntry.getName());
                             if (zipEntry.getName().equals("SYMLINKS.txt")) {
                                 BufferedReader symlinksReader = new BufferedReader(new InputStreamReader(zipInput));
                                 String line;
@@ -171,7 +174,7 @@ public final class TermuxInstaller {
                                     String oldPath = parts[0];
                                     String newPath = TERMUX_STAGING_PREFIX_DIR_PATH + "/" + parts[1];
                                     symlinks.add(Pair.create(oldPath, newPath));
-
+                                    LogUtils.d(LOG_TAG, "setupBootstrapIfNeeded oldPath:" + oldPath + ", newPath:" + newPath);
                                     error = ensureDirectoryExists(new File(newPath).getParentFile());
                                     if (error != null) {
                                         showBootstrapErrorDialog(activity, whenDone, Error.getErrorMarkdownString(error));
@@ -180,6 +183,7 @@ public final class TermuxInstaller {
                                 }
                             } else {
                                 String zipEntryName = zipEntry.getName();
+                              //  LogUtils.d(LOG_TAG, "setupBootstrapIfNeeded zipEntryName:" + zipEntryName);
                                 File targetFile = new File(TERMUX_STAGING_PREFIX_DIR_PATH, zipEntryName);
                                 boolean isDirectory = zipEntry.isDirectory();
 

@@ -1,0 +1,57 @@
+﻿#title{
+	
+
+	text-align: center;
+	width: 30%;
+	
+	line-height: 100px;
+	
+}
+
+#title111{
+	
+	width: 100%; 
+	font-size: 1cm; 
+	text-align: center;
+	color: #ffffff;
+}
+#btn1{
+	float:left;
+	width: 150px; 
+    line-height:100px;
+    margin-left: 30px;
+    margin-top: 30px;
+	text-align: center; 
+	background-color:rgba(255,255,255,0.5);
+	font-family: 黑体;
+}
+#btn2{
+	
+	
+	float:left;
+	width: 150px; 
+    line-height:100px;
+    margin-top: 30px;
+    margin-left: 30px;
+	text-align: center; 
+
+	background-color:rgba(255,255,255,0.2);
+	font-family: 黑体;
+	
+	
+}
+			a:link {color:#FFFFFF}	/* 未访问的链接 */
+			a:visited {color: #FF5500}	/* 已访问的链接 */
+			a:hover {color: #FF00FF}	/* 鼠标移动到链接上 */
+			a:active {color: #0000FF}	/* 选定的链接 */
+body{
+	
+	background-color: #2B2B2B
+	
+}
+
+
+a{
+	
+	text-decoration: none;
+}
