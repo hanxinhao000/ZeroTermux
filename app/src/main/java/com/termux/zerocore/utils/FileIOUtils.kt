@@ -14,9 +14,12 @@ import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
 import com.termux.zerocore.url.FileUrl
 import java.io.*
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 object FileIOUtils {
 
@@ -368,6 +371,10 @@ object FileIOUtils {
         return name.endsWith("tar.gz") || name.endsWith("tar.bz2") || name.endsWith("tar.xz")
     }
 
+    public fun isModuleFormat(name: String): Boolean {
+        return name.endsWith("7Z") || name.endsWith("7z")
+    }
+
     public fun isXinhaoLinkPath(mContext: Context): Boolean {
         return File(getXinhaoLinkPath(mContext)).exists()
     }
@@ -456,6 +463,50 @@ object FileIOUtils {
     public fun saveDataMessageFileString(msg: String): Boolean {
         val dataMessagePathFile = getDataMessagePathFile()
         return UUtils.setFileString(dataMessagePathFile, msg)
+    }
+    //获取模块包路径
+    public fun getModuleFiles(): ArrayList<File>? {
+        if (!FileUrl.zeroTermuxModule.exists()) {
+            if (!FileUrl.zeroTermuxModule.mkdirs()) {
+                LogUtils.d(TAG, "getModuleFiles create folder is fail, path: " + FileUrl.zeroTermuxModule.absolutePath)
+                return null
+            }
+        }
+        val listFiles = FileUrl.zeroTermuxModule.listFiles()
+        if (listFiles == null || listFiles.isEmpty()) {
+            LogUtils.d(TAG, "getModuleFiles module listFiles is empty ")
+            return null
+        }
+        val arrayList = ArrayList<File>()
+        arrayList.addAll(listFiles)
+        return arrayList
+    }
+
+    public fun cpFile(inputFile: File, outputFile: File, mCpMsg: CpMsg) {
+        if (outputFile.exists()) {
+            mCpMsg.msg(UUtils.getString(R.string.install_module_msg7), false)
+            if (!outputFile.delete()) {
+                mCpMsg.msg(UUtils.getString(R.string.install_module_msg8), false)
+            }
+        }
+        try {
+            FileInputStream(inputFile).use { fis ->
+                FileOutputStream(outputFile).use { os ->
+                    val buffer = ByteArray(1024)
+                    var len: Int
+                    while (fis.read(buffer).also { len = it } != -1) {
+                        os.write(buffer, 0, len)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            mCpMsg.msg(e.toString(), true)
+        }
+
+    }
+
+    public interface CpMsg {
+        fun msg(msg: String, isEndInstall: Boolean)
     }
 
 }

@@ -90,6 +90,9 @@ android {
         //状态栏
         //https://github.com/gyf-dev/ImmersionBar
         implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
+        //Zip解压
+        implementation 'com.hzy:un7zip:+'
+
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"

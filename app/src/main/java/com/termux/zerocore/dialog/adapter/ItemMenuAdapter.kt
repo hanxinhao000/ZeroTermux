@@ -193,6 +193,11 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
             CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_UNINSTALL -> {
                 unInstallAll()
             }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_INSTALL_MODULE -> {
+                val installModuleDialog = InstallModuleDialog(mContext as Activity)
+                installModuleDialog.show()
+                installModuleDialog.setCancelable(false)
+            }
         }
     }
 

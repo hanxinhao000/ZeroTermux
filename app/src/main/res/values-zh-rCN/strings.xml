@@ -796,6 +796,21 @@
     <string name="data_message_hint">创建你的数据包信息，对数据包使用进行说明，设置后数据包相关信息会显示在主菜单的最右侧</string>
     <string name="data_message_empty">数据包简介不能为空</string>
     <string name="zero_uninstall">卸载</string>
+    <string name="install_module">安装模块</string>
+    <string name="install_module_message">注意:安装后不能卸载,只对当前容器生效(如果路径已经放入模块包但是不显示，请检查SD卡权限)</string>
+    <string name="install_empty">内部存储/xinhao/module,没有模块包</string>
+    <string name="install_message">控制台:\n开始安装模块</string>
+    <string name="delete_module_data">删除此模块包</string>
+    <string name="data_module_name">模块包名称:</string>
+    <string name="data_module_size">模块包大小:</string>
+    <string name="data_module_path">模块包路径:</string>
+    <string name="file_module_msg">确定要永久删除此模块包？删除之后可没有办法恢复噢。</string>
+    <string name="install_module_msg1">正在准备安装模块</string>
+    <string name="install_module_msg2">正在展开安装模块</string>
+    <string name="install_module_msg3">展开模块错误！</string>
+    <string name="install_module_msg4">模块展开完成,开始安装</string>
+    <string name="install_module_msg5">无效模块安装包,安装文件[INSTALL.txt]无法找到</string>
+    <string name="install_module_msg6">安装脚本错误,无法找到[目标文件][目标位置][权限]3个参数</string>
 </resources>
 
 

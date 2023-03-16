@@ -31,7 +31,6 @@ public class UUUtils {
                     list.remove(j);
             }
         }
-
         return list;
     }
 

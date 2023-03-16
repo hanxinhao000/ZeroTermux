@@ -800,4 +800,19 @@ Reset successfully</string>
     <string name="data_message_hint">Create your data package information and explain the use of the data package. After setting, the relevant information of the data package will be displayed on the far right of the main menu</string>
     <string name="data_message_empty">Data Msg Not Empty</string>
     <string name="zero_uninstall">unInstall</string>
+    <string name="install_module">Install Module</string>
+    <string name="install_module_message">Note: It cannot be uninstalled after installation, and it only takes effect for the current container (if the path has been put into the module package but it is not displayed, please check the SD card permission)</string>
+    <string name="install_empty">sdcard/xinhao/module,no data</string>
+    <string name="install_message">Console:\nStart installing modules</string>
+    <string name="delete_module_data">remove this modpack</string>
+    <string name="data_module_name">module name:</string>
+    <string name="data_module_size">module size:</string>
+    <string name="data_module_path">module path:</string>
+    <string name="file_module_msg">Are you sure you want to permanently delete this modpack? There is no way to restore it after deletion.</string>
+    <string name="install_module_msg1">Preparing to install the module</string>
+    <string name="install_module_msg2">Expanding install module</string>
+    <string name="install_module_msg3">Expand module error!</string>
+    <string name="install_module_msg4">The module deployment is complete and the installation starts</string>
+    <string name="install_module_msg5">Invalid module installation package, the installation file [INSTALL.txt] cannot be found</string>
+    <string name="install_module_msg6">Installation script error, cannot find [target file] [target location] [permission] 3 parameters</string>
 </resources>

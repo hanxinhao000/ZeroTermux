@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.arialyy.aria.core.Aria;
 import com.example.xh_lib.application.XHApplication;
 import com.hjq.permissions.XXPermissions;
+import com.hzy.lib7z.Z7Extractor;
 import com.lzy.okgo.OkGo;
 import com.mallotec.reb.localeplugin.LocaleConstant;
 import com.mallotec.reb.localeplugin.LocalePlugin;
@@ -53,6 +54,8 @@ public class TermuxApplication extends XHApplication {
 
         // Set log config for the app
         setLogConfig(context);
+
+        Z7Extractor.init();
 
         Logger.logDebug("Starting Application");
 
