@@ -858,8 +858,38 @@ public class UUtils {
             fileOutputStream.flush();
             open.close();
             fileOutputStream.close();
-            Log.e(LOG_TAG, "writerFileRawInput: deon"  );
+            Log.e(LOG_TAG, "writerFileRawInput: done"  );
         } catch (Exception e) {
+            Log.e(LOG_TAG, "writerFileRawInput: " + e.toString() );
+            e.printStackTrace();
+        }
+
+    }
+
+    //写出文件
+    public static void writerFileRawInput(File mFile, InputStream open, FileCallback mFileCallback) {
+        Log.e(LOG_TAG, "writerFileRawInput: start");
+        try {
+            int len = 0;
+            byte[] lll = new byte[1024];
+
+            if (!mFile.exists()) {
+                mFile.createNewFile();
+                Log.e(LOG_TAG, "writerFileRawInput: createNewFile");
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(mFile);
+
+            while ((len = open.read(lll)) != -1) {
+                fileOutputStream.write(lll,0,len);
+            }
+
+            fileOutputStream.flush();
+            open.close();
+            fileOutputStream.close();
+            mFileCallback.callBack("", true);
+            Log.e(LOG_TAG, "writerFileRawInput: done"  );
+        } catch (Exception e) {
+            mFileCallback.callBack("", false);
             Log.e(LOG_TAG, "writerFileRawInput: " + e.toString() );
             e.printStackTrace();
         }
@@ -1071,5 +1101,9 @@ public class UUtils {
 
     public static interface WriterFileListener {
         void schedule(long l, boolean isEnd);
+    }
+
+    public static interface FileCallback {
+        void callBack(String msg, boolean state);
     }
 }

@@ -34,6 +34,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val ITEM_CLICK_DATA_MSG = 1009
         public val ITEM_CLICK_UNINSTALL = 1010
         public val ITEM_CLICK_INSTALL_MODULE = 1011
+        public val ITEM_CLICK_DEF_BASH = 1012
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -85,6 +86,15 @@ class CommonCommandsDialog : BaseDialogDown {
         mInstallModule.isEg = false
         mInstallModule.key = CommonCommandsDialogConstant.ITEM_CLICK_INSTALL_MODULE
         mList.add(mInstallModule)
+        /**
+         * 恢复到默认启动文件
+         */
+        var mDefBash: ItemMenuBean.Data = ItemMenuBean.Data()
+        mDefBash.title = UUtils.getString(R.string.install_def_bash)
+        mDefBash.id = R.mipmap.install_module
+        mDefBash.isEg = false
+        mDefBash.key = CommonCommandsDialogConstant.ITEM_CLICK_DEF_BASH
+        mList.add(mDefBash)
         /**
          * 视屏背景
          */

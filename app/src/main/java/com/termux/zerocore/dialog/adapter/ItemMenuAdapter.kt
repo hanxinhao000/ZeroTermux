@@ -3,6 +3,7 @@ package com.termux.zerocore.dialog.adapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.AssetManager
 import android.os.Handler
 import android.os.Message
 import android.text.TextUtils
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
+import com.example.xh_lib.utils.UUtils.FileCallback
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -197,6 +199,27 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 val installModuleDialog = InstallModuleDialog(mContext as Activity)
                 installModuleDialog.show()
                 installModuleDialog.setCancelable(false)
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_DEF_BASH -> {
+                val switchDialog = SwitchDialog(mContext as Activity)
+                switchDialog.createSwitchDialog(UUtils.getString(R.string.install_def_bash_is_writer))
+                switchDialog.ok?.setOnClickListener {
+                    val file = File(FileUrl.smsBashrcFile)
+                    val open = UUtils.getContext().assets.open("bash.bashrc")
+                    UUtils.writerFileRawInput(file, open, object : FileCallback {
+                        override fun callBack(msg: String?, state: Boolean) {
+                            if (state) {
+                                UUtils.showMsg(UUtils.getString(R.string.install_def_bash_msg_ok))
+                            } else {
+                                UUtils.showMsg(UUtils.getString(R.string.install_def_bash_msg_error))
+                            }
+                            switchDialog.dismiss()
+                        }
+
+                    })
+                }
+                switchDialog.show()
+
             }
         }
     }

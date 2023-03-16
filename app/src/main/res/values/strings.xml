@@ -792,6 +792,10 @@
     <string name="install_module_msg7">目标文件存在！选择覆盖此文件</string>
     <string name="install_module_msg8">目标文件存在！选择覆盖此文件错误</string>
     <string name="install_module_msg9">权限设置错误, 设置默认0700</string>
-    <string name="install_module_msg10">模块安装完成!</string>
+    <string name="install_module_msg10">模块安装完成!有些功能需要重启后生效</string>
     <string name="install_module_msg11">检测到权限为空,将跳过设置文件权限</string>
+    <string name="install_def_bash">默认启动文件</string>
+    <string name="install_def_bash_msg_ok">默认启动文件恢复成功</string>
+    <string name="install_def_bash_msg_error">默认启动文件恢复错误!!</string>
+    <string name="install_def_bash_is_writer">确定要恢复到默认的系统启动脚本(bash.bashrc)? 操作无法更改!</string>
 </resources>

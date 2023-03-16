@@ -815,4 +815,13 @@ Reset successfully</string>
     <string name="install_module_msg4">The module deployment is complete and the installation starts</string>
     <string name="install_module_msg5">Invalid module installation package, the installation file [INSTALL.txt] cannot be found</string>
     <string name="install_module_msg6">Installation script error, cannot find [target file] [target location] [permission] 3 parameters</string>
+    <string name="install_module_msg7">Object file exists! Choose to overwrite this file</string>
+    <string name="install_module_msg8">Object file exists! Choose to overwrite this file error</string>
+    <string name="install_module_msg9">Permission setting error, set default 0700</string>
+    <string name="install_module_msg10">The module installation is complete! Some functions need to be restarted to take effect</string>
+    <string name="install_module_msg11">If the permission is detected to be empty, setting the file permission will be skipped</string>
+    <string name="install_def_bash">default startup file</string>
+    <string name="install_def_bash_msg_ok">The default startup file was restored successfully</string>
+    <string name="install_def_bash_msg_error">default boot file restore error!!</string>
+    <string name="install_def_bash_is_writer">Are you sure you want to revert to the default system startup script (bash.bashrc)? The action cannot be changed!</string>
 </resources>
