@@ -91,7 +91,7 @@ class CommonCommandsDialog : BaseDialogDown {
          */
         var mDefBash: ItemMenuBean.Data = ItemMenuBean.Data()
         mDefBash.title = UUtils.getString(R.string.install_def_bash)
-        mDefBash.id = R.mipmap.install_module
+        mDefBash.id = R.mipmap.def_bash
         mDefBash.isEg = false
         mDefBash.key = CommonCommandsDialogConstant.ITEM_CLICK_DEF_BASH
         mList.add(mDefBash)
