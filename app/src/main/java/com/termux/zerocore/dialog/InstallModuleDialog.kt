@@ -13,6 +13,7 @@ import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.back.bean.DataBean
 import com.termux.zerocore.back.listener.RestoreFileDataListener
+import com.termux.zerocore.back.listener.RestoreRefreshFileListener
 import com.termux.zerocore.dialog.adapter.ModuleAdapter
 import com.termux.zerocore.utils.FileIOUtils
 import com.termux.zerocore.utils.ModuleInstallUtils
@@ -81,18 +82,43 @@ class InstallModuleDialog: BaseDialogCentre {
             arrayList.add(dataBean)
         }
         val moduleAdapter = ModuleAdapter(arrayList, mContext)
+        moduleAdapter.setRestoreRefreshFileListener(object : RestoreRefreshFileListener{
+            override fun refresh() {
+                val moduleFiles1 = FileIOUtils.getModuleFiles()
+                val arrayList1 = ArrayList<DataBean>()
+                if (moduleFiles1 == null || moduleFiles1.isEmpty()) {
+                    mInstallEmpty?.visibility = View.VISIBLE
+                    mRecyclerView?.visibility = View.GONE
+                    return
+                }
+                moduleFiles1.let {
+                    it.forEach {
+                        val dataBean = DataBean()
+                        dataBean.mFile = it
+                        arrayList1.add(dataBean)
+                    }
+                    moduleAdapter.setList(arrayList1)
+                    moduleAdapter.notifyDataSetChanged()
+                }
+            }
+        })
         mRecyclerView?.layoutManager = LinearLayoutManager(UUtils.getContext())
         mRecyclerView?.adapter = moduleAdapter
         moduleAdapter.setRestoreFileDataListener(object: RestoreFileDataListener {
             override fun file(mDataBean: DataBean) {
-                mInstallLl?.visibility = View.INVISIBLE
-                mConsoleRl?.visibility = View.VISIBLE
+                val switchDialog = SwitchDialog(mContext)
+                switchDialog.createSwitchDialog(UUtils.getString(R.string.install_module_switch))
+                switchDialog.show()
+                switchDialog.ok?.setOnClickListener {
+                    switchDialog.dismiss()
+                    mInstallLl?.visibility = View.INVISIBLE
+                    mConsoleRl?.visibility = View.VISIBLE
 
                     Z7ExtracatUtils.setUnZipCallBack(object : Z7ExtracatUtils.UnZipCallBack {
                         override fun onStart() {
                             MainScope().launch(Dispatchers.Main) {
-                               mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg1)}\n${UUtils.getString(R.string.install_module_msg2)}"
-                               mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                                mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg1)}\n${UUtils.getString(R.string.install_module_msg2)}"
+                                mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
                             }
                         }
 
@@ -140,6 +166,7 @@ class InstallModuleDialog: BaseDialogCentre {
                     })
                     ModuleInstallUtils.unZipModule(mDataBean.mFile!!)
                 }
+            }
         })
     }
 

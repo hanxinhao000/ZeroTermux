@@ -824,4 +824,6 @@ Reset successfully</string>
     <string name="install_def_bash_msg_ok">The default startup file was restored successfully</string>
     <string name="install_def_bash_msg_error">default boot file restore error!!</string>
     <string name="install_def_bash_is_writer">Are you sure you want to revert to the default system startup script (bash.bashrc)? The action cannot be changed!</string>
+    <string name="install_module_switch">Are you sure you want to install this module pack?</string>
+    <string name="install_module_clear_tempmodule">An exception occurred when emptying the temporary folder, please manually delete the ~/tempmodule folder!</string>
 </resources>

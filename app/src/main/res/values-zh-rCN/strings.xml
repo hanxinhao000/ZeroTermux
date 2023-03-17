@@ -820,6 +820,8 @@
     <string name="install_def_bash_msg_ok">默认启动文件恢复成功</string>
     <string name="install_def_bash_msg_error">默认启动文件恢复错误!!</string>
     <string name="install_def_bash_is_writer">确定要恢复到默认的系统启动脚本(bash.bashrc)? 操作无法更改!</string>
+    <string name="install_module_switch">您确定要安装此模块包?</string>
+    <string name="install_module_clear_tempmodule">清空临时文件夹出现异常,请手动删除~/tempmodule文件夹!</string>
 </resources>
 
 

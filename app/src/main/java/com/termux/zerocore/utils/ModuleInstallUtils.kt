@@ -7,7 +7,9 @@ import com.termux.R
 import com.termux.zerocore.url.FileUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.apache.commons.io.FileUtils
 import java.io.File
 
 object ModuleInstallUtils {
@@ -22,7 +24,7 @@ object ModuleInstallUtils {
                 return
             }
         }
-        GlobalScope.launch(Dispatchers.IO) {
+        MainScope().launch(Dispatchers.IO) {
             LogUtils.d(TAG, "installModule inputFilePath:" + mFile.absolutePath + ",outputPath:" + file.absolutePath)
             Z7ExtracatUtils.unZipFile(mFile, file)
 
@@ -102,6 +104,13 @@ object ModuleInstallUtils {
 
         }
 
+        try {
+            FileUtils.cleanDirectory(File(FileUrl.mainHomeUrl, "/tempmodule"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            LogUtils.d(TAG, "installModule  cleanDirectory error $e")
+            mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_clear_tempmodule), false, null)
+        }
         mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg10), true, null)
 
     }
