@@ -8,18 +8,33 @@
     android:layout_height="match_parent"
     tools:context=".zerocore.activity.EditTextActivity">
 
-    <EditText
-        android:id="@+id/edit_text"
-        android:padding="10dp"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_margin="3dp"
-        android:text=""
-        android:gravity="left"
-        android:textColor="@color/color_ffffff"
-        android:textSize="15sp"
         android:layout_above="@+id/button_ll"
         android:background="@drawable/shape_line_2e84e6"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/edit_text"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_margin="3dp"
+            android:text=""
+            android:gravity="left"
+            android:visibility="gone"
+            android:textColor="@color/color_ffffff"
+            android:textSize="15sp"
+            android:layout_height="match_parent"/>
+
+        <me.testica.codeeditor.Editor
+            android:id="@+id/editor"
+            android:padding="5dp"
+            app:textSize="15sp"
+            android:layout_margin="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -804,4 +804,5 @@
     <string name="edit_save">保存</string>
     <string name="edit_cancel">取消</string>
     <string name="changed_bash">编辑启动文件</string>
+    <string name="save_error_">保存失败</string>
 </resources>

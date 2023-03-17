@@ -92,6 +92,7 @@ android {
         implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
         //Zip解压
         implementation 'com.hzy:un7zip:+'
+        implementation 'me.testica:codeeditor:1.0.2'
 
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
