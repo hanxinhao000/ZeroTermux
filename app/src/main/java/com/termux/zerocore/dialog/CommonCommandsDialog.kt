@@ -35,6 +35,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val ITEM_CLICK_UNINSTALL = 1010
         public val ITEM_CLICK_INSTALL_MODULE = 1011
         public val ITEM_CLICK_DEF_BASH = 1012
+        public val ITEM_CLICK_BASH_CHANGE = 1013
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -95,6 +96,15 @@ class CommonCommandsDialog : BaseDialogDown {
         mDefBash.isEg = false
         mDefBash.key = CommonCommandsDialogConstant.ITEM_CLICK_DEF_BASH
         mList.add(mDefBash)
+        /**
+         * 修改bash
+         */
+        var mChangBash: ItemMenuBean.Data = ItemMenuBean.Data()
+        mChangBash.title = UUtils.getString(R.string.changed_bash)
+        mChangBash.id = R.mipmap.bash_change
+        mChangBash.isEg = false
+        mChangBash.key = CommonCommandsDialogConstant.ITEM_CLICK_BASH_CHANGE
+        mList.add(mChangBash)
         /**
          * 视屏背景
          */

@@ -3,6 +3,8 @@ package com.termux.zerocore.utils
 import com.example.xh_lib.utils.LogUtils
 import com.termux.zerocore.url.FileUrl
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 object BashFileUtils {
     private val TAG = "BashFileUtils"
@@ -16,7 +18,7 @@ object BashFileUtils {
         val startCommand = getStartCommand()
         val lines: List<String> = file.readLines()
         if (startCommand == null || startCommand.isEmpty()) {
-            val arrayList = ArrayList<String>()
+            val arrayList = LinkedList<String>()
             arrayList.addAll(lines)
             arrayList.add(arrayList.size, "# ZeroTermux[Start]")
             list.forEach {
@@ -35,24 +37,27 @@ object BashFileUtils {
             }
         } else {
             LogUtils.d(TAG, "getStartCommand bash.bashrc ZT Command is:$startCommand")
-            var start = 0
+            var end = 0
             for (i in lines.indices) {
-                if (lines[i].contains("ZeroTermux[Start]")) {
-                    LogUtils.d(TAG, "getStartCommand ZeroTermux[Start] is:$start")
-                    start = i + 1
+                if (lines[i].contains("ZeroTermux[End]")) {
+                    LogUtils.d(TAG, "getStartCommand ZeroTermux[Start] is:$end")
+                    end = i - 1
                 }
             }
-            list.addAll(startCommand)
-            val arrayListLines = ArrayList<String>()
+            //获取的所有文本 lines = arrayListLines
+            //获取ZT当前的  startCommand
+           // startCommand.addAll(list)
+            val arrayListLines = LinkedList<String>()
             arrayListLines.addAll(lines)
+            list.reverse()
             list.forEach {
-                arrayListLines.add(start, it)
+                arrayListLines.add(end, it)
             }
-            val newList1: ArrayList<String> = UUUtils.removeDuplicate_1(arrayListLines)
+           // val newList1: ArrayList<String> = UUUtils.removeDuplicate_1(arrayListLines)
 
-            LogUtils.d(TAG, "getStartCommand add command 2:$newList1")
+            LogUtils.d(TAG, "getStartCommand add command 2:$arrayListLines")
             file.printWriter().use { out ->
-                newList1.forEach {
+                arrayListLines.forEach {
                     out.print(it)
                     out.println()
                 }

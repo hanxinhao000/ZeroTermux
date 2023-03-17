@@ -22,7 +22,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/permission_run_command_label"
         android:protectionLevel="dangerous" />
-    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
+
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -41,10 +42,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".app.TermuxApplication"
@@ -55,13 +60,21 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.TermuxApp.DayNight.DarkActionBar"
+        android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".zerocore.activity.ImageActivity"
+        <activity
+            android:name=".zerocore.activity.EditTextActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".zerocore.activity.ImageActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <!--
          This (or rather, value 2.1 or higher) is needed to make the Samsung Galaxy S8
              mark the app with "This app is optimized to run in full screen."
@@ -71,18 +84,18 @@
             android:value="10.0" />
         <meta-data
             android:name="android.notch_support"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="notch.config"
             android:value="portrait|landscape" />
 
         <activity
             android:name=".app.TermuxActivity"
-            android:theme="@style/Theme.TermuxActivity.DayNight.NoActionBar"
             android:configChanges="orientation|screenSize|smallestScreenSize|density|screenLayout|uiMode|keyboard|keyboardHidden|navigation"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:resizeableActivity="true">
+            android:resizeableActivity="true"
+            android:theme="@style/Theme.TermuxActivity.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -101,8 +114,8 @@
 
         <activity-alias
             android:name=".HomeActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:targetActivity=".app.TermuxActivity">
+            android:targetActivity=".app.TermuxActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
 
             <!-- Launch activity automatically on boot on Android Things devices -->
             <intent-filter>
@@ -165,16 +178,21 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name="com.zzti.fengyongge.imagepicker.PhotoPreviewActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name="com.zzti.fengyongge.imagepicker.PhotoSelectorActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name="com.lcw.library.imagepicker.activity.ImagePickerActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name="com.lcw.library.imagepicker.activity.ImagePreActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name="com.lcw.library.imagepicker.activity.BaseActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
+            android:name="com.zzti.fengyongge.imagepicker.PhotoPreviewActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="com.zzti.fengyongge.imagepicker.PhotoSelectorActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="com.lcw.library.imagepicker.activity.ImagePickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="com.lcw.library.imagepicker.activity.ImagePreActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="com.lcw.library.imagepicker.activity.BaseActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".shared.activities.ReportActivity"
             android:documentLaunchMode="intoExisting"
@@ -185,8 +203,8 @@
             android:label="@string/opne_in_zerotermux"
             android:noHistory="true"
             android:resizeableActivity="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:taskAffinity="${TERMUX_PACKAGE_NAME}.filereceiver">
+            android:taskAffinity="${TERMUX_PACKAGE_NAME}.filereceiver"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
 
             <!-- Accept multiple file types when sending. -->
             <intent-filter>
@@ -240,7 +258,9 @@
         </service>
 
         <receiver android:name=".app.TermuxOpenReceiver" />
-        <service android:name=".zerocore.ftp.FsService"/>
+
+        <service android:name=".zerocore.ftp.FsService" />
+
         <receiver
             android:name=".shared.activities.ReportActivity$ReportActivityBroadcastReceiver"
             android:exported="false" />
@@ -250,22 +270,16 @@
             android:authorities="${TERMUX_PACKAGE_NAME}.files"
             android:exported="true"
             android:grantUriPermissions="true"
-            android:readPermission="android.permission.permRead" />
-
-        <!-- Version < 3.0. DeX Mode and Screen Mirroring support -->
+            android:readPermission="android.permission.permRead" /> <!-- Version < 3.0. DeX Mode and Screen Mirroring support -->
         <meta-data
             android:name="com.samsung.android.keepalive.density"
-            android:value="true" />
-
-        <!-- Version >= 3.0. DeX Dual Mode support -->
+            android:value="true" /> <!-- Version >= 3.0. DeX Dual Mode support -->
         <meta-data
             android:name="com.samsung.android.multidisplay.keep_process_alive"
             android:value="true" />
-
         <meta-data
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
-
     </application>
 
 </manifest>

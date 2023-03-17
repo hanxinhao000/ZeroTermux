@@ -659,7 +659,8 @@
     <string name="error_run_command_service_invalid_execution_command_runner">Invalid execution command runner to RunCommandService: `%1$s`</string>
     <string name="error_termux_service_unsupported_execution_command_shell_create_mode">Unsupported execution command shell create mode to TermuxService: `%1$s`</string>
     <string name="error_termux_service_execution_command_shell_name_unset">Shell name not set but `%1$s` shell create mode passed</string>
-    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME; requires
+    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME;
+        requires
         \"Display over other apps\" permission to start terminal sessions from background on Android >= 10.
         Grants it from Settings -> Apps -> &TERMUX_APP_NAME; -> Advanced</string>
     <string name="bootstrap_error_installed_on_portable_sd">&TERMUX_APP_NAME; cannot be installed on
@@ -800,4 +801,7 @@
     <string name="install_def_bash_is_writer">确定要恢复到默认的系统启动脚本(bash.bashrc)? 操作无法更改!</string>
     <string name="install_module_switch">您确定要安装此模块包?</string>
     <string name="install_module_clear_tempmodule">清空临时文件夹出现异常,请手动删除~/tempmodule文件夹!</string>
+    <string name="edit_save">保存</string>
+    <string name="edit_cancel">取消</string>
+    <string name="changed_bash">编辑启动文件</string>
 </resources>

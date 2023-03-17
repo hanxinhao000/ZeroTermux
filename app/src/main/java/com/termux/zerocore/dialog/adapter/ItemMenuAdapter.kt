@@ -19,6 +19,7 @@ import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.termux.R
 import com.termux.app.TermuxActivity
+import com.termux.zerocore.activity.EditTextActivity
 import com.termux.zerocore.activity.ImageActivity
 import com.termux.zerocore.bean.ItemMenuBean
 import com.termux.zerocore.data.CommendShellData
@@ -220,6 +221,12 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 }
                 switchDialog.show()
 
+            }
+
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_BASH_CHANGE -> {
+                val intent = Intent(mContext, EditTextActivity::class.java)
+                intent.putExtra("edit_path", FileUrl.smsBashrcFile)
+                mContext?.startActivity(intent)
             }
         }
     }
