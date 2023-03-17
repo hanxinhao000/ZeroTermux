@@ -110,13 +110,13 @@ class RestoreViewModel {
                         }
                         mBackupStoreDialogCloseListener?.backupStoreDismiss()
                         var mLoadingDialog: LoadingDialog? = null
-                        GlobalScope.launch {
+                        MainScope().launch {
                             withContext(Dispatchers.Main) {
                                 mLoadingDialog = LoadingDialog(mContext!!)
                                 mLoadingDialog?.msg?.text = UUtils.getString(R.string.正在载入中)
                                 mLoadingDialog?.show()
                                 mLoadingDialog?.setCancelable(false)
-                                mCreateConversationListener?.create()
+                               // mCreateConversationListener?.create()
                             }
                             withContext(Dispatchers.IO) {
                                 delay(1000)

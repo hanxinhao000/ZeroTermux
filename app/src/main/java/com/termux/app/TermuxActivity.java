@@ -3376,9 +3376,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
     //测试方法
     private void testFun() {
-        if (!HttpServerManager.isAlive()) {
+   /*     if (!HttpServerManager.isAlive()) {
             HttpServerManager.startService(19953, "");
-        }
+        }*/
 
     }
 
