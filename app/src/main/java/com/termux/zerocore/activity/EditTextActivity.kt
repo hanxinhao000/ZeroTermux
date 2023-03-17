@@ -84,7 +84,7 @@ class EditTextActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (UUtils.setFileString(file, toString)) {
-                UUtils.showMsg( UUtils.getString(R.string.保存成功))
+                UUtils.showMsg( UUtils.getString(R.string.save_ok_))
                 finish()
             } else {
                 UUtils.showMsg( UUtils.getString(R.string.save_error_))

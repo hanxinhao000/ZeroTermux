@@ -36,6 +36,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val ITEM_CLICK_INSTALL_MODULE = 1011
         public val ITEM_CLICK_DEF_BASH = 1012
         public val ITEM_CLICK_BASH_CHANGE = 1013
+        public val ITEM_CLICK_START_MSG = 1014
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -105,6 +106,16 @@ class CommonCommandsDialog : BaseDialogDown {
         mChangBash.isEg = false
         mChangBash.key = CommonCommandsDialogConstant.ITEM_CLICK_BASH_CHANGE
         mList.add(mChangBash)
+
+        /**
+         * 修改欢迎语
+         */
+        var mChangStartMsg: ItemMenuBean.Data = ItemMenuBean.Data()
+        mChangStartMsg.title = UUtils.getString(R.string.start_msg)
+        mChangStartMsg.id = R.mipmap.start_msg_ico
+        mChangStartMsg.isEg = false
+        mChangStartMsg.key = CommonCommandsDialogConstant.ITEM_CLICK_START_MSG
+        mList.add(mChangStartMsg)
         /**
          * 视屏背景
          */

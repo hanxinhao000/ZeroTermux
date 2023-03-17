@@ -228,6 +228,12 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 intent.putExtra("edit_path", FileUrl.smsBashrcFile)
                 mContext?.startActivity(intent)
             }
+
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_START_MSG -> {
+                val intent = Intent(mContext, EditTextActivity::class.java)
+                intent.putExtra("edit_path", FileUrl.smsMotdFile)
+                mContext?.startActivity(intent)
+            }
         }
     }
 

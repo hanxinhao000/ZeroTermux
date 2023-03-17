@@ -805,4 +805,6 @@
     <string name="edit_cancel">取消</string>
     <string name="changed_bash">编辑启动文件</string>
     <string name="save_error_">保存失败</string>
+    <string name="save_ok_">保存成功,有些文件需要重启APP生效</string>
+    <string name="start_msg">修改欢迎语</string>
 </resources>
