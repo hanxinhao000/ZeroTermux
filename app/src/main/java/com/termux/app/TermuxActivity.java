@@ -403,6 +403,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTerminalView.setActionPointer2ClickListener(new TerminalView.ActionPointer2ClickListener() {
             @Override
             public void pointer2Click() {
+                String toolbox_state = com.termux.view.zerotermux.SaveData.getData("toolbox_state", UUtils.getContext());
+                LogUtils.d(TAG, "pointer2Click toolbox_state:" + toolbox_state);
+                if (!(toolbox_state == null || toolbox_state.isEmpty() || toolbox_state.equals("def"))) {
+                    return;
+                }
                 final LoadingDialog[] loadingDialog = {null};
                 CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
                 mCommonCommandsDialog.show();

@@ -1,7 +1,6 @@
 package com.termux.zerocore.dialog
 
 import android.content.Context
-import android.graphics.Color
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,6 +11,7 @@ import com.blockchain.ub.util.custom.dialog.BaseDialogDown
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.app.TermuxActivity
+import com.termux.view.zerotermux.SaveData
 import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.ItemMenuBean
 import com.termux.zerocore.dialog.adapter.CommonCommandsAdapter
@@ -45,6 +45,7 @@ class CommonCommandsDialog : BaseDialogDown {
     private var recycler_view:RecyclerView? = null
     private var item_menu_rec:RecyclerView? = null
     private var clipboard_note:TextView? = null
+    private var prohibit_toolbox:TextView? = null
     private var clear_text:TextView? = null
     private var select_1_ll:LinearLayout? = null
     private var select_2_ll: LinearLayout? = null
@@ -74,6 +75,22 @@ class CommonCommandsDialog : BaseDialogDown {
         clipboard_container = mView.findViewById(R.id.clipboard_container)
         other_container = mView.findViewById(R.id.other_container)
         item_menu_rec = mView.findViewById(R.id.item_menu_rec)
+        prohibit_toolbox = mView.findViewById(R.id.prohibit_toolbox)
+        prohibit_toolbox?.setOnClickListener {
+            val switchDialog = SwitchDialog(mContext)
+            switchDialog.createSwitchDialog(UUtils.getString(R.string.rohibit_toolbox_msg))
+            switchDialog.show()
+            switchDialog.ok?.let {
+                it.text = UUtils.getString(R.string.rohibit_toolbox_select)
+                it.setOnClickListener {
+                    SaveData.saveData(SaveData.TOOL, "disable_display", UUtils.getContext())
+                    UUtils.showMsg(UUtils.getString(R.string.rohibit_toolbox_ok_))
+                    switchDialog.dismiss()
+                    dismiss()
+                }
+            }
+
+        }
 
     }
 

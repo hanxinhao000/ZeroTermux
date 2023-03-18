@@ -3,4 +3,6 @@
   <string name="copy_text">复制</string>
   <string name="text_selection_more">更多…</string>
   <string name="add_text">添加命令</string>
+  <string name="enable_toolbox">启用工具箱</string>
+  <string name="enable_toolbox_msg">工具箱已启动，现在你可以双指单击打开了</string>
 </resources>

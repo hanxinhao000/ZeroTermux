@@ -672,7 +672,7 @@
     <string name="title_share_selected_text_with">Send selected text to:</string>
     <string name="add_commend_msg_fail">"Can't add empty commands"</string>
     <string name="add_commend_msg_ok">"The addition is successful. For details, please set the \"Command Definition\" function"</string>
-    <string name="tool_cent">工具箱</string>
+    <string name="tool_cent">工具箱(禁止弹出工具箱)</string>
     <string name="linux_commend">常用命令</string>
     <string name="linux_clipboard">剪贴板</string>
     <string name="font_name">字体名称:</string>
@@ -808,4 +808,7 @@
     <string name="save_ok_">保存成功,有些文件需要重启APP生效</string>
     <string name="start_msg">修改欢迎语</string>
     <string name="create_folder">创建文件夹</string>
+    <string name="rohibit_toolbox_msg">在你调整字体大小或三指截图的时候，可以选择禁止显示工具箱\n启用工具箱:[长按终端->启用工具箱]</string>
+    <string name="rohibit_toolbox_select">禁用显示</string>
+    <string name="rohibit_toolbox_ok_">已禁用显示,如要开启请:[长按终端->启用工具箱]</string>
 </resources>

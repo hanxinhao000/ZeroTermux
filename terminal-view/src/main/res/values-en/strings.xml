@@ -1,6 +1,8 @@
 <resources>
   <string name="paste_text">Paste</string>
   <string name="copy_text">copy</string>
-  <string name="text_selection_more">More…</string>
   <string name="add_text">Add Command</string>
+  <string name="enable_toolbox">enable_toolbox</string>
+  <string name="text_selection_more">More…</string>
+    <string name="enable_toolbox_msg">The toolbox is launched and you can now open it with a two-finger click</string>
 </resources>

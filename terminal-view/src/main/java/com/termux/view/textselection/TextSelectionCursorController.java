@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -17,6 +18,7 @@ import com.termux.terminal.TerminalBuffer;
 import com.termux.terminal.WcWidth;
 import com.termux.view.R;
 import com.termux.view.TerminalView;
+import com.termux.view.zerotermux.SaveData;
 
 public class TextSelectionCursorController implements CursorController {
 
@@ -32,8 +34,9 @@ public class TextSelectionCursorController implements CursorController {
     private ActionMode mActionMode;
     public final int ACTION_COPY = 1;
     public final int ACTION_ADD = 2;
-    public final int ACTION_PASTE = 3;
-    public final int ACTION_MORE = 4;
+    public final int ENABLE_TOOLBOX = 3;
+    public final int ACTION_PASTE = 4;
+    public final int ACTION_MORE = 5;
     /**
      *  Zerotermux hanxinhao000
      * @return
@@ -118,10 +121,11 @@ public class TextSelectionCursorController implements CursorController {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 int show = MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT;
-
+                String data = SaveData.getData(SaveData.TOOL, mEndHandle.getContext());
                 ClipboardManager clipboard = (ClipboardManager) terminalView.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 menu.add(Menu.NONE, ACTION_COPY, Menu.NONE, R.string.copy_text).setShowAsAction(show);
                 menu.add(Menu.NONE, ACTION_ADD, Menu.NONE, R.string.add_text).setShowAsAction(show);
+                menu.add(Menu.NONE, ENABLE_TOOLBOX, Menu.NONE, R.string.enable_toolbox).setEnabled(data != null && !(data.isEmpty()) &&!(data.equals("def"))).setShowAsAction(show);
                 menu.add(Menu.NONE, ACTION_PASTE, Menu.NONE, R.string.paste_text).setEnabled(clipboard != null && clipboard.hasPrimaryClip()).setShowAsAction(show);
                 menu.add(Menu.NONE, ACTION_MORE, Menu.NONE, R.string.text_selection_more);
                 return true;
@@ -163,6 +167,11 @@ public class TextSelectionCursorController implements CursorController {
                         if (mAddCommend != null) {
                             mAddCommend.editCommend(getSelectedText());
                         }
+                        terminalView.stopTextSelectionMode();
+                        break;
+                    case ENABLE_TOOLBOX:
+                        SaveData.saveData(SaveData.TOOL, "def", mEndHandle.getContext());
+                        Toast.makeText(mEndHandle.getContext(), mEndHandle.getContext().getResources().getString(R.string.enable_toolbox_msg), Toast.LENGTH_SHORT).show();
                         terminalView.stopTextSelectionMode();
                         break;
                 }
