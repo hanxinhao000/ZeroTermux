@@ -801,6 +801,7 @@ Reset successfully</string>
     <string name="data_message_empty">Data Msg Not Empty</string>
     <string name="zero_uninstall">unInstall</string>
     <string name="install_module">Install Module</string>
+    <string name="install_module_download">Install Module(DownLoad Module)</string>
     <string name="install_module_message">Note: It cannot be uninstalled after installation, and it only takes effect for the current container (if the path has been put into the module package but it is not displayed, please check the SD card permission)</string>
     <string name="install_empty">sdcard/xinhao/module,no data</string>
     <string name="install_message">Console:\nStart installing modules</string>
@@ -836,4 +837,6 @@ Reset successfully</string>
     <string name="rohibit_toolbox_msg">When you adjust the font size or take a three-finger screenshot, you can choose to disable toolbox\nEnable toolbox: [long press the terminal -> enable toolbox]</string>
     <string name="rohibit_toolbox_select">disable display</string>
     <string name="rohibit_toolbox_ok_">The display is disabled, if you want to open it please: [long press the terminal -> enable toolbox]</string>
+    <string name="module_un7z_">Module Expanding...</string>
+    <string name="module_install_pro">processing command:</string>
 </resources>

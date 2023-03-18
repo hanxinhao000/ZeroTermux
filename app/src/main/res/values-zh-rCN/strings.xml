@@ -797,6 +797,7 @@
     <string name="data_message_empty">数据包简介不能为空</string>
     <string name="zero_uninstall">卸载</string>
     <string name="install_module">安装模块</string>
+    <string name="install_module_download">安装模块(下载模块)</string>
     <string name="install_module_message">注意:安装后不能卸载,只对当前容器生效(如果路径已经放入模块包但是不显示，请检查SD卡权限)</string>
     <string name="install_empty">内部存储/xinhao/module,没有模块包</string>
     <string name="install_message">控制台:\n开始安装模块</string>
@@ -832,6 +833,8 @@
     <string name="rohibit_toolbox_msg">在你调整字体大小或三指截图的时候，可以选择禁止显示工具箱\n启用工具箱:[长按终端->启用工具箱]</string>
     <string name="rohibit_toolbox_select">禁用显示</string>
     <string name="rohibit_toolbox_ok_">已禁用显示,如要开启请:[长按终端->启用工具箱]</string>
+    <string name="module_un7z_">模块展开中...</string>
+    <string name="module_install_pro">正在处理命令:</string>
 </resources>
 
 

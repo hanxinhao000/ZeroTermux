@@ -776,6 +776,7 @@
     <string name="data_message_empty">数据包简介不能为空</string>
     <string name="zero_uninstall">卸载</string>
     <string name="install_module">安装模块</string>
+    <string name="install_module_download">安装模块(下载模块)</string>
     <string name="install_module_message">注意:安装后不能卸载,只对当前容器生效(如果路径已经放入模块包但是不显示，请检查SD卡权限)</string>
     <string name="install_empty">内部存储/xinhao/module,没有模块包</string>
     <string name="install_message">控制台:\n开始安装模块</string>

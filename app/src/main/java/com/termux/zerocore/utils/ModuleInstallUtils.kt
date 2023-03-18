@@ -60,9 +60,8 @@ object ModuleInstallUtils {
                 try {
                     index ++
                     stringBuilder.append(".")
-                    mInstallModuleMsg?.msg(stringBuilder.toString(), true, null)
-                    val split = it.split("->")
                     mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+                    val split = it.split("->")
                     LogUtils.d(TAG, "installModule split: $split")
                     if (split.size != 3) {
                         mInstallModuleMsg?.msg("${UUtils.getString(R.string.install_module_msg6)}->[$it]", true, null)

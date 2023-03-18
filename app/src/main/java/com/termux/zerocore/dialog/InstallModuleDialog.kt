@@ -27,6 +27,7 @@ import kotlin.coroutines.suspendCoroutine
 class InstallModuleDialog: BaseDialogCentre {
     private var TAG = "InstallModuleDialog"
     private var mInstallEmpty: TextView? = null
+    private var download_module: TextView? = null
     private var mRecyclerView: RecyclerView? = null
     private var mInstallLl: LinearLayout? = null
     private var mConsoleRl: RelativeLayout? = null
@@ -43,6 +44,7 @@ class InstallModuleDialog: BaseDialogCentre {
         mView?.let {
             mInstallEmpty = it.findViewById(R.id.install_empty)
             mRecyclerView = it.findViewById(R.id.recycler_view)
+            download_module = it.findViewById(R.id.download_module)
             mInstallLl = it.findViewById(R.id.install_ll)
             mConsoleRl = it.findViewById(R.id.console_rl)
             mInstallModule = it.findViewById(R.id.install_module)
@@ -53,7 +55,10 @@ class InstallModuleDialog: BaseDialogCentre {
             mOk?.setOnClickListener {
                 dismiss()
             }
-            mClose?.visibility = View.GONE
+            download_module?.setOnClickListener {
+                UUtils.startUrl("https://od.ixcmstudio.cn/repository/main/module/")
+            }
+
             mClose?.setOnClickListener {
                 mThread?.interrupt()
                 dismiss()
@@ -113,6 +118,7 @@ class InstallModuleDialog: BaseDialogCentre {
                 switchDialog.show()
                 switchDialog.ok?.setOnClickListener {
                     switchDialog.dismiss()
+                    mClose?.visibility = View.GONE
                     mInstallLl?.visibility = View.INVISIBLE
                     mConsoleRl?.visibility = View.VISIBLE
                     var fileNumTemp: Int = 0
