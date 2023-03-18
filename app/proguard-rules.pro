@@ -17,6 +17,7 @@
 -keep class **$$UploadListenerProxy{ *; }
 -keep class **$$DownloadGroupListenerProxy{ *; }
 -keep class **$$DGSubListenerProxy{ *; }
+-keep class com.hzy.lib7z.**{*;}
 -keepclasseswithmembernames class * {
     @Download.* <methods>;
     @Upload.* <methods>;
