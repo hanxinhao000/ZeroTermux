@@ -9,7 +9,7 @@ object Z7ExtracatUtils {
 
     public var mUnZipCallBack: UnZipCallBack? = null
 
-    public suspend fun unZipFile(mInputFile: File, mOutputPath: File) {
+    public  fun unZipFile(mInputFile: File, mOutputPath: File) {
         Z7Extractor.extractFile(mInputFile.absolutePath, mOutputPath.absolutePath, object: IExtractCallback {
             override fun onStart() {
                 mUnZipCallBack?.onStart()
@@ -45,7 +45,7 @@ object Z7ExtracatUtils {
         fun onSucceed()
     }
 
-    public suspend fun unZipAssets(mAssetManager: AssetManager, name:String, mOutputPath: File) {
+    public  fun unZipAssets(mAssetManager: AssetManager, name:String, mOutputPath: File) {
         Z7Extractor.extractAsset(mAssetManager, name, mOutputPath.absolutePath, object : IExtractCallback {
             override fun onStart() {
                 mUnZipCallBack?.onStart()

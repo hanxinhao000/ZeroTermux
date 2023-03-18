@@ -9,6 +9,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.back.bean.DataBean
@@ -52,6 +53,7 @@ class InstallModuleDialog: BaseDialogCentre {
             mOk?.setOnClickListener {
                 dismiss()
             }
+            mClose?.visibility = View.GONE
             mClose?.setOnClickListener {
                 mThread?.interrupt()
                 dismiss()
@@ -113,57 +115,72 @@ class InstallModuleDialog: BaseDialogCentre {
                     switchDialog.dismiss()
                     mInstallLl?.visibility = View.INVISIBLE
                     mConsoleRl?.visibility = View.VISIBLE
-
+                    var fileNumTemp: Int = 0
+                    var fileNumConnut: Int = 0
+                    val stringBuilder = StringBuilder()
+                    LogUtils.d(TAG, "file start install module...")
                     Z7ExtracatUtils.setUnZipCallBack(object : Z7ExtracatUtils.UnZipCallBack {
-                        override fun onStart() {
-                            MainScope().launch(Dispatchers.Main) {
-                                mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg1)}\n${UUtils.getString(R.string.install_module_msg2)}"
-                                mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                            override fun onStart() {
+                                UUtils.getHandler().post {
+                                    stringBuilder.
+                                        append(mConsoleText?.text).
+                                        append("\n").
+                                        append(UUtils.getString(R.string.install_module_msg1)).
+                                        append(UUtils.getString(R.string.install_module_msg2))
+
+                                    mConsoleText?.text = stringBuilder.toString()
+                                    mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                                }
                             }
-                        }
 
-                        override fun onGetFileNum(fileNum: Int) {
-
-                        }
-
-                        override fun onProgress(name: String?, size: Long) {
-                            MainScope().launch(Dispatchers.Main) {
-                                mConsoleText?.text = "${mConsoleText?.text}\n${name}"
-                                mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                            override fun onGetFileNum(fileNum: Int) {
+                                fileNumTemp = fileNum
                             }
-                        }
 
-                        override fun onError(errorCode: Int, message: String?) {
-                            MainScope().launch(Dispatchers.Main) {
-                                mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg3)}:${message},$errorCode"
-                                mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                            override fun onProgress(name: String?, size: Long) {
+                                fileNumConnut++
+                                UUtils.getHandler().post {
+                                    mConsoleText?.text = "$stringBuilder\n${UUtils.getString(R.string.module_un7z_)}$fileNumConnut/$fileNumTemp"
+                                    // mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                                }
                             }
-                        }
 
-                        override fun onSucceed() {
-                            mClose?.visibility = View.VISIBLE
-                            mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg4)}"
-                            mConsoleText?.text = "${mConsoleText?.text}\n\n\n\n"
-                            mScrollView?.fullScroll(ScrollView.FOCUS_DOWN)
-                            mThread =  Thread {
-                                ModuleInstallUtils.installModule(object : ModuleInstallUtils.InstallModuleMsg {
-                                    override fun msg(msg: String, isInstallEnd: Boolean,  mThrowable: Throwable?) {
-                                        UUtils.getHandler().post {
-                                            if (isInstallEnd) {
-                                                mOk?.visibility = View.VISIBLE
-                                            } else {
-                                                mOk?.visibility = View.GONE
-                                            }
-                                            mConsoleText?.text = "${mConsoleText?.text}\n$msg"
-                                            mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
-                                        }
-                                    }
-                                })
+                            override fun onError(errorCode: Int, message: String?) {
+                             UUtils.getHandler().post {
+                                 mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg3)}:${message},$errorCode"
+                                 mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                             }
                             }
-                            mThread?.start()
-                        }
+
+                            override fun onSucceed() {
+                               UUtils.getHandler().post {
+                                  // mClose?.visibility = View.VISIBLE
+                                   mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg4)}"
+                                   mConsoleText?.text = "${mConsoleText?.text}\n\n\n\n"
+                                   mScrollView?.fullScroll(ScrollView.FOCUS_DOWN)
+                                   mThread = Thread {
+                                       ModuleInstallUtils.installModule(object : ModuleInstallUtils.InstallModuleMsg {
+                                           override fun msg(msg: String, isInstallEnd: Boolean,  mThrowable: Throwable?) {
+                                               UUtils.getHandler().post {
+                                                   if (isInstallEnd) {
+                                                       mOk?.visibility = View.VISIBLE
+                                                   } else {
+                                                       mOk?.visibility = View.GONE
+                                                   }
+                                                   mConsoleText?.let {
+                                                       it.text = msg
+                                                   }
+                                                   mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
+                                               }
+                                           }
+                                       })
+                                   }
+                                   mThread!!.start()
+                               }
+                            }
 
                     })
+                    LogUtils.d(TAG, "file start unZipModule")
                     ModuleInstallUtils.unZipModule(mDataBean.mFile!!)
                 }
             }

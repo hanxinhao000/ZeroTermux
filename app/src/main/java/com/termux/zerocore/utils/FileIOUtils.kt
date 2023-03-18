@@ -484,9 +484,9 @@ object FileIOUtils {
 
     public fun cpFile(inputFile: File, outputFile: File, mCpMsg: CpMsg) {
         if (outputFile.exists()) {
-            mCpMsg.msg(UUtils.getString(R.string.install_module_msg7), false)
+           // mCpMsg.msg(UUtils.getString(R.string.install_module_msg7), false)
             if (!outputFile.delete()) {
-                mCpMsg.msg(UUtils.getString(R.string.install_module_msg8), false)
+                mCpMsg.msg(UUtils.getString(R.string.install_module_msg8) + ":${outputFile.absolutePath}", false)
             }
         }
         try {
@@ -500,6 +500,7 @@ object FileIOUtils {
                 }
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             mCpMsg.msg(e.toString(), true)
         }
 
