@@ -62,19 +62,32 @@ object ModuleInstallUtils {
                     val tempModuleFile = File(FileUrl.mainHomeUrl, "/tempmodule/${split[0]}")
                     val mainFile = File(FileUrl.mainFilesUrl, "/${split[1]}")
                     LogUtils.d(TAG, "installModule mainFile path:" + mainFile.absolutePath)
-                    if (!(it.startsWith("#")) && it.contains("bash.bashrc")) {
+                    if (!(it.startsWith("#")) && it.contains("usr/etc/bash.bashrc")) {
                         LogUtils.d(TAG, "installModule open bash.bashrc")
-
                         val readLines = tempModuleFile.readLines()
                         val arrayList = ArrayList<String>()
                         arrayList.addAll(readLines)
                         BashFileUtils.setStartCommand(arrayList)
                     } else {
-                        FileIOUtils.cpFile(tempModuleFile, mainFile, object : FileIOUtils.CpMsg{
-                            override fun msg(msg: String, isEndInstall: Boolean) {
-                                mInstallModuleMsg?.msg(msg, false, null)
+                        //创建文件夹
+
+                            if (tempModuleFile.isDirectory) {
+                                mainFile.mkdirs()
+                                mInstallModuleMsg?.msg(UUtils.getString(R.string.create_folder) + ":${mainFile.absolutePath}", false, null)
+                            } else {
+                                if (mainFile.parentFile != null && !(mainFile.parentFile.exists())) {
+                                    mainFile.parentFile.mkdirs()
+                                    mInstallModuleMsg?.msg(UUtils.getString(R.string.create_folder) + ":${mainFile.absolutePath}", false, null)
+                                }
+                                FileIOUtils.cpFile(tempModuleFile, mainFile, object : FileIOUtils.CpMsg{
+                                    override fun msg(msg: String, isEndInstall: Boolean) {
+                                        mInstallModuleMsg?.msg(msg, false, null)
+                                    }
+                                })
                             }
-                        })
+
+
+
                         when (split[2].length) {
                             0 -> {
                                 mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg11), false, null)

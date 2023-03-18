@@ -807,4 +807,5 @@
     <string name="save_error_">保存失败</string>
     <string name="save_ok_">保存成功,有些文件需要重启APP生效</string>
     <string name="start_msg">修改欢迎语</string>
+    <string name="create_folder">创建文件夹</string>
 </resources>
