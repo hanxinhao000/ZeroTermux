@@ -486,12 +486,12 @@ open class ZFileOperateListener {
      */
     open fun deleteFile(filePath: String, context: Context, block: Boolean.() -> Unit) {
         AlertDialog.Builder(context).apply {
-            setTitle("温馨提示")
-            setMessage("您确定要删除吗？")
-            setPositiveButton("删除") { _, _ ->
+            setTitle("注意[Notice]")
+            setMessage("请谨慎执行此操作,目录的软连接删除可能会清除你手机存储所有的文件(软连接文件夹右下角会显示上下箭头的图标)!\nPlease perform this operation carefully, the soft link deletion of the directory may clear all the files stored on your phone (the icon of up and down arrows will be displayed in the lower right corner of the soft link folder)")
+            setPositiveButton("删除[delete]") { _, _ ->
                 ZFileUtil.deleteFile(filePath, context, block)
             }
-            setNegativeButton("取消") { dialog, _ ->
+            setNegativeButton("取消[no]") { dialog, _ ->
                 dialog.dismiss()
             }
             show()
