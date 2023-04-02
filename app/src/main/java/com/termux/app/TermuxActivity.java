@@ -111,6 +111,7 @@ import com.termux.zerocore.back.BackRestoreDialog;
 import com.termux.zerocore.back.listener.CreateConversationListener;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
+import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.data.UsbFileData;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
@@ -143,12 +144,15 @@ import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
 import com.termux.zerocore.view.xuehua.SnowView;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
+import com.zp.z_file.ui.ZFileListFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import org.jetbrains.annotations.NotNull;
@@ -187,11 +191,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public static TerminalView mTerminalView;
 
     /**
-     *  The {@link TerminalViewClient} interface implementation to allow for communication between
-     *  {@link TerminalView} and {@link TermuxActivity}.
+     * The {@link TerminalViewClient} interface implementation to allow for communication between
+     * {@link TerminalView} and {@link TermuxActivity}.
      */
     TermuxTerminalViewClient mTermuxTerminalViewClient;
 
+    LocalBroadcastManager localBroadcastManager;
+    LocalReceiver localReceiver;
 
     /**
      * Termux app shared preferences manager.
@@ -240,8 +246,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
     /**
-     *  The {@link TerminalSessionClient} interface implementation to allow for communication between
-     *  {@link TerminalSession} and {@link TermuxActivity}.
+     * The {@link TerminalSessionClient} interface implementation to allow for communication between
+     * {@link TerminalSession} and {@link TermuxActivity}.
      */
     TermuxTerminalSessionActivityClient mTermuxTerminalSessionActivityClient;
 
@@ -271,7 +277,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private int mNavBarHeight;
 
     private int mTerminalToolbarDefaultHeight;
-
 
 
     private static final int CONTEXT_MENU_SELECT_URL_ID = 0;
@@ -385,12 +390,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
     private void initListener() {
         mTerminalView.getTextSelectionCursorControllerView().setAddCommend(new TextSelectionCursorController.AddCommend() {
             @Override
             public void editCommend(String edit) {
-                if (!TextUtils.isEmpty(edit)){
+                if (!TextUtils.isEmpty(edit)) {
                     UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_ok));
                     FileIOUtils.INSTANCE.commendSave(edit, edit, false);
                 } else {
@@ -429,10 +433,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         back_video.setVisibility(View.GONE);
                         back_img.setVisibility(View.GONE);
                         back_color.setVisibility(View.GONE);
-                        TerminalRenderer.COLOR_TEXT =  Color.parseColor("#ffffff");
-                        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR =  Color.parseColor("#ffffff");
+                        TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
+                        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
                         mTerminalView.invalidate();
-                        if(mExtraKeysView != null) {
+                        if (mExtraKeysView != null) {
                             mExtraKeysView.setColorButton();
                             mExtraKeysView.invalidate();
                         }
@@ -459,7 +463,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             try {
                                 key_bord.addView(mView);
                                 getTerminalToolbarViewPager().setVisibility(View.GONE);
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                                 key_bord.removeAllViews();
                             }
@@ -500,43 +504,44 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         });
     }
-    public void initColorConfig(){
+
+    public void initColorConfig() {
         String font_color = SaveData.INSTANCE.getStringOther("font_color");
         String back_color = SaveData.INSTANCE.getStringOther("back_color");
         String change_text = SaveData.INSTANCE.getStringOther("change_text");
         String change_text_show = SaveData.INSTANCE.getStringOther("change_text_show");
-        if(!(font_color == null || font_color.isEmpty() || font_color.equals("def"))){
+        if (!(font_color == null || font_color.isEmpty() || font_color.equals("def"))) {
             try {
                 int color = Integer.parseInt(font_color);
                 TerminalRenderer.COLOR_TEXT = color;
                 ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
                 mTerminalView.invalidate();
                 UUtils.showLog("Test:111111");
-                if(mExtraKeysView != null) {
+                if (mExtraKeysView != null) {
                     mExtraKeysView.setColorButton();
                     mExtraKeysView.invalidate();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        if(!(back_color == null || back_color.isEmpty() || back_color.equals("def"))){
+        if (!(back_color == null || back_color.isEmpty() || back_color.equals("def"))) {
             try {
                 int color = Integer.parseInt(back_color);
                 this.back_color.setBackgroundColor(color);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        if((change_text == null || change_text.isEmpty() || change_text.equals("def"))){
+        if ((change_text == null || change_text.isEmpty() || change_text.equals("def"))) {
             this.back_color.setAlpha(1f);
-        }else{
+        } else {
             this.back_color.setAlpha(0.3f);
         }
 
-        if((change_text_show == null || change_text_show.isEmpty() || change_text_show.equals("def"))){
+        if ((change_text_show == null || change_text_show.isEmpty() || change_text_show.equals("def"))) {
             double_tishi.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             double_tishi.setVisibility(View.GONE);
         }
         if (FileIOUtils.INSTANCE.isPathVideo()) {
@@ -554,7 +559,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         } else {
             //没有视频
             File file = new File(FileUrl.INSTANCE.getMainConfigImg() + "/back.jpg");
-            if(file.exists()) {
+            if (file.exists()) {
                 Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
                 back_video.setVisibility(View.GONE);
                 back_img.setVisibility(View.VISIBLE);
@@ -669,6 +674,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxService = null;
         }
         unregisterReceiver(mUsbReceiver);
+        localBroadcastManager.unregisterReceiver(localReceiver);
 
         try {
             unbindService(this);
@@ -683,7 +689,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
          *
          */
 
-      //  unregisterReceiver(mUsbReceiver);
+        //  unregisterReceiver(mUsbReceiver);
     }
 
     @Override
@@ -694,9 +700,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         saveTerminalToolbarTextInput(savedInstanceState);
         savedInstanceState.putBoolean(ARG_ACTIVITY_RECREATED, true);
     }
-
-
-
 
 
     /**
@@ -713,6 +716,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         setTermuxSessionsListView();
 
+        fileManager();
+        locaBroadcast();
         final Intent intent = getIntent();
         setIntent(null);
 
@@ -761,17 +766,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
-
-
-
     private void reloadProperties() {
         mProperties.loadTermuxPropertiesFromDisk();
 
         if (mTermuxTerminalViewClient != null)
             mTermuxTerminalViewClient.onReloadProperties();
     }
-
 
 
     private void setActivityTheme() {
@@ -792,7 +792,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
     public void addTermuxActivityRootViewGlobalLayoutListener() {
         getTermuxActivityRootView().getViewTreeObserver().addOnGlobalLayoutListener(getTermuxActivityRootView());
     }
@@ -801,7 +800,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (getTermuxActivityRootView() != null)
             getTermuxActivityRootView().getViewTreeObserver().removeOnGlobalLayoutListener(getTermuxActivityRootView());
     }
-
 
 
     private void setTermuxTerminalViewAndClients() {
@@ -829,13 +827,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
     private void setTerminalToolbarView(Bundle savedInstanceState) {
         mTermuxTerminalExtraKeys = new TermuxTerminalExtraKeys(this, mTerminalView,
             mTermuxTerminalViewClient, mTermuxTerminalSessionActivityClient);
 
         final ViewPager terminalToolbarViewPager = getTerminalToolbarViewPager();
-        if (mPreferences.shouldShowTerminalToolbar()) terminalToolbarViewPager.setVisibility(View.VISIBLE);
+        if (mPreferences.shouldShowTerminalToolbar())
+            terminalToolbarViewPager.setVisibility(View.VISIBLE);
 
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
         mTerminalToolbarDefaultHeight = layoutParams.height;
@@ -878,13 +876,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private void saveTerminalToolbarTextInput(Bundle savedInstanceState) {
         if (savedInstanceState == null) return;
 
-        final EditText textInputView =  findViewById(R.id.terminal_toolbar_text_input);
+        final EditText textInputView = findViewById(R.id.terminal_toolbar_text_input);
         if (textInputView != null) {
             String textInput = textInputView.getText().toString();
-            if (!textInput.isEmpty()) savedInstanceState.putString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT, textInput);
+            if (!textInput.isEmpty())
+                savedInstanceState.putString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT, textInput);
         }
     }
-
 
 
     private void setSettingsButtonView() {
@@ -908,17 +906,19 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void setToggleKeyboardView() {
         findViewById(R.id.toggle_keyboard_button).setOnClickListener(v -> {
-            mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
-            getDrawer().closeDrawers();
+          /*  mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
+            getDrawer().closeDrawers();*/
+            indexSwitch(0);
         });
 
         findViewById(R.id.toggle_keyboard_button).setOnLongClickListener(v -> {
             //toggleTerminalToolbar();
             return true;
         });
+        findViewById(R.id.select_new_session_button).setOnClickListener(v -> {
+            indexSwitch(1);
+        });
     }
-
-
 
 
     @SuppressLint("RtlHardcoded")
@@ -938,7 +938,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    /** Show a toast and dismiss the last one if still visible. */
+    /**
+     * Show a toast and dismiss the last one if still visible.
+     */
     public void showToast(String text, boolean longDuration) {
         if (text == null || text.isEmpty()) return;
         if (mLastToast != null) mLastToast.cancel();
@@ -946,7 +948,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mLastToast.setGravity(Gravity.TOP, 0, 0);
         mLastToast.show();
     }
-
 
 
     @Override
@@ -977,7 +978,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         menu.add(Menu.NONE, CONTEXT_MENU_REPORT_ID, Menu.NONE, R.string.action_report_issue);
     }
 
-    /** Hook system menu to show context menu instead. */
+    /**
+     * Hook system menu to show context menu instead.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         mTerminalView.showContextMenu();
@@ -1072,6 +1075,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 .setNegativeButton(android.R.string.cancel, null).show();
         }
     }
+
     private void toggleKeepScreenOn() {
         if (mTerminalView.getKeepScreenOn()) {
             mTerminalView.setKeepScreenOn(false);
@@ -1092,7 +1096,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
     /**
      * For processes to access primary external storage (/sdcard, /storage/emulated/0, ~/storage/shared),
      * termux needs to be granted legacy WRITE_EXTERNAL_STORAGE or MANAGE_EXTERNAL_STORAGE permissions
@@ -1106,7 +1109,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 int requestCode = isPermissionCallback ? -1 : PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION;
 
                 // If permission is granted, then also setup storage symlinks.
-                if(PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
+                if (PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
                     TermuxActivity.this, requestCode, !isPermissionCallback)) {
                     if (isPermissionCallback)
                         Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
@@ -1125,7 +1128,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Logger.logVerbose(LOG_TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: "  + resultCode + ", data: "  + IntentUtils.getIntentString(data));
+        Logger.logVerbose(LOG_TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode + ", data: " + IntentUtils.getIntentString(data));
         if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
             requestStoragePermission(true);
         }
@@ -1134,12 +1137,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Logger.logVerbose(LOG_TAG, "onRequestPermissionsResult: requestCode: " + requestCode + ", permissions: "  + Arrays.toString(permissions) + ", grantResults: "  + Arrays.toString(grantResults));
+        Logger.logVerbose(LOG_TAG, "onRequestPermissionsResult: requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays.toString(grantResults));
         if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
             requestStoragePermission(true);
         }
     }
-
 
 
     public int getNavBarHeight() {
@@ -1205,7 +1207,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
     public TermuxService getTermuxService() {
         return mTermuxService;
     }
@@ -1237,8 +1238,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public TermuxAppSharedProperties getProperties() {
         return mProperties;
     }
-
-
 
 
     public static void updateTermuxActivityStyling(Context context, boolean recreateActivity) {
@@ -1292,7 +1291,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (intent == null) return;
 
             if (mIsVisible) {
-                if(fixTermuxActivityBroadcastReceiverIntent(intent)) {
+                if (fixTermuxActivityBroadcastReceiverIntent(intent)) {
                     return;
                 }
 
@@ -1350,7 +1349,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
     public static void startTermuxActivity(@NonNull final Context context) {
         ActivityUtils.startActivity(context, newInstance(context));
     }
@@ -1363,11 +1361,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
     /**
-     *
-     *
      * ZeroView
-     *
-     *
      */
     private LinearLayout code_ll;
     private LinearLayout rongqi;
@@ -1416,17 +1410,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private ImageView back_img;
     private VideoView back_video;
 
+    private FrameLayout frame_file;
+    private RelativeLayout session_rl;
+
+
     /**
-     *
-     *
      * ZeroTermux
-     *
      */
 
-    private void initZeroView(){
+    private void initZeroView() {
 
 
         code_ll = findViewById(R.id.code_ll);
+        frame_file = findViewById(R.id.frame_file);
+        session_rl = findViewById(R.id.session_rl);
         telegram_group_tv = findViewById(R.id.telegram_group_tv);
         qq_group_tv = findViewById(R.id.qq_group_tv);
         zerotermux_bbs = findViewById(R.id.zerotermux_bbs);
@@ -1473,10 +1470,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         back_img = mTermuxActivityRootView.getBack_img();
         back_video = mTermuxActivityRootView.getBack_video();
 
-        try{
+        try {
             double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1514,7 +1511,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 UUtils.showMsg(UUtils.getString(R.string.已开始打印APP实时delog));
 
                 mTerminalView.sendTextToTerminal("adb logcat * | find \"trace\" \n");
-              //  mTerminalView.sendTextToTerminal("adb shell \n");
+                //  mTerminalView.sendTextToTerminal("adb shell \n");
                 return true;
             }
         });
@@ -1522,7 +1519,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTerminalView.setDoubleClickListener(this);
         title_mb.setVisibility(View.GONE);
         String xieyi = SaveData.INSTANCE.getStringOther("xieyi");
-        if(xieyi == null || xieyi.isEmpty() || xieyi.equals("def") ){
+        if (xieyi == null || xieyi.isEmpty() || xieyi.equals("def")) {
             ProtocolDialog protocolDialog = new ProtocolDialog(this);
             protocolDialog.show();
             protocolDialog.setCancelable(false);
@@ -1532,10 +1529,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onDrawerSlide(@NonNull @NotNull View drawerView, float slideOffset) {
                 int i = (int) (slideOffset * 100);
-                if(getDrawer().isDrawerVisible(Gravity.LEFT)){
-                    if(i < 50){
+                if (getDrawer().isDrawerVisible(Gravity.LEFT)) {
+                    if (i < 50) {
                         title_mb.setVisibility(View.GONE);
-                    }else{
+                    } else {
                         title_mb.setVisibility(View.VISIBLE);
                         ip_status.setText(UUtils.getHostIP());
                     }
@@ -1544,7 +1541,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             @Override
             public void onDrawerOpened(@NonNull @NotNull View drawerView) {
-              //  title_mb.setVisibility(View.VISIBLE);
+                //  title_mb.setVisibility(View.VISIBLE);
                 WindowUtils.setImmersionBar(TermuxActivity.this, 0.6f);
                 setEgInstallStatus();
                 layout_menu.setFocusable(true);
@@ -1554,7 +1551,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onDrawerClosed(@NonNull @NotNull View drawerView) {
                 WindowUtils.setImmersionBar(TermuxActivity.this, 0.1f);
-              //  title_mb.setVisibility(View.GONE);
+                //  title_mb.setVisibility(View.GONE);
                 setEgInstallStatus();
                 layout_menu.setFocusable(false);
             }
@@ -1573,13 +1570,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void run() {
                 String dataMessageFileString = FileIOUtils.INSTANCE.getDataMessageFileString();
                 if (dataMessageFileString != null && !(dataMessageFileString.trim().isEmpty())) {
-                   UUtils.getHandler().post(new Runnable() {
-                       @Override
-                       public void run() {
-                           mDataMessageCard.setVisibility(View.VISIBLE);
-                           mDataMessage.setText(UUtils.getString(R.string.data_message) + "\n\n" + dataMessageFileString);
-                       }
-                   });
+                    UUtils.getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDataMessageCard.setVisibility(View.VISIBLE);
+                            mDataMessage.setText(UUtils.getString(R.string.data_message) + "\n\n" + dataMessageFileString);
+                        }
+                    });
                 } else {
                     UUtils.getHandler().post(new Runnable() {
                         @Override
@@ -1596,26 +1593,23 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         version.setText(UUtils.getString(R.string.版本) + " : " + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
         String versionName = ZeroCoreManage.getVersionName();
         if (!TextUtils.isEmpty(versionName)) {
-            eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + versionName );
+            eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + versionName);
         } else {
-            eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + UUtils.getString(R.string.engine_not_install) );
+            eg_tv.setText(UUtils.getString(R.string.engine_vision) + " : " + UUtils.getString(R.string.engine_not_install));
         }
     }
 
     /**
-     *
      * 刷新状态
-     *
-     *
      */
 
-    private void initStatue(){
+    private void initStatue() {
         String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
 
-        if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
+        if (xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")) {
             xue_hua_start.setText(UUtils.getString(R.string.雪花关));
             xue_fragment.removeAllViews();
-        }else{
+        } else {
             xue_hua_start.setText(UUtils.getString(R.string.雪花开));
             SnowView snowView = new SnowView(TermuxActivity.this);
             xue_fragment.removeAllViews();
@@ -1627,7 +1621,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
 
             /**
              * 源切换功能
@@ -1656,7 +1650,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 MenuLeftPopuListWindow.MenuLeftPopuListData heb = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.mingl_ico, UUtils.getString(R.string.hit), 46667);
                 menuLeftPopuListData.add(heb);
 
-                showMenuDialog(menuLeftPopuListData,code_ll);
+                showMenuDialog(menuLeftPopuListData, code_ll);
 
                 break;
 
@@ -1673,7 +1667,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 MenuLeftPopuListWindow.MenuLeftPopuListData gjvnc = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.dsk, UUtils.getString(R.string.高级VNC), 12);
                 menuLeftPopuListDatavnc.add(gjvnc);
 
-                showMenuDialog(menuLeftPopuListDatavnc,vnc_start);
+                showMenuDialog(menuLeftPopuListDatavnc, vnc_start);
 
                 break;
 
@@ -1694,7 +1688,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
              */
             case R.id.back_res:
                 getDrawer().closeDrawer(Gravity.LEFT);
-              //  startActivity(new Intent(this, BackNewActivity.class));
+                //  startActivity(new Intent(this, BackNewActivity.class));
                 BackRestoreDialog backRestoreDialog = new BackRestoreDialog(this);
                 backRestoreDialog.setCreateConversationListener(new CreateConversationListener() {
                     @Override
@@ -1709,7 +1703,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             case R.id.linux_online:
                 getDrawer().closeDrawer(Gravity.LEFT);
-                UUtils.writerFile("linux/termux_toolx.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/linux.sh"));
+                UUtils.writerFile("linux/termux_toolx.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/linux.sh"));
                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunLinuxSh());
                 break;
             case R.id.qemu:
@@ -1728,7 +1722,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 MenuLeftPopuListWindow.MenuLeftPopuListData winXpData = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.windows_xp_ico, UUtils.getString(R.string.WinXp), 503);
                 menuLeftPopuListData1.add(winXpData);
 
-                showMenuDialog(menuLeftPopuListData1,qemu);
+                showMenuDialog(menuLeftPopuListData1, qemu);
 
                 break;
             case R.id.cmd_command:
@@ -1743,8 +1737,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
                 Intent intent2 = new Intent(this, WebViewActivity.class);
-                intent2.putExtra("title","ZeroTermux 论坛");
-                intent2.putExtra("content",HTTPIP.ZERO_BBS);
+                intent2.putExtra("title", "ZeroTermux 论坛");
+                intent2.putExtra("content", HTTPIP.ZERO_BBS);
                 startActivity(intent2);
 
                 break;
@@ -1761,7 +1755,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 MenuLeftPopuListWindow.MenuLeftPopuListData msg_phone = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.install_msg_phone, UUtils.getString(R.string.安装短信读取工具), 6);
                 menuphoneMsg.add(msg_phone);
 
-                showMenuDialog(menuphoneMsg,msg);
+                showMenuDialog(menuphoneMsg, msg);
                 break;
 
             case R.id.files_mulu:
@@ -1771,11 +1765,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     Intent intent = new Intent();
                     intent.setAction("com.utermux.files.action");
                     startActivity(intent);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
 
                     try {
-                        installApk(getAssets().open("apk/utermux_file_plug.ip"),"files");
+                        installApk(getAssets().open("apk/utermux_file_plug.ip"), "files");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -1785,7 +1779,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
             case R.id.github:
-               // SendJoinUtils.INSTANCE.sendJoin(this);
+                // SendJoinUtils.INSTANCE.sendJoin(this);
 
                 Intent intent = new Intent();
                 intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux"));//Url 就是你要打开的网址
@@ -1796,10 +1790,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
                 //refStartCommandStat()
-                if(StartRunCommandUtils.INSTANCE.isRun()){
+                if (StartRunCommandUtils.INSTANCE.isRun()) {
 
                     StartRunCommandUtils.INSTANCE.endRun();
-                }else{
+                } else {
                     StartRunCommandUtils.INSTANCE.startRun();
                 }
 
@@ -1813,11 +1807,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     Intent intent1 = new Intent();
                     intent1.setAction("com.zero_float.action.ENTER");
                     startActivity(intent1);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
 
                     try {
-                        installApk(getAssets().open("apk/zero_float.ip"),"zeroFloat");
+                        installApk(getAssets().open("apk/zero_float.ip"), "zeroFloat");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -1848,7 +1842,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     public void onClick(View v) {
 
 
-
                     }
                 });
 
@@ -1861,8 +1854,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         String s = edit_text.getText().toString();
 
 
-
-                        if(s == null || s.isEmpty()){
+                        if (s == null || s.isEmpty()) {
 
                             s = "http://10.242.164.19";
 
@@ -1893,21 +1885,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
 
-                if(xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")){
+                if (xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")) {
                     xue_hua_start.setText(UUtils.getString(R.string.雪花开));
                     SnowView snowView = new SnowView(TermuxActivity.this);
                     xue_fragment.removeAllViews();
                     xue_fragment.addView(snowView);
-                    SaveData.INSTANCE.saveStringOther("xue_statues","true");
-                }else{
+                    SaveData.INSTANCE.saveStringOther("xue_statues", "true");
+                } else {
                     xue_hua_start.setText(UUtils.getString(R.string.雪花关));
                     xue_fragment.removeAllViews();
-                    SaveData.INSTANCE.saveStringOther("xue_statues","def");
+                    SaveData.INSTANCE.saveStringOther("xue_statues", "def");
                 }
 
 
                 break;
-                //官方插件
+            //官方插件
             case R.id.termux_pl:
 
 
@@ -1928,15 +1920,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 MenuLeftPopuListWindow.MenuLeftPopuListData msg_x11 = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.termux_x11, UUtils.getString(R.string.termux_x11), 24);
                 menuphoneGfCj.add(msg_x11);
 
-                showMenuDialog(menuphoneGfCj,termux_pl);
+                showMenuDialog(menuphoneGfCj, termux_pl);
 
                 break;
 
-                //全屏 WindowUtils
+            //全屏 WindowUtils
             case R.id.quanping:
 
 
-                if(quanping.getTag() == null){
+                if (quanping.getTag() == null) {
 
                     WindowUtils.setFullScreen(this);
                     quanping.setTag("fff");
@@ -1945,7 +1937,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     getTerminalToolbarViewPager().setVisibility(View.GONE);
 
 
-                }else{
+                } else {
 
                     WindowUtils.exitFullScreen(this);
                     quanping.setTag(null);
@@ -1953,8 +1945,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     getExtraKeysView().setVisibility(View.VISIBLE);
                     getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
                 }
-
-
 
 
                 break;
@@ -1969,10 +1959,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 MenuLeftPopuListWindow.MenuLeftPopuListData msg_en = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.yingwen_ico, UUtils.getString(R.string.English), 31);
                 yuyan_list.add(msg_en);
 
-                showMenuDialog(yuyan_list,yuyan);
+                showMenuDialog(yuyan_list, yuyan);
 
                 break;
-                //底层弹窗
+            //底层弹窗
             case R.id.zero_fun:
                 getDrawer().close();
 
@@ -2051,9 +2041,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     @Override
                     public void onChange(boolean change) {
                         Logger.logDebug(LOG_TAG, "change:" + change);
-                        if(change){
+                        if (change) {
                             back_color.setAlpha(0.3f);
-                        }else{
+                        } else {
                             back_color.setAlpha(1f);
                         }
                     }
@@ -2062,9 +2052,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     @Override
                     public void onChange(boolean change) {
                         Logger.logDebug(LOG_TAG, "setOnTextCheckedChangeListener:" + change);
-                        if(change){
+                        if (change) {
                             double_tishi.setVisibility(View.VISIBLE);
-                        }else{
+                        } else {
                             double_tishi.setVisibility(View.GONE);
                         }
                     }
@@ -2104,37 +2094,32 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-    private void showMenuDialog(ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> arrayList,View showView){
+    private void showMenuDialog(ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> arrayList, View showView) {
 
         MenuLeftPopuListWindow menuLeftPopuListWindow = new MenuLeftPopuListWindow(this);
         menuLeftPopuListWindow.setItemClickPopuListener(this);
         menuLeftPopuListWindow.setListData(arrayList);
-        menuLeftPopuListWindow.showAsDropDown(showView,250,-200);
-
+        menuLeftPopuListWindow.showAsDropDown(showView, 250, -200);
 
 
     }
 
     /**
-     *
      * 刷新状态
-     *
-     *
      */
 
-    private void refStartCommandStat(){
+    private void refStartCommandStat() {
 
 
-        if(StartRunCommandUtils.INSTANCE.isRun()){
+        if (StartRunCommandUtils.INSTANCE.isRun()) {
 
             text_start.setText(UUtils.getString(R.string.开机启动开));
 
-        }else{
+        } else {
 
             text_start.setText(UUtils.getString(R.string.开机启动));
 
         }
-
 
 
     }
@@ -2150,7 +2135,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
     /**
-     *
      * 菜单点击事件
      *
      * @param id
@@ -2158,9 +2142,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
 
     @Override
-    public void itemClick(int id, int index,MenuLeftPopuListWindow mMenuLeftPopuListWindow) {
+    public void itemClick(int id, int index, MenuLeftPopuListWindow mMenuLeftPopuListWindow) {
         mMenuLeftPopuListWindow.dismiss();
-        switch(id){
+        switch (id) {
             //清华
             case 1:
 
@@ -2317,7 +2301,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                UUtils.writerFile("qemu/utqemu.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/utqemu.sh"));
+                                UUtils.writerFile("qemu/utqemu.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/utqemu.sh"));
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -2331,8 +2315,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     }
                 });
                 msgQemuLine.setCancelable(true);
-
-
 
 
                 break;
@@ -2353,12 +2335,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             if (all) {
 
                                 File zeroTermuxShare = FileUrl.INSTANCE.getZeroTermuxShare();
-                                if(!zeroTermuxShare.exists()){
+                                if (!zeroTermuxShare.exists()) {
                                     zeroTermuxShare.mkdirs();
                                 }
 
                                 getDrawer().closeDrawer(Gravity.LEFT);
-                                UUtils.writerFile("qemu/qemu_win7.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_win7.sh"));
+                                UUtils.writerFile("qemu/qemu_win7.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/qemu_win7.sh"));
                                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
 
                             } else {
@@ -2380,7 +2362,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     });
 
 
-
                 break;
 
             case 503:
@@ -2395,12 +2376,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             if (all) {
 
                                 File zeroTermuxShare = FileUrl.INSTANCE.getZeroTermuxShare();
-                                if(!zeroTermuxShare.exists()){
+                                if (!zeroTermuxShare.exists()) {
                                     zeroTermuxShare.mkdirs();
                                 }
 
                                 getDrawer().closeDrawer(Gravity.LEFT);
-                                UUtils.writerFile("qemu/qemu_winxp.sh",new File(FileUrl.INSTANCE.getMainHomeUrl(),"/qemu_winxp.sh"));
+                                UUtils.writerFile("qemu/qemu_winxp.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/qemu_winxp.sh"));
                                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWinXPSh());
 
                             } else {
@@ -2422,7 +2403,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     });
 
 
-
                 break;
             case 6:
                 getDrawer().closeDrawer(Gravity.LEFT);
@@ -2441,15 +2421,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     public void onClick(View v) {
                         msg.dismiss();
                         File file = new File(FileUrl.INSTANCE.getSmsUrl());
-                        if(file.exists()){
+                        if (file.exists()) {
 
                             UUtils.showMsg(UUtils.getString(R.string.您已安装工具));
 
-                        }else{
+                        } else {
 
 
-                            UUtils.writerFile("runcommand/smsread",new File(FileUrl.INSTANCE.getSmsUrl()));
-                            UUtils.writerFile("runcommand/readcontacts",new File(FileUrl.INSTANCE.getPhoneUrl()));
+                            UUtils.writerFile("runcommand/smsread", new File(FileUrl.INSTANCE.getSmsUrl()));
+                            UUtils.writerFile("runcommand/readcontacts", new File(FileUrl.INSTANCE.getPhoneUrl()));
 
                             TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunsmsChomdSh());
                             TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunPhoneChomdSh());
@@ -2464,11 +2444,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
 
-                //快速
+            //快速
             case 10:
-                UUtils.showLog("插件:快速" );
+                UUtils.showLog("插件:快速");
                 getDrawer().closeDrawer(Gravity.LEFT);
-                try{
+                try {
 
                     Intent intent = new Intent();
                     intent.setAction("com.utermux.action.vnc");
@@ -2479,7 +2459,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                     startActivity(intent);
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     UUtils.showLog("插件:" + e.toString());
                     UUtils.showMsg(UUtils.getString(R.string.请下载插件));
@@ -2490,7 +2470,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
 
 
-                //自定
+            //自定
             case 11:
                 getDrawer().closeDrawer(Gravity.LEFT);
 
@@ -2507,7 +2487,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     public void onClick(View v) {
 
 
-                        try{
+                        try {
                             Intent intent = new Intent();
                             intent.setAction("com.utermux.action.vnc");
                             intent.putExtra("utermux_as", "false");
@@ -2515,7 +2495,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             intent.putExtra("port", vncConnectionDialog.getPort().getText().toString());
                             intent.putExtra("password", vncConnectionDialog.getPassword().getText().toString());
                             startActivity(intent);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                             UUtils.showLog("插件:" + e.toString());
                             UUtils.showMsg(UUtils.getString(R.string.请下载插件));
@@ -2527,19 +2507,18 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 });
 
 
-
                 break;
-                //高级
+            //高级
             case 12:
                 getDrawer().closeDrawer(Gravity.LEFT);
 
-                try{
+                try {
                     Intent intent = new Intent();
                     intent.setAction("com.utermux.action.vnc");
                     intent.putExtra("utermux_as", "true");
                     startActivity(intent);
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     UUtils.showLog("插件:" + e.toString());
                     UUtils.showMsg(UUtils.getString(R.string.请下载插件));
@@ -2547,29 +2526,29 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 }
 
                 break;
-                //API
+            //API
             case 20:
                 getDrawer().closeDrawer(Gravity.LEFT);
                 try {
-                    installApk(getAssets().open("apk/termux_api.ip"),"termux_api");
+                    installApk(getAssets().open("apk/termux_api.ip"), "termux_api");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
-                //Tasker
+            //Tasker
             case 21:
                 getDrawer().closeDrawer(Gravity.LEFT);
                 try {
-                    installApk(getAssets().open("apk/termux_tasker.ip"),"termux_tasker");
+                    installApk(getAssets().open("apk/termux_tasker.ip"), "termux_tasker");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
-                //BOOT
+            //BOOT
             case 22:
                 getDrawer().closeDrawer(Gravity.LEFT);
                 try {
-                    installApk(getAssets().open("apk/termux_boot.ip"),"termux_boot");
+                    installApk(getAssets().open("apk/termux_boot.ip"), "termux_boot");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -2579,7 +2558,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             case 23:
                 getDrawer().closeDrawer(Gravity.LEFT);
                 try {
-                    installApk(getAssets().open("apk/termux_styling.ip"),"termux_styling");
+                    installApk(getAssets().open("apk/termux_styling.ip"), "termux_styling");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -2589,22 +2568,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             case 24:
                 getDrawer().closeDrawer(Gravity.LEFT);
                 try {
-                    installApk(getAssets().open("apk/termux_x11.ip"),"termux_x11");
+                    installApk(getAssets().open("apk/termux_x11.ip"), "termux_x11");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-                //中文
+            //中文
             case 30:
-              //  Intent intent = new Intent(this, TermuxActivity.class);
+                //  Intent intent = new Intent(this, TermuxActivity.class);
                 LocaleHelper.Companion.getInstance()
                     .language(getLocale("2")).apply(this);
-               // startActivity(intent);
+                // startActivity(intent);
 
 
                 break;
-                //英文
+            //英文
             case 31:
                 LocaleHelper.Companion.getInstance()
                     .language(getLocale("1")).apply(this);
@@ -2614,9 +2593,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
-
-    private SwitchDialog switchDialogShow(String title,String msg){
+    private SwitchDialog switchDialogShow(String title, String msg) {
 
         getDrawer().closeDrawer(Gravity.LEFT);
         SwitchDialog switchDialog = new SwitchDialog(this);
@@ -2635,23 +2612,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-
-
     @Override
     public void doubleClicke(float x) {
-
 
 
         int width = getWindow().getWindowManager().getDefaultDisplay().getWidth();
         UUtils.showLog("点击位置:" + x + " 屏幕总宽度:" + width);
 
-        if(x <= 100){
+        if (x <= 100) {
 
             getDrawer().openDrawer(Gravity.LEFT);
             return;
         }
 
-        if(x  >= width - 100){
+        if (x >= width - 100) {
             getDrawer().openDrawer(Gravity.RIGHT);
             return;
         }
@@ -2675,12 +2649,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void close() {
                 popupWindow[0].dismiss();
             }
-        },TermuxActivity.this, popupWindow[0]));
+        }, TermuxActivity.this, popupWindow[0]));
         popupWindow[0].setOutsideTouchable(true);
         //  popupWindow.setAnimationStyle(R.style.Animation);
         popupWindow[0].setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow[0].setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow[0].showAsDropDown(mTerminalView,0,- boomWindow[0].getHigh(bln));
+        popupWindow[0].showAsDropDown(mTerminalView, 0, -boomWindow[0].getHigh(bln));
         popupWindow[0].setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
@@ -2709,17 +2683,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     //判断短消息是否正在读取
     private boolean isPhoneRun = false;
 
-    private void resBroadcastReceiever(String msg){
+    private void resBroadcastReceiever(String msg) {
         Logger.logDebug(LOG_TAG, "resBroadcastReceiever start:" + msg);
-        if(msg == null){
+        if (msg == null) {
             return;
         }
 
-        if(msg.equals("readsms")){
+        if (msg.equals("readsms")) {
 
             boolean vim = IsInstallCommand.INSTANCE.isInstall(this, "vim", CodeString.INSTANCE.getRunsmsInstallSh());
 
-            if(vim){
+            if (vim) {
 
                 XXPermissions.with(this)
                     .permission(Permission.READ_SMS)
@@ -2728,31 +2702,31 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         @Override
                         public void onGranted(List<String> permissions, boolean all) {
                             if (all) {
-                               // UUtils.showMsg("获取录音和日历权限成功");
+                                // UUtils.showMsg("获取录音和日历权限成功");
 
                                 String smsInPhone = SmsUtils.getSmsInPhone();
-                                UUtils.setFileString(new File(FileUrl.INSTANCE.getSmsUrlFile()),smsInPhone);
+                                UUtils.setFileString(new File(FileUrl.INSTANCE.getSmsUrlFile()), smsInPhone);
                                 UUtils.sleepSetRunMm(new Runnable() {
                                     @Override
                                     public void run() {
                                         TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim sms.txt \n");
                                     }
-                                },100);
+                                }, 100);
 
                             } else {
-                               // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                             }
                         }
 
                         @Override
                         public void onDenied(List<String> permissions, boolean never) {
                             if (never) {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                 // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                 XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
                             } else {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                             }
                         }
                     });
@@ -2762,17 +2736,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
 
         //联系人
-        if(msg.equals("contactperson")){
+        if (msg.equals("contactperson")) {
 
-            if(!isPhoneRun){
+            if (!isPhoneRun) {
 
-                synchronized (TermuxActivity.class){
+                synchronized (TermuxActivity.class) {
 
                     isPhoneRun = true;
 
                     boolean vim = IsInstallCommand.INSTANCE.isInstall(this, "vim", CodeString.INSTANCE.getRunsmsInstallSh());
 
-                    if(vim){
+                    if (vim) {
 
                         XXPermissions.with(this)
                             .permission(Permission.READ_CONTACTS)
@@ -2791,7 +2765,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                             @Override
                                             public void run() {
                                                 String allContacts = PhoneUtils.getAllContacts(UUtils.getContext());
-                                                UUtils.setFileString(new File(FileUrl.INSTANCE.getPhoneUrlFile()),allContacts);
+                                                UUtils.setFileString(new File(FileUrl.INSTANCE.getPhoneUrlFile()), allContacts);
                                                 UUtils.sleepSetRunMm(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -2804,14 +2778,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                                             }
                                                         });
                                                     }
-                                                },100);
+                                                }, 100);
                                             }
                                         }).start();
 
                                     } else {
                                         isPhoneRun = false;
                                         // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                     }
                                 }
 
@@ -2819,42 +2793,39 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                 public void onDenied(List<String> permissions, boolean never) {
                                     isPhoneRun = false;
                                     if (never) {
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                         // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                         XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
                                     } else {
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.无权限读取)+"! \n");
+                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                     }
                                 }
                             });
 
-                    }else{
+                    } else {
                         isPhoneRun = false;
                     }
 
                 }
 
 
-            }else{
+            } else {
 
-                TermuxActivity.mTerminalView.sendTextToTerminal("echo "+UUtils.getString(R.string.请等待)+"! \n");
+                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.请等待) + "! \n");
 
             }
-
-
-
 
 
         }
 
 
-        if(msg.equals("left")){
+        if (msg.equals("left")) {
 
             getDrawer().openDrawer(Gravity.LEFT);
 
         }
 
-        if(msg.equals("right")){
+        if (msg.equals("right")) {
 
             getDrawer().openDrawer(Gravity.RIGHT);
 
@@ -2864,7 +2835,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-    private void installApk(InputStream inputStream,String fileName){
+    private void installApk(InputStream inputStream, String fileName) {
 
 
         SwitchDialog switchDialog1 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.您未安装该插件));
@@ -2891,13 +2862,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         @Override
                         public void onGranted(List<String> permissions, boolean all) {
                             if (all) {
-                                if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
+                                if (!FileUrl.INSTANCE.getZeroTermuxApk().exists()) {
                                     FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
                                 }
-                                File file1 = new File(Environment.getExternalStorageDirectory(), "/xinhao/apk/"+ fileName +".apk");
+                                File file1 = new File(Environment.getExternalStorageDirectory(), "/xinhao/apk/" + fileName + ".apk");
                                 LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
                                 loadingDialog.show();
-                                UUtils.writerFileRawInput(file1,inputStream);
+                                UUtils.writerFileRawInput(file1, inputStream);
 
                                 new Thread(new Runnable() {
                                     @Override
@@ -2913,7 +2884,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                             @Override
                                             public void run() {
                                                 loadingDialog.dismiss();
-                                                UUtils.installApk(UUtils.getContext(),file1.getAbsolutePath());
+                                                UUtils.installApk(UUtils.getContext(), file1.getAbsolutePath());
                                             }
                                         });
 
@@ -2944,14 +2915,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         });
 
 
-
     }
-
 
 
     //创建目录
 
-    private void createFiles(){
+    private void createFiles() {
 
      /*   File file = new File(FileUrl.INSTANCE.getMainConfigUrl());
         File fileProperties = new File(FileUrl.INSTANCE.getMainConfigUrl(), "/termux.properties");
@@ -2965,7 +2934,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             reloadActivityStyling();
         }*/
 
-        if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
+        if (!FileUrl.INSTANCE.getZeroTermuxHome().exists()) {
 
 
             /**
@@ -2976,9 +2945,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
              */
             String sdcard_xinhao = SaveData.INSTANCE.getStringOther("sdcard_xinhao");
 
-            if(sdcard_xinhao == null || sdcard_xinhao.isEmpty() || sdcard_xinhao.equals("def")){
+            if (sdcard_xinhao == null || sdcard_xinhao.isEmpty() || sdcard_xinhao.equals("def")) {
 
-                SaveData.INSTANCE.saveStringOther("sdcard_xinhao","true");
+                SaveData.INSTANCE.saveStringOther("sdcard_xinhao", "true");
 
                 SwitchDialog switchDialog2 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.需要在您的手机));
 
@@ -3005,46 +2974,46 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                 public void onGranted(List<String> permissions, boolean all) {
                                     if (all) {
 
-                                        if(!FileUrl.INSTANCE.getZeroTermuxHome().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxHome().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxHome().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxData().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxData().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxData().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxApk().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxApk().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxWindows().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxWindows().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxWindows().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxCommand().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxCommand().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxCommand().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxFont().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxFont().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxFont().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxIso().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxIso().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxIso().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxMysql().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxMysql().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxMysql().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxOnlineSystem().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxOnlineSystem().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxOnlineSystem().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxQemu().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxQemu().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxQemu().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxServer().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxServer().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxServer().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxShare().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxShare().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxShare().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxSystem().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxSystem().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxSystem().mkdirs();
                                         }
-                                        if(!FileUrl.INSTANCE.getZeroTermuxWebConfig().exists()){
+                                        if (!FileUrl.INSTANCE.getZeroTermuxWebConfig().exists()) {
                                             FileUrl.INSTANCE.getZeroTermuxWebConfig().mkdirs();
                                         }
                                         UUtils.showMsg("ok");
@@ -3069,34 +3038,26 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                     }
                 });
-            }else{
+            } else {
             }
         }
     }
 
     /**
-     *
      * 重新进入该窗口面板默认关闭
-     *
-     *
      */
-    private void isShow(){
+    private void isShow() {
         title_mb.setVisibility(View.GONE);
         getDrawer().close();
     }
 
     /**
-     *
-     *
-     *
      * 连接到服务器
-     *
-     *
      */
 
-    public void startHttp(String ip){
+    public void startHttp(String ip) {
         String ip_save = SaveData.INSTANCE.getStringOther("ip_save");
-        if(ip_save == null || ip_save.isEmpty() || ip_save.equals("def")){
+        if (ip_save == null || ip_save.isEmpty() || ip_save.equals("def")) {
             ArrayList<EditPromptBean.EditPromptData> arrayList = new ArrayList<>();
             EditPromptBean.EditPromptData editPromptData = new EditPromptBean.EditPromptData();
             editPromptData.setIp(ip);
@@ -3106,9 +3067,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             editPromptBean.setArrayList(arrayList);
             String s = new Gson().toJson(editPromptBean);
             UUtils.showLog("编辑框存入[第一次]:" + s);
-            SaveData.INSTANCE.saveStringOther("ip_save",s);
-        }else{
-            try{
+            SaveData.INSTANCE.saveStringOther("ip_save", s);
+        } else {
+            try {
                 EditPromptBean editPromptBean = new Gson().fromJson(ip_save, EditPromptBean.class);
                 ArrayList<EditPromptBean.EditPromptData> arrayList = editPromptBean.getArrayList();
                 EditPromptBean.EditPromptData editPromptData = new EditPromptBean.EditPromptData();
@@ -3119,10 +3080,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 editPromptBean.setArrayList(arrayList1);
                 String s = new Gson().toJson(editPromptBean);
                 UUtils.showLog("编辑框存入[多次]:" + s);
-                SaveData.INSTANCE.saveStringOther("ip_save",s);
-            }catch (Exception e){
+                SaveData.INSTANCE.saveStringOther("ip_save", s);
+            } catch (Exception e) {
                 e.printStackTrace();
-                  SaveData.INSTANCE.saveStringOther("ip_save","def");
+                SaveData.INSTANCE.saveStringOther("ip_save", "def");
             }
         }
         LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
@@ -3134,14 +3095,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 loadingDialog.dismiss();
                 UUtils.showLog("连接成功:" + msg.obj);
 
-                try{
+                try {
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
 
                     DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
                     downLoadDialogBoom.setIP(ip + "/repository/main.json");
                     downLoadDialogBoom.show();
                     downLoadDialogBoom.setCancelable(true);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
                 }
@@ -3153,22 +3114,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 loadingDialog.dismiss();
                 UUtils.showMsg(UUtils.getString(R.string.无法连接到自定义服务器));
             }
-        },new HashMap<>(),5555);
+        }, new HashMap<>(), 5555);
 
 
     }
 
 
     /**
-     *
-     *
-     *
      * 连接到服务器
-     *
-     *
      */
 
-    public void startHttp1(String ip){
+    public void startHttp1(String ip) {
 
 
         XXPermissions.with(TermuxActivity.this)
@@ -3187,21 +3143,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         loadingDialog.show();
 
 
-
                         new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
                             @Override
                             public void onSuccessful(@NotNull Message msg, int mWhat) {
                                 loadingDialog.dismiss();
                                 UUtils.showLog("连接成功:" + msg.obj);
 
-                                try{
+                                try {
                                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
 
                                     DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
                                     downLoadDialogBoom.setIP(ip + "/repository/main.json");
                                     downLoadDialogBoom.show();
                                     downLoadDialogBoom.setCancelable(true);
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                     UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
                                 }
@@ -3213,8 +3168,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                 loadingDialog.dismiss();
                                 UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
                             }
-                        },new HashMap<>(),5555);
-
+                        }, new HashMap<>(), 5555);
 
 
                     } else {
@@ -3236,23 +3190,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             });
 
 
-
-
-
-
-
-
     }
 
 
     /**
-     *
-     *
      * 连接服务器获取版本
-     *
      */
 
-    private void getServiceVs(){
+    private void getServiceVs() {
 
         ip_status.setText(UUtils.getHostIP());
         new BaseHttpUtils().getUrl(HTTPIP.IP + "/repository/main.json", new HttpResponseListenerBase() {
@@ -3262,23 +3207,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 UUtils.showLog("连接成功:" + msg.obj);
                 LogUtils.d(TAG, "getServiceVs onSuccessful connection succeeded");
 
-                try{
+                try {
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
 
                     service_status.setText(zdyDataBean.getVersionName());
                     service_eg.setText(zdyDataBean.getEngineName());
 
-                    if(zdyDataBean.getMsg() == null || zdyDataBean.getMsg().isEmpty()){
+                    if (zdyDataBean.getMsg() == null || zdyDataBean.getMsg().isEmpty()) {
 
-                    }else{
+                    } else {
                         msg_tv.setText(zdyDataBean.getMsg());
                     }
 
 
-
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                   // UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
+                    // UUtils.showMsg(UUtils.getString(R.string.服务器数据格式不正确));
                     service_status.setText(UUtils.getString(R.string.未连接));
                     LogUtils.d(TAG, "getServiceVs connection error:" + e.toString());
                 }
@@ -3288,13 +3232,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onFailure(@org.jetbrains.annotations.Nullable Response<String> response, @NotNull String msg, int mWhat) {
 
-               // UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
+                // UUtils.showMsg(UUtils.getString(R.string.无法连接到下载站服务器));
                 service_status.setText(UUtils.getString(R.string.未连接));
                 service_eg.setText(UUtils.getString(R.string.未连接));
                 LogUtils.d(TAG, "getServiceVs data error:" + response.getException());
             }
-        },new HashMap<>(),5555);
-
+        }, new HashMap<>(), 5555);
 
 
     }
@@ -3302,7 +3245,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private Locale getLocale(String which) {
 
 
-        switch (which){
+        switch (which) {
 
 
             case "0":
@@ -3314,37 +3257,35 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 return Locale.SIMPLIFIED_CHINESE;
         }
     }
-    private void initFiles(){
+
+    private void initFiles() {
         File mainFile = new File(FileUrl.INSTANCE.getMainBinUrl());
         File openLeftFile = new File(FileUrl.INSTANCE.getOpenLeft());
         File openRigthFile = new File(FileUrl.INSTANCE.getOpenRight());
-        if(mainFile.exists()){
+        if (mainFile.exists()) {
 
-            if(!openLeftFile.exists()){
-                UUtils.writerFile("runcommand/openleftwindow",openLeftFile);
-               UUtils.chmod(openLeftFile);
+            if (!openLeftFile.exists()) {
+                UUtils.writerFile("runcommand/openleftwindow", openLeftFile);
+                UUtils.chmod(openLeftFile);
             }
-            if(!openRigthFile.exists()){
-                UUtils.writerFile("runcommand/openrightwindow",openRigthFile);
+            if (!openRigthFile.exists()) {
+                UUtils.writerFile("runcommand/openrightwindow", openRigthFile);
                 UUtils.chmod(openRigthFile);
             }
 
         }
 
     }
+
     /**
-     *
-     *
      * OTG 设备广播  暂时无法使用
-     *
-     *
      */
     BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (mOTGManager == null) {
                 mOTGManager = new OTGManager();
             }
-          //  mOTGManager.initOtg(TermuxActivity.this, intent);
+            //  mOTGManager.initOtg(TermuxActivity.this, intent);
         }
     };
 
@@ -3358,19 +3299,19 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 getDrawer().openDrawer(Gravity.LEFT);
             }
             return false;
-        }else {
+        } else {
             return super.onKeyDown(keyCode, event);
         }
     }
 
-    private void initScrollHandler(){
+    private void initScrollHandler() {
         mDataMessage.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 //canScrollVertically()方法为判断指定方向上是否可以滚动,参数为正数或负数,负数检查向上是否可以滚动,正数为检查向下是否可以滚动
-                if (mDataMessage.canScrollVertically(1) || mDataMessage.canScrollVertically(-1)){
+                if (mDataMessage.canScrollVertically(1) || mDataMessage.canScrollVertically(-1)) {
                     v.getParent().requestDisallowInterceptTouchEvent(true);//requestDisallowInterceptTouchEvent();要求父类布局不在拦截触摸事件
-                    if (event.getAction() == MotionEvent.ACTION_UP){ //判断是否松开
+                    if (event.getAction() == MotionEvent.ACTION_UP) { //判断是否松开
                         v.getParent().requestDisallowInterceptTouchEvent(false); //requestDisallowInterceptTouchEvent();让父类布局继续拦截触摸事件
                     }
                 }
@@ -3379,12 +3320,40 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         });
 
     }
+
     //测试方法
     private void testFun() {
    /*     if (!HttpServerManager.isAlive()) {
             HttpServerManager.startService(19953, "");
         }*/
 
+    }
+
+    private void indexSwitch(int index) {
+        frame_file.setVisibility(View.INVISIBLE);
+        session_rl.setVisibility(View.INVISIBLE);
+        switch (index) {
+            case 0:
+                frame_file.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                session_rl.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    private void fileManager() {
+        FragmentTransaction fragmentTransaction = this.getSupportFragmentManager()
+            .beginTransaction();
+        fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
+            .commit();
+    }
+
+    private void locaBroadcast() {
+       localBroadcastManager  = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter("localbroadcast");
+        localReceiver = new LocalReceiver();
+        localBroadcastManager.registerReceiver(localReceiver,intentFilter);
     }
 
 }

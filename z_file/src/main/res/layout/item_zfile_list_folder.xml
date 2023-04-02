@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/shape_r_3dp_161823">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?selectableItemBackground"
+        android:gravity="center|start"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/zfile_default_divider_padding"
+        android:paddingEnd="@dimen/zfile_default_divider_padding">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/item_zfile_list_folderPic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                tools:src="@drawable/ic_zfile_folder" />
+
+            <ImageView
+                android:id="@+id/item_zfile_list_folderHintPic"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="start|bottom"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="gone"
+                tools:src="@drawable/zfile_sys"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/item_zfile_list_symlink"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible"
+                tools:src="@drawable/zfile_symlink"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center|start"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/zfile_default_divider_padding"
+            android:paddingEnd="@dimen/zfile_default_divider_padding">
+
+            <TextView
+                android:id="@+id/item_zfile_list_folderNameTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:textColor="@color/zfile_white"
+                android:textSize="14sp"
+                tools:text="文件夹名称" />
+
+            <TextView
+                android:id="@+id/item_zfile_list_folderHintTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/zfile_white"
+                android:textSize="10sp"
+                android:visibility="gone"
+                android:ellipsize="end"
+                android:maxLength="30"
+                android:maxLines="1"
+                tools:ignore="SmallSp"
+                tools:text="访问限制"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/zfile_default_divider_padding">
+
+            <TextView
+                android:id="@+id/item_zfile_list_folderCountTxt"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center|end"
+                android:background="@drawable/zfile_count"
+                android:gravity="center"
+                android:textColor="@color/zfile_white"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:ignore="SmallSp"
+                tools:text="99" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

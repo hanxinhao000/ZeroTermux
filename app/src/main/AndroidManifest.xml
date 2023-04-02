@@ -68,6 +68,12 @@
             android:name=".zerocore.activity.EditTextActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false">
+
+            <intent-filter>
+                <action android:name="com.termux.zerocore.activity.edittextactivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

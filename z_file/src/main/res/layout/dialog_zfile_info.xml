@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Base.DialogWindowTitle.AppCompat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="15dp"
+        android:text="@string/zfile_info_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_info_name" />
+
+        <TextView
+            android:id="@+id/zfile_dialog_info_fileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/zfile_black"
+            tools:text="aaa.mp3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_info_type" />
+
+        <TextView
+            android:id="@+id/zfile_dialog_info_fileType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/zfile_black"
+            tools:text="aaa.mp3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_info_size" />
+
+        <TextView
+            android:id="@+id/zfile_dialog_info_fileSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/zfile_black"
+            tools:text="aaa.mp3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_info_time2" />
+
+        <TextView
+            android:id="@+id/zfile_dialog_info_fileDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/zfile_black"
+            tools:text="aaa.mp3" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="7dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_info_path" />
+
+        <TextView
+            android:id="@+id/zfile_dialog_info_filePath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/zfile_black"
+            tools:text="aaa.mp3" />
+
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/zfile_dialog_info_moreBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/zfile_info_more"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/zfile_dialog_info_moreLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+        <LinearLayout
+            android:id="@+id/zfile_dialog_info_fileDurationLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="7dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zfile_info_duration" />
+
+            <TextView
+                android:id="@+id/zfile_dialog_info_fileDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zfile_info_loadding"
+                android:textColor="@color/zfile_black"
+                tools:text="aaa.mp3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/zfile_dialog_info_fileFBLLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="7dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zfile_info_wh" />
+
+            <TextView
+                android:id="@+id/zfile_dialog_info_fileFBL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zfile_info_duration"
+                android:textColor="@color/zfile_black"
+                tools:text="aaa.mp3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="7dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zfile_info_other" />
+
+            <TextView
+                android:id="@+id/zfile_dialog_info_fileOther"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/zfile_black"
+                tools:text="aaa.mp3" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/zfile_md_bottom_margin"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <Button
+            android:id="@+id/zfile_dialog_info_down"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/zfile_down"
+            android:textColor="@color/zfile_base_color" />
+
+        <!--<Button
+            android:id="@+id/zfile_dialog_info_copy"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/dialog_info_down"
+            android:text="复制所有信息"
+            android:textColor="@color/zfile_base_color"
+            android:visibility="gone" />-->
+
+    </RelativeLayout>
+
+</LinearLayout>

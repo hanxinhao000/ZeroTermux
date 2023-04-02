@@ -9,6 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
@@ -38,6 +39,11 @@ class EditTextActivity : AppCompatActivity() {
             finish()
         }
         val file = File(stringExtra)
+        if (file.length() > (1024 * 1024)) {
+            UUtils.showMsg("文件太大!\n[file size too big]")
+            finish()
+            return
+        }
         if (!file.exists()) {
             finish()
         }

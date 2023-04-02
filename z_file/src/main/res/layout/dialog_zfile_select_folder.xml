@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zfile_back"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/zfile_bgcolor">
+
+        <ImageView
+            android:id="@+id/zfile_select_folder_closePic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:layout_gravity="center|start"
+            android:background="@drawable/zfile_ripple_bg"
+            android:padding="7dp"
+            android:src="@drawable/zfile_close" />
+
+        <TextView
+            android:id="@+id/zfile_select_folder_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="56dp"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/zfile_select_forder"
+            android:textColor="@color/zfile_black"
+            android:textSize="15sp"  />
+
+        <ImageView
+            android:id="@+id/zfile_select_folder_downPic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/zfile_ripple_bg"
+            android:layout_gravity="end|center"
+            android:padding="7dp"
+            android:src="@drawable/zfile_down" />
+
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/zfile_select_folder_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_zfile_list_folder"/>
+
+</LinearLayout>

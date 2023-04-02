@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/zfile_white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp">
+
+        <ImageView
+            android:id="@+id/dialog_zfile_audio_play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center|start"
+            android:background="@drawable/zfile_ripple_music_bg"
+            android:padding="5dp"
+            android:src="@drawable/zfile_play" />
+
+        <TextView
+            android:id="@+id/dialog_zfile_audio_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/zfile_black"
+            tools:text="我是音频文件.mp3" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/dialog_zfile_audio_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingStart="@dimen/zfile_default_divider_padding"
+        android:paddingEnd="@dimen/zfile_default_divider_padding">
+
+        <Chronometer
+            android:id="@+id/dialog_zfile_audio_nowTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start" />
+
+        <TextView
+            android:id="@+id/dialog_zfile_audio_countTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            tools:text="03:00" />
+
+    </FrameLayout>
+
+</LinearLayout>

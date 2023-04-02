@@ -109,6 +109,7 @@ android {
         implementation project(":terminal-view")
         implementation project(":termux-shared")
         implementation project(":FHttpServer")
+        implementation project(":z_file")
     }
 
     defaultConfig {

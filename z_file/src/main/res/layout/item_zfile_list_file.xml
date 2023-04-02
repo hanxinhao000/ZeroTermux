@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_margin="5dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/shape_r_3dp_161823">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="?selectableItemBackground"
+        android:padding="@dimen/zfile_default_divider_padding">
+
+        <!-- android:transitionName="jump_File" -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:id="@+id/ff"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/item_zfile_list_file_pic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                tools:src="@drawable/ic_zfile_other"
+                android:transitionName="jump_File"/>
+            <ImageView
+                android:id="@+id/item_zfile_list_symlink"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible"
+                tools:src="@drawable/zfile_symlink"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/item_zfile_list_file_boxLayout"
+            android:layout_width="40dp"
+            android:visibility="invisible"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/item_zfile_file_box_pic"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_zfile_quan" />
+
+            <CheckBox
+                android:id="@+id/item_zfile_list_file_box1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/item_zfile_list_file_box2"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:background="@drawable/zfile_checkbox_seletor" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/ff"
+            android:layout_toStartOf="@+id/item_zfile_list_file_boxLayout"
+            android:gravity="center|start"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/item_zfile_list_file_nameTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/zfile_white"
+                android:textSize="14sp"
+                tools:text="文件名称" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/item_zfile_list_file_dateTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/zfile_bbbbb9"
+                    android:textSize="12sp"
+                    tools:text="2018-07-03 16:12:30" />
+
+                <TextView
+                    android:id="@+id/item_zfile_list_file_sizeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/zfile_bbbbb9"
+                    android:textSize="12sp"
+                    tools:text="10Kb" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+
+</FrameLayout>

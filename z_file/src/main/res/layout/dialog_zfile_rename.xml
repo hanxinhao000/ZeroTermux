@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Base.DialogWindowTitle.AppCompat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingTop="15dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="15dp"
+        android:text="@string/zifle_rename_title" />
+
+    <EditText
+        android:id="@+id/zfile_dialog_renameEdit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/zfile_info_rename"
+        android:imeOptions="actionDone"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:inputType="text"
+        android:textColor="@color/zfile_black"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/zfile_md_bottom_margin"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <Button
+            android:id="@+id/zfile_dialog_rename_cancel"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_cancel"
+            android:textColor="@color/zfile_base_color" />
+
+        <Button
+            android:id="@+id/zfile_dialog_rename_down"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zfile_down"
+            android:textColor="@color/zfile_base_color" />
+
+    </LinearLayout>
+
+</LinearLayout>

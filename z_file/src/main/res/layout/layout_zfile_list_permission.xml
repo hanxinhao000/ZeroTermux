@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zfile_white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginEnd="35dp"
+        android:text="@string/zfile_permission_bad2"
+        android:textColor="@color/zfile_no_permissions_color1"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/zfile_permission_againBtn"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="35dp"
+        android:text="@string/zfile_permission_bad3"
+        android:textColor="@color/zfile_no_permissions_color2" />
+
+</LinearLayout>

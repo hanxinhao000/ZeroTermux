@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 重写该属性即可自定义，请勿修改的过分大 手机CPU、RAM 无法支持较高的数值 -->
+
+    <!-- ZIP 解压压缩包时，单个文件最大 100 * 1024 * 1024 （单位：byte）  -->
+    <integer name="zfile_zip_max_size">104857600</integer>
+
+    <!-- ZIP 压缩包中最多支持 1024 个文件 -->
+    <integer name="zfile_zip_max_length">1024</integer>
+
+</resources>

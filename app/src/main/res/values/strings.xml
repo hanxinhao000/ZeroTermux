@@ -814,4 +814,6 @@
     <string name="rohibit_toolbox_ok_">已禁用显示,如要开启请:[长按终端->启用工具箱]</string>
     <string name="module_un7z_">模块展开中...</string>
     <string name="module_install_pro">正在处理命令:</string>
+    <string name="file_manager">文件管理</string>
+    <string name="select_session">切换会话</string>
 </resources>

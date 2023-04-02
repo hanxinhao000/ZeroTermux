@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zfile_bgcolor"
+    tools:context=".ui.ZFileQWFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/zfile_qw_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_zfile_list_file"/>
+
+    <LinearLayout
+        android:id="@+id/zfile_qw_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <ProgressBar
+            android:layout_width="45dp"
+            android:layout_height="45dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/zfile_qw_loading"/>
+
+    </LinearLayout>
+
+    <ViewStub
+        android:id="@+id/zfile_qw_emptyStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/layout_zfile_list_empty"/>
+
+</FrameLayout>

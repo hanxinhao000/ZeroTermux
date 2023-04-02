@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="zfile_default_divider_padding">10dp</dimen>
+    <dimen name="zfile_diy_divider_height">15dp</dimen>
+    <dimen name="zfile_md_bottom_margin">5dp</dimen>
+</resources>

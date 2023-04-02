@@ -23,6 +23,18 @@
                 android:id="@+id/rl_1"
                 android:layout_above="@+id/terminal_toolbar_view_pager"
                 android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@string/请双击命令窗口试试"
+                    android:textColor="@color/color_ffffff"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/double_tishi"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:alpha="0.1"
+                    android:layout_height="wrap_content"/>
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:id="@+id/xue_fragment"
@@ -56,7 +68,7 @@
                     </RelativeLayout>
                     <LinearLayout
                         android:id="@+id/left_drawer"
-                        android:layout_width="240dp"
+                        android:layout_width="320dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="end"
                         android:background="@drawable/shape_r_3dp_161823"
@@ -65,48 +77,7 @@
                         android:dividerHeight="0dp"
                         android:descendantFocusability="blocksDescendants"
                         android:orientation="vertical">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <ImageButton
-                                android:id="@+id/settings_button"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:src="@drawable/ic_settings"
-                                android:background="@null"
-                                android:contentDescription="@string/action_open_settings" />
-                        </LinearLayout>
-                        <ListView
-                            android:id="@+id/terminal_sessions_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_gravity="top"
-                            android:layout_weight="1"
-                            android:choiceMode="singleChoice"
-                            android:longClickable="true" />
-                        <LinearLayout
-                            style="?android:attr/buttonBarStyle"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <Button
-                                android:id="@+id/toggle_keyboard_button"
-                                style="?android:attr/buttonBarButtonStyle"
-                                android:layout_width="match_parent"
-                                android:textColor="@color/color_ffffff"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/action_toggle_soft_keyboard" />
-                            <Button
-                                android:id="@+id/new_session_button"
-                                style="?android:attr/buttonBarButtonStyle"
-                                android:textColor="@color/color_ffffff"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="@string/action_new_session" />
-                        </LinearLayout>
+                       <include layout="@layout/include_right_menu"/>
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/left_drawer_menu"
@@ -124,18 +95,7 @@
                         <include layout="@layout/layout_menu_all"/>
                     </LinearLayout>
                 </androidx.drawerlayout.widget.DrawerLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="@string/请双击命令窗口试试"
-                    android:textColor="@color/color_ffffff"
-                    android:gravity="center"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/double_tishi"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:alpha="0.1"
-                    android:layout_height="wrap_content"/>
+
                 <include
                     layout="@layout/layout_message" />
             </RelativeLayout>

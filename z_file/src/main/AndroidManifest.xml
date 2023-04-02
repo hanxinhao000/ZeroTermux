@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.zp.z_file">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage"/>
+
+    <application>
+        <activity android:name=".ui.ZFileQWActivity"
+            android:theme="@style/ZFile_BaseTheme"/>
+        <activity
+            android:name=".ui.ZFileListActivity2"
+            android:theme="@style/ZFile_BaseTheme" />
+        <activity
+            android:name=".ui.ZFilePicActivity"
+            android:theme="@style/ZFile_BaseTheme" />
+        <activity
+            android:name=".ui.ZFileVideoPlayActivity"
+            android:theme="@style/ZFile_BaseTheme" />
+    </application>
+
+</manifest>

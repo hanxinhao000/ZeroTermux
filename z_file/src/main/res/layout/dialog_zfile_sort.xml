@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Base.DialogWindowTitle.AppCompat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="15dp"
+        android:text="@string/zfile_sort_title" />
+
+    <RadioGroup
+        android:id="@+id/zfile_sortGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <RadioButton
+            android:id="@+id/zfile_sort_by_default"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:checked="true"
+            android:text="@string/zfile_sort_default" />
+
+        <RadioButton
+            android:id="@+id/zfile_sort_by_name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/zfile_sort_by_name" />
+
+        <RadioButton
+            android:id="@+id/zfile_sort_by_date"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/zfile_sort_by_time" />
+
+        <RadioButton
+            android:id="@+id/zfile_sort_by_size"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/zfile_sort_by_size" />
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/zfile_sequenceLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:visibility="visible"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/zfile_default_divider_padding"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="@dimen/zfile_default_divider_padding"
+            android:text="@string/zfile_sort_ss"
+            android:textColor="@color/zfile_gray"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/zfile_sequenceGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <RadioButton
+                android:id="@+id/zfile_sequence_asc"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:text="@string/zfile_sort_sx" />
+
+            <RadioButton
+                android:id="@+id/zfile_sequence_desc"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="@string/zfile_sort_jx" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginBottom="@dimen/zfile_md_bottom_margin">
+
+        <Button
+            android:id="@+id/zfile_dialog_sort_down"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/zfile_down"
+            android:textColor="@color/zfile_base_color" />
+
+        <TextView
+            android:id="@+id/zfile_dialog_sort_cancel"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/zfile_dialog_sort_down"
+            android:text="@string/zfile_cancel"
+            android:textColor="@color/zfile_base_color" />
+
+    </RelativeLayout>
+
+</LinearLayout>
