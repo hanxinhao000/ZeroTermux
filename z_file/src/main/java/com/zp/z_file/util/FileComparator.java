@@ -8,16 +8,20 @@ import java.util.Comparator;
 
 public class FileComparator implements Comparator {
     public int compare(Object file1Path, Object file2Path) {
-        File obj1 = new File(((ZFileBean)file1Path).getFilePath());
-        File obj2 = new File(((ZFileBean)file2Path).getFilePath());
-        if(obj1.isDirectory() && obj2.isFile()){
-            return 1;
+        File file1 = new File(((ZFileBean)file1Path).getFilePath());
+        File file2 = new File(((ZFileBean)file2Path).getFilePath());
+
+        int value1 = 0, value2 = 0;
+        if (file1.isDirectory()) {
+            value1 = 1;
         }
-        else if(obj1.isFile() && obj2.isDirectory()){
-            return -1;
+        if (file2.isDirectory()) {
+            value2 = 1;
         }
-        else{
-            return obj1.getName().compareTo(obj2.getName());
+        if (value1 != value2) {
+            return value2 - value1;
+        } else {
+            return file1.getName().compareTo(file2.getName());
         }
     }
 

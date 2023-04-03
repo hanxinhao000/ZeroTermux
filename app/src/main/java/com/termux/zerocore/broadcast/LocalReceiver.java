@@ -46,11 +46,11 @@ public class LocalReceiver extends BroadcastReceiver {
                 String name = new File(split[0]).getName();
                 String command = "";
                 if (name.endsWith("tar.gz")) {
-                    command = "tar -xzvf \"" + split[0] + "\" -C " + split[1] + "/";
+                    command = "tar -xzvf \"" + split[0] + "\" -C " + split[1] + "/ && echo \"解压完成 Decompression complete\"";
                 } else if (name.endsWith("tar.bz2")) {
-                    command = "tar -xjf \"" + split[0] + "\" -C " + split[1] + "/";
+                    command = "tar -xjf \"" + split[0] + "\" -C " + split[1] + "/ && echo \"解压完成 Decompression complete\"";
                 } else if (name.endsWith("tar.xz")) {
-                    command = "tar -xvJf \"" + split[0] + "\" -C " + split[1] + "/";
+                    command = "tar -xvJf \"" + split[0] + "\" -C " + split[1] + "/ && echo \"解压完成 Decompression complete\"";
                 } else {
                     command = "echo \"不能识别的格式(unrecognized format)\"";
                 }
