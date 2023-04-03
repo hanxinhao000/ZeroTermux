@@ -27,5 +27,6 @@ public class XHApplication extends Application {
 
         UUtils.initUUtils(mContext,mHandler);
 
+
     }
 }

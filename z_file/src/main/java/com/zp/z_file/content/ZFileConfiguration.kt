@@ -1,5 +1,6 @@
 package com.zp.z_file.content
 
+import android.content.Context
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -63,7 +64,10 @@ import java.io.Serializable
 class ZFileConfiguration : Serializable {
 
     companion object {
-
+         var mApplicationContext: Context? = null
+        public fun init(mContext: Context) {
+            mApplicationContext = mContext
+        }
         /** QQ目录 */
         const val QQ = "ZFILE_QQ_FILE_PATH"
 
@@ -237,7 +241,7 @@ class ZFileConfiguration : Serializable {
      * 打开文件需要 [FileProvider] 一般都是包名 + xxxFileProvider
      * 如果项目中已经存在或其他原因无法修改，请自己实现 [ZFileOpenListener]
      */
-    var authority = ""
+    var authority = mApplicationContext?.packageName + ".fileProvider"
 
     /**
      * 是否需要显示 已选择的文件个数 提示

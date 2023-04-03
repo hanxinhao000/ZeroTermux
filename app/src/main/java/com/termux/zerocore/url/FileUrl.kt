@@ -15,6 +15,7 @@ object FileUrl {
 
     //主目录
     public val mainFilesUrl = TermuxConstants.TERMUX_FILES_DIR_PATH
+    public val mainAppUrl = TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH
     public val mainHomeUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home"
     public val mainBinUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/usr/bin"
     public val mainConfigUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home/.termux/"

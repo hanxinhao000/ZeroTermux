@@ -39,7 +39,7 @@ class EditTextActivity : AppCompatActivity() {
             finish()
         }
         val file = File(stringExtra)
-        if (file.length() > (1024 * 1024)) {
+        if (file.length() > (20 * 1024)) {
             UUtils.showMsg("文件太大!\n[file size too big]")
             finish()
             return

@@ -27,10 +27,13 @@ import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 import com.termux.zerocore.bean.SaveDataZeroEngine;
+import com.termux.zerocore.bosybox.BusyBoxManager;
 import com.termux.zerocore.filetype.MyFileImageListener;
 import com.termux.zerocore.utils.ClipBoardUtil;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import com.zp.z_file.common.ZFileManageHelp;
+import com.zp.z_file.content.ZFileConfiguration;
+import com.zp.z_file.util.ZFileUUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -49,13 +52,17 @@ public class TermuxApplication extends XHApplication {
         super.onCreate();
 
         FUtils.init(this);
+
+
         Context context = getApplicationContext();
 
         // Set crash handler for the app
         TermuxCrashUtils.setDefaultCrashHandler(this);
+        ZFileUUtils.initUUtils(mContext, mHandler);
+
 
         ZFileManageHelp.getInstance().init(new MyFileImageListener());
-
+        ZFileConfiguration.Companion.setMApplicationContext(this);
         // Set log config for the app
         setLogConfig(context);
 
@@ -127,6 +134,13 @@ public class TermuxApplication extends XHApplication {
         });
 
         new ClipBoardUtil().registerClipEvents();
+
+/*        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BusyBoxManager.INSTANCE.init();
+            }
+        }).start();*/
 
     }
 

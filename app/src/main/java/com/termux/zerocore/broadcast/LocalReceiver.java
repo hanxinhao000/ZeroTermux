@@ -5,9 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
+import com.example.xh_lib.utils.LogUtils;
+import com.example.xh_lib.utils.UUtils;
 import com.termux.app.TermuxActivity;
+import com.termux.terminal.Logger;
+import com.termux.zerocore.bosybox.BusyBoxManager;
+import com.termux.zerocore.utils.Z7ExtracatUtils;
+import com.zp.z_file.zerotermux.ZTConfig;
+
+import java.io.File;
 
 public class LocalReceiver extends BroadcastReceiver {
+    private static String TAG = "LocalReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
@@ -16,9 +27,103 @@ public class LocalReceiver extends BroadcastReceiver {
             return;
         }
         String broadcastString = intent.getStringExtra("broadcastString");
-        if (broadcastString == null || broadcastString.isEmpty()) {
+        if (broadcastString != null && !(broadcastString.isEmpty())) {
+            TermuxActivity.mTerminalView.sendTextToTerminal(broadcastString + "\n");
+            if (ZTConfig.INSTANCE.getCloseListener() != null) {
+                ZTConfig.INSTANCE.getCloseListener().close();
+            }
             return;
         }
-        TermuxActivity.mTerminalView.sendTextToTerminal(broadcastString + "\n");
+        String broadcastStringTAR = intent.getStringExtra("broadcastStringTar");
+        if (broadcastStringTAR != null && !(broadcastStringTAR.isEmpty())) {
+            LogUtils.d(TAG, "onReceive broadcastStringTAR:" + broadcastStringTAR);
+            try {
+                String[] split = broadcastStringTAR.split(",");
+                if (split.length != 2) {
+                    LogUtils.d(TAG, "onReceive split.length is not 2" );
+                    return;
+                }
+                String command = "tar -xzvf \"" + split[0] + "\" -C " + split[1] + "/";
+                if (ZTConfig.INSTANCE.getCloseListener() != null) {
+                    ZTConfig.INSTANCE.getCloseListener().close();
+                }
+                TermuxActivity.mTerminalView.sendTextToTerminal( command + "\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        String broadcastString7Z = intent.getStringExtra("broadcastString7Z");
+        if (broadcastString7Z != null && !(broadcastString7Z.isEmpty())) {
+            LogUtils.d(TAG, "onReceive broadcastStringTAR:" + broadcastString7Z);
+
+            Z7ExtracatUtils.INSTANCE.setMUnZipCallBack(new Z7ExtracatUtils.UnZipCallBack() {
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onGetFileNum(int fileNum) {
+
+                }
+
+                @Override
+                public void onProgress(@Nullable String name, long size) {
+                    if (ZTConfig.INSTANCE.getZ7Listener() != null) {
+                        UUtils.runOnUIThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ZTConfig.INSTANCE.getZ7Listener().decompress(name, false, false);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onError(int errorCode, @Nullable String message) {
+                    if (ZTConfig.INSTANCE.getZ7Listener() != null) {
+                       UUtils.runOnUIThread(new Runnable() {
+                           @Override
+                           public void run() {
+                               ZTConfig.INSTANCE.getZ7Listener().decompress("error:" + message, true, true);
+                           }
+                       });
+                    }
+                }
+
+                @Override
+                public void onSucceed() {
+                    if (ZTConfig.INSTANCE.getZ7Listener() != null) {
+                       UUtils.runOnUIThread(new Runnable() {
+                           @Override
+                           public void run() {
+                               ZTConfig.INSTANCE.getZ7Listener().decompress("", true, false);
+                           }
+                       });
+                    }
+                }
+            });
+            try {
+                String[] split = broadcastString7Z.split(",");
+                if (split.length != 2) {
+                    LogUtils.d(TAG, "onReceive split.length is not 2" );
+                    return;
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Z7ExtracatUtils.INSTANCE.unZipFile(new File(split[0]), new File(split[1]));
+                    }
+                }).start();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogUtils.d(TAG, "onReceive 7Z Error:" + e.toString() );
+            }
+            return;
+        }
+
     }
 }

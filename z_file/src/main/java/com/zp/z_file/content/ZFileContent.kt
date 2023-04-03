@@ -58,6 +58,13 @@ const val PPTX = "pptx"
 
 const val PDF = "pdf"
 
+const val TAGGZ = "gz"
+const val TAGXZ = "xz"
+const val TAGBZ2 = "bz2"
+const val TAG = "tar"
+
+const val Z7 = "7z"
+
 const val ZIP = "zip"
 
 /** 默认资源 */

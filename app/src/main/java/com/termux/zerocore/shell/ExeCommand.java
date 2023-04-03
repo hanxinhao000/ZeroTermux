@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ExeCommand {
 
+
     //shell进程
     private Process process;
     //对应进程的3个流

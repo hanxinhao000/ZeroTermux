@@ -59,6 +59,7 @@
     <string name="zfile_git_clone">在此目录克隆仓库</string>
     <string name="zfile_wget">使用wget下载到此目录</string>
     <string name="zfile_git_clone_empty">网址不能为空!</string>
+    <string name="zfile_successfully_decompressed">解压完成!</string>
 
 
 </resources>

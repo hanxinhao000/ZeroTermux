@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import com.zp.z_file.R
+import com.zp.z_file.content.ZFileConfiguration
 import com.zp.z_file.content.getStringById
 import com.zp.z_file.content.getZFileConfig
 import com.zp.z_file.content.toast
@@ -51,14 +53,19 @@ internal object ZFileOpenUtil {
     fun openPDF(filePath: String, view: View) {
         open(filePath, PDF, view.context)
     }
+    fun openOtherFile(filePath: String, type: String, view: View) {
+        open(filePath, type, view.context)
+    }
 
     private fun open(filePath: String, type: String, context: Context?) {
+        getZFileConfig().authority = ZFileConfiguration.mApplicationContext?.packageName + ".fileProvider"
+        Log.e("open", "System.err: ${getZFileConfig().authority}" )
         context?.let {
             try {
                 it.startActivity(Intent(Intent.ACTION_VIEW).apply {
                     addCategory("android.intent.category.DEFAULT")
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         val contentUri = FileProvider.getUriForFile(
                             it,

@@ -59,6 +59,6 @@
     <string name="zfile_git_clone">Clone repository in this directory</string>
     <string name="zfile_wget">Download to this directory using wget</string>
     <string name="zfile_git_clone_empty">URL cannot be empty!</string>
-
+    <string name="zfile_successfully_decompressed">SuccessfullyDecompressed!</string>
 
 </resources>

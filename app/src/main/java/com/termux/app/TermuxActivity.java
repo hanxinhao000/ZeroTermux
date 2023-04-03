@@ -145,6 +145,8 @@ import com.termux.zerocore.view.BoomWindow;
 import com.termux.zerocore.view.xuehua.SnowView;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import com.zp.z_file.ui.ZFileListFragment;
+import com.zp.z_file.zerotermux.CloseListener;
+import com.zp.z_file.zerotermux.ZTConfig;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -3347,6 +3349,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             .beginTransaction();
         fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
             .commit();
+        ZTConfig.INSTANCE.setCloseListener(new CloseListener() {
+            @Override
+            public void close() {
+                getDrawer().closeDrawers();
+            }
+        });
     }
 
     private void locaBroadcast() {

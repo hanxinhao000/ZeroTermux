@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -24,6 +25,9 @@ import com.zp.z_file.ui.ZFilePicActivity
 import com.zp.z_file.ui.ZFileVideoPlayActivity
 import com.zp.z_file.ui.dialog.*
 import com.zp.z_file.util.*
+import com.zp.z_file.zerotermux.CallBackListener
+import com.zp.z_file.zerotermux.Z7Listener
+import com.zp.z_file.zerotermux.ZTConfig
 import java.io.File
 import java.io.IOException
 
@@ -158,6 +162,8 @@ open class ZFileTypeListener {
             XLS, XLSX -> ZFileXlsType()
             PPT, PPTX -> ZFilePptType()
             PDF -> ZFilePdfType()
+            TAGGZ, TAGXZ, TAGBZ2, TAG -> ZFileTarGzType()
+            Z7 -> ZFile7ZType()
             else -> ZFileOtherType()
         }
     }
@@ -171,13 +177,16 @@ open class ZFileOpenListener {
     private val textArrays by lazy {
         arrayOf(
             "编辑(Edit)",
+            "使用VIM打开(open with vim)",
             "在终端运行(run in terminal)",
+            "使用其它应用程序打开(Open with another application)",
         )
     }
     private val otherArrays by lazy {
         arrayOf(
             "编辑(Edit)",
-            "在插件【质感文件】中打开,跳转之后请在左侧菜单选择【UTermux】\nOpen it in the plug-in [texture file], after jumping, please select [UTermux] in the left menu",
+            "使用VIM打开(open with vim)",
+            "使用其它应用程序打开(Open with another application)",
         )
     }
     /**
@@ -237,13 +246,22 @@ open class ZFileOpenListener {
                             LocalBroadcastManager.getInstance(view.context).apply {
                                 val intent = Intent()
                                 intent.action = "localbroadcast"
+                                val sendText = "pkg install vim -y && vim $filePath"
+                                intent.putExtra("broadcastString", sendText)
+                                sendBroadcast(intent)
+                            }
+                        }
+                        2 -> {
+                            LocalBroadcastManager.getInstance(view.context).apply {
+                                val intent = Intent()
+                                intent.action = "localbroadcast"
                                 val sendText = "bash $filePath"
                                 intent.putExtra("broadcastString", sendText)
                                 sendBroadcast(intent)
                             }
-
-
-
+                        }
+                        3 -> {
+                            ZFileOpenUtil.openOtherFile(filePath, "text/plain", view)
                         }
                     }
                     dialog.dismiss()
@@ -261,8 +279,8 @@ open class ZFileOpenListener {
     open fun openZIP(filePath: String, view: View) {
         view.context?.let {
             AlertDialog.Builder(it).apply {
-                setTitle("请选择")
-                setItems(arrayOf("打开", "解压")) { dialog, which ->
+                setTitle("请选择(select)")
+                setItems(arrayOf("打开(open)", "解压(decompress)")) { dialog, which ->
                     if (which == 0) {
                         ZFileOpenUtil.openZIP(filePath, view)
                     } else {
@@ -270,9 +288,113 @@ open class ZFileOpenListener {
                     }
                     dialog.dismiss()
                 }
+                setPositiveButton("取消(cancel)") { dialog, _ -> dialog.dismiss() }
+                show()
+            }
+        }
+    }
+
+    open fun openTar(filePath: String, view: View) {
+        view.context?.let {
+            AlertDialog.Builder(it).apply {
+                setTitle("请选择(select)")
+                setItems(arrayOf("解压(decompress)")) { dialog, which ->
+                    if (which == 0) {
+                        tarSelect(filePath, it)
+                    }
+                    dialog.dismiss()
+                }
                 setPositiveButton("取消") { dialog, _ -> dialog.dismiss() }
                 show()
             }
+        }
+    }
+
+    open fun open7Z(filePath: String, view: View) {
+        view.context?.let {
+            AlertDialog.Builder(it).apply {
+                setTitle("请选择(select)")
+                setItems(arrayOf("解压(decompress)")) { dialog, which ->
+                    if (which == 0) {
+                        z7Select(filePath, it)
+                    }
+                    dialog.dismiss()
+                }
+                setPositiveButton("取消") { dialog, _ -> dialog.dismiss() }
+                show()
+            }
+        }
+    }
+    private fun z7Select(filePath: String, context: Context) {
+        Log.e(TAG, "tarSelect: filePath:" + filePath )
+        if (context is AppCompatActivity) {
+            context.checkFragmentByTag("ZFileSelectFolderDialog")
+            val dialog = ZFileSelectFolderDialog.newInstance("解压")
+            dialog.selectFolder = {
+                val targetFile = this
+                val loadingDialog = LoadingDialog(context)
+                loadingDialog.show()
+                ZTConfig.setZ7Listener(object: Z7Listener{
+                    override fun decompress(text: String, runs: Boolean, error: Boolean) {
+                        loadingDialog.msg?.text = text
+                        if (error) {
+                            loadingDialog.dismiss()
+                            ZFileUUtils.showMsg(text)
+                            return
+                        }
+                        if (runs) {
+                            loadingDialog.dismiss()
+                            ZFileUUtils.showMsg("解压完成\nSuccessfullyDecompressed")
+                        }
+
+                    }
+
+                })
+                LocalBroadcastManager.getInstance(context).apply {
+                    val intent = Intent()
+                    intent.action = "localbroadcast"
+                    val sendText = "$filePath,$targetFile"
+                    intent.putExtra("broadcastString7Z", sendText)
+                    sendBroadcast(intent)
+                }
+               // LoadingDialog
+            }
+            dialog.show(context.supportFragmentManager, "ZFileSelectFolderDialog")
+        } else {
+            ZFileLog.e("文件解压 showDialog 失败")
+        }
+    }
+
+    private fun tarSelect(filePath: String, context: Context) {
+        Log.e(TAG, "tarSelect: filePath:" + filePath )
+        if (context is AppCompatActivity) {
+            context.checkFragmentByTag("Z7ZFileSelectFolderDialog")
+            val dialog = ZFileSelectFolderDialog.newInstance("解压")
+            dialog.selectFolder = {
+                val targetFile = this
+                ZTConfig.setCallBackListener(object: CallBackListener {
+                    override fun call() {
+                        val fragment =
+                            context.supportFragmentManager.findFragmentByTag(getZFileConfig().fragmentTag)
+                        if (fragment is ZFileListFragment) {
+                            fragment.observer(true)
+                        } else {
+                            ZFileLog.e("文件解压成功，但是无法立刻刷新界面！")
+                        }
+                    }
+
+                })
+                LocalBroadcastManager.getInstance(context).apply {
+                    val intent = Intent()
+                    intent.action = "localbroadcast"
+                    val sendText = "$filePath,$targetFile"
+                    intent.putExtra("broadcastStringTar", sendText)
+                    sendBroadcast(intent)
+                }
+            }
+            dialog.show(context.supportFragmentManager, "Z7ZFileSelectFolderDialog")
+        } else {
+            ZFileLog.e("文件解压 showDialog 失败")
         }
     }
 
@@ -354,17 +476,16 @@ open class ZFileOpenListener {
                             view.context!!.startActivity(apply)
                         }
                         1 -> {
-                            try {
-                                val apply = Intent().apply {
-                                    action = "com.utermux.files.action"
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                    putExtra("edit_path", filePath)
-                                }
-                                view.context!!.startActivity(apply)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                Toast.makeText( view.context!!, "没有安装插件,请在【右侧菜单 -> 打开目录】安装此插件!\nThere is no plug-in installed, please install this plug-in in [right menu -> open file]!", Toast.LENGTH_SHORT).show()
+                            LocalBroadcastManager.getInstance(view.context).apply {
+                                val intent = Intent()
+                                intent.action = "localbroadcast"
+                                val sendText = "pkg install vim -y && vim $filePath"
+                                intent.putExtra("broadcastString", sendText)
+                                sendBroadcast(intent)
                             }
+                        }
+                        2 -> {
+                            ZFileOpenUtil.openOtherFile(filePath, "text/plain", view)
                         }
                     }
                     dialog.dismiss()
