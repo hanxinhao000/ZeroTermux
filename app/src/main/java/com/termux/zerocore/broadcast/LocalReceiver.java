@@ -43,7 +43,18 @@ public class LocalReceiver extends BroadcastReceiver {
                     LogUtils.d(TAG, "onReceive split.length is not 2" );
                     return;
                 }
-                String command = "tar -xzvf \"" + split[0] + "\" -C " + split[1] + "/";
+                String name = new File(split[0]).getName();
+                String command = "";
+                if (name.endsWith("tar.gz")) {
+                    command = "tar -xzvf \"" + split[0] + "\" -C " + split[1] + "/";
+                } else if (name.endsWith("tar.bz2")) {
+                    command = "tar -xjf \"" + split[0] + "\" -C " + split[1] + "/";
+                } else if (name.endsWith("tar.xz")) {
+                    command = "tar -xvJf \"" + split[0] + "\" -C " + split[1] + "/";
+                } else {
+                    command = "echo \"不能识别的格式(unrecognized format)\"";
+                }
+
                 if (ZTConfig.INSTANCE.getCloseListener() != null) {
                     ZTConfig.INSTANCE.getCloseListener().close();
                 }

@@ -67,7 +67,7 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
                         list,
                         FileComparator()
                     )
-                    list.reverse()
+                   // list.reverse()
                 }
                 ZFileConfiguration.BY_DATE -> list.sortBy { it.originalDate }
                 ZFileConfiguration.BY_SIZE -> list.sortBy { it.originaSize }
@@ -79,7 +79,7 @@ internal class ZFileDefaultLoadListener : ZFileLoadListener {
                         list,
                         FileComparator()
                     )
-                    list.reverse()
+                   // list.reverse()
                 }
                 ZFileConfiguration.BY_DATE -> list.sortByDescending { it.originalDate }
                 ZFileConfiguration.BY_SIZE -> list.sortByDescending { it.originaSize }
