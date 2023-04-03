@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:focusable="false"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="wrap_content"
             android:id="@+id/title_mb"
@@ -268,7 +268,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <ScrollView
+                    <androidx.core.widget.NestedScrollView
                         android:layout_width="match_parent"
                         android:layout_height="200dp">
                         <LinearLayout
@@ -315,7 +315,7 @@
                                 android:text="@string/会话窗口在右侧"
                                 android:layout_height="wrap_content"/>
                         </LinearLayout>
-                    </ScrollView>
+                    </androidx.core.widget.NestedScrollView>
                     <ImageView
                         android:layout_width="10dp"
                         android:src="@mipmap/up_down"
