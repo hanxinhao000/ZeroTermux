@@ -309,10 +309,18 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             // Do not steal dedicated buttons from a full external keyboard.
             return false;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            //zerotermux
             mVirtualControlKeyDown = down;
+            if (mKeyUpDown != null) {
+                mKeyUpDown.keyDown(keyCode);
+            }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             mVirtualFnKeyDown = down;
+            //zerotermux
+            if (mKeyUpDown != null) {
+                mKeyUpDown.keyDown(keyCode);
+            }
             return true;
         }
         return false;
@@ -797,6 +805,16 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         String text = ShareUtils.getTextStringFromClipboardIfSet(mActivity, true);
         if (text != null)
             session.getEmulator().paste(text);
+    }
+    /**
+     * ZeroTermux
+     */
+    public interface KeyUpDown {
+        void keyDown(int key);
+    }
+    private KeyUpDown mKeyUpDown;
+    public void setKeyUpDown(KeyUpDown mKeyUpDown) {
+        this.mKeyUpDown = mKeyUpDown;
     }
 
 }

@@ -815,6 +815,26 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (mTermuxTerminalViewClient != null)
             mTermuxTerminalViewClient.onCreate();
+        if (mTermuxTerminalViewClient != null) {
+            mTermuxTerminalViewClient.setKeyUpDown(new TermuxTerminalViewClient.KeyUpDown() {
+                @Override
+                public void keyDown(int key) {
+                    if (getDrawer().isDrawerOpen(Gravity.LEFT) || getDrawer().isDrawerOpen(Gravity.RIGHT)) {
+                        getDrawer().closeDrawers();
+                        return;
+                    }
+                    if (key == KeyEvent.KEYCODE_VOLUME_UP) {
+                        getDrawer().openDrawer(Gravity.LEFT);
+                        return;
+                    }
+
+                    if (key == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                        getDrawer().openDrawer(Gravity.RIGHT);
+                        return;
+                    }
+                }
+            });
+        }
 
         if (mTermuxTerminalSessionActivityClient != null)
             mTermuxTerminalSessionActivityClient.onCreate();
@@ -3301,9 +3321,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 getDrawer().openDrawer(Gravity.LEFT);
             }
             return false;
-        } else {
-            return super.onKeyDown(keyCode, event);
         }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void initScrollHandler() {
