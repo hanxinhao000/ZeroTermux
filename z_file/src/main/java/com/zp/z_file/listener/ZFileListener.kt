@@ -179,6 +179,7 @@ open class ZFileOpenListener {
             "编辑(Edit)",
             "使用VIM打开(open with vim)",
             "在终端运行(run in terminal)",
+            "设置此文件可执行权限(Set executable permissions for this file)",
             "使用其它应用程序打开(Open with another application)",
         )
     }
@@ -186,6 +187,8 @@ open class ZFileOpenListener {
         arrayOf(
             "编辑(Edit)",
             "使用VIM打开(open with vim)",
+            "尝试在终端运行(run in terminal try)",
+            "设置此文件可执行权限(Set executable permissions for this file)",
             "使用其它应用程序打开(Open with another application)",
         )
     }
@@ -261,6 +264,16 @@ open class ZFileOpenListener {
                             }
                         }
                         3 -> {
+                            LocalBroadcastManager.getInstance(view.context).apply {
+                                val intent = Intent()
+                                intent.action = "localbroadcast"
+                                val file = File(filePath)
+                                val sendText = "cd ${file.parentFile?.absolutePath} && chmod 777 ${file.name}"
+                                intent.putExtra("broadcastString", sendText)
+                                sendBroadcast(intent)
+                            }
+                        }
+                        4 -> {
                             ZFileOpenUtil.openOtherFile(filePath, "text/plain", view)
                         }
                     }
@@ -485,6 +498,26 @@ open class ZFileOpenListener {
                             }
                         }
                         2 -> {
+                            LocalBroadcastManager.getInstance(view.context).apply {
+                                val intent = Intent()
+                                intent.action = "localbroadcast"
+                                val file = File(filePath)
+                                val sendText = "cd ${file.parentFile?.absolutePath} && ./${file.name}"
+                                intent.putExtra("broadcastString", sendText)
+                                sendBroadcast(intent)
+                            }
+                        }
+                        3 -> {
+                            LocalBroadcastManager.getInstance(view.context).apply {
+                                val intent = Intent()
+                                intent.action = "localbroadcast"
+                                val file = File(filePath)
+                                val sendText = "cd ${file.parentFile?.absolutePath} && chmod 777 ${file.name}"
+                                intent.putExtra("broadcastString", sendText)
+                                sendBroadcast(intent)
+                            }
+                        }
+                        4 -> {
                             ZFileOpenUtil.openOtherFile(filePath, "text/plain", view)
                         }
                     }
