@@ -52,7 +52,7 @@
               android:textColor="#fff"
               android:id="@+id/input_system_name"
               android:visibility="gone"
-              android:hint="请输入新的系统盘名称"
+              android:hint="请输入新的系统盘名称(new name)"
               android:textColorHint="#aaa"
               android:layout_height="wrap_content"/>
 

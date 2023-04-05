@@ -54,6 +54,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.2.1'
     implementation "commons-io:commons-io:2.5"
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 // 这玩意 AndroidStudio需要配置代理才能上传、否则上传到JCenter会无限超时

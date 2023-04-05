@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
+import android.system.Os
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
@@ -162,7 +163,7 @@ open class ZFileTypeListener {
             XLS, XLSX -> ZFileXlsType()
             PPT, PPTX -> ZFilePptType()
             PDF -> ZFilePdfType()
-            TAGGZ, TAGXZ, TAGBZ2, TAG -> ZFileTarGzType()
+            TAGGZ, TAGXZ, TAGBZ2 -> ZFileTarGzType()
             Z7 -> ZFile7ZType()
             else -> ZFileOtherType()
         }
@@ -311,8 +312,10 @@ open class ZFileOpenListener {
         view.context?.let {
             AlertDialog.Builder(it).apply {
                 setTitle("请选择(select)")
-                setItems(arrayOf("解压(decompress)")) { dialog, which ->
+                setItems(arrayOf("安装此恢复包(Install this recovery package)", "解压(decompress)")) { dialog, which ->
                     if (which == 0) {
+                        InstallTarData.installTar(view.context!!, filePath)
+                    } else if (which == 1) {
                         tarSelect(filePath, it)
                     }
                     dialog.dismiss()

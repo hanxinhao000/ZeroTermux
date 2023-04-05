@@ -17,6 +17,6 @@ open class ZFileTarGzType : ZFileType() {
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(getRes(getZFileConfig().resources.zipRes, R.drawable.ic_zfile_tar))
+        pic.setImageResource(getRes(getZFileConfig().resources.zipRes, R.drawable.ic_zfile_data))
     }
 }

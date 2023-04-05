@@ -60,6 +60,13 @@
     <string name="zfile_wget">使用wget下载到此目录</string>
     <string name="zfile_git_clone_empty">网址不能为空!</string>
     <string name="zfile_successfully_decompressed">解压完成!</string>
-
+    <string name="storage_error">"~/storage"目录在操作过程中目录丢失，请手动termux-setup-storage创建或重新打开"容器管理"让程序自动创建</string>
+    <string name="unrecognized_compression_format">不能识别的数据包!</string>
+    <string name="system_create_container">创建恢复的系统容器</string>
+    <string name="system_create_container_empty">系统容器名称不能为空</string>
+    <string name="正在载入中">正在载入中,请稍后。</string>
+    <string name="system_create_container_fail">系统创建失败!请重试</string>
+    <string name="system_restore_success">系统恢复完成,请在切换系统，切换您的系统</string>
+    <string name="input_system_name">请输入新的系统盘名称</string>
 
 </resources>
