@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="MissingDefaultResource">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:alpha="0.9"
+        android:background="@drawable/shape_line_2e84e6">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:id="@+id/close"
+            android:visibility="visible"
+            android:src="@mipmap/close_window"
+            android:layout_height="20dp"/>
+
+        <LinearLayout
+            android:id="@+id/install_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="visible"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/download_module"
+                android:text="@string/install_module_download"
+                android:textColor="@color/color_48baf3"
+                android:textSize="13sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="450dp"
+                android:layout_marginTop="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/clipboard_container"
+                    android:visibility="visible"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:text="@string/install_module_message"
+                            android:textColor="@color/color_ffffff"
+                            android:textSize="10sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="5dp"
+                            android:visibility="invisible" />
+                        <TextView
+                            android:id="@+id/install_empty"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/install_empty"
+                            android:textColor="@color/color_ffffff"
+                            android:textSize="15sp" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:id="@+id/console_rl"
+              android:visibility="invisible"
+              android:layout_height="match_parent">
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:orientation="vertical"
+                  android:layout_margin="10dp"
+                  android:layout_above="@+id/ok"
+                  android:layout_height="match_parent">
+
+                  <TextView
+                      android:id="@+id/install_module"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:gravity="center"
+                      android:text="@string/install_module"
+                      android:textColor="@color/color_ffffff"
+                      android:textSize="13sp" />
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:id="@+id/scrollView"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:textColor="@color/color_ffffff"
+                        android:textSize="12sp"
+                        android:layout_above="@+id/ok"
+                        android:id="@+id/console_text"
+                        android:text="@string/install_message"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
+
+              </LinearLayout>
+              <TextView
+                  android:layout_width="100dp"
+                  android:layout_weight="1"
+                  android:id="@+id/ok"
+                  android:layout_height="35dp"
+                  android:background="@drawable/shape_r_3dp_553d_all"
+                  android:gravity="center"
+                  android:visibility="invisible"
+                  android:text="@string/确定"
+                  android:layout_alignParentBottom="true"
+                  android:layout_alignParentRight="true"
+                  android:layout_marginBottom="10dp"
+                  android:textColor="@color/color_ffffff"
+                  android:layout_marginRight="10dp"
+                  android:textSize="14sp" />
+
+          </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

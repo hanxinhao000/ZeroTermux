@@ -18,6 +18,7 @@ import androidx.collection.ArrayMap
 import androidx.fragment.app.FragmentActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.zp.z_file.R
+import com.zp.z_file.bean.DataBean
 import com.zp.z_file.common.ZFileType
 import com.zp.z_file.content.*
 import com.zp.z_file.type.*
@@ -330,8 +331,25 @@ open class ZFileOpenListener {
         view.context?.let {
             AlertDialog.Builder(it).apply {
                 setTitle("请选择(select)")
-                setItems(arrayOf("解压(decompress)")) { dialog, which ->
+                setItems(arrayOf("安装此模块包(Install this modpack)", "解压(decompress)")) { dialog, which ->
                     if (which == 0) {
+                        val switchDialog = SwitchDialog(view.context)
+                        switchDialog.createSwitchDialog(ZFileUUtils.getString(R.string.install_module_switch))
+                        switchDialog.show()
+                        switchDialog.cancel?.setOnClickListener {
+                            switchDialog.dismiss()
+
+                        }
+                        switchDialog.ok?.setOnClickListener {
+                            switchDialog.dismiss()
+                            val installModuleDialog = InstallModuleDialog(view.context)
+                            installModuleDialog.show()
+                            val dataBean = DataBean()
+                            dataBean.mFile = File(filePath)
+                            installModuleDialog.installModule(dataBean)
+                        }
+
+                    } else if (which == 1){
                         z7Select(filePath, it)
                     }
                     dialog.dismiss()

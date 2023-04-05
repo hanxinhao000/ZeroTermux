@@ -17,6 +17,6 @@ open class ZFile7ZType : ZFileType() {
     }
 
     override fun loadingFile(filePath: String, pic: ImageView) {
-        pic.setImageResource(getRes(getZFileConfig().resources.zipRes, R.drawable.ic_zfile_7z))
+        pic.setImageResource(getRes(getZFileConfig().resources.zipRes, R.drawable.ic_zfile_moudel))
     }
 }
