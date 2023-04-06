@@ -3366,14 +3366,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private void fileManager() {
         FragmentTransaction fragmentTransaction = this.getSupportFragmentManager()
             .beginTransaction();
-        fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
-            .commit();
-        ZTConfig.INSTANCE.setCloseListener(new CloseListener() {
-            @Override
-            public void close() {
-                getDrawer().closeDrawers();
-            }
-        });
+        if (fragmentTransaction.isEmpty()) {
+            fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
+                .commit();
+
+            ZTConfig.INSTANCE.setCloseListener(new CloseListener() {
+                @Override
+                public void close() {
+                    getDrawer().closeDrawers();
+                }
+            });
+        }
     }
 
     private void locaBroadcast() {
