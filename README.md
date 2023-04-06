@@ -129,7 +129,7 @@ https://github.com/testica/codeeditor
 
 ## 如果项目对你有用，请支持下吧~~~
 
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/alipay.png" height="500" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/wechat.png" height="500" width="360">
+<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/alipay.png" height="360" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/wechat.png" height="360" width="360">
 
 
 
