@@ -1948,27 +1948,23 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             //全屏 WindowUtils
             case R.id.quanping:
-
-
                 if (quanping.getTag() == null) {
-
                     WindowUtils.setFullScreen(this);
                     quanping.setTag("fff");
                     //mExtraKeysView.setVisibility(View.GONE);
-                    getExtraKeysView().setVisibility(View.GONE);
-                    getTerminalToolbarViewPager().setVisibility(View.GONE);
-
-
+                    if (getExtraKeysView() != null && getTerminalToolbarViewPager() != null) {
+                        getExtraKeysView().setVisibility(View.GONE);
+                        getTerminalToolbarViewPager().setVisibility(View.GONE);
+                    }
                 } else {
-
                     WindowUtils.exitFullScreen(this);
                     quanping.setTag(null);
                     //mExtraKeysView.setVisibility(View.VISIBLE);
-                    getExtraKeysView().setVisibility(View.VISIBLE);
-                    getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
+                    if (getExtraKeysView() != null && getTerminalToolbarViewPager() != null) {
+                        getExtraKeysView().setVisibility(View.VISIBLE);
+                        getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
+                    }
                 }
-
-
                 break;
 
             case R.id.yuyan:
@@ -2088,8 +2084,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
                         mTerminalView.invalidate();
                         UUtils.showLog("Test:22222");
-                        mExtraKeysView.setColorButton();
-                        mExtraKeysView.invalidate();
+                        if (mExtraKeysView != null) {
+                            mExtraKeysView.setColorButton();
+                            mExtraKeysView.invalidate();
+                        }
                     }
 
                     @Override
@@ -2098,8 +2096,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
                         mTerminalView.invalidate();
                         UUtils.showLog("Test:333333");
-                        mExtraKeysView.setColorButton();
-                        mExtraKeysView.invalidate();
+                        if (mExtraKeysView != null) {
+                            mExtraKeysView.setColorButton();
+                            mExtraKeysView.invalidate();
+                        }
+
                     }
                 });
 
