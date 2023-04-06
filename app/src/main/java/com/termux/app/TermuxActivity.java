@@ -3364,8 +3364,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
     private void fileManager() {
+        if (frame_file.getChildCount() != 0) {
+            return;
+        }
         FragmentTransaction fragmentTransaction = this.getSupportFragmentManager()
             .beginTransaction();
+
         if (fragmentTransaction.isEmpty()) {
             fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
                 .commit();
