@@ -8,10 +8,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.example.xh_lib.utils.LogUtils;
+import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
 import com.termux.app.TermuxActivity;
 import com.termux.terminal.Logger;
 import com.termux.zerocore.bosybox.BusyBoxManager;
+import com.termux.zerocore.utils.FileHttpUtils;
 import com.termux.zerocore.utils.Z7ExtracatUtils;
 import com.zp.z_file.zerotermux.ZTConfig;
 
@@ -133,6 +135,22 @@ public class LocalReceiver extends BroadcastReceiver {
                 e.printStackTrace();
                 LogUtils.d(TAG, "onReceive 7Z Error:" + e.toString() );
             }
+            return;
+        }
+
+        String broadcastHttp = intent.getStringExtra("broadcastHttp");
+        if (broadcastHttp != null && !(broadcastHttp.isEmpty())) {
+            if (broadcastHttp.equals("open")) {
+                UUtils.showMsg("ok--open");
+                FileHttpUtils.Companion.get().startServer();
+                FileHttpUtils.Companion.get().setHttpBoot();
+            }
+            if (broadcastHttp.equals("close")) {
+                UUtils.showMsg("ok--close");
+                FileHttpUtils.Companion.get().stopServer();
+                FileHttpUtils.Companion.get().cancelHttpBoot();
+            }
+
             return;
         }
     }

@@ -133,6 +133,7 @@ import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
+import com.termux.zerocore.utils.FileHttpUtils;
 import com.termux.zerocore.utils.FileIOUtils;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.PhoneUtils;
@@ -3345,10 +3346,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     //测试方法
     private void testFun() {
-   /*     if (!HttpServerManager.isAlive()) {
-            HttpServerManager.startService(19953, "");
-        }*/
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileHttpUtils.Companion.get().bootHttp();
+            }
+        }).start();
     }
 
     private void indexSwitch(int index) {

@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!--   下面重写即可自定义   -->
-    <string name="zfile_title">ZeroTermux目录管理</string>
+    <string name="zfile_title">ZT目录管理</string>
     <string name="zfile_menu_down">完成</string>
     <string name="zfile_root_path">根目录(点击导航栏返回)</string>
     <string name="zfile_path">指定目录</string>
@@ -106,4 +106,9 @@
     <string name="错误">错误</string>
     <string name="install_module_clear_tempmodule">清空临时文件夹出现异常,请手动删除~/tempmodule文件夹!</string>
 
+    <string name="open_http_files">打开网页文件(端口:19956)</string>
+    <string name="close_http_files">关闭网页文件(端口:19956)</string>
+    <string name="http_folder">文件夹</string>
+    <string name="http_file">文件</string>
+    <string name="no_http_msg">似乎没有链接网络?请手动在浏览器打开本机IP:19956</string>
 </resources>

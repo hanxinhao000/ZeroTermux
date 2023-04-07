@@ -837,6 +837,9 @@
     <string name="module_install_pro">正在处理命令:</string>
     <string name="file_manager">文件管理</string>
     <string name="select_session">切换会话</string>
+    <string name="http_folder">文件夹</string>
+    <string name="http_file">文件</string>
+    <string name="no_http_msg">似乎没有链接网络?请手动在浏览器打开本机IP:19956</string>
 </resources>
 
 

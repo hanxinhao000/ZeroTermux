@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!--   下面重写即可自定义   -->
-    <string name="zfile_title">ZeroTermux directory management</string>
+    <string name="zfile_title">ZTDirectory</string>
     <string name="zfile_menu_down">Finish</string>
     <string name="zfile_root_path">Root directory (clickNavigationReturn)</string>
     <string name="zfile_path">specified directory</string>
@@ -101,9 +101,13 @@
     <string name="install_module_msg9">Permission setting error, set default 0700</string>
     <string name="install_module_msg10">The module installation is complete! Some functions need to be restarted to take effect</string>
     <string name="install_module_msg11">If the permission is detected to be empty, setting the file permission will be skipped</string>
-    <string name="module_un7z_">Module Expanding...</string>
+    <string name="module_un7z_">Module Expanding…</string>
     <string name="module_install_pro">Processing command:</string>
     <string name="错误">error</string>
     <string name="install_module_clear_tempmodule">An exception occurred when emptying the temporary folder, please manually delete the ~/tempmodule folder!</string>
-
+    <string name="open_http_files">Open webpage file (port: 19956)</string>
+    <string name="close_http_files">Close the webpage file (port: 19956)</string>
+    <string name="http_folder">folder</string>
+    <string name="http_file">file</string>
+    <string name="no_http_msg">It seems that there is no connection to the network? Please manually open the local IP: 19956 in the browser</string>
 </resources>

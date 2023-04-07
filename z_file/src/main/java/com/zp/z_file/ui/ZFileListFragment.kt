@@ -32,6 +32,7 @@ import com.zp.z_file.ui.dialog.ZFileSelectFolderDialog
 import com.zp.z_file.ui.dialog.ZFileSortDialog
 import com.zp.z_file.util.ZFileLog
 import com.zp.z_file.util.ZFilePermissionUtil
+import com.zp.z_file.util.ZFileUUtils
 import com.zp.z_file.util.ZFileUtil
 import java.io.File
 
@@ -360,6 +361,24 @@ class ZFileListFragment : Fragment() {
 
                 }
                 createEditDialog.show()
+            }
+            R.id.open_http -> {
+                LocalBroadcastManager.getInstance(view!!.context).apply {
+                    val intent = Intent()
+                    intent.action = "localbroadcast"
+                    val sendText = "open"
+                    intent.putExtra("broadcastHttp", sendText)
+                    sendBroadcast(intent)
+                }
+            }
+            R.id.close_http -> {
+                LocalBroadcastManager.getInstance(view!!.context).apply {
+                    val intent = Intent()
+                    intent.action = "localbroadcast"
+                    val sendText = "close"
+                    intent.putExtra("broadcastHttp", sendText)
+                    sendBroadcast(intent)
+                }
             }
 
          //   R.id.menu_zfile_px -> showSortDialog()
@@ -797,6 +816,22 @@ class ZFileListFragment : Fragment() {
         when (getZFileConfig().titleGravity) {
             ZFileConfiguration.TITLE_LEFT -> {
                 vb?.zfileListToolBar?.title = title
+                vb?.zfileListToolBar?.setOnClickListener {
+                    if ( ZFileUUtils.getHostIP() != null &&  ZFileUUtils.getHostIP().isNullOrEmpty()) {
+                        try {
+                            val split = ZFileUUtils.getHostIP().split("\n")
+                            if (split.isNotEmpty()) {
+                                ZFileUUtils.startUrl("http://" + split[0] + ":19956")
+                            } else {
+                                ZFileUUtils.showMsg(ZFileUUtils.getString(R.string.no_http_msg))
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            ZFileUUtils.showMsg(e.toString())
+                        }
+                    }
+                }
+
                 vb?.zfileListCenterTitle?.visibility = View.GONE
             }
             else -> {

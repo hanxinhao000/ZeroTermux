@@ -841,4 +841,7 @@ Reset successfully</string>
     <string name="module_install_pro">processing command:</string>
     <string name="file_manager">File Manager</string>
     <string name="select_session">Select Session</string>
+    <string name="http_folder">folder</string>
+    <string name="http_file">file</string>
+    <string name="no_http_msg">It seems that there is no connection to the network? Please manually open the local IP: 19956 in the browser</string>
 </resources>

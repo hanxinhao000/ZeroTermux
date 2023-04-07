@@ -76,6 +76,7 @@ public class UUtils {
     public static final String DATE_FORMAT_YMDHM = "yyyy-MM-dd HH:mm";
     private static final String LOG_TAG = "Termux--Apk:UUtils";
     private static Context mContext;
+    private static SimpleDateFormat mSimpleDateFormat;
     private static Handler mHandler;
 
 
@@ -292,9 +293,9 @@ public class UUtils {
      * Creates a SimpleDateFormat in the formatting used by ftp sever/client.
      */
     private static SimpleDateFormat createSimpleDateFormat() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return df;
+        mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        mSimpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return mSimpleDateFormat;
     }
 
     public static Date parseDate(String time) throws ParseException {

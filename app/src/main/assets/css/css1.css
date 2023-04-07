@@ -24,19 +24,24 @@
 	text-align: center; 
 	background-color:rgba(255,255,255,0.5);
 	font-family: 黑体;
+
 }
 #btn2{
 	
 	
 	float:left;
-	width: 150px; 
+	width: 300px;
     line-height:100px;
     margin-top: 30px;
     margin-left: 30px;
-	text-align: center; 
+	text-align: center;
+	font-weight: bold;
 
 	background-color:rgba(255,255,255,0.2);
-	font-family: 黑体;
+	font-family: 文泉驿微米黑;
+	text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
 	
 	
 }

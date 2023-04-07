@@ -37,6 +37,14 @@
         android:id="@+id/wget"
         android:title="@string/zfile_wget"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/open_http"
+        android:title="@string/open_http_files"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/close_http"
+        android:title="@string/close_http_files"
+        app:showAsAction="never" />
 
 
 </menu>
