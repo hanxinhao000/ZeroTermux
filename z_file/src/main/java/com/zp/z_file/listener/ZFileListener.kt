@@ -166,6 +166,7 @@ open class ZFileTypeListener {
             PDF -> ZFilePdfType()
             TAGGZ, TAGXZ, TAGBZ2 -> ZFileTarGzType()
             Z7 -> ZFile7ZType()
+            DEB -> ZFileDEBType()
             else -> ZFileOtherType()
         }
     }
@@ -318,6 +319,38 @@ open class ZFileOpenListener {
                         InstallTarData.installTar(view.context!!, filePath)
                     } else if (which == 1) {
                         tarSelect(filePath, it)
+                    }
+                    dialog.dismiss()
+                }
+                setPositiveButton("取消") { dialog, _ -> dialog.dismiss() }
+                show()
+            }
+        }
+    }
+
+    open fun openDeb(filePath: String, view: View) {
+        view.context?.let {
+            AlertDialog.Builder(it).apply {
+                setTitle("请选择(select)")
+                setItems(arrayOf("安装(Install)", "解压(decompress)")) { dialog, which ->
+                    if (which == 0) {
+                        LocalBroadcastManager.getInstance(view.context).apply {
+                            val intent = Intent()
+                            intent.action = "localbroadcast"
+                            val file = File(filePath)
+                            val sendText = "cd ${file.parentFile?.absolutePath} && dpkg -i ${file.name}"
+                            intent.putExtra("broadcastString", sendText)
+                            sendBroadcast(intent)
+                        }
+                    } else if (which == 1) {
+                        LocalBroadcastManager.getInstance(view.context).apply {
+                            val intent = Intent()
+                            intent.action = "localbroadcast"
+                            val file = File(filePath)
+                            val sendText = "cd ${file.parentFile?.absolutePath} && mkdir ${file.name}_folder && dpkg -X ${file.name} ${file.name}_folder"
+                            intent.putExtra("broadcastString", sendText)
+                            sendBroadcast(intent)
+                        }
                     }
                     dialog.dismiss()
                 }

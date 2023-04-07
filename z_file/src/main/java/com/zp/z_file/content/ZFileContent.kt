@@ -65,6 +65,8 @@ const val TAG = "tar"
 
 const val Z7 = "7z"
 
+const val DEB = "deb"
+
 const val ZIP = "zip"
 
 /** 默认资源 */
