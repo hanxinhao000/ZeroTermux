@@ -343,14 +343,7 @@ open class ZFileOpenListener {
                             sendBroadcast(intent)
                         }
                     } else if (which == 1) {
-                        LocalBroadcastManager.getInstance(view.context).apply {
-                            val intent = Intent()
-                            intent.action = "localbroadcast"
-                            val file = File(filePath)
-                            val sendText = "cd ${file.parentFile?.absolutePath} && mkdir ${file.name}_folder && dpkg -X ${file.name} ${file.name}_folder"
-                            intent.putExtra("broadcastString", sendText)
-                            sendBroadcast(intent)
-                        }
+                        debSelect(filePath, view.context)
                     }
                     dialog.dismiss()
                 }
@@ -393,6 +386,30 @@ open class ZFileOpenListener {
             }
         }
     }
+
+    private fun debSelect(filePath: String, context: Context) {
+        Log.e(TAG, "tarSelect: filePath:" + filePath )
+        if (context is AppCompatActivity) {
+            context.checkFragmentByTag("ZFileSelectFolderDialog")
+            val dialog = ZFileSelectFolderDialog.newInstance("解压")
+            dialog.selectFolder = {
+                val targetFile = this
+                LocalBroadcastManager.getInstance(context).apply {
+                    val intent = Intent()
+                    intent.action = "localbroadcast"
+                    val file = File(filePath)
+                    val sendText = "cd ${file.parentFile?.absolutePath} && mkdir $targetFile/${file.name}_folder && dpkg -X ${file.name} $targetFile/${file.name}_folder"
+                    intent.putExtra("broadcastString", sendText)
+                    sendBroadcast(intent)
+                }
+            }
+            dialog.show(context.supportFragmentManager, "ZFileSelectFolderDialog")
+        } else {
+            ZFileLog.e("文件解压 showDialog 失败")
+        }
+    }
+
+
     private fun z7Select(filePath: String, context: Context) {
         Log.e(TAG, "tarSelect: filePath:" + filePath )
         if (context is AppCompatActivity) {
