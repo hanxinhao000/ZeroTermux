@@ -344,6 +344,7 @@ open class ZFileOpenListener {
                             switchDialog.dismiss()
                             val installModuleDialog = InstallModuleDialog(view.context)
                             installModuleDialog.show()
+                            installModuleDialog.setCancelable(false)
                             val dataBean = DataBean()
                             dataBean.mFile = File(filePath)
                             installModuleDialog.installModule(dataBean)
