@@ -38,6 +38,10 @@ object FileIOUtils {
     //ROM信息文件地址
     public const val DATA_MESSAGE_PATH = "/ZtInfo/data.config"
     public const val DATA_MESSAGE_PATH_FOLDER = "/ZtInfo"
+    //网站默认地址
+    public const val HTML_PATH = "/ztlink/html"
+    public const val XINHAO_PATH = "/ztlink/xinhao"
+    public const val HTML_ZT_LINK_PATH = "/ztlink"
 
 
     //VIDEO
@@ -444,7 +448,29 @@ object FileIOUtils {
             LogUtils.d(TAG, "folder is create")
             file.mkdirs()
         }
+        createWebConfig()
         return File(homePath, DATA_MESSAGE_PATH)
+    }
+
+    public fun createWebConfig() {
+        val fileZtLinkPATH = File(getHomePath(UUtils.getContext()), HTML_ZT_LINK_PATH)
+        val fileHtmlPATH = File(getHomePath(UUtils.getContext()), HTML_PATH)
+        val fileXinHaoPATH = File(getHomePath(UUtils.getContext()), XINHAO_PATH)
+
+        val file1 = File(FileUrl.zeroTermuxHome, "web_config")
+
+        if (!fileZtLinkPATH.exists()) {
+            fileZtLinkPATH.mkdirs()
+        }
+        if (!file1.exists()) {
+            file1.mkdirs()
+        }
+        try {
+            Os.symlink(file1.absolutePath, fileHtmlPATH.absolutePath)
+            Os.symlink(FileUrl.zeroTermuxHome.absolutePath, fileXinHaoPATH.absolutePath)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     public fun getDataMessageFileString(): String {

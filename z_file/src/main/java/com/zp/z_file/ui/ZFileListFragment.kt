@@ -380,6 +380,15 @@ class ZFileListFragment : Fragment() {
                     sendBroadcast(intent)
                 }
             }
+            R.id.zt_developer -> {
+                LocalBroadcastManager.getInstance(view!!.context).apply {
+                    val intent = Intent()
+                    intent.action = "localbroadcast"
+                    val sendText = "DeveloperActivity"
+                    intent.putExtra("broadcastStartActivity", sendText)
+                    sendBroadcast(intent)
+                }
+            }
 
          //   R.id.menu_zfile_px -> showSortDialog()
          //   R.id.menu_zfile_show -> {

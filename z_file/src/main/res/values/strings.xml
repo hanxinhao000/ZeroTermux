@@ -101,7 +101,7 @@
     <string name="install_module_msg9">权限设置错误, 设置默认0700</string>
     <string name="install_module_msg10">模块安装完成!有些功能需要重启后生效</string>
     <string name="install_module_msg11">检测到权限为空,将跳过设置文件权限</string>
-    <string name="module_un7z_">模块展开中...</string>
+    <string name="module_un7z_">模块展开中…</string>
     <string name="module_install_pro">正在处理命令:</string>
     <string name="错误">错误</string>
     <string name="install_module_clear_tempmodule">清空临时文件夹出现异常,请手动删除~/tempmodule文件夹!</string>
@@ -111,4 +111,5 @@
     <string name="http_folder">文件夹</string>
     <string name="http_file">文件</string>
     <string name="no_http_msg">似乎没有链接网络?请手动在浏览器打开本机IP:19956</string>
+    <string name="zerotermux_test">测试(ZT开发者)</string>
 </resources>

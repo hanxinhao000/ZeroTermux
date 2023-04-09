@@ -13,6 +13,7 @@ import com.example.xh_lib.utils.UUtils;
 import com.termux.app.TermuxActivity;
 import com.termux.terminal.Logger;
 import com.termux.zerocore.bosybox.BusyBoxManager;
+import com.termux.zerocore.developer.DeveloperActivity;
 import com.termux.zerocore.utils.FileHttpUtils;
 import com.termux.zerocore.utils.Z7ExtracatUtils;
 import com.zp.z_file.zerotermux.ZTConfig;
@@ -151,6 +152,15 @@ public class LocalReceiver extends BroadcastReceiver {
                 FileHttpUtils.Companion.get().cancelHttpBoot();
             }
 
+            return;
+        }
+        String broadcastStartActivity = intent.getStringExtra("broadcastStartActivity");
+        if (broadcastStartActivity != null && !(broadcastStartActivity.isEmpty())) {
+            if (broadcastStartActivity.equals("DeveloperActivity")) {
+                Intent intent1 = new Intent(context, DeveloperActivity.class);
+                intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent1);
+            }
             return;
         }
     }

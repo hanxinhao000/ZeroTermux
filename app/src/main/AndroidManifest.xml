@@ -65,15 +65,23 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
+            android:name="com.termux.zerocore.developer.DeveloperActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".zerocore.activity.EditTextActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="false">
-
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
-                <action android:name="com.termux.zerocore.activity.edittextactivity"/>
+                <action android:name="com.termux.zerocore.activity.edittextactivity" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -174,7 +182,6 @@
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"

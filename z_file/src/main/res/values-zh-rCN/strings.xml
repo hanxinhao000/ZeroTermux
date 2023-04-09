@@ -110,4 +110,5 @@
     <string name="http_folder">文件夹</string>
     <string name="http_file">文件</string>
     <string name="no_http_msg">似乎没有链接网络?请手动在浏览器打开本机IP:19956</string>
+    <string name="zerotermux_test">测试(ZT开发者)</string>
 </resources>

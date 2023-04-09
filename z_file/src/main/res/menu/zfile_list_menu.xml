@@ -45,6 +45,10 @@
         android:id="@+id/close_http"
         android:title="@string/close_http_files"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/zt_developer"
+        android:title="@string/zerotermux_test"
+        app:showAsAction="never" />
 
 
 </menu>
