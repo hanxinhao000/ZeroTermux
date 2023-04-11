@@ -973,11 +973,16 @@ public class UUtils {
     }
 
     public static void startUrl(String url) {
-        Intent intent = new Intent();
-        intent.setData(Uri.parse(url));//Url 就是你要打开的网址
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        UUtils.getContext().startActivity(intent); //启动浏览器
+        try {
+            Intent intent = new Intent();
+            intent.setData(Uri.parse(url));//Url 就是你要打开的网址
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            UUtils.getContext().startActivity(intent); //启动浏览器
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void chmod(File file){
