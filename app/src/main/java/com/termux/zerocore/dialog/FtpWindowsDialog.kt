@@ -129,7 +129,7 @@ class FtpWindowsDialog : BaseDialogCentre {
     private fun switchOff(it:SwitchView) {
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
-                FsService.stop()
+                FtpService.stopService()
                 it.visibility = View.INVISIBLE
                 mProgressBar?.visibility = View.VISIBLE
             }
