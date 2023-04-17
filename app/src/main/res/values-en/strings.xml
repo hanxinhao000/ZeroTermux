@@ -849,4 +849,25 @@ Reset successfully</string>
     <string name="startup_command_key">startup_command</string>
     <string name="open_ttyd_http">NetworkTerminal(ttyd)</string>
     <string name="open_file_http">NetworkFiles</string>
+
+    <string name="adb_command">ADBCommand</string>
+    <string name="adb_tool">ADBTool</string>
+
+
+    <string name="notification_channel_foreground_service">Reception</string>
+    <string name="notification_channel_attention">hint</string>
+    <string name="notification_ftp_start_error_title">FTP service failed to start</string>
+    <string name="notification_ftp_start_errer_message">The FTP service cannot be started, please check the network, permissions, and operating mode</string>
+    <string name="item_charset_gbk">GBK(Simplified Chinese)</string>
+    <string name="item_charset_utf">UTF-8 (default)</string>
+    <string name="permission_write_external">Please authorize storage read and write permissions</string>
+    <string name="snackbar_action_goto">go to settings</string>
+    <string name="attention_ftp_is_running">You need to close the FTP service before you can modify the settings</string>
+    <string name="attention_no_user_account">Please add an account or use anonymous mode to open the FTP service</string>
+    <string name="ftp_status_not_running">FTP service is not running</string>
+    <string name="ftp_status_running_head">The FTP service runs on </string>
+    <string name="attention_opening_ftp">Opening FTP service&#8230;</string>
+    <string name="attention_closing_ftp">Shutting down the FTP service&#8230;</string>
+    <string name="word_stop">stop</string>
+    <string name="ftp_title_no">ZeroTermux:FTP</string>
 </resources>

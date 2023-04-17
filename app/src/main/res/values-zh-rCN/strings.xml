@@ -845,6 +845,27 @@
     <string name="startup_command_key">启动命令</string>
     <string name="open_ttyd_http">网络终端(ttyd)</string>
     <string name="open_file_http">网络文件</string>
+
+    <string name="adb_command">ADB终端</string>
+    <string name="adb_tool">ADB工具箱</string>
+
+
+    <string name="notification_channel_foreground_service">前台服务</string>
+    <string name="notification_channel_attention">提示</string>
+    <string name="notification_ftp_start_error_title">FTP服务无法启动</string>
+    <string name="notification_ftp_start_errer_message">FTP服务无法启动，请检查网络、权限、运行模式</string>
+    <string name="item_charset_gbk">GBK(简体中文)</string>
+    <string name="item_charset_utf">UTF-8(默认)</string>
+    <string name="permission_write_external">请授权存储读写权限</string>
+    <string name="snackbar_action_goto">前往设置</string>
+    <string name="attention_ftp_is_running">需要先关闭FTP服务才可以修改设置</string>
+    <string name="attention_no_user_account">请添加一个账户或者使用匿名模式来打开FTP服务</string>
+    <string name="ftp_status_not_running">FTP服务没有运行</string>
+    <string name="ftp_status_running_head">FTP服务运行于</string>
+    <string name="attention_opening_ftp">正在打开FTP服务&#8230;</string>
+    <string name="attention_closing_ftp">正在关闭FTP服务&#8230;</string>
+    <string name="word_stop">停止</string>
+    <string name="ftp_title_no">ZeroTermux:FTP</string>
 </resources>
 
 

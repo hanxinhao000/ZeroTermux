@@ -402,8 +402,8 @@ public class FtpService extends Service implements NetworkStatusMonitor.NetworkS
             builder.setContentText(content);
             Intent stopIntent = new Intent(this, StopServiceReceiver.class);
             stopIntent.setAction(ACTION_STOP_SERVICE);
-            builder.addAction(R.drawable.ic_stop, getResources().getString(R.string.word_stop), PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-            builder.setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, TermuxActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
+          //  builder.addAction(R.drawable.ic_stop, getResources().getString(R.string.word_stop), PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+         //   builder.setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, TermuxActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
             startForeground(1, builder.build());
         } catch (Exception e) {
             e.printStackTrace();
@@ -432,7 +432,7 @@ public class FtpService extends Service implements NetworkStatusMonitor.NetworkS
                         setCountSecondsAndStart(getSharedPreferences(Constants.PreferenceConsts.FILE_NAME, Context.MODE_PRIVATE)
                                 .getInt(Constants.PreferenceConsts.AUTO_STOP_VALUE, Constants.PreferenceConsts.AUTO_STOP_VALUE_DEFAULT));
                     }
-                    makeThisForeground(getResources().getString(R.string.notification_title),
+                    makeThisForeground(getResources().getString(R.string.ftp_title_no),
                             getResources().getString(R.string.ftp_status_running_head) + CommonUtils.getFTPServiceDisplayAddress(this));
                 }
                 break;
