@@ -1,6 +1,7 @@
 package com.termux.zerocore.dialog
 
 import android.content.Context
+import android.os.Environment
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -15,7 +16,10 @@ import com.github.iielse.switchbutton.SwitchView.OnStateChangedListener
 import com.termux.R
 import com.termux.zerocore.bean.SaveDataZeroEngine
 import com.termux.zerocore.ftp.FsService
-import com.termux.zerocore.utils.FileIOUtils
+import com.termux.zerocore.ftp.new_ftp.Constants
+import com.termux.zerocore.ftp.new_ftp.config.FTP_CONFIG
+import com.termux.zerocore.ftp.new_ftp.services.FtpService
+import com.termux.zerocore.url.FileUrl.mainFilesUrl
 import kotlinx.coroutines.*
 
 class FtpWindowsDialog : BaseDialogCentre {
@@ -59,7 +63,7 @@ class FtpWindowsDialog : BaseDialogCentre {
             switchIndex(FtpWindowsDialogConstant.ROOT_PATH_SDCARD, true)
         }
         mFtpMsg?.setOnClickListener {
-            UUtils.startUrl("https://github.com/ppareit/swiftp")
+           // UUtils.startUrl("https://github.com/ppareit/swiftp")
         }
         mZeroRoot?.setOnClickListener {
             switchIndex(FtpWindowsDialogConstant.ROOT_PATH_ZERO_HOME, true)
@@ -70,7 +74,7 @@ class FtpWindowsDialog : BaseDialogCentre {
             }
         }
         mSwitchBtn?.let {
-            it.isOpened = FsService.isRunning()
+            it.isOpened = FtpService.isFTPServiceRunning()
             it.setOnStateChangedListener(object :OnStateChangedListener{
                 override fun toggleToOn(view: SwitchView?) {
                     switchOn(it)
@@ -96,7 +100,7 @@ class FtpWindowsDialog : BaseDialogCentre {
         initDefUser()
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
-                FsService.stop()
+                FtpService.stopService()
                 it.visibility = View.INVISIBLE
                 mProgressBar?.visibility = View.VISIBLE
             }
@@ -104,7 +108,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                 delay(1000)
             }
             withContext(Dispatchers.Main){
-                FsService.start()
+                FtpService.startService(UUtils.getContext())
             }
             withContext(Dispatchers.IO) {
                 delay(1500)
@@ -115,7 +119,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                 LogUtils.d(FtpWindowsDialogConstant.TAG, "initDefUser stringData:$stringData")
                 it.visibility = View.VISIBLE
                 mProgressBar?.visibility = View.INVISIBLE
-                it.isOpened = FsService.isRunning()
+                it.isOpened = FtpService.isFTPServiceRunning()
                 mPopupFtpWindowsSwitchBtnListener?.switchBtn(true)
                 initTitleText()
             }
@@ -201,6 +205,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                 if (isInit) {
                     SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_CHROOT, SaveDataZeroEngine.FTP_SDCARD_ROOT)
                 }
+                FTP_CONFIG.PATH = Environment.getExternalStorageDirectory().absolutePath
                 mSdcard?.setBackgroundResource(R.drawable.shape_line_8cff5a)
             }
             FtpWindowsDialogConstant.ROOT_PATH_ZERO_HOME -> {
@@ -208,6 +213,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                     SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_CHROOT, SaveDataZeroEngine.FTP_ZERO_TERMUX_FILE)
                 }
                 mZeroRoot?.setBackgroundResource(R.drawable.shape_line_8cff5a)
+                FTP_CONFIG.PATH = mainFilesUrl
             }
         }
         if (isInit) {
@@ -226,7 +232,7 @@ class FtpWindowsDialog : BaseDialogCentre {
     }
 
     private fun initTitleText() {
-        if (FsService.isRunning()) {
+        if (FtpService.isFTPServiceRunning()) {
             val port =
                 SaveDataZeroEngine.getStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT)
             val empty = SaveDataZeroEngine.isEmpty(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT)
@@ -247,11 +253,18 @@ class FtpWindowsDialog : BaseDialogCentre {
             val port =
                 SaveDataZeroEngine.getStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PORT)
             mPortEd?.setText(port)
+            try {
+                Constants.PreferenceConsts.PORT_NUMBER_DEFAULT = port.toInt()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
         }
         if (!SaveDataZeroEngine.isEmpty(UUtils.getContext(), SaveDataZeroEngine.FTP_PASS_WORD)) {
             val password =
                 SaveDataZeroEngine.getStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_PASS_WORD)
             mPassword?.setText(password)
+            FTP_CONFIG.PASSWORD = password
         }
         val stringData =
             SaveDataZeroEngine.getStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_CHROOT)

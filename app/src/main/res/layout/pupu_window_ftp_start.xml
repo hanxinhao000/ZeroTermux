@@ -103,6 +103,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_marginTop="6dp"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
 
@@ -251,9 +252,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_marginLeft="40dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:textColor="@color/color_ffffff"
             android:layout_toRightOf="@+id/ftp_title"
             android:textSize="10sp"
+            android:layout_margin="20dp"
             android:id="@+id/ftp_msg"
             android:text="@string/ftp_msg"
             android:background="@drawable/shape_r_3dp_161823_232635"

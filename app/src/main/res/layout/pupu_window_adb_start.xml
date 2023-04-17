@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape_r_3dp_161823_2e"
+    android:padding="10dp"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:id="@+id/title_ftp"
+        android:textColor="@color/color_ffffff"
+        android:text="ZeroADB(LADB)"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_ffffff"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/adb_command"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="@string/adb_command"
+            android:background="@drawable/shape_line_8cff5a"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_ffffff"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/adb_tool"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="@string/adb_tool"
+            android:background="@drawable/shape_r_3dp_161823_232635"
+            android:layout_height="30dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

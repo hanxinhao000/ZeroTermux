@@ -748,7 +748,7 @@
 
     <string name="ftp_title">说明</string>
 
-    <string name="ftp_msg">点击此段说明，跳转到作者github,再次鸣谢作者Pieter Pareit的FTP核心程序\n此FTP核心是由swiftp集成的。\n地址:https://github.com/ppareit/swiftp\n功能可以使用FTP上传文件到Zero Home或者SDCARD\n在更改需要访问的路径是会重启FTP服务\n但是更改用户名、密码、端口需要手动重启服务来生效\n更改用户名、密码、端口数据会实时保存</string>
+    <string name="ftp_msg">核心根据apache改进而来，默认目录为本Linux目录\n此版本为2.0，修复了FTP连接异常问题，更换了核心,确保此功能稳定!</string>
 
     <string name="ftp_error">文件未被加载或读取失败, 请加载后打开或重试</string>
 
@@ -840,6 +840,11 @@
     <string name="http_folder">文件夹</string>
     <string name="http_file">文件</string>
     <string name="no_http_msg">似乎没有链接网络?请手动在浏览器打开本机IP:19956</string>
+    <string name="buffer_size_key">缓冲大小</string>
+    <string name="auto_shell_key">自动终端</string>
+    <string name="startup_command_key">启动命令</string>
+    <string name="open_ttyd_http">网络终端(ttyd)</string>
+    <string name="open_file_http">网络文件</string>
 </resources>
 
 

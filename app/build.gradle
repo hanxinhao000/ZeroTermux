@@ -21,6 +21,10 @@ android {
         options.fork = true
         options.forkOptions.jvmArgs += ["-Duser.language=en"]
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+    }
     signingConfigs {
         release {
             keyAlias 'phone1'
@@ -196,6 +200,16 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation files('libs/commons-logging-1.2.jar')
+    implementation files('libs/commons-net-3.8.0.jar')
+    implementation files('libs/ftplet-api-1.1.1.jar')
+    implementation files('libs/ftpserver-core-1.1.1-edited.jar')
+    implementation files('libs/jlan-5.jar')
+    implementation files('libs/log4j-1.2.17.jar')
+    implementation files('libs/mina-core-2.0.16.jar')
+    implementation files('libs/slf4j-api-1.7.21.jar')
+    implementation files('libs/slf4j-log4j12-1.7.21.jar')
+
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
     implementation "androidx.core:core-ktx:1.8.0"

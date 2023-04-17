@@ -16,6 +16,7 @@
         android:name="android.hardware.usb.host"
         android:required="true" />
 
+
     <permission
         android:name="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND"
         android:description="@string/permission_run_command_description"
@@ -64,6 +65,7 @@
         android:theme="@style/Theme.TermuxApp.DayNight.DarkActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <uses-library android:name="org.apache.ftpserver" android:required="false" />
         <activity
             android:name="com.termux.zerocore.developer.DeveloperActivity"
             android:exported="false"
@@ -274,6 +276,13 @@
         <receiver android:name=".app.TermuxOpenReceiver" />
 
         <service android:name=".zerocore.ftp.FsService" />
+        <service
+            android:name="com.termux.zerocore.ftp.new_ftp.services.FtpService"
+            android:exported="true" />
+        <service
+            android:name="com.termux.zerocore.ftp.new_ftp.services.MyTileService"
+            android:icon="@drawable/ic_launcher">
+        </service>
 
         <receiver
             android:name=".shared.activities.ReportActivity$ReportActivityBroadcastReceiver"

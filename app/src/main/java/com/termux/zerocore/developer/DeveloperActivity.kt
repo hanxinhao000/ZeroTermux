@@ -1,12 +1,16 @@
 package com.termux.zerocore.developer
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.system.Os
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.url.FileUrl
+import org.alfresco.jlan.server.config.ServerConfiguration
+import org.alfresco.jlan.smb.server.SMBServer
 import java.io.File
+
 
 class DeveloperActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +28,16 @@ class DeveloperActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
+        }
+
+        findViewById<Button>(R.id.samba_create).setOnClickListener {
+            try {
+                val config = ServerConfiguration("Android Server")
+                val server = SMBServer(config)
+                server.startServer()
+            } catch (e: Exception) {
+                UUtils.showMsg(e.toString())
+            }
         }
     }
 }
