@@ -1,0 +1,20 @@
+{
+    "code": 0,
+    "ip": "http://od.ixcmstudio.cn/",
+    "home": "/repository/main/",
+	"versionName": "0.118.32",
+	"engineName": "0.1.20221116",
+	"serviceName": "IXCM工作室公益下载站(IXCM Studio)",
+	"msg": "【更新内容】\n【update content】\n0.118.32:\n1.同步官方升级\nSynchronous official upgrade\n2.修复菜单滑动错误\nFix menu sliding bug\n3.增加文件视图管理器(可随时使用视图查看linux目录了)\nAdd a file view manager (you can use the view to view the linux directory at any time)\n3.1：现在可以随时在目录创建内存卡软连接了\nNow you can create a memory card soft link in the directory at any time\n3.2：根据视图目录跳转至终端目录\nJump to the terminal directory according to the view directory\n3.3：现在可以安装任意目录的恢复包、模块包\nNow you can install recovery packages and module packages in any directory\n3.4：增加解压支持：tar.gz、gat.xz、tar.bz2、7Z、ZIP\nAdd decompression support: tar.gz, gat.xz, tar.bz2, 7Z, ZIP\n3.5：可以播放音乐\ncan play music3.6：视图文件夹中的文件可一键编译或者使用VIM一键编辑\nFiles in the view folder can be compiled with one click or edited with one click using VIM\n3.7：视图当中的文件可以尝试终端运行\nThe files in the view can try to run the terminal\n4.现在按音量键 + - 呼出左侧/右侧菜单栏\nNow press the volume key + - to bring up the left/right menu bar\n",
+    "data": [
+	{
+            "name": "点击上方蓝色字体，进入网页下载站",
+            "download": "/repository/main/ZeroTermux/ZeroTermux-0.1",
+            "size": "http://d.icdown.club/",
+			"fileName": "ZeroTermux-0.118.32.apk",
+			"type": "apk",
+			"isDownload": "0",
+			"note": "点击上方蓝色字体，进入网页下载站\nClick on the blue font above to go to the web download site"
+        }
+    ]
+}

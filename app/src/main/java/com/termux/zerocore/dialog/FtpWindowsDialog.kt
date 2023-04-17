@@ -205,7 +205,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                 if (isInit) {
                     SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_CHROOT, SaveDataZeroEngine.FTP_SDCARD_ROOT)
                 }
-                FTP_CONFIG.PATH = Environment.getExternalStorageDirectory().absolutePath
+              //  FTP_CONFIG.PATH = Environment.getExternalStorageDirectory().absolutePath
                 mSdcard?.setBackgroundResource(R.drawable.shape_line_8cff5a)
             }
             FtpWindowsDialogConstant.ROOT_PATH_ZERO_HOME -> {
@@ -213,7 +213,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                     SaveDataZeroEngine.putStringData(UUtils.getContext(), SaveDataZeroEngine.FTP_CHROOT, SaveDataZeroEngine.FTP_ZERO_TERMUX_FILE)
                 }
                 mZeroRoot?.setBackgroundResource(R.drawable.shape_line_8cff5a)
-                FTP_CONFIG.PATH = mainFilesUrl
+             //   FTP_CONFIG.PATH = mainFilesUrl
             }
         }
         if (isInit) {
