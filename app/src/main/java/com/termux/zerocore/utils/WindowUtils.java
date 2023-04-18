@@ -1,8 +1,11 @@
 package com.termux.zerocore.utils;
 
 import android.app.Activity;
+import android.os.Build;
+import android.view.View;
 import android.view.WindowManager;
 
+import com.gyf.immersionbar.BarHide;
 import com.gyf.immersionbar.ImmersionBar;
 import com.termux.app.TermuxActivity;
 
@@ -14,24 +17,26 @@ public class WindowUtils {
      * 全屏显示
      */
     public static void setFullScreen(Activity activity) {
-        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-        params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        activity.getWindow().setAttributes(params);
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        ImmersionBar.with(activity)
+            .transparentStatusBar()  //透明状态栏，不写默认透明色
+            .transparentNavigationBar()  //透明导航栏，不写默认黑色(设置此方法，fullScreen()方法自动为true)
+            .fullScreen(true)      //有导航栏的情况下，activity全屏显示，也就是activity最下面被导航栏覆盖，不写默认非全屏
+            .hideBar(BarHide.FLAG_HIDE_BAR)
+            .transparentBar().init();
         isFullScreen = true;
-        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN); // Activity全屏显示，且状态栏被覆盖掉
     }
 
     /**
      * 退出全屏
      */
     public static void exitFullScreen(Activity activity) {
-        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-        params.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        activity.getWindow().setAttributes(params);
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        ImmersionBar.with(activity)
+            .transparentStatusBar()  //透明状态栏，不写默认透明色
+            .transparentNavigationBar()  //透明导航栏，不写默认黑色(设置此方法，fullScreen()方法自动为true)
+            .fullScreen(false)      //有导航栏的情况下，activity全屏显示，也就是activity最下面被导航栏覆盖，不写默认非全屏
+            .hideBar(BarHide.FLAG_SHOW_BAR)
+            .transparentBar().init();
         isFullScreen = false;
-        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN); // Activity全屏显示，但是状态栏不会被覆盖掉，而是正常显示，只是Activity顶端布局会被覆盖住
     }
 
     /**
