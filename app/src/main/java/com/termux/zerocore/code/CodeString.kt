@@ -31,7 +31,7 @@ public object CodeString {
     public val runsmsInstallSh:String = "cd ~ && pkg update -y && pkg install vim -y \n"
     public val runstartSh:String = "cd ~ && cd ~ && cd .xinhao_history && chmod 777 start_command.sh && cd ~ \n"
 
-    public var runLineQemu = "cd ~ && pkg update -y && pkg install wget -y && wget http://od.ixcmstudio.cn/repository/main/qemu_sh/utqemu.sh && chmod 777 utqemu.sh && ./utqemu.sh"
+    public var runLineQemu = "cd ~ && pkg update -y && pkg install wget -y && wget https://od.ixcmstudio.cn/repository/main/qemu_sh/utqemu.sh && chmod 777 utqemu.sh && ./utqemu.sh"
 
 
 
