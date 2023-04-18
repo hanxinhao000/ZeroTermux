@@ -274,7 +274,7 @@ ARCH_CHECK() {
 			ARCH=tablet ;;
 		i*86|x86*|amd64)
 	if grep -E -q 'tablet|computer' ${HOME}/.utqemu_ 2>/dev/null; then
-	case $(egrep 'tablet|computer' ${HOME}/.utqemu_) in
+	case $(grep -E 'tablet|computer' ${HOME}/.utqemu_) in
 		tablet) DIRECT="/sdcard"
 			ARCH=tablet ;;
 		computer) DIRECT="${HOME}"
@@ -372,13 +372,13 @@ LIST() {
 		echo -e "\n${GREEN}请确认系统镜像已放入手机目录${STORAGE}里${RES}\n" ;;
 	*) echo -e "\n${GREEN}请确认系统镜像已放入目录${STORAGE}里${RES}\n" ;;
 	esac
-	ls ${DIRECT}${STORAGE} | egrep "\.blkdebug|\.blkverify|\.bochs|\.cloop|\.cow|\.tftp|\.ftps|\.ftp|\.https|\.http|\.dmg|\.nbd|\.parallels|\.qcow|\.qcow2|\.qed|\.host_cdrom|\.host_floppy|\.host_device|\.file|\.raw|\.sheepdog|\.vdi|\.vmdk|\.vpc|\.vvfat|\.img|\.XBZJ|\.vhd|\.iso|\.fd" >/dev/null 2>&1
+	ls ${DIRECT}${STORAGE} | grep -E "\.blkdebug|\.blkverify|\.bochs|\.cloop|\.cow|\.tftp|\.ftps|\.ftp|\.https|\.http|\.dmg|\.nbd|\.parallels|\.qcow|\.qcow2|\.qed|\.host_cdrom|\.host_floppy|\.host_device|\.file|\.raw|\.sheepdog|\.vdi|\.vmdk|\.vpc|\.vvfat|\.img|\.XBZJ|\.vhd|\.iso|\.fd" >/dev/null 2>&1
 	if [ $? == 1 ]; then
 		echo -e "${GREEN}\n貌似没有符合格式的镜像，请以实际文件名为主${RES}"
 		sleep 1
 	else
 	echo -e "已为你列出镜像文件夹中的常用镜像格式文件（仅供参考）\e[33m"
-	LIST=`ls ${DIRECT}${STORAGE} | egrep "\.blkdebug|\.blkverify|\.bochs|\.cloop|\.cow|\.tftp|\.ftps|\.ftp|\.https|\.http|\.dmg|\.nbd|\.parallels|\.qcow|\.qcow2|\.qed|\.host_cdrom|\.host_floppy|\.host_device|\.file|\.raw|\.sheepdog|\.vdi|\.vmdk|\.vpc|\.vvfat|\.img|\.XBZJ|\.vhd|\.iso|\.fd" | awk '{printf("%d) %s\n" ,NR,$0)}'`
+	LIST=`ls ${DIRECT}${STORAGE} | grep -E "\.blkdebug|\.blkverify|\.bochs|\.cloop|\.cow|\.tftp|\.ftps|\.ftp|\.https|\.http|\.dmg|\.nbd|\.parallels|\.qcow|\.qcow2|\.qed|\.host_cdrom|\.host_floppy|\.host_device|\.file|\.raw|\.sheepdog|\.vdi|\.vmdk|\.vpc|\.vvfat|\.img|\.XBZJ|\.vhd|\.iso|\.fd" | awk '{printf("%d) %s\n" ,NR,$0)}'`
 #	LIST=`ls | awk '{printf("%d) %s\n" ,NR,$0)}'`
 	echo -e "$LIST${RES}"
 	echo -e "序号选项仅支持系统镜像，如果没列出请回车手输"
@@ -395,7 +395,7 @@ LIST() {
 #################
 LIST1(){
 	echo -e "${YELLOW}"
-	ls ${DIRECT}${STORAGE} | egrep "\.blkdebug|\.blkverify|\.bochs|\.cloop|\.cow|\.tftp|\.ftps|\.ftp|\.https|\.http|\.dmg|\.nbd|\.parallels|\.qcow|\.qcow2|\.qed|\.host_cdrom|\.host_floppy|\.host_device|\.file|\.raw|\.sheepdog|\.vdi|\.vmdk|\.vpc|\.vvfat|\.img|\.XBZJ|\.vhd|\.iso|\.fd"
+	ls ${DIRECT}${STORAGE} | grep -E "\.blkdebug|\.blkverify|\.bochs|\.cloop|\.cow|\.tftp|\.ftps|\.ftp|\.https|\.http|\.dmg|\.nbd|\.parallels|\.qcow|\.qcow2|\.qed|\.host_cdrom|\.host_floppy|\.host_device|\.file|\.raw|\.sheepdog|\.vdi|\.vmdk|\.vpc|\.vvfat|\.img|\.XBZJ|\.vhd|\.iso|\.fd"
 	echo -e "${RES}"
 }
 #################
@@ -448,10 +448,13 @@ fi
 if [ -e /apex ]; then
 APEX="-b /apex"
 fi
+if [ -e /system_ext ]; then
+SYSTEM_EXT="-b /system_ext"
+fi
 pkill -9 pulseaudio 2>/dev/null
 pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1 &
 unset LD_PRELOAD
-proot --kill-on-exit ${LDCONFIG} ${PLAT_PROPERTY_CONTEXT} ${PROPERTY_CONTEXT} ${APEX} -b /vendor -b /system -b /sdcard -b /sdcard:/root/sdcard -b /data/data/com.termux/files -b /data/data/com.termux/cache -b /data/data/com.termux/files/usr/tmp:/tmp -b /dev/null:/proc/sys/kernel/cap_last_cap -b $DEBIAN-qemu/etc/proc/version:/proc/version -b $DEBIAN-qemu/etc/proc/misc:/proc/misc -b $DEBIAN-qemu/etc/proc/buddyinfo:/proc/buddyinfo -b $DEBIAN-qemu/etc/proc/kmsg:/proc/kmsg -b $DEBIAN-qemu/etc/proc/consoles:/proc/consoles -b $DEBIAN-qemu/etc/proc/execdomains:/proc/execdomains -b $DEBIAN-qemu/etc/proc/stat:/proc/stat -b $DEBIAN-qemu/etc/proc/fb:/proc/fb -b $DEBIAN-qemu/etc/proc/loadavg:/proc/loadavg -b $DEBIAN-qemu/etc/proc/key-users:/proc/key-users -b $DEBIAN-qemu/etc/proc/uptime:/proc/uptime -b $DEBIAN-qemu/etc/proc/devices:/proc/devices -b $DEBIAN-qemu/etc/proc/vmstat:/proc/vmstat -b /data/dalvik-cache -b $DEBIAN-qemu/tmp:/dev/shm -b /proc/self/fd/2:/dev/stderr -b /proc/self/fd/1:/dev/stdout -b /proc/self/fd/0:/dev/stdin -b /proc/self/fd:/dev/fd -b /dev/urandom:/dev/random --sysvipc --link2symlink -S $DEBIAN-qemu -w /root /usr/bin/env -i HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games LANG=zh_CN.UTF-8 TZ=Asia/Shanghai TERM=xterm-256color USER=root /bin/bash --login
+proot --kill-on-exit ${LDCONFIG} ${PLAT_PROPERTY_CONTEXT} ${PROPERTY_CONTEXT} ${APEX} ${SYSTEM_EXT} -b /vendor -b /system -b /sdcard -b /sdcard:/root/sdcard -b /data/data/com.termux/files -b /data/data/com.termux/cache -b /data/data/com.termux/files/usr/tmp:/tmp -b /dev/null:/proc/sys/kernel/cap_last_cap -b $DEBIAN-qemu/etc/proc/version:/proc/version -b $DEBIAN-qemu/etc/proc/misc:/proc/misc -b $DEBIAN-qemu/etc/proc/buddyinfo:/proc/buddyinfo -b $DEBIAN-qemu/etc/proc/kmsg:/proc/kmsg -b $DEBIAN-qemu/etc/proc/consoles:/proc/consoles -b $DEBIAN-qemu/etc/proc/execdomains:/proc/execdomains -b $DEBIAN-qemu/etc/proc/stat:/proc/stat -b $DEBIAN-qemu/etc/proc/fb:/proc/fb -b $DEBIAN-qemu/etc/proc/loadavg:/proc/loadavg -b $DEBIAN-qemu/etc/proc/key-users:/proc/key-users -b $DEBIAN-qemu/etc/proc/uptime:/proc/uptime -b $DEBIAN-qemu/etc/proc/devices:/proc/devices -b $DEBIAN-qemu/etc/proc/vmstat:/proc/vmstat -b /data/dalvik-cache -b $DEBIAN-qemu/tmp:/dev/shm -b /proc/self/fd/2:/dev/stderr -b /proc/self/fd/1:/dev/stdout -b /proc/self/fd/0:/dev/stdin -b /proc/self/fd:/dev/fd -b /dev/urandom:/dev/random --sysvipc --link2symlink -S $DEBIAN-qemu -w /root /usr/bin/env -i HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games LANG=zh_CN.UTF-8 TZ=Asia/Shanghai TERM=xterm-256color USER=root /bin/bash --login
 
 }
 ##################
@@ -783,19 +786,25 @@ ${BF_URL}-security buster/updates ${DEB}" >/etc/apt/sources.list
 	2)
 	echo -e "\n${YELLOW}下载的地址来自spice的作者最新版，由于Github速度非常有限，所以这边只提供下载地址，请复制到其他方式下载，如获取失败，请重试${RES}\n"
 	CONFIRM
-	while ( [ "$SPI_URL" != '0' ] && [[ ! $SPI_URL_ =~ apk ]] )
+	while ( [ "$SPI_URL" != '0' ] && [ -z $SPI_URL_ ] )
 do
-	SPI_URL=`curl --connect-timeout 5 -m 8 -s https://github.com/iiordanov/remote-desktop-clients | grep tag\/ | cut -d '"' -f 6 | cut -d '/' -f 6`
-SPI_URL_=`curl --connect-timeout 5 -m 8 https://github.com/iiordanov/remote-desktop-clients/releases/tag/$SPI_URL | grep SPICE | grep apk | tail -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1`
-	if [[ ! $SPI_URL_ =~ apk ]]; then
+#	SPI_URL=`curl --connect-timeout 5 -m 8 -s https://github.com/iiordanov/remote-desktop-clients | grep tag\/ | cut -d '"' -f 6 | cut -d '/' -f 6`
+	SPI_URL=`curl --connect-timeout 5 -m 8 -s https://kgithub.com/iiordanov/remote-desktop-clients | grep tag\/ | awk -F 'href="' '{print $2}'|awk -F '/' '{print $NF}'|cut -d '"' -f 1`
+#SPI_URL_=`curl --connect-timeout 5 -m 8 https://kgithub.com/iiordanov/remote-desktop-clients/releases/tag/$SPI_URL | grep SPICE | grep apk | tail -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1`
+	while [ -z $SPI_URL_ ]; do
+	i=0
+	SPI_URL_=`curl -LI https://kgithub.com/iiordanov/remote-desktop-clients/releases/download/$SPI_URL/freeaSPICE-${SPI_URL}_$i-final.apk|grep -i length|awk '{print $2}'`
+	if [ -z $SPI_URL_ ]; then
 	read -r -p "获取失败，重试请回车，退出请输0 " input
 	case $input in
 	0) QEMU_ETC ;;
 	*) ;;
 	esac
 	fi
+done
 	done
-	echo -e "\n下载地址\n${GREEN}https://github.com/iiordanov/remote-desktop-clients/releases/download/$SPI_URL/$SPI_URL_${RES}\n"
+#	echo -e "\n下载地址\n${GREEN}https://github.com/iiordanov/remote-desktop-clients/releases/download/$SPI_URL/$SPI_URL_${RES}\n"
+	echo -e "\n下载地址\n${GREEN}https://kgithub.com/iiordanov/remote-desktop-clients/releases/download/$SPI_URL/freeaSPICE-v5.1.2_$i-final.apk${RES}\n"
 	CONFIRM ;;
 	3) VERSION=`curl https://sourceforge.net/projects/libsdl-android/files/apk/XServer-XSDL/ | grep android | grep 'XSDL/XServer' | grep '\.apk/download' | head -n 1 | cut -d '/' -f 9`
 	echo -e "\n下载地址\n${GREEN}https://jaist.dl.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/$VERSION${RES}\n"
@@ -985,7 +994,8 @@ MOVE_OUT() {
 ##################
 QEMU_SYSTEM() {
 	if [ ! -f "/usr/bin/perl" ]; then
-	ln -sv /usr/bin/perl* /usr/bin/perl
+	ln -sv /usr/bin/perl*aarch64* /usr/bin/perl
+#	ln -sv /usr/bin/perl* /usr/bin/perl
 	fi
 	if [ ! $(command -v curl) ]; then
 		sudo_
@@ -1005,7 +1015,7 @@ QEMU_SYSTEM() {
 	if grep -q 'THIS IS QEMU CONTAINER' /etc/profile; then
 	if [ ! $(command -v busybox) ]; then
 	$sudo apt install busybox -y
-	for i in ps uptime killall egrep top; do if [ $(command -v $i) ]; then ln -svf $(command -v busybox) $(command -v $i); else ln -svf $(command -v busybox) /usr/bin/$i; fi done
+	for i in ps uptime killall grep -E top; do if [ $(command -v $i) ]; then ln -svf $(command -v busybox) $(command -v $i); else ln -svf $(command -v busybox) /usr/bin/$i; fi done
 	fi
 	fi
 	fi
@@ -1054,7 +1064,9 @@ echo -e "0)  退出\n"
 
 	read -r -p "请选择: " input
 	case $input in
-	1) echo -e "${YELLOW}安装过程中，如遇到询问选择，请输(y)，安装过程容易出错，请重试安装${RES}"
+	1) 
+		unset LANG
+	echo -e "${YELLOW}安装过程中，如遇到询问选择，请输(y)，安装过程容易出错，请重试安装${RES}"
 	sleep 2
 	uname -a | grep 'Android' -q
 	if [ $? == 0 ]; then
@@ -1074,6 +1086,7 @@ echo -e "0)  退出\n"
 	fi
 	sed -i "/zh_CN.UTF/s/#//" /etc/locale.gen
 	locale-gen
+	export LANG=zh_CN.UTF-8
 	PA
 	echo -e "\n${GREEN}已完成安装，如无法正常使用，请重新执行此操作${RES}"
 	fi
@@ -1121,7 +1134,7 @@ echo -e "0)  退出\n"
 	7) if [ -e ${HOME}/.utqemu_log ]; then
 	echo -e "\n${GREEN}日志已忽略不重要的信息${RES}\n按空格下一页，退出请按q\n"
 	CONFIRM
-	more ${HOME}/.utqemu_log | egrep "qemu-system-x86_64|qemu-system-i386|initialization" | egrep -v "stronger memory|Connection reset by peer|requested feature"
+	more ${HOME}/.utqemu_log | grep -E "qemu-system-x86_64|qemu-system-i386|initialization" | grep -E -v "stronger memory|Connection reset by peer|requested feature"
 echo -e "\n${YELLOW}常见错误提示：${RES}
 ${BLUE}开机蓝屏; 通常为机算机类型(pc q35)，磁盘接口(IDE SATA VIRTIO)，运行内存配置过大等原因造成，请尝试修改配置${RES}
 No such file or directory; ${YELLOW}(没有匹配的目录或文件名)${RES}
@@ -2870,12 +2883,12 @@ echo -e "1) 换源
 	1) if [ -d /data/data/com.termux/files/usr/etc/termux/mirrors/china ]; then
 		rm -rf /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
 		mkdir /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
-		cp /data/data/com.termux/files/usr/etc/termux/mirrors/china/mirrors.bfsu.edu.cn /data/data/com.termux/files//usr/etc/termux/chosen_mirrors/
+		ln -svf /data/data/com.termux/files/usr/etc/termux/mirrors/china/mirrors.bfsu.edu.cn /data/data/com.termux/files//usr/etc/termux/chosen_mirrors
 	fi
 		sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list && pkg update ;;
 	2) if [ -d /data/data/com.termux/files/usr/etc/termux/mirrors/china ]; then
 		rm -rf /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
-		ln -s /data/data/com.termux/files/usr/etc/termux/mirrors/china /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
+		ln -svf /data/data/com.termux/files/usr/etc/termux/mirrors/china /data/data/com.termux/files/usr/etc/termux/chosen_mirrors
 	fi
 		sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.tuna.tsinghua.edu.cn/termux/termux-packages-24 stable main@' $PREFIX/etc/apt/sources.list && pkg update ;;
 	*) MAIN ;;
