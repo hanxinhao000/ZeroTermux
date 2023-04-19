@@ -115,6 +115,9 @@ class ZFileListFragment : Fragment() {
             }
             var newPath = if (startPath.isNullOrEmpty()) SD_ROOT else startPath
             if (!newPath.toFile().exists()) {
+                newPath = "/data/data/com.termux/"
+            }
+            if (!newPath.toFile().exists()) {
                 newPath = Environment.getExternalStorageDirectory().absolutePath
             }
             return ZFileListFragment().apply {
