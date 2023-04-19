@@ -113,9 +113,9 @@ class ZFileListFragment : Fragment() {
                             "please use \" getZFileHelp().start() \""
                 )
             }
-            val newPath = if (startPath.isNullOrEmpty()) SD_ROOT else startPath
+            var newPath = if (startPath.isNullOrEmpty()) SD_ROOT else startPath
             if (!newPath.toFile().exists()) {
-                throw ZFileException("$newPath not exist")
+                newPath = Environment.getExternalStorageDirectory().absolutePath
             }
             return ZFileListFragment().apply {
                 arguments = Bundle().run {
