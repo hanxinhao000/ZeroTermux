@@ -1,6 +1,7 @@
 package com.zp.z_file.content
 
 import android.content.Context
+import android.os.Environment
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -118,7 +119,7 @@ class ZFileConfiguration : Serializable {
     /**
      * 起始访问位置，空为SD卡根目录，还可指定 [QQ] 或 [WECHAT] 目录
      */
-    var filePath: String? = null
+    var filePath: String? = Environment.getExternalStorageDirectory().absolutePath
 
     /**
      * QQ、Wechat 配置信息
