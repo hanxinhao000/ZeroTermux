@@ -37,6 +37,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val ITEM_CLICK_DEF_BASH = 1012
         public val ITEM_CLICK_BASH_CHANGE = 1013
         public val ITEM_CLICK_START_MSG = 1014
+        public val ITEM_CLICK_DOCKER_CHECK = 1015
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -253,7 +254,17 @@ class CommonCommandsDialog : BaseDialogDown {
         mUnInstall.backColor = UUtils.getColor(R.color.color_8850b397)
         mUnInstall.key = CommonCommandsDialogConstant.ITEM_CLICK_UNINSTALL
         mList.add(mUnInstall)
-
+        /**
+         * 检查是否可以安装docker
+         *
+         */
+        var mDocker: ItemMenuBean.Data = ItemMenuBean.Data()
+        mDocker.title = UUtils.getString(R.string.docker_check)
+        mDocker.id = R.mipmap.docker
+        mDocker.isEg = false
+        mDocker.backColor = UUtils.getColor(R.color.color_8850b397)
+        mDocker.key = CommonCommandsDialogConstant.ITEM_CLICK_DOCKER_CHECK
+        mList.add(mDocker)
 
 
         mItemMenuAdapter = ItemMenuAdapter(mList, mContext, this)

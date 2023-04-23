@@ -844,4 +844,5 @@
     <string name="attention_closing_ftp">正在关闭FTP服务&#8230;</string>
     <string name="word_stop">停止</string>
     <string name="ftp_title_no">ZeroTermux:FTP</string>
+    <string name="docker_check">Docker检查\n(ROOT)</string>
 </resources>

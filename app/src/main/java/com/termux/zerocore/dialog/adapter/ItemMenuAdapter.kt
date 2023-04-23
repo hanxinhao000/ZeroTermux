@@ -22,6 +22,7 @@ import com.termux.app.TermuxActivity
 import com.termux.zerocore.activity.EditTextActivity
 import com.termux.zerocore.activity.ImageActivity
 import com.termux.zerocore.bean.ItemMenuBean
+import com.termux.zerocore.code.CodeString
 import com.termux.zerocore.data.CommendShellData
 import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.dialog.*
@@ -233,6 +234,11 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 val intent = Intent(mContext, EditTextActivity::class.java)
                 intent.putExtra("edit_path", FileUrl.smsMotdFile)
                 mContext?.startActivity(intent)
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_DOCKER_CHECK -> {
+                mCommonCommandsDialogDismissListener?.dismiss()
+                UUtils.writerFile("runcommand/check-config.sh", File(FileUrl.mainHomeUrl, "/check-config.sh"))
+                TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.runDocker)
             }
         }
     }
