@@ -870,4 +870,5 @@ Reset successfully</string>
     <string name="attention_closing_ftp">Shutting down the FTP service&#8230;</string>
     <string name="word_stop">stop</string>
     <string name="ftp_title_no">ZeroTermux:FTP</string>
+    <string name="docker_check">DockerCheck\n(ROOT)</string>
 </resources>
