@@ -677,7 +677,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxService = null;
         }
         unregisterReceiver(mUsbReceiver);
-        localBroadcastManager.unregisterReceiver(localReceiver);
+        if (localBroadcastManager!= null) {
+            localBroadcastManager.unregisterReceiver(localReceiver);
+        }
 
         try {
             unbindService(this);
