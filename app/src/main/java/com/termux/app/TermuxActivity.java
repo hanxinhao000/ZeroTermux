@@ -1,9 +1,7 @@
 package com.termux.app;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -11,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -53,12 +50,7 @@ import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
 import com.example.xh_lib.utils.UUtils2;
-import com.github.mjdev.libaums.UsbMassStorageDevice;
-import com.github.mjdev.libaums.fs.FileSystem;
-import com.github.mjdev.libaums.fs.UsbFile;
-import com.github.mjdev.libaums.partition.Partition;
 import com.google.gson.Gson;
-import com.gyf.immersionbar.ImmersionBar;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -92,7 +84,6 @@ import com.termux.shared.termux.extrakeys.ExtraKeysView;
 import com.termux.shared.termux.interact.TextInputDialogUtils;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
-import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.shared.theme.NightMode;
 import com.termux.shared.view.KeyboardUtils;
@@ -113,7 +104,6 @@ import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
-import com.termux.zerocore.data.UsbFileData;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
 import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
@@ -128,7 +118,6 @@ import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.dialog.VNCConnectionDialog;
 import com.termux.zerocore.dialog.adapter.ItemMenuAdapter;
 import com.termux.zerocore.http.HTTPIP;
-import com.termux.zerocore.http_service.HttpServerManager;
 import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.url.FileUrl;
@@ -1728,8 +1717,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             case R.id.linux_online:
                 getDrawer().closeDrawer(Gravity.LEFT);
-                UUtils.writerFile("linux/termux_toolx.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/linux.sh"));
-                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunLinuxSh());
+                LoadingDialog loadingDialog = new LoadingDialog(this);
+                loadingDialog.show();
+                loadingDialog.setCancelable(false);
+                UUtils.runOnThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UUtils.writerFile("linux/termux_linux_toolx.zip", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/termux_linux_toolx.zip"));
+                        UUtils.runOnThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loadingDialog.dismiss();
+                                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunLinuxSh());
+                            }
+                        });
+                    }
+                });
                 break;
             case R.id.qemu:
 

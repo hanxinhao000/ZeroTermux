@@ -21,7 +21,7 @@ public object CodeString {
     public val HEB: String = "sed -i 's@^\\(deb.*stable main\\)\$@#\\1\\ndeb https://mirrors.hit.edu.cn/termux/termux-packages-24 stable main@' \$PREFIX/etc/apt/sources.list &&" +
         "apt update && apt upgrade \n"
     public val UpDate: String = "pkg update -y \n"
-    public val runLinuxSh: String = "cd ~ && cd ~ && chmod 777 linux.sh && ./linux.sh \n"
+    public val runLinuxSh: String = "cd ~ && cd ~ && unzip termux_linux_toolx.zip && cd termux-install-linux-master && pkg update && pkg install proot git python -y && python termux-linux-install.py \n"
     public val runQemuSh: String = "cd ~ && cd ~ && chmod 777 utqemu.sh && ./utqemu.sh \n"
     public val runWin7Sh: String = "cd ~ && cd ~ && chmod 777 qemu_win7.sh && ./qemu_win7.sh \n"
     public val runWinXPSh: String = "cd ~ && cd ~ && chmod 777 qemu_winxp.sh && ./qemu_winxp.sh \n"
