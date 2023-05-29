@@ -98,7 +98,7 @@ object ModuleInstallUtils {
                         BashFileUtils.setStartCommand(arrayList)
                     } else {
                         //创建文件夹
-                            if (tempModuleFile.isDirectory) {
+                            if (tempModuleFile.isDirectory || mainFile.isDirectory) {
                                // mInstallModuleMsg?.msg(UUtils.getString(R.string.create_folder) + ":${mainFile.absolutePath}", false, null)
                                 mainFile.mkdirs()
                             } else {
@@ -108,29 +108,30 @@ object ModuleInstallUtils {
                                 }
                             }
 
+                        if (!mainFile.isDirectory) {
+                            cpFile(tempModuleFile, mainFile, object : CpMsg{
+                                override fun msg(msg: String, isEndInstall: Boolean) {
+                                    stringBuilder.append("\n").append(msg).append("\n")
+                                    mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+                                }
+                            })
 
-                        cpFile(tempModuleFile, mainFile, object : CpMsg{
-                            override fun msg(msg: String, isEndInstall: Boolean) {
-                                stringBuilder.append("\n").append(msg).append("\n")
-                                mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
-                            }
-                        })
-
-                        when (split[2].length) {
-                            0 -> {
-                               // mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg11), false, null)
-                            }
-                            1,2 -> {
-                                Os.chmod(mainFile.absolutePath, 700)
-                               // mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg9), false, null)
-                            }
-                            3 -> {
-                                val toInt = split[2].toInt()
-                                Os.chmod(mainFile.absolutePath, toInt)
-                            }
-                            else ->{
-                                Os.chmod(mainFile.absolutePath, 700)
-                              //  mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg9), false, null)
+                            when (split[2].length) {
+                                0 -> {
+                                    // mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg11), false, null)
+                                }
+                                1,2 -> {
+                                    Os.chmod(mainFile.absolutePath, 700)
+                                    // mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg9), false, null)
+                                }
+                                3 -> {
+                                    val toInt = split[2].toInt()
+                                    Os.chmod(mainFile.absolutePath, toInt)
+                                }
+                                else ->{
+                                    Os.chmod(mainFile.absolutePath, 700)
+                                    //  mInstallModuleMsg?.msg(UUtils.getString(R.string.install_module_msg9), false, null)
+                                }
                             }
                         }
                     }

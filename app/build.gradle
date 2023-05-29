@@ -98,6 +98,8 @@ android {
         implementation 'com.hzy:un7zip:+'
         implementation 'me.testica:codeeditor:1.0.2'
 
+        implementation 'org.samba.jcifs:jcifs:1.3.3'
+
         implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.1'
         implementation 'org.nanohttpd:nanohttpd:2.3.1'
         provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
