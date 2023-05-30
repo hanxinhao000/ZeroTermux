@@ -1,24 +1,34 @@
 package com.termux.filepicker
 
+import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.core.net.toFile
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.utils.FileIOUtils
+import com.zp.z_file.bean.DataBean
+import com.zp.z_file.ui.dialog.InstallModuleDialog
+import com.zp.z_file.util.InstallTarData
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileInputStream
 
+
 class TermuxFileReceiverActivity : ComponentActivity() {
     private val TAG = "TermuxFileReceiverActivity"
     private val start_fz: LinearLayout by lazy { findViewById(R.id.start_fz) }
+    private val install_module: LinearLayout by lazy { findViewById(R.id.install_module) }
+    private val install_data: LinearLayout by lazy { findViewById(R.id.install_data) }
     private val msg_file: TextView by lazy { findViewById(R.id.msg_file) }
     private val msg_pro: TextView by lazy { findViewById(R.id.msg_pro) }
     private val image_view: ImageView by lazy { findViewById(R.id.image_view) }
@@ -29,8 +39,34 @@ class TermuxFileReceiverActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_termux_file_receiver)
-        intent?.data?.encodedPath?.let {
+        val realPathFromURI = UUtils.getFileAbsolutePath(this, intent?.data)
+        realPathFromURI.let {
             mFile = File(it)
+            if (FileIOUtils.isPacketFormat(mFile!!.name)) {
+                install_data.visibility = View.VISIBLE
+            } else {
+                install_data.visibility = View.GONE
+            }
+
+            if (FileIOUtils.isModuleFormat(mFile!!.name)) {
+                install_module.visibility = View.VISIBLE
+            } else {
+                install_module.visibility = View.GONE
+            }
+            install_data.setOnClickListener {
+                InstallTarData.installTar(this, realPathFromURI)
+            }
+
+            install_module.setOnClickListener {
+                val installModuleDialog = InstallModuleDialog(this)
+                installModuleDialog.show()
+                installModuleDialog.setCancelable(false)
+                val dataBean = DataBean()
+                dataBean.mFile = mFile
+                installModuleDialog.installModule(dataBean)
+            }
+
+
             LogUtils.d(TAG, "onCreate file Size: ${mFile?.length()}")
             LogUtils.d(TAG, "onCreate file Path: ${mFile?.absolutePath}")
             val lengthToMb = FileIOUtils.getLengthToMb(mFile!!)
@@ -92,4 +128,8 @@ class TermuxFileReceiverActivity : ComponentActivity() {
         }
 
     }
+
+
+
+
 }

@@ -867,6 +867,9 @@
     <string name="word_stop">停止</string>
     <string name="ftp_title_no">ZeroTermux:FTP</string>
     <string name="docker_check">Docker检查\n(ROOT)</string>
+    <string name="termux_copy_ll">复制文件到~</string>
+    <string name="termux_moudle_ll">安装模块包</string>
+    <string name="termux_targz_ll">安装恢复包</string>
 </resources>
 
 

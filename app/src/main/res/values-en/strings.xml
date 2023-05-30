@@ -871,4 +871,7 @@ Reset successfully</string>
     <string name="word_stop">stop</string>
     <string name="ftp_title_no">ZeroTermux:FTP</string>
     <string name="docker_check">DockerCheck\n(ROOT)</string>
+    <string name="termux_copy_ll">copy</string>
+    <string name="termux_moudle_ll">install module</string>
+    <string name="termux_targz_ll">install data</string>
 </resources>
