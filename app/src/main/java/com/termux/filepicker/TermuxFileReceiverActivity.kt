@@ -14,10 +14,16 @@ import androidx.activity.ComponentActivity
 import androidx.core.net.toFile
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.termux.R
+import com.termux.app.TermuxInstaller
 import com.termux.zerocore.utils.FileIOUtils
 import com.zp.z_file.bean.DataBean
 import com.zp.z_file.ui.dialog.InstallModuleDialog
+import com.zp.z_file.ui.dialog.LoadingDialog
+import com.zp.z_file.ui.dialog.SwitchDialog
 import com.zp.z_file.util.InstallTarData
 import kotlinx.coroutines.*
 import java.io.File
@@ -42,11 +48,11 @@ class TermuxFileReceiverActivity : ComponentActivity() {
         val realPathFromURI = UUtils.getFileAbsolutePath(this, intent?.data)
         realPathFromURI.let {
             mFile = File(it)
-            if (FileIOUtils.isPacketFormat(mFile!!.name)) {
+    /*        if (FileIOUtils.isPacketFormat(mFile!!.name)) {
                 install_data.visibility = View.VISIBLE
             } else {
                 install_data.visibility = View.GONE
-            }
+            }*/
 
             if (FileIOUtils.isModuleFormat(mFile!!.name)) {
                 install_module.visibility = View.VISIBLE
@@ -54,19 +60,31 @@ class TermuxFileReceiverActivity : ComponentActivity() {
                 install_module.visibility = View.GONE
             }
             install_data.setOnClickListener {
-                InstallTarData.installTar(this, realPathFromURI)
+                val loadingDialog = LoadingDialog(this)
+                loadingDialog.show()
+                TermuxInstaller.setupStorageSymlinks(this)
+                GlobalScope.launch(Dispatchers.IO) {
+                    delay(3000)
+                    withContext(Dispatchers.Main) {
+                        InstallTarData.installTar(this@TermuxFileReceiverActivity, realPathFromURI)
+                        loadingDialog.dismiss()
+                    }
+                }
             }
-
             install_module.setOnClickListener {
-                val installModuleDialog = InstallModuleDialog(this)
-                installModuleDialog.show()
-                installModuleDialog.setCancelable(false)
-                val dataBean = DataBean()
-                dataBean.mFile = mFile
-                installModuleDialog.installModule(dataBean)
+                val switchDialog = SwitchDialog(this)
+                switchDialog.createSwitchDialog(UUtils.getString(R.string.termux_install_module_switch))
+                switchDialog.ok?.setOnClickListener {
+                    switchDialog.dismiss()
+                    val installModuleDialog = InstallModuleDialog(this)
+                    installModuleDialog.show()
+                    installModuleDialog.setCancelable(false)
+                    val dataBean = DataBean()
+                    dataBean.mFile = mFile
+                    installModuleDialog.installModule(dataBean)
+                }
+                switchDialog.show()
             }
-
-
             LogUtils.d(TAG, "onCreate file Size: ${mFile?.length()}")
             LogUtils.d(TAG, "onCreate file Path: ${mFile?.absolutePath}")
             val lengthToMb = FileIOUtils.getLengthToMb(mFile!!)

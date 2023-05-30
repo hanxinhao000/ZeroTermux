@@ -874,4 +874,5 @@ Reset successfully</string>
     <string name="termux_copy_ll">copy</string>
     <string name="termux_moudle_ll">install module</string>
     <string name="termux_targz_ll">install data</string>
+    <string name="termux_install_module_switch">确定要安装此模块?</string>
 </resources>
