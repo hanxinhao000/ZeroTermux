@@ -120,7 +120,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:textColor="@color/color_ffffff"
-                        android:textSize="12sp"
+                        android:textSize="15sp"
                         android:layout_above="@+id/ok"
                         android:id="@+id/console_text"
                         android:text="@string/install_message"

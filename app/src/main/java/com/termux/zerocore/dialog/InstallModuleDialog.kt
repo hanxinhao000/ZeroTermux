@@ -154,6 +154,7 @@ class InstallModuleDialog: BaseDialogCentre {
                             override fun onError(errorCode: Int, message: String?) {
                              UUtils.getHandler().post {
                                  mConsoleText?.text = "${mConsoleText?.text}\n${UUtils.getString(R.string.install_module_msg3)}:${message},$errorCode"
+                                 mOk?.visibility = View.VISIBLE
                                  mScrollView!!.post{mScrollView!!.fullScroll(View.FOCUS_DOWN)}
                              }
                             }

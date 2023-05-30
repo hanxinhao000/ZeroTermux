@@ -709,8 +709,45 @@ public class ZFileUUtils {
 
 
 
-    public static String getFileString(File file){
+    public static String getFileStringN(File file){
       //  UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
+        String txt = "";
+        String temp = "";
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+
+
+            while ((temp = bufferedReader.readLine()) != null) {
+                txt = txt + temp;
+            }
+            bufferedReader.close();
+
+           // Log.e("XINHAO_HAN", "onCreate: " + txt);
+
+
+            return txt;
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "文件加载失败!" + e.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "文件加载失败!" + e.toString();
+        }
+
+
+    }
+
+    public static String getFileString(File file){
+        //  UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
         String txt = "";
         String temp = "";
         if (!file.exists()) {
@@ -729,7 +766,7 @@ public class ZFileUUtils {
             }
             bufferedReader.close();
 
-           // Log.e("XINHAO_HAN", "onCreate: " + txt);
+            // Log.e("XINHAO_HAN", "onCreate: " + txt);
 
 
             return txt;

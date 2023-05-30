@@ -3,6 +3,7 @@ package com.termux.zerocore.developer
 import android.os.Bundle
 import android.system.Os
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
@@ -35,6 +36,15 @@ class DeveloperActivity : AppCompatActivity() {
                 val config = ServerConfiguration("Android Server")
                 val server = SMBServer(config)
                 server.startServer()
+            } catch (e: Exception) {
+                UUtils.showMsg(e.toString())
+            }
+        }
+        findViewById<Button>(R.id.test1).setOnClickListener {
+            try {
+                val file =
+                    File("/data/data/com.termux/files/home/ubuntu-in-termux/ubuntu-fs/etc/init.d/procps")
+                Toast.makeText(this, "${file.exists()}", Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 UUtils.showMsg(e.toString())
             }

@@ -19,5 +19,11 @@
         android:text="启动samba服务"
         android:id="@+id/samba_create"
         android:layout_height="wrap_content"/>
+    <Button
+        android:layout_width="wrap_content"
+        style="@style/Theme.Termux.Black"
+        android:text="测试1"
+        android:id="@+id/test1"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

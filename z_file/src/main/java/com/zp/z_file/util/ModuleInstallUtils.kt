@@ -28,6 +28,11 @@ object ModuleInstallUtils {
     private val TERMUX_FILES_DIR_PATH =
         "$TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH/files" // Default: "/data/data/com.termux/files"
 
+    /**
+     * Moudle root path
+     */
+    private var rootPath = ""
+
     private var mInstallModuleMsg: InstallModuleMsg? = null
     private val mainHomeUrl = "$TERMUX_FILES_DIR_PATH/home"
     private val mainFilesUrl = TERMUX_FILES_DIR_PATH
@@ -60,10 +65,9 @@ object ModuleInstallUtils {
         }
         val lines: List<String> = mFile.readLines()
         var size = lines.size
-        var index = 0
         stringBuilder.append(ZFileUUtils.getString(R.string.module_install_pro))
         mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
-        lines.forEach {
+        lines.forEach { it ->
             LogUtils.d(TAG, "installModule it: $it")
             if (Thread.interrupted()) {
                 LogUtils.d(TAG, "installModule thread stop!")
@@ -74,11 +78,76 @@ object ModuleInstallUtils {
                 stringBuilder.append("\n").append(it.replace("# ", ""))
                // stringBuilder.append(it).append("\n")
                 mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+            } else if (it.startsWith("DD")) {
+                //获取软连接 跟目录
+                rootPath = it.replace("DD ", "")
+                LogUtils.d(TAG, "installModule RootPath: $rootPath")
+            } else if (it.startsWith("LL")) {
+                try {
+                    var filePath = it.replace("LL ", "")
+                    val file = File(filePath)
+                    LogUtils.d(TAG, "installModule FilePath: $filePath--(${file.exists()})")
+                    if (file.exists()) {
+                        val fileString = ZFileUUtils.getFileStringN(file)
+                        LogUtils.e(TAG, "installModule fileString: $fileString")
+                        if (fileString.startsWith("/") || fileString.startsWith("\\")) {
+                            val fileLink = File(rootPath, fileString)
+                            LogUtils.e(TAG, "installModule fileLink: ${fileLink.absolutePath}")
+                            if (fileLink.exists()) {
+                                LogUtils.d(TAG, "installModule ${file.absolutePath} -> ${fileLink.absolutePath}")
+                                stringBuilder.append(file.absolutePath).append("->").append(fileLink.absolutePath).append("\n")
+                                mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+                                if (stringBuilder.length > 800) {
+                                    stringBuilder.delete(0, 200)
+                                }
+                                file.delete()
+                                Os.symlink(fileLink.absolutePath, file.absolutePath)
+                            } else {
+                                LogUtils.e(TAG, "installModule '/ \\' File LinkPath: ${fileLink.absolutePath}, is not exists!(${fileLink.exists()})")
+                            }
+                        } else if (fileString.startsWith("..")) {
+                            file.parentFile?.parentFile?.let {
+                                val fileLink = File(it, fileString.replace("..", ""))
+                                if (fileLink.exists()) {
+                                    LogUtils.d(TAG, "installModule ${file.absolutePath} -> ${fileLink.absolutePath}")
+                                    file.delete()
+                                    stringBuilder.append(file.absolutePath).append("->").append(fileLink.absolutePath).append("\n")
+                                    mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+                                    if (stringBuilder.length > 800) {
+                                        stringBuilder.delete(0, 200)
+                                    }
+                                    Os.symlink(fileLink.absolutePath ,file.absolutePath)
+                                } else {
+                                    LogUtils.e(TAG, "installModule '..' File LinkPath: ${fileLink.absolutePath}, is not exists!(${fileLink.exists()})")
+                                }
+                            }
+                        } else {
+                            file.parentFile?.let {
+                                val fileLink = File(it, "/${fileString}")
+                                if (fileLink.exists()) {
+                                    LogUtils.d(TAG, "installModule ${file.absolutePath} -> ${fileLink.absolutePath}")
+                                    file.delete()
+                                    stringBuilder.append(file.absolutePath).append("->").append(fileLink.absolutePath).append("\n")
+                                    mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+                                    if (stringBuilder.length > 800) {
+                                        stringBuilder.delete(0, 200)
+                                    }
+                                    Os.symlink(fileLink.absolutePath, file.absolutePath)
+                                } else {
+                                    LogUtils.e(TAG, "installModule '' File LinkPath: ${fileLink.absolutePath}, is not exists!(${File(fileLink.absolutePath).exists()})")
+                                }
+                            }
+                        }
+                    } else {
+                        LogUtils.e(TAG, "installModule FilePath: $filePath, is not exists!")
+                    }
+                } catch (e: Exception) {
+                    stringBuilder.append(e.toString())
+                    mInstallModuleMsg?.msg(stringBuilder.toString(), true, null)
+                }
+
             } else {
                 try {
-                    index ++
-                    stringBuilder.append(".")
-                    mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
                     val split = it.split("->")
                     LogUtils.d(TAG, "installModule split: $split")
                     if (split.size != 3) {
@@ -87,10 +156,15 @@ object ModuleInstallUtils {
                         clearData(stringBuilder)
                         return
                     }
+                    stringBuilder.append(split[1]).append("\n")
+                    mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
+                    if (stringBuilder.length > 800) {
+                        stringBuilder.delete(0, 200)
+                    }
                     val tempModuleFile = File(mainHomeUrl, "/tempmodule/${split[0]}")
                     val mainFile = File(mainFilesUrl, "/${split[1]}")
                     LogUtils.d(TAG, "installModule mainFile path:" + mainFile.absolutePath)
-                    if (!(it.startsWith("#")) && it.contains("bash.bashrc")) {
+                    if (!(it.startsWith("#")) && it.contains("/usr/etc/bash.bashrc")) {
                         LogUtils.d(TAG, "installModule open bash.bashrc")
                         val readLines = tempModuleFile.readLines()
                         val arrayList = ArrayList<String>()
