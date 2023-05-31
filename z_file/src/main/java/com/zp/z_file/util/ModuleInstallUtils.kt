@@ -143,7 +143,7 @@ object ModuleInstallUtils {
                     }
                 } catch (e: Exception) {
                     stringBuilder.append(e.toString())
-                    mInstallModuleMsg?.msg(stringBuilder.toString(), true, null)
+                    mInstallModuleMsg?.msg(stringBuilder.toString(), false, null)
                 }
 
             } else {
