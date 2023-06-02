@@ -887,9 +887,9 @@ Reset successfully</string>
     <string name="switch0">No Control  (check this if remote device control is not required)</string>
     <string name="switch1">Nav Bar  (check this if remote device does not have on-screen nav bar)</string>
     <string name="press_again">Press again to exit</string>
-    <string name="label_server_title">label server</string>
+    <string name="label_server_title">label server(BATE)</string>
     <string name="ip_connect">0.0.0.0</string>
-    <string name="remote_connection">ADB label server</string>
+    <string name="remote_connection">ADB label server(bate)</string>
     <string name="adb_title_msg">Connecting...Do not click \'Start\' more than once!</string>
 
     <string-array name="options_resolution_keys">

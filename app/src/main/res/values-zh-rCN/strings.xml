@@ -884,9 +884,9 @@
     <string name="switch0">无控制（如果不需要远程设备控制，请选中此项）</string>
     <string name="switch1">导航栏（如果远程设备没有屏幕导航栏，请选中此项）</string>
 
-    <string name="label_server_title">远程连接</string>
+    <string name="label_server_title">远程连接(BATE)</string>
     <string name="ip_connect">0.0.0.0</string>
-    <string name="remote_connection">ADB远程连接</string>
+    <string name="remote_connection">ADB远程连接(bate)</string>
     <string name="press_again">再按一次退出</string>
     <string name="adb_title_msg">正在连接...请勿多次点击\'启动\'！</string>
 

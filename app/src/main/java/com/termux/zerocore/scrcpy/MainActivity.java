@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
+import com.termux.zerocore.dialog.LoadingDialog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,18 +154,46 @@ public class MainActivity extends Activity implements Scrcpy.ServiceCallbacks, S
         sendCommands = new SendCommands();
 
         startButton.setOnClickListener(v -> {
-            UUtils.showMsg(UUtils.getString(R.string.adb_title_msg));
-            local_ip = wifiIpAddress();
-            getAttributes();
-            if (!serverAdr.isEmpty()) {
-                if (sendCommands.SendAdbCommands(context, fileBase64, serverAdr, local_ip, videoBitrate, Math.max(screenHeight, screenWidth)) == 0) {
-                    start_screen_copy_magic();
-                } else {
-                    Toast.makeText(context, "Network OR ADB connection failed", Toast.LENGTH_SHORT).show();
+           // UUtils.showMsg(UUtils.getString(R.string.adb_title_msg));
+            LoadingDialog loadingDialog = new LoadingDialog(this);
+            loadingDialog.show();
+            loadingDialog.setCancelable(false);
+            UUtils.runOnThread(new Runnable() {
+                @Override
+                public void run() {
+                    local_ip = wifiIpAddress();
+                    getAttributes();
+                    if (!serverAdr.isEmpty()) {
+                        if (sendCommands.SendAdbCommands(context, fileBase64, serverAdr, local_ip, videoBitrate, Math.max(screenHeight, screenWidth)) == 0) {
+                            UUtils.runOnUIThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    start_screen_copy_magic();
+                                    loadingDialog.dismiss();
+                                }
+                            });
+                        } else {
+                            UUtils.runOnUIThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Network OR ADB connection failed", Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismiss();
+                                }
+                            });
+
+                        }
+                    } else {
+                      UUtils.runOnUIThread(new Runnable() {
+                          @Override
+                          public void run() {
+                              Toast.makeText(context, "Server Address Empty", Toast.LENGTH_SHORT).show();
+                              loadingDialog.dismiss();
+                          }
+                      });
+                    }
                 }
-            } else {
-                Toast.makeText(context, "Server Address Empty", Toast.LENGTH_SHORT).show();
-            }
+            });
+
         });
         get_saved_preferences();
     }
