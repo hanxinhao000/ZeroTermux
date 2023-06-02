@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@color/color_161823"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/color_ffffff"
+            android:text="@string/label_server_title"
+            android:textAppearance="@android:style/TextAppearance" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:textColor="@color/color_ffffff"
+            android:text="@string/label_server_ip"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <EditText
+            android:id="@+id/editText_server_host"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:maxLength="15"
+            android:padding="5dp"
+            android:background="@drawable/shape_line_2e84e6"
+            android:ems="7"
+            android:textSize="15sp"
+            android:hint="@string/ip_connect"
+            android:textColorHint="@color/color_ffffff"
+            android:inputType="text"
+            android:minHeight="48dp"
+            tools:ignore="LabelFor,SpeakableTextPresentCheck"
+            android:importantForAutofill="no" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/color_ffffff"
+            android:textSize="15sp"
+            android:text="@string/label_video_resolution"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <Spinner
+            android:id="@+id/spinner_video_resolution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:entries="@array/options_resolution_keys"
+            android:minHeight="48dp"
+            tools:ignore="DuplicateSpeakableTextCheck" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textSize="15sp"
+            android:textColor="@color/color_ffffff"
+            android:text="@string/label_video_bitrate"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <Spinner
+            android:id="@+id/spinner_video_bitrate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/options_bitrate_keys"
+            android:minHeight="48dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/switch0"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:textColor="@color/color_ffffff"
+            android:layout_weight="1"
+            android:text="@string/switch0"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:textColor="@color/color_ffffff"
+            android:layout_weight="1"
+            android:text="@string/switch1"
+            android:textSize="15sp" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/shape_r_3dp_553d_all"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/button_start"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/action_start"
+            android:textColor="@color/color_ffffff"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+</LinearLayout>
+

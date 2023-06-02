@@ -874,5 +874,50 @@ Reset successfully</string>
     <string name="termux_copy_ll">copy</string>
     <string name="termux_moudle_ll">install module</string>
     <string name="termux_targz_ll">install data</string>
-    <string name="termux_install_module_switch">确定要安装此模块?</string>
+    <string name="termux_install_module_switch">Make sure you want to install this module?</string>
+
+    <string name="label_server_ip">Remote Device IP address</string>
+    <string name="label_video_resolution">Resolution</string>
+    <string name="label_video_bitrate">Bitrate</string>
+    <string name="label_x">x</string>
+    <string name="action_start">Start</string>
+    <string name="appswitch_button">=</string>
+    <string name="home_button">o</string>
+    <string name="back_button">v</string>
+    <string name="switch0">No Control  (check this if remote device control is not required)</string>
+    <string name="switch1">Nav Bar  (check this if remote device does not have on-screen nav bar)</string>
+    <string name="press_again">Press again to exit</string>
+    <string name="label_server_title">label server</string>
+    <string name="ip_connect">0.0.0.0</string>
+    <string name="remote_connection">ADB label server</string>
+    <string name="adb_title_msg">Connecting...Do not click \'Start\' more than once!</string>
+
+    <string-array name="options_resolution_keys">
+        <item>1920x1080</item>
+        <item>1280x720</item>
+        <item>800x448</item>
+        <item>640x360</item>
+    </string-array>
+
+    <string-array name="options_resolution_values">
+        <item>1920,1080</item>
+        <item>1280,720</item>
+        <item>800,448</item>
+        <item>640,360</item>
+    </string-array>
+
+    <string-array name="options_bitrate_keys">
+        <item>6 Mbps</item>
+        <item>4 Mbps</item>
+        <item>2 Mbps</item>
+        <item>1 Mbps</item>
+    </string-array>
+
+    <integer-array name="options_bitrate_values">
+        <item>6144000</item>
+        <item>4096000</item>
+        <item>2048000</item>
+        <item>1024000</item>
+    </integer-array>
+
 </resources>

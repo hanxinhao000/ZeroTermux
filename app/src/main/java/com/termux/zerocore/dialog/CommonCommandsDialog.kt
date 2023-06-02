@@ -38,6 +38,7 @@ class CommonCommandsDialog : BaseDialogDown {
         public val ITEM_CLICK_BASH_CHANGE = 1013
         public val ITEM_CLICK_START_MSG = 1014
         public val ITEM_CLICK_DOCKER_CHECK = 1015
+        public val ITEM_CLICK_REMOTE_CONNECTION = 1016
     }
 
     private val CLIPBOARD_SELECT = 0
@@ -265,6 +266,18 @@ class CommonCommandsDialog : BaseDialogDown {
         mDocker.backColor = UUtils.getColor(R.color.color_8850b397)
         mDocker.key = CommonCommandsDialogConstant.ITEM_CLICK_DOCKER_CHECK
         mList.add(mDocker)
+
+        /**
+         * 远程连接
+         *
+         */
+        var mRemoteConnection: ItemMenuBean.Data = ItemMenuBean.Data()
+        mRemoteConnection.title = UUtils.getString(R.string.remote_connection)
+        mRemoteConnection.id = R.mipmap.yc_connect
+        mRemoteConnection.isEg = false
+        mRemoteConnection.backColor = UUtils.getColor(R.color.color_8850b397)
+        mRemoteConnection.key = CommonCommandsDialogConstant.ITEM_CLICK_REMOTE_CONNECTION
+        mList.add(mRemoteConnection)
 
 
         mItemMenuAdapter = ItemMenuAdapter(mList, mContext, this)

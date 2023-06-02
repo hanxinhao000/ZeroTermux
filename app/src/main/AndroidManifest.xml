@@ -167,6 +167,10 @@
         <activity
             android:name=".zerocore.activity.WebViewActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".zerocore.scrcpy.MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
+
         <activity
             android:name=".app.activities.SettingsActivity"
             android:exported="true"
@@ -264,6 +268,8 @@
         <service
             android:name=".app.TermuxService"
             android:exported="false" />
+        <service android:name=".zerocore.scrcpy.Scrcpy"
+            />
         <service
             android:name=".app.RunCommandService"
             android:exported="true"

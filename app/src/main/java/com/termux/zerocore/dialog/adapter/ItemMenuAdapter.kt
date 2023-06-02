@@ -29,6 +29,7 @@ import com.termux.zerocore.dialog.*
 import com.termux.zerocore.dialog.CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_DATA_MSG
 import com.termux.zerocore.dialog.view_holder.ItemMenuViewHolder
 import com.termux.zerocore.keybord.KeyBordManage
+import com.termux.zerocore.scrcpy.MainActivity
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.url.FileUrl.zeroTermuxApk
 import com.termux.zerocore.url.FileUrl.zeroTermuxCommand
@@ -239,6 +240,10 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                 mCommonCommandsDialogDismissListener?.dismiss()
                 UUtils.writerFile("runcommand/check-config.sh", File(FileUrl.mainHomeUrl, "/check-config.sh"))
                 TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.runDocker)
+            }
+            CommonCommandsDialog.CommonCommandsDialogConstant.ITEM_CLICK_REMOTE_CONNECTION -> {
+                val intent = Intent(mContext, MainActivity::class.java)
+                mContext?.startActivity(intent)
             }
         }
     }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="0px"
+    android:paddingLeft="0px"
+    android:paddingRight="0px"
+    android:background="@android:color/background_dark"
+    android:weightSum="2"
+    android:orientation="vertical">
+    <SurfaceView
+        android:id="@+id/decoder_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+    <LinearLayout
+        android:id="@+id/nav_button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@android:color/background_dark"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/background_dark"
+            android:rotation="90"
+            android:textAlignment="center"
+            android:text="@string/back_button"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/home_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:rotation="90"
+            android:background="@android:color/background_dark"
+            android:text="@string/home_button"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+
+        <Button
+            android:id="@+id/appswitch_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/background_dark"
+            android:text="@string/appswitch_button"
+            android:textColor="@android:color/white"
+            android:textSize="28sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
