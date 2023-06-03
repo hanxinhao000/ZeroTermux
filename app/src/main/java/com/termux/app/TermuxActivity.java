@@ -1577,7 +1577,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         });
         refStartCommandStat();
 
-        throw new RuntimeException("测试");
     }
 
     private void dataMessage() {
