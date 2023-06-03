@@ -45,88 +45,94 @@ class TermuxFileReceiverActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_termux_file_receiver)
-        val realPathFromURI = UUtils.getFileAbsolutePath(this, intent?.data)
-        realPathFromURI.let {
-            mFile = File(it)
-    /*        if (FileIOUtils.isPacketFormat(mFile!!.name)) {
-                install_data.visibility = View.VISIBLE
-            } else {
-                install_data.visibility = View.GONE
-            }*/
+        try {
+            val realPathFromURI = UUtils.getFileAbsolutePath(this, intent?.data)
+            realPathFromURI.let {
+                mFile = File(it)
+                /*        if (FileIOUtils.isPacketFormat(mFile!!.name)) {
+                            install_data.visibility = View.VISIBLE
+                        } else {
+                            install_data.visibility = View.GONE
+                        }*/
 
-            if (FileIOUtils.isModuleFormat(mFile!!.name)) {
-                install_module.visibility = View.VISIBLE
-            } else {
-                install_module.visibility = View.GONE
-            }
-            install_data.setOnClickListener {
-                val loadingDialog = LoadingDialog(this)
-                loadingDialog.show()
-                TermuxInstaller.setupStorageSymlinks(this)
-                GlobalScope.launch(Dispatchers.IO) {
-                    delay(3000)
-                    withContext(Dispatchers.Main) {
-                        InstallTarData.installTar(this@TermuxFileReceiverActivity, realPathFromURI)
-                        loadingDialog.dismiss()
+                if (FileIOUtils.isModuleFormat(mFile!!.name)) {
+                    install_module.visibility = View.VISIBLE
+                } else {
+                    install_module.visibility = View.GONE
+                }
+                install_data.setOnClickListener {
+                    val loadingDialog = LoadingDialog(this)
+                    loadingDialog.show()
+                    TermuxInstaller.setupStorageSymlinks(this)
+                    GlobalScope.launch(Dispatchers.IO) {
+                        delay(3000)
+                        withContext(Dispatchers.Main) {
+                            InstallTarData.installTar(this@TermuxFileReceiverActivity, realPathFromURI)
+                            loadingDialog.dismiss()
+                        }
                     }
                 }
-            }
-            install_module.setOnClickListener {
-                val switchDialog = SwitchDialog(this)
-                switchDialog.createSwitchDialog(UUtils.getString(R.string.termux_install_module_switch))
-                switchDialog.ok?.setOnClickListener {
-                    switchDialog.dismiss()
-                    val installModuleDialog = InstallModuleDialog(this)
-                    installModuleDialog.show()
-                    installModuleDialog.setCancelable(false)
-                    val dataBean = DataBean()
-                    dataBean.mFile = mFile
-                    installModuleDialog.installModule(dataBean)
+                install_module.setOnClickListener {
+                    val switchDialog = SwitchDialog(this)
+                    switchDialog.createSwitchDialog(UUtils.getString(R.string.termux_install_module_switch))
+                    switchDialog.ok?.setOnClickListener {
+                        switchDialog.dismiss()
+                        val installModuleDialog = InstallModuleDialog(this)
+                        installModuleDialog.show()
+                        installModuleDialog.setCancelable(false)
+                        val dataBean = DataBean()
+                        dataBean.mFile = mFile
+                        installModuleDialog.installModule(dataBean)
+                    }
+                    switchDialog.show()
                 }
-                switchDialog.show()
+                LogUtils.d(TAG, "onCreate file Size: ${mFile?.length()}")
+                LogUtils.d(TAG, "onCreate file Path: ${mFile?.absolutePath}")
+                val lengthToMb = FileIOUtils.getLengthToMb(mFile!!)
+                if (lengthToMb != null) {
+                    msg_file.text = UUtils.getString(R.string.file_name_copy)
+                        .replace("{file}", mFile!!.name)
+                        .replace("{size}", lengthToMb)
+                        .replace("{path}", mFile!!.absolutePath)
+                        .replace("{suffix}", FileIOUtils.getExtension(mFile!!))
+                } else {
+                    msg_file.text = UUtils.getString(R.string.file_name_copy)
+                        .replace("{file}", "N/A")
+                        .replace("{size}", "N/A")
+                        .replace("{path}", "N/A")
+                        .replace("{suffix}", "N/A")
+                }
             }
-            LogUtils.d(TAG, "onCreate file Size: ${mFile?.length()}")
-            LogUtils.d(TAG, "onCreate file Path: ${mFile?.absolutePath}")
-            val lengthToMb = FileIOUtils.getLengthToMb(mFile!!)
-            if (lengthToMb != null) {
-                msg_file.text = UUtils.getString(R.string.file_name_copy)
-                    .replace("{file}", mFile!!.name)
-                    .replace("{size}", lengthToMb)
-                    .replace("{path}", mFile!!.absolutePath)
-                    .replace("{suffix}", FileIOUtils.getExtension(mFile!!))
-            } else {
-                msg_file.text = UUtils.getString(R.string.file_name_copy)
-                    .replace("{file}", "N/A")
-                    .replace("{size}", "N/A")
-                    .replace("{path}", "N/A")
-                    .replace("{suffix}", "N/A")
+
+            start_fz.setOnClickListener {
+                if (mFile == null) {
+                    UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
+                    finish()
+                    return@setOnClickListener
+                }
+                val file = File(FileIOUtils.getHomePath(UUtils.getContext()), mFile!!.name)
+                LogUtils.d(TAG, "onCreate file: ${file.absolutePath}")
+                if (!file.exists()) {
+                    file.createNewFile()
+                }
+                try {
+                    val fileInputStream = FileInputStream(mFile!!)
+                    image_view.visibility = View.GONE
+                    pro.visibility = View.VISIBLE
+                    GlobalScope.launch(Dispatchers.IO) {
+                        showText(file, fileInputStream)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
+                    finish()
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            UUtils.showMsg()
         }
 
-        start_fz.setOnClickListener {
-            if (mFile == null) {
-                UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
-                finish()
-                return@setOnClickListener
-            }
-            val file = File(FileIOUtils.getHomePath(UUtils.getContext()), mFile!!.name)
-            LogUtils.d(TAG, "onCreate file: ${file.absolutePath}")
-            if (!file.exists()) {
-                file.createNewFile()
-            }
-            try {
-                val fileInputStream = FileInputStream(mFile!!)
-                image_view.visibility = View.GONE
-                pro.visibility = View.VISIBLE
-                GlobalScope.launch(Dispatchers.IO) {
-                    showText(file, fileInputStream)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                UUtils.showMsg(UUtils.getString(R.string.not_file_msg))
-                finish()
-            }
-        }
     }
 
     private suspend fun showText(file: File, fileInputStream: FileInputStream) {

@@ -920,4 +920,6 @@ Reset successfully</string>
         <item>1024000</item>
     </integer-array>
 
+    <string name="copy_uri_error">URI duplication error, please wait for the developer to fix it...</string>
+
 </resources>
