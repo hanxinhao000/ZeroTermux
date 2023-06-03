@@ -5,6 +5,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 
 public class UncaughtExceptionHandlerActivity extends AppCompatActivity {
@@ -20,7 +21,7 @@ public class UncaughtExceptionHandlerActivity extends AppCompatActivity {
 
         EditText viewById = findViewById(R.id.error_text);
 
-        viewById.setText(viewById.getText().toString() + "\n\n" + error);
+        viewById.setText(viewById.getText().toString() + "\nVersion:" + UUtils.getVersionName(UUtils.getContext()) + "\n\n" + error);
 
     }
 }
