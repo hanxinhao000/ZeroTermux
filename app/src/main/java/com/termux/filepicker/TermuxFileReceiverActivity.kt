@@ -130,7 +130,7 @@ class TermuxFileReceiverActivity : ComponentActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            UUtils.showMsg()
+            UUtils.showMsg(UUtils.getString(R.string.copy_uri_error))
         }
 
     }
