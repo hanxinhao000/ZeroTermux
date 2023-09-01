@@ -378,7 +378,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initColorConfig();
         initListener();
         initScrollHandler();
-        testFun();
+        //默认应该关闭 19956端口
+        //testFun();
     }
 
 

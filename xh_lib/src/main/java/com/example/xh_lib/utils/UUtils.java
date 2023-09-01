@@ -806,6 +806,32 @@ public class UUtils {
 
     }
 
+    public static String getFileStringNotNewFile(File file){
+        //  UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
+        String txt = "";
+        String temp = "";
+        if (!file.exists()) {
+            return "";
+        }
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            while ((temp = bufferedReader.readLine()) != null) {
+                txt = txt + temp + "\n";
+            }
+            bufferedReader.close();
+            // Log.e("XINHAO_HAN", "onCreate: " + txt);
+            return txt;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return "文件加载失败!" + e.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "文件加载失败!" + e.toString();
+        }
+
+
+    }
+
     public static boolean setFileString(File fileString, String msg){
         try {
             PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileString)));
@@ -1319,5 +1345,13 @@ public class UUtils {
             }
         }
         return file.getAbsolutePath();
+    }
+
+    public static int isSymbolicLink(File f)  {
+        try {
+            return !f.getAbsolutePath().equals(f.getCanonicalPath())? 1 : 0;
+        } catch (IOException e) {
+            return -1;
+        }
     }
 }

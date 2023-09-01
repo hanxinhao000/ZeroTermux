@@ -3,6 +3,7 @@ package com.termux.zerocore.broadcast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -10,6 +11,8 @@ import androidx.annotation.Nullable;
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.SaveData;
 import com.example.xh_lib.utils.UUtils;
+import com.termux.BuildConfig;
+import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.terminal.Logger;
 import com.termux.zerocore.bosybox.BusyBoxManager;
@@ -156,10 +159,12 @@ public class LocalReceiver extends BroadcastReceiver {
         }
         String broadcastStartActivity = intent.getStringExtra("broadcastStartActivity");
         if (broadcastStartActivity != null && !(broadcastStartActivity.isEmpty())) {
-            if (broadcastStartActivity.equals("DeveloperActivity")) {
+            if (broadcastStartActivity.equals("DeveloperActivity") && BuildConfig.DEBUG) {
                 Intent intent1 = new Intent(context, DeveloperActivity.class);
                 intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent1);
+            } else {
+                UUtils.showMsg(UUtils.getString(R.string.developer_activity));
             }
             return;
         }

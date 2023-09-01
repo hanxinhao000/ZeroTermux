@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.system.Os;
+import android.util.Log;
 import android.util.Pair;
 import android.view.WindowManager;
 
@@ -212,6 +213,7 @@ public final class TermuxInstaller {
                     if (symlinks.isEmpty())
                         throw new RuntimeException("No SYMLINKS.txt encountered");
                     for (Pair<String, String> symlink : symlinks) {
+                        UUtils.setFileString(new File("/data/data/com.termux/files/t.txt") ,symlinks.toString() + "\n");
                         Os.symlink(symlink.first, symlink.second);
                     }
 

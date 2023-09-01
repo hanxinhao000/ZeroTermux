@@ -891,6 +891,8 @@
     <string name="adb_title_msg">正在连接...请勿多次点击\'启动\'！</string>
     <string name="copy_uri_error">URI复制错误，请等待开发者修复...</string>
 
+    <string name="developer_activity">请在DEBUG模式下进入</string>
+
 
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>

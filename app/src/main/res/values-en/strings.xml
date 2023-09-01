@@ -892,6 +892,8 @@ Reset successfully</string>
     <string name="remote_connection">ADB label server(bate)</string>
     <string name="adb_title_msg">Connecting...Do not click \'Start\' more than once!</string>
 
+    <string name="developer_activity">Please enter in DEBUG mode</string>
+
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>
         <item>1280x720</item>

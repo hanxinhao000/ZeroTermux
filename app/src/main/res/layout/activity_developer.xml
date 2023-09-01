@@ -7,9 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".zerocore.developer.DeveloperActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        android:text="此页面逻辑可能会造成你的数据丢失"
+        android:layout_height="wrap_content"/>
     <Button
         android:layout_width="wrap_content"
         style="@style/Theme.Termux.Black"
+        android:layout_marginTop="10dp"
         android:text="创捷软连接files"
         android:id="@+id/create_files"
         android:layout_height="wrap_content"/>
@@ -24,6 +33,24 @@
         style="@style/Theme.Termux.Black"
         android:text="测试1"
         android:id="@+id/test1"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:layout_width="wrap_content"
+        style="@style/Theme.Termux.Black"
+        android:text="测试压缩zip"
+        android:id="@+id/test_zip"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/test_unzip"
+        android:layout_width="wrap_content"
+        android:text="测试解压zip..."
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/test_rlj"
+        android:layout_width="wrap_content"
+        android:text="测试软连接..."
         android:layout_height="wrap_content"/>
 
 </LinearLayout>
