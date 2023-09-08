@@ -824,8 +824,8 @@
     <string name="buffer_size_key">缓冲大小</string>
     <string name="auto_shell_key">自动终端</string>
     <string name="startup_command_key">启动命令</string>
-    <string name="adb_command">ADB终端</string>
-    <string name="adb_tool">ADB工具箱</string>
+    <string name="adb_command">输入配对码</string>
+    <string name="adb_tool">输入端口号</string>
 
 
     <string name="notification_channel_foreground_service">前台服务</string>
@@ -867,6 +867,7 @@
     <string name="adb_title_msg">正在连接...请勿多次点击\'启动\'！</string>
     <string name="copy_uri_error">URI复制错误，请等待开发者修复...</string>
     <string name="developer_activity">请在DEBUG模式下进入</string>
+    <string name="input_content_cannot_be_empty">输入内容不能为空</string>
 
 
     <string-array name="options_resolution_keys">

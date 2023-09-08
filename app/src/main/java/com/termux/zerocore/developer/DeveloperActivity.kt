@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.zerocore.adb.dialog.AdbWindowsDialog
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.zip.ZipUtils
 import com.termux.zerocore.zip.ZipUtils.ZipNameListener
@@ -92,6 +93,11 @@ class DeveloperActivity : AppCompatActivity() {
         findViewById<Button>(R.id.test_rlj).setOnClickListener {
 
             Os.symlink("/storage/emulated/0", "/data/data/com.termux/files1/files/sdcard")
+        }
+
+        findViewById<Button>(R.id.adb_connect).setOnClickListener {
+
+            AdbWindowsDialog().initWindowView(this)
         }
     }
 }

@@ -10,6 +10,8 @@ object CommendShellData {
     public const val SHELL_DATA_RUN_WEB = "ttyd bash&\n"
 
     //备份
+    //"cd ~ && cd ~ && tar -zcvf - TemporaryMark | pv -s $(($(du -sk TemporaryMark | awk '{print $1}') * 1024)) | gzip > ./storage/shared/xinhao/data/systemName
+   // public var SHELL_BACKUP = "cd ~ && cd ~ && tar -TemporaryMark - /data/data/com.termux/files | pv -s $(($(du -sk /data/data/com.termux/files | awk '{print $1}') * 1024)) | gzip > ./storage/shared/xinhao/data/systemName && echo \"${UUtils.getString(R.string.backup_success)}\" \n"
     public var SHELL_BACKUP = "cd ~ && cd ~ && tar -TemporaryMark ./storage/shared/xinhao/data/systemName /data/data/com.termux/files && echo \"${UUtils.getString(R.string.backup_success)}\" \n"
     public const val SHELL_TAR_GZ = "zcvf"
     public const val SHELL_TAR_BZ2 = "jcvf"

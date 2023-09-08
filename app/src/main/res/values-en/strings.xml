@@ -850,8 +850,9 @@ Reset successfully</string>
     <string name="open_ttyd_http">NetworkTerminal(ttyd)</string>
     <string name="open_file_http">NetworkFiles</string>
 
-    <string name="adb_command">ADBCommand</string>
-    <string name="adb_tool">ADBTool</string>
+    <string name="adb_command">Enter pairing code</string>
+    <string name="adb_tool">Enter port number</string>
+    <string name="input_content_cannot_be_empty">input content cannot be empty</string>
 
 
     <string name="notification_channel_foreground_service">Reception</string>

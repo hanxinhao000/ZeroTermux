@@ -846,8 +846,9 @@
     <string name="open_ttyd_http">网络终端(ttyd)</string>
     <string name="open_file_http">网络文件</string>
 
-    <string name="adb_command">ADB终端</string>
-    <string name="adb_tool">ADB工具箱</string>
+    <string name="adb_command">输入配对码</string>
+    <string name="adb_tool">输入端口号</string>
+    <string name="input_content_cannot_be_empty">输入内容不能为空</string>
 
 
     <string name="notification_channel_foreground_service">前台服务</string>

@@ -53,4 +53,10 @@
         android:text="测试软连接..."
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:id="@+id/adb_connect"
+        android:layout_width="wrap_content"
+        android:text="ADB 连接框"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>
