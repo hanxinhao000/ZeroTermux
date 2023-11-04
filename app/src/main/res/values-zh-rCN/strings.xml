@@ -894,6 +894,52 @@
 
     <string name="developer_activity">请在DEBUG模式下进入</string>
 
+    <string name="common_functions">常用功能</string>
+    <string name="beautification_function">美化/UI功能</string>
+    <string name="online_features">线上功能</string>
+    <string name="zt_features">ZT功能</string>
+    <string name="zt_settings">ZeroTermux设置</string>
+    <string name="zt_settings1">ZT设置</string>
+    <string name="zt_settings_note">ZeroTermux 相关设置选项</string>
+    <string name="container_settings">容器设置</string>
+    <string name="container_settings_note">应用容器内应用程序，只针对当前容器设置</string>
+    <string name="about_zerotermux">关于ZeroTermux</string>
+    <string name="about_zerotermux_note">版本信息、鸣谢、GITHUB</string>
+    <string name="termux_settings">Termux原生设置</string>
+    <string name="termux_settings_note">进入Termux原生设置内容</string>
+    <string name="install_termux_software">安装/还原Termux官方软件</string>
+    <string name="install_termux_software_note">使用安装ZT相同签名的原生Termux、API、X11等</string>
+    <string name="zt_download_service">ZT下载服务器</string>
+    <string name="zt_download_service_note">默认端口为:19956</string>
+    <string name="zt_download_service_note1">请注意！此功能没有账号密码保护，默认即可打开下载。打开后请注意个人隐私外泄！</string>
+    <string name="zt_sidebar_closes_automatically">侧边栏自动关闭</string>
+    <string name="zt_sidebar_closes_automatically_note">调出输入法就自动关闭侧边栏(左、右)</string>
+    <string name="zt_landscaping_settings">点击“美化设置”关闭左侧栏</string>
+    <string name="zt_landscaping_settings_note">按照个人设置习惯使用打开还是关闭侧边栏</string>
+    <string name="toolbox_display_settings">禁止工具箱显示</string>
+    <string name="toolbox_display_settings_note">双指放大或缩小字体造成手势冲突，可在此\n临时关闭</string>
+    <string name="user_bottom_keyboard_settings">打开键盘规则模式</string>
+    <string name="user_bottom_keyboard_settings_note">强制使用ZT设置键盘规则,其它设置键盘\n规则一律无效</string>
+    <string name="bottom_keyboard_settings">设置键盘规则</string>
+    <string name="bottom_keyboard_settings_note">输入个性化的键盘规则,提高输入效率</string>
+    <string name="log_output">输出LOG到存储卡</string>
+    <string name="log_output_note">输出LOG文件到\n【/xinhao/ZeroTermuxLog/ZeroTermux.log】\n可能影响性能请谨慎开启!!!!</string>
+    <string name="zt_about">关于ZeroTermux</string>
+    <string name="zt_about_zerotermux">ZeroTermux GITHUB</string>
+    <string name="zt_about_zerotermux_note">跳转到ZeroTermux GITHUB页面</string>
+    <string name="zt_about_zerotermux_core_manage">ZeroCoreManage GITHUB(扩展引擎)</string>
+    <string name="zt_about_zerotermux_core_manage_note">跳转到ZeroTermux GITHUB页面\nZeroTermux的额外扩展引擎包</string>
+    <string name="zt_about_card_title">ZeroTermux</string>
+    <string name="zt_about_card_title_note">ZeroTermux 是基于Termux二次开发，增加了\n相对于Termux没有的的辅助功能，方便快速上手\n此软件可相当于一个微型linux系统,可额外安装\n其他发行版本如：Ubuntu、CentOs等</string>
+    <string name="zeroCore_about_card_title">ZeroCoreManage</string>
+    <string name="zeroCore_about_card_title_note">ZeroCoreManage 是基于ZeroTermux的扩展包,对于\nZeroTermux功能的扩展,目的是为了减小ZeroTermux\n的软件包大小,不安装此扩展包ZeroTermux依旧可以正常运行\n引擎额外内容:\n\n1. 内置键盘\n2. WEB访问内存卡\n3. X86 Alpine</string>
+    <string name="zt_developer">开发/贡献</string>
+    <string name="zt_developer_note">Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \nXINHAO_HAN 等(排名不分先后)</string>
+    <string name="zt_install">还原/扩展官方版本</string>
+    <string name="zt_install_float">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> Termux Float】安装插件</string>
+    <string name="zt_install_file">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> (Zero)Utermux File Plug】安装插件</string>
+
+
 
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>

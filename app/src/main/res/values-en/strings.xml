@@ -895,6 +895,52 @@ Reset successfully</string>
 
     <string name="developer_activity">Please enter in DEBUG mode</string>
 
+    <string name="common_functions">Common Functions</string>
+    <string name="beautification_function">Beautification/UI function</string>
+    <string name="online_features">online features</string>
+    <string name="zt_features">ZT function</string>
+    <string name="zt_settings">ZeroTermux settings</string>
+    <string name="zt_settings1">ZT settings</string>
+    <string name="zt_settings_note">ZeroTermux Related settings options</string>
+    <string name="container_settings">Container settings</string>
+    <string name="container_settings_note">Applications within the application container are only set for the current container.</string>
+    <string name="about_zerotermux">About ZeroTermux</string>
+    <string name="about_zerotermux_note">Version information, acknowledgments, GITHUB</string>
+    <string name="termux_settings">Termux native settings</string>
+    <string name="termux_settings_note">Enter the Termux native settings content</string>
+    <string name="install_termux_software">Install/restore Termux official software</string>
+    <string name="install_termux_software_note">Use native Termux, API, X11, etc. with the same signature as ZT installed</string>
+    <string name="zt_download_service">ZT download server</string>
+    <string name="zt_download_service_note">The default port is:19956</string>
+    <string name="zt_download_service_note1">Please note! This function is not protected by account password and can be downloaded by default. Please be careful about personal privacy being leaked after opening it!</string>
+    <string name="zt_sidebar_closes_automatically">Sidebar closes automatically</string>
+    <string name="zt_sidebar_closes_automatically_note">Calling up the input method will automatically close the sidebar (left, right)</string>
+    <string name="zt_landscaping_settings">Click "Beautification Settings" to close the left column</string>
+    <string name="zt_landscaping_settings_note">Open or close the sidebar according to your personal settings.</string>
+    <string name="toolbox_display_settings">Disable toolbox display</string>
+    <string name="toolbox_display_settings_note">Enlarging or reducing the font with two fingers causes gesture conflict, which can be temporarily closed here\n</string>
+    <string name="user_bottom_keyboard_settings">Turn on keyboard rules mode</string>
+    <string name="user_bottom_keyboard_settings_note">Force the use of ZT to set keyboard rules, other keyboard settings\nrules will be invalid</string>
+    <string name="bottom_keyboard_settings">Set keyboard rules</string>
+    <string name="bottom_keyboard_settings_note">Enter personalized keyboard rules to improve input efficiency</string>
+    <string name="log_output">Output LOG to memory card</string>
+    <string name="log_output_note">Output the LOG file to\n[/xinhao/ZeroTermuxLog/ZeroTermux.log]\nIt may affect performance, please enable it with caution!!!!</string>
+    <string name="zt_about">About ZeroTermux</string>
+    <string name="zt_about_zerotermux">ZeroTermux GITHUB</string>
+    <string name="zt_about_zerotermux_note">Jump to ZeroTermux GITHUB page</string>
+    <string name="zt_about_zerotermux_core_manage">ZeroCoreManage GITHUB (extension engine)</string>
+    <string name="zt_about_zerotermux_core_manage_note">Jump to ZeroTermux GITHUB page\nAdditional extension engine package for ZeroTermux</string>
+    <string name="zt_about_card_title">ZeroTermux</string>
+    <string name="zt_about_card_title_note">ZeroTermux is a secondary development based on Termux, adding\nauxiliary functions that are not available in Termux, making it easy to get started quickly\nThis software can be equivalent to a mini-linux system and can be additionally installed\nOther distributions such as: Ubuntu, CentOs, etc.</string>
+    <string name="zeroCore_about_card_title">ZeroCoreManage</string>
+    <string name="zeroCore_about_card_title_note">ZeroCoreManage is an expansion pack based on ZeroTermux. The purpose of extending the ZeroTermux function is to reduce the size of the ZeroTermux software package. ZeroTermux can still run normally without installing this expansion pack. Extra engine content:\n\n1. Built-in Keyboard\n2. WEB access memory card\n3. X86 Alpine</string>
+    <string name="zt_developer">Development/Contribution</string>
+    <string name="zt_developer_note">Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \nXINHAO_HAN etc (in no particular order)</string>
+    <string name="zt_install">Restore/expand official version</string>
+    <string name="zt_install_float">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> Termux Float] to install the plug-in</string>
+    <string name="zt_install_file">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> (Zero)Utermux File Plug] to install the plug-in</string>
+
+
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>
         <item>1280x720</item>
