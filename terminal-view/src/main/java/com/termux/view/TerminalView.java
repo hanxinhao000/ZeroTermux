@@ -577,7 +577,7 @@ public final class TerminalView extends View {
     @TargetApi(23)
     public boolean onTouchEvent(MotionEvent event) {
 
-
+        // ZeroTermux add {@
         //判断双击
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if((System.currentTimeMillis() - doubleClick) < 260){
@@ -586,6 +586,9 @@ public final class TerminalView extends View {
                 }
             }
             doubleClick = System.currentTimeMillis();
+            if (mOneClickListener != null) {
+                mOneClickListener.onClick();
+            }
         }
         //判断双指单机
         if (event.getAction() == MotionEvent.ACTION_POINTER_2_DOWN) {
@@ -593,6 +596,9 @@ public final class TerminalView extends View {
                 mActionPointer2ClickListener.pointer2Click();
             }
         }
+        // 判断单机，
+
+        // @}
 
 
         if (mEmulator == null) return true;
@@ -1558,14 +1564,23 @@ public final class TerminalView extends View {
 
     private  DoubleClickListener mDoubleClickListener;
     private  ActionPointer2ClickListener mActionPointer2ClickListener;
+    private  OneClickListener mOneClickListener;
     public void setDoubleClickListener(DoubleClickListener mDoubleClickListener){
         this.mDoubleClickListener = mDoubleClickListener;
     }
     public void setActionPointer2ClickListener(ActionPointer2ClickListener mActionPointer2ClickListener){
         this.mActionPointer2ClickListener = mActionPointer2ClickListener;
     }
+    public void setOneClickListener(OneClickListener mOneClickListener){
+        this.mOneClickListener = mOneClickListener;
+    }
     public interface DoubleClickListener{
         void doubleClicke(float x);
+
+    }
+
+    public interface OneClickListener{
+        void onClick();
 
     }
     public interface ActionPointer2ClickListener{

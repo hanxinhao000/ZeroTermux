@@ -16,7 +16,6 @@
         android:name="android.hardware.usb.host"
         android:required="true" />
 
-
     <permission
         android:name="${TERMUX_PACKAGE_NAME}.permission.RUN_COMMAND"
         android:description="@string/permission_run_command_description"
@@ -65,9 +64,33 @@
         android:theme="@style/Theme.TermuxApp.DayNight.DarkActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <uses-library android:name="org.apache.ftpserver" android:required="false" />
         <activity
-            android:name="com.termux.zerocore.developer.DeveloperActivity"
+            android:name=".zerocore.settings.ZTInstallActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:exported="false" />
+        <activity
+            android:name=".zerocore.settings.ZTAboutActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.settings.ContainerSettingsMainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.settings.ZeroTermuxSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.settings.ZtSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <uses-library
+            android:name="org.apache.ftpserver"
+            android:required="false" />
+
+        <activity
+            android:name=".zerocore.developer.DeveloperActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
@@ -167,10 +190,9 @@
         <activity
             android:name=".zerocore.activity.WebViewActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".zerocore.scrcpy.MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
-
+        <activity
+            android:name=".zerocore.scrcpy.MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".app.activities.SettingsActivity"
             android:exported="true"
@@ -268,8 +290,7 @@
         <service
             android:name=".app.TermuxService"
             android:exported="false" />
-        <service android:name=".zerocore.scrcpy.Scrcpy"
-            />
+        <service android:name=".zerocore.scrcpy.Scrcpy" />
         <service
             android:name=".app.RunCommandService"
             android:exported="true"
@@ -283,12 +304,11 @@
 
         <service android:name=".zerocore.ftp.FsService" />
         <service
-            android:name="com.termux.zerocore.ftp.new_ftp.services.FtpService"
+            android:name=".zerocore.ftp.new_ftp.services.FtpService"
             android:exported="true" />
         <service
-            android:name="com.termux.zerocore.ftp.new_ftp.services.MyTileService"
-            android:icon="@drawable/ic_launcher">
-        </service>
+            android:name=".zerocore.ftp.new_ftp.services.MyTileService"
+            android:icon="@drawable/ic_launcher" />
 
         <receiver
             android:name=".shared.activities.ReportActivity$ReportActivityBroadcastReceiver"

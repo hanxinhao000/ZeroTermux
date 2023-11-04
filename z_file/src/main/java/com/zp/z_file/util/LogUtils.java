@@ -9,15 +9,34 @@ import java.io.IOException;
 public class LogUtils {
     public static String TAG = "ZeroTermux";
 
+    public static boolean isShow = false;
     public static void e(String tag, String msg) {
         Log.e(TAG + "--" + tag, msg);
+        if (isShow) {
+            Log.i(TAG, "e: output log is open...");
+            createLogFile(TAG + "--" + tag + msg);
+        }
+    }
+    public static void i(String tag, String msg) {
+        Log.i(TAG + "--" + tag, msg);
+        if (isShow) {
+            Log.i(TAG, "i: output log is open...");
+            createLogFile(TAG + "--" + tag + msg);
+        }
     }
     public static void d(String tag, String msg) {
         Log.d(TAG + "--" + tag, msg);
-      //  createLogFile(TAG + "--" + tag + msg);
+        if (isShow) {
+            Log.i(TAG, "d: output log is open...");
+            createLogFile(TAG + "--" + tag + msg);
+        }
     }
     public static void crawl(String tag, String msg, Exception e) {
         Log.d(TAG + "--" + tag, msg, e);
+        if (isShow) {
+            Log.i(TAG, "crawl: output log is open...");
+            createLogFile(TAG + "--" + tag + msg);
+        }
     }
 
     public static void createLogFile(String msg) {

@@ -78,22 +78,6 @@ class CommonCommandsDialog : BaseDialogDown {
         other_container = mView.findViewById(R.id.other_container)
         item_menu_rec = mView.findViewById(R.id.item_menu_rec)
         prohibit_toolbox = mView.findViewById(R.id.prohibit_toolbox)
-        prohibit_toolbox?.setOnClickListener {
-            val switchDialog = SwitchDialog(mContext)
-            switchDialog.createSwitchDialog(UUtils.getString(R.string.rohibit_toolbox_msg))
-            switchDialog.show()
-            switchDialog.ok?.let {
-                it.text = UUtils.getString(R.string.rohibit_toolbox_select)
-                it.setOnClickListener {
-                    SaveData.saveData(SaveData.TOOL, "disable_display", UUtils.getContext())
-                    UUtils.showMsg(UUtils.getString(R.string.rohibit_toolbox_ok_))
-                    switchDialog.dismiss()
-                    dismiss()
-                }
-            }
-
-        }
-
     }
 
     private fun initMenuData() {

@@ -29,10 +29,12 @@ import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 import com.termux.zerocore.bean.SaveDataZeroEngine;
 import com.termux.zerocore.bosybox.BusyBoxManager;
 import com.termux.zerocore.filetype.MyFileImageListener;
+import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.utils.ClipBoardUtil;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import com.zp.z_file.common.ZFileManageHelp;
 import com.zp.z_file.content.ZFileConfiguration;
+import com.zp.z_file.util.LogUtils;
 import com.zp.z_file.util.ZFileUUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -60,6 +62,7 @@ public class TermuxApplication extends XHApplication {
         TermuxCrashUtils.setDefaultCrashHandler(this);
         ZFileUUtils.initUUtils(mContext, mHandler);
 
+        LogUtils.isShow = UserSetManage.Companion.get().getZTUserBean().isOutputLOG();
 
         ZFileManageHelp.getInstance().init(new MyFileImageListener());
         ZFileConfiguration.Companion.setMApplicationContext(this);

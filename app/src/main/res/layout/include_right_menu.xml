@@ -1,89 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/color_2b2b2b"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/settings_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_settings"
-            android:background="@null"
-            android:contentDescription="@string/action_open_settings" />
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_gravity="top"
-        android:layout_weight="1"
-        android:layout_height="0dp">
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:id="@+id/frame_file"
-            android:layout_height="match_parent"/>
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:visibility="invisible"
-          android:id="@+id/session_rl"
-          android:layout_height="match_parent">
-          <ListView
-              android:id="@+id/terminal_sessions_list"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:choiceMode="singleChoice"
-              android:layout_above="@+id/session_ll"
-              android:longClickable="true" />
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:id="@+id/session_ll"
-         android:layout_alignParentBottom="true"
-         android:layout_height="wrap_content">
-         <Button
-             android:layout_width="0dp"
-             android:layout_weight="1"
-             android:visibility="invisible"
-             android:layout_height="wrap_content"/>
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:orientation="vertical"
+       android:id="@+id/file_layout"
+       android:layout_height="match_parent">
 
-         <Button
-             android:id="@+id/new_session_button"
-             style="?android:attr/buttonBarButtonStyle"
-             android:textColor="@color/color_ffffff"
-             android:layout_width="0dp"
-             android:layout_weight="1"
-             android:layout_height="wrap_content"
-             android:text="@string/action_new_session" />
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:visibility="gone"
+           android:orientation="horizontal">
+           <ImageButton
+               android:id="@+id/settings_button"
+               android:layout_width="40dp"
+               android:layout_height="40dp"
+               android:src="@drawable/ic_settings"
+               android:background="@null"
+               android:contentDescription="@string/action_open_settings" />
+       </LinearLayout>
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_gravity="top"
+           android:layout_weight="1"
+           android:layout_height="0dp">
+           <FrameLayout
+               android:layout_width="match_parent"
+               android:id="@+id/frame_file"
+               android:layout_height="match_parent"/>
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:visibility="invisible"
+               android:id="@+id/session_rl"
+               android:layout_height="match_parent">
+               <ListView
+                   android:id="@+id/terminal_sessions_list"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:choiceMode="singleChoice"
+                   android:layout_above="@+id/session_ll"
+                   android:longClickable="true" />
 
-     </LinearLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:id="@+id/session_ll"
+                   android:layout_alignParentBottom="true"
+                   android:layout_height="wrap_content">
+                   <Button
+                       android:layout_width="0dp"
+                       android:layout_weight="1"
+                       android:visibility="invisible"
+                       android:layout_height="wrap_content"/>
 
-      </RelativeLayout>
 
-    </RelativeLayout>
-    <LinearLayout
-        style="?android:attr/buttonBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/toggle_keyboard_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:textColor="@color/color_ffffff"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/file_manager" />
-        <Button
-            android:id="@+id/select_new_session_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:textColor="@color/color_ffffff"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/select_session" />
-    </LinearLayout>
+                   <Button
+                       android:id="@+id/new_session_button"
+                       style="?android:attr/buttonBarButtonStyle"
+                       android:textColor="@color/color_ffffff"
+                       android:layout_width="0dp"
+                       android:layout_weight="1"
+                       android:layout_height="wrap_content"
+                       android:text="@string/action_new_session" />
 
+               </LinearLayout>
+
+           </RelativeLayout>
+
+       </RelativeLayout>
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_marginTop="5dp"
+           android:layout_marginRight="5dp"
+           android:layout_marginLeft="5dp"
+           android:layout_marginBottom="5dp"
+           app:cardElevation="0dp"
+           app:cardBackgroundColor="@color/color_55000000"
+           app:cardCornerRadius="6dp"
+           android:layout_height="wrap_content">
+
+           <LinearLayout
+               style="?android:attr/buttonBarStyle"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal">
+               <Button
+                   android:id="@+id/toggle_keyboard_button"
+                   style="?android:attr/buttonBarButtonStyle"
+                   android:layout_width="match_parent"
+                   android:textColor="@color/color_ffffff"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:text="@string/file_manager" />
+               <Button
+                   android:id="@+id/select_new_session_button"
+                   style="?android:attr/buttonBarButtonStyle"
+                   android:textColor="@color/color_ffffff"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:text="@string/select_session" />
+           </LinearLayout>
+
+       </androidx.cardview.widget.CardView>
+
+
+   </LinearLayout>
 </LinearLayout>

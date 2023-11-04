@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_termux_root_view"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -39,65 +40,29 @@
                     android:layout_width="match_parent"
                     android:id="@+id/xue_fragment"
                     android:layout_height="match_parent"/>
-                <androidx.drawerlayout.widget.DrawerLayout
-                    android:id="@+id/drawer_layout"
-                    android:layout_width="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_height="match_parent">
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <com.termux.view.TerminalView
-                            android:id="@+id/terminal_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="3dp"
-                            android:layout_marginLeft="3dp"
-                            android:layout_above="@+id/key_bord"
-                            android:focusableInTouchMode="true"
-                            android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
-                            android:scrollbars="vertical"
-                            android:importantForAutofill="no"
-                            android:autofillHints="password" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:id="@+id/key_bord"
-                            android:layout_alignParentBottom="true"
-                            android:orientation="vertical"
-                            android:layout_height="wrap_content"/>
-                    </RelativeLayout>
-                    <LinearLayout
-                        android:id="@+id/left_drawer"
-                        android:layout_width="320dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="end"
-                        android:background="@drawable/shape_r_3dp_161823"
-                        android:choiceMode="singleChoice"
-                        android:divider="@android:color/transparent"
-                        android:dividerHeight="0dp"
-                        android:descendantFocusability="blocksDescendants"
-                        android:orientation="vertical">
-                       <include layout="@layout/include_right_menu"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/left_drawer_menu"
-                        android:layout_width="90dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="start"
-                        android:choiceMode="singleChoice"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/shape_r_3dp_161823_left"
-                        android:divider="@android:color/transparent"
-                        android:dividerHeight="0dp"
-                        android:descendantFocusability="blocksDescendants"
-                        android:orientation="vertical">
-                        <include layout="@layout/layout_menu_all"/>
-                    </LinearLayout>
-                </androidx.drawerlayout.widget.DrawerLayout>
 
-                <include
-                    layout="@layout/layout_message" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <com.termux.view.TerminalView
+                        android:id="@+id/terminal_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_above="@+id/key_bord"
+                        android:focusableInTouchMode="true"
+                        android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
+                        android:scrollbars="vertical"
+                        android:importantForAutofill="no"
+                        android:autofillHints="password" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:id="@+id/key_bord"
+                        android:layout_alignParentBottom="true"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
             </RelativeLayout>
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/terminal_toolbar_view_pager"

@@ -10,6 +10,7 @@ import java.io.IOException
 class FileHttpUtils private constructor() {
     private var mHttpServer: HttpServer? = null
     private val port: Int = 19956
+    private var isServicesRun = false
     private val TAG = "FileHttpUtils"
     private val TAGFileHttpUtils = "file_http_utils"
     companion object {
@@ -42,7 +43,9 @@ class FileHttpUtils private constructor() {
                 }
                 try {
                     mHttpServer?.start()
+                    isServicesRun = true
                 } catch (e: IOException) {
+                    isServicesRun = false
                     e.printStackTrace()
                 }
             }
@@ -62,7 +65,9 @@ class FileHttpUtils private constructor() {
             }
             try {
                 mHttpServer?.stop()
+                isServicesRun = false
             } catch (e: IOException) {
+                isServicesRun = true
                 e.printStackTrace()
             }
         }
@@ -72,6 +77,10 @@ class FileHttpUtils private constructor() {
         if (data == null || data.isEmpty() || data.equals("def")) {
             startServer()
         }
+    }
+
+    public fun isServicesRun(): Boolean {
+        return isServicesRun
     }
 
     public fun setHttpBoot() {

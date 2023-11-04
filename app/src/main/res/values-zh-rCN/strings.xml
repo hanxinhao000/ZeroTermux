@@ -690,7 +690,7 @@
     <string name="title_share_selected_text_with">发送选择文本到:</string>
     <string name="add_commend_msg_fail">不能添加空的命令</string>
     <string name="add_commend_msg_ok">"添加成功,详细请在\"命令定义\"功能设置"</string>
-    <string name="tool_cent">工具箱(禁止弹出工具箱)</string>
+    <string name="tool_cent">工具箱</string>
     <string name="linux_commend">常用命令</string>
     <string name="linux_clipboard">剪贴板</string>
     <string name="font_name">字体名称:</string>

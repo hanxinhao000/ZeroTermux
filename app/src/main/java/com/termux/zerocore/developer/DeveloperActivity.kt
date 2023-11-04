@@ -3,21 +3,23 @@ package com.termux.zerocore.developer
 import android.os.Bundle
 import android.system.Os
 import android.util.Log
-
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.billy.android.swipe.SmartSwipe
+import com.billy.android.swipe.SmartSwipeWrapper
+import com.billy.android.swipe.consumer.DrawerConsumer
+import com.billy.android.swipe.consumer.SlidingConsumer
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.shared.file.FileUtils
 import com.termux.zerocore.adb.dialog.AdbWindowsDialog
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.zip.ZipUtils
 import com.termux.zerocore.zip.ZipUtils.ZipNameListener
-
 import org.alfresco.jlan.server.config.ServerConfiguration
 import org.alfresco.jlan.smb.server.SMBServer
 import java.io.File
-
 
 
 class DeveloperActivity : AppCompatActivity() {
@@ -31,12 +33,17 @@ class DeveloperActivity : AppCompatActivity() {
                 file1.mkdirs()
             }
             try {
-                Os.symlink(file1.absolutePath, file.absolutePath)
+                FileUtils.createDirectoryFile("/data/data/com.termux/files1/")
+                val pair = Pair<String, String>("t.txt", "/data/data/com.termux/files/t.txt")
+                Os.symlink(pair.first, pair.second)
             }catch (e: Exception) {
                 e.printStackTrace()
             }
 
         }
+
+        val findViewById = findViewById<SmartSwipeWrapper>(R.id.smart_swipe)
+
 
         findViewById<Button>(R.id.samba_create).setOnClickListener {
             try {

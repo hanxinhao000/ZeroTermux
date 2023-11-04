@@ -384,7 +384,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             TerminalSession newTerminalSession = newTermuxSession.getTerminalSession();
             setCurrentSession(newTerminalSession);
 
-            mActivity.getDrawer().closeDrawers();
+          //  mActivity.getDrawer().smoothClose();
         }
     }
 
@@ -518,11 +518,14 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
     }
 
     public void updateBackgroundColor() {
-        if (!mActivity.isVisible()) return;
-        TerminalSession session = mActivity.getCurrentSession();
-        if (session != null && session.getEmulator() != null) {
-            mActivity.getWindow().getDecorView().setBackgroundColor(session.getEmulator().mColors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND]);
-        }
+        // ZeroTermux.add {@
+        //造成新建会话底部按钮消失
+       // if (!mActivity.isVisible() && mActivity.getDrawer().isOpened()) return;
+       // TerminalSession session = mActivity.getCurrentSession();
+       // if (session != null && session.getEmulator() != null) {
+        //    mActivity.getWindow().getDecorView().setBackgroundColor(session.getEmulator().mColors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND]);
+       // }
+        //@}
     }
 
 }

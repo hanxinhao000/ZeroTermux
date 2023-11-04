@@ -87,7 +87,10 @@ android {
 
         //图片/视频选择器
         implementation 'com.lcw.library:imagepicker:2.2.7'
-
+        //滑动器
+        implementation 'com.billy.android:smart-swipe:1.1.0'
+//compat for android support library
+        implementation 'com.billy.android:smart-swipe-x:1.1.0'
         //glide
         implementation 'com.github.bumptech.glide:glide:4.8.0'
         annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
@@ -129,7 +132,7 @@ android {
         minSdkVersion project.properties.minSdkVersion.toInteger()
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 117
-        versionName "0.118.36.3"
+        versionName "0.118.37"
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"

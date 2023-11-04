@@ -695,7 +695,7 @@ Reset successfully</string>
     <string name="title_share_selected_text_with">Send selected text to:</string>
     <string name="add_commend_msg_fail">"Can't add empty commands"</string>
     <string name="add_commend_msg_ok">"The addition is successful. For details, please set the \"Command Definition\" function"</string>
-    <string name="tool_cent">Toolbox (prohibit ejecting toolbox)</string>
+    <string name="tool_cent">Toolbox</string>
     <string name="linux_commend">commend</string>
     <string name="linux_clipboard">clipboard</string>
     <string name="font_name">fontName:</string>

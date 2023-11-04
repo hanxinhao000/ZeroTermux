@@ -7,6 +7,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -1353,5 +1354,23 @@ public class UUtils {
         } catch (IOException e) {
             return -1;
         }
+    }
+
+    //获取状态栏的高度
+    public static int getStatusBarHeight(Activity activity) {
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
+
+    public static int getNavigationBarHeight(Activity activity) {
+        Resources resources = activity.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height","dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        Log.v("dbw", "Navi height:" + height);
+        return height;
     }
 }

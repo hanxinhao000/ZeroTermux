@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -38,10 +39,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.billy.android.swipe.SmartSwipe;
+import com.billy.android.swipe.SmartSwipeWrapper;
+import com.billy.android.swipe.SwipeConsumer;
+import com.billy.android.swipe.consumer.SlidingConsumer;
+import com.billy.android.swipe.consumer.StretchConsumer;
+import com.billy.android.swipe.listener.SimpleSwipeListener;
+import com.billy.android.swipe.listener.SwipeListener;
 import com.blockchain.ub.utils.httputils.BaseHttpUtils;
 import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
 import com.bumptech.glide.Glide;
@@ -102,6 +111,7 @@ import com.termux.zerocore.back.BackRestoreDialog;
 import com.termux.zerocore.back.listener.CreateConversationListener;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
+import com.termux.zerocore.bean.ZTUserBean;
 import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
@@ -117,9 +127,11 @@ import com.termux.zerocore.dialog.SYFunBoomDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.dialog.VNCConnectionDialog;
 import com.termux.zerocore.dialog.adapter.ItemMenuAdapter;
+import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
+import com.termux.zerocore.settings.ZtSettingsActivity;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
 import com.termux.zerocore.utils.FileHttpUtils;
@@ -210,6 +222,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      * The root view of the {@link TermuxActivity}.
      */
     TermuxActivityRootView mTermuxActivityRootView;
+
+    private SlidingConsumer mSlidingConsumer;
+
+    private View mLayoutMenuAll;
+    private View mIncludeRightMenu;
 
     /**
      * The space at the bottom of {@link @mTermuxActivityRootView} of the {@link TermuxActivity}.
@@ -315,7 +332,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_termux);
-
+        initSmartSwipe();
         // Load termux shared preferences
         // This will also fail if TermuxConstants.TERMUX_PACKAGE_NAME does not equal applicationId
         mPreferences = TermuxAppSharedPreferences.build(this, true);
@@ -371,17 +388,89 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // app has been opened.
         TermuxUtils.sendTermuxOpenedBroadcast(this);
 
-
         createFiles();
         initZeroView();
         initStatue();
         initColorConfig();
         initListener();
-        initScrollHandler();
         //默认应该关闭 19956端口
         //testFun();
+        initStatusBarHeight();
     }
 
+    private void initStatusBarHeight() {
+        int statusBarHeight = UUtils.getStatusBarHeight(this);
+        int navigationBarHeight = UUtils.getNavigationBarHeight(this);
+        ViewGroup.LayoutParams layoutParams = scrollView_main.getLayoutParams();
+        if (layoutParams != null) {
+            LinearLayout.LayoutParams ll = (LinearLayout.LayoutParams) layoutParams;
+            ll.topMargin = statusBarHeight + 10;
+            ll.bottomMargin = navigationBarHeight + 10;
+            scrollView_main.setLayoutParams(ll);
+        }
+        ViewGroup.LayoutParams layoutParams1 = file_layout.getLayoutParams();
+        if (layoutParams1 != null) {
+            LinearLayout.LayoutParams ll = (LinearLayout.LayoutParams) layoutParams1;
+            ll.topMargin = statusBarHeight + 10;
+            ll.bottomMargin = navigationBarHeight + 10;
+            file_layout.setLayoutParams(ll);
+        }
+
+    }
+    @Override
+    public <T extends View> T findViewById(int id) {
+        T viewById = super.findViewById(id);
+        if (viewById == null) {
+            viewById = mLayoutMenuAll.findViewById(id);
+        }
+        if (viewById == null) {
+            viewById = mIncludeRightMenu.findViewById(id);
+        }
+        return viewById;
+    }
+
+    private void initSmartSwipe() {
+        mLayoutMenuAll = UUtils.getViewLay(R.layout.layout_menu_all);
+        mIncludeRightMenu = UUtils.getViewLay(R.layout.include_right_menu);
+        int size = SmartSwipe.dp2px(300, this);
+        mLayoutMenuAll.setLayoutParams(new ViewGroup.LayoutParams(size, ViewGroup.LayoutParams.MATCH_PARENT));
+        mIncludeRightMenu.setLayoutParams(new ViewGroup.LayoutParams(size, ViewGroup.LayoutParams.MATCH_PARENT));
+        SmartSwipeWrapper leftHorizontalMenuWrapper = SmartSwipe.wrap(mLayoutMenuAll).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
+        SmartSwipeWrapper rightHorizontalMenuWrapper = SmartSwipe.wrap(mIncludeRightMenu).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
+        SimpleSwipeListener listener = new SimpleSwipeListener() {
+            @Override
+            public void onSwipeOpened(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
+                super.onSwipeOpened(wrapper, consumer, direction);
+
+            }
+
+            @Override
+            public void onSwipeClosed(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
+                super.onSwipeClosed(wrapper, consumer, direction);
+
+            }
+        };
+
+         mSlidingConsumer = new SlidingConsumer()
+            .setDrawerExpandable(true)
+            //horizontal menu
+            // .setHorizontalDrawerView(horizontalMenuWrapper)
+            .setLeftDrawerView(leftHorizontalMenuWrapper)
+            .setRightDrawerView(rightHorizontalMenuWrapper)
+            .showScrimAndShadowOutsideContentView()
+            //set the translucent color of scrim (default is 0:transparent)
+            .setScrimColor(0xFFFFFF)
+            .setShadowSize(SmartSwipe.dp2px(10, this))
+            .setShadowColor(0xFFFFFF)
+            .addListener(listener)
+            //set edge size to swipe to 20dp (default is 0: whole range of the contentView bounds)
+            .setEdgeSize(SmartSwipe.dp2px(20, this))
+            .as(SlidingConsumer.class);
+        mSlidingConsumer.setRelativeMoveFactor(100);
+        SmartSwipe.wrap(this)
+            //add new consumer to this activity wrapper
+            .addConsumer(mSlidingConsumer);
+    }
 
     private void initListener() {
         mTerminalView.getTextSelectionCursorControllerView().setAddCommend(new TextSelectionCursorController.AddCommend() {
@@ -400,9 +489,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTerminalView.setActionPointer2ClickListener(new TerminalView.ActionPointer2ClickListener() {
             @Override
             public void pointer2Click() {
-                String toolbox_state = com.termux.view.zerotermux.SaveData.getData("toolbox_state", UUtils.getContext());
-                LogUtils.d(TAG, "pointer2Click toolbox_state:" + toolbox_state);
-                if (!(toolbox_state == null || toolbox_state.isEmpty() || toolbox_state.equals("def"))) {
+                if (UserSetManage.Companion.get().getZTUserBean().isToolShow()) {
                     return;
                 }
                 final LoadingDialog[] loadingDialog = {null};
@@ -591,6 +678,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         Logger.logVerbose(LOG_TAG, "onResume");
 
         VideoUtils.getInstance().onResume();
+        initUserData();
 
         if (mIsInvalidState) return;
 
@@ -605,9 +693,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         TermuxCrashUtils.notifyAppCrashFromCrashLogFile(this, LOG_TAG);
 
         mIsOnResumeAfterOnCreate = false;
-
-
-        isShow();
 
         /**
          *
@@ -624,10 +709,26 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     }
 
+    // ZeroTermux add {@
+    private void initUserData() {
+        ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
+        if (ztUserBean.isOpenDownloadFileServices()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                   if (!FileHttpUtils.Companion.get().isServicesRun()) {
+                       FileHttpUtils.Companion.get().bootHttp();
+                   }
+                }
+            }).start();
+        }
+
+    }
+    //@}
+
     @Override
     protected void onRestart() {
         super.onRestart();
-        isShow();
     }
 
     @Override
@@ -649,7 +750,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         removeTermuxActivityRootViewGlobalLayoutListener();
 
         unregisterTermuxActivityBroadcastReceiver();
-        getDrawer().closeDrawers();
+        getDrawer().smoothClose();
     }
 
     @Override
@@ -706,6 +807,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void onServiceConnected(ComponentName componentName, IBinder service) {
 
         Logger.logDebug(LOG_TAG, "onServiceConnected");
+        Log.e(TAG, "onServiceConnected: onServiceConnected" );
 
         mTermuxService = ((TermuxService.LocalBinder) service).service;
 
@@ -812,17 +914,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxTerminalViewClient.setKeyUpDown(new TermuxTerminalViewClient.KeyUpDown() {
                 @Override
                 public void keyDown(int key) {
-                    if (getDrawer().isDrawerOpen(Gravity.LEFT) || getDrawer().isDrawerOpen(Gravity.RIGHT)) {
-                        getDrawer().closeDrawers();
+                    if (getDrawer().isOpened()) {
+                        getDrawer().smoothClose();
                         return;
                     }
                     if (key == KeyEvent.KEYCODE_VOLUME_UP) {
-                        getDrawer().openDrawer(Gravity.LEFT);
+                        getDrawer().smoothLeftOpen();
                         return;
                     }
 
                     if (key == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                        getDrawer().openDrawer(Gravity.RIGHT);
+                        getDrawer().smoothRightOpen();
                         return;
                     }
                 }
@@ -939,8 +1041,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @SuppressLint("RtlHardcoded")
     @Override
     public void onBackPressed() {
-        if (getDrawer().isDrawerOpen(Gravity.LEFT)) {
-            getDrawer().closeDrawers();
+        if (getDrawer().isOpened()) {
+            getDrawer().smoothClose();
         } else {
             finishActivityIfNotFinishing();
         }
@@ -1183,8 +1285,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mExtraKeysView = extraKeysView;
     }
 
-    public DrawerLayout getDrawer() {
-        return (DrawerLayout) findViewById(R.id.drawer_layout);
+    public SlidingConsumer getDrawer() {
+        return mSlidingConsumer;
     }
 
 
@@ -1207,6 +1309,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     public void termuxSessionListNotifyUpdated() {
         mTermuxSessionListViewController.notifyDataSetChanged();
+
     }
 
     public boolean isVisible() {
@@ -1379,6 +1482,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      * ZeroView
      */
     private LinearLayout code_ll;
+    private ScrollView scrollView_main;
+    private LinearLayout file_layout;
+    private CardView main_card;
+    private CardView ip_card;
+    private ImageView open_image;
+    private CardView info_card;
     private LinearLayout rongqi;
     private LinearLayout back_res;
     private LinearLayout linux_online;
@@ -1390,14 +1499,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView version;
     private TextView eg_tv;
     private TextView text_start;
-    private LinearLayout title_mb;
     private LinearLayout github;
     private LinearLayout start_command;
     private LinearLayout xuanfu;
     private LinearLayout ziti;
     private LinearLayout zero_tier;
     private LinearLayout download_http;
-    private LinearLayout zt_title;
     private LinearLayout vnc_start;
     private LinearLayout xue_hua;
     private LinearLayout termux_pl;
@@ -1415,8 +1522,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView telegram_group_tv;
     private TextView double_tishi;
     private TextView xue_hua_start;
-    private EditText mDataMessage;
-    private CardView mDataMessageCard;
     private FrameLayout xue_fragment;
     private LinearLayout online_sh;
     private LinearLayout beautify;
@@ -1434,9 +1539,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
 
     private void initZeroView() {
-
-
         code_ll = findViewById(R.id.code_ll);
+        scrollView_main = findViewById(R.id.scrollView_main);
+        file_layout = findViewById(R.id.file_layout);
+        main_card = findViewById(R.id.main_card);
+        ip_card = findViewById(R.id.ip_card);
+        open_image = findViewById(R.id.open_image);
+        info_card = findViewById(R.id.info_card);
         frame_file = findViewById(R.id.frame_file);
         session_rl = findViewById(R.id.session_rl);
         telegram_group_tv = findViewById(R.id.telegram_group_tv);
@@ -1453,7 +1562,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         files_mulu = findViewById(R.id.files_mulu);
         version = findViewById(R.id.version);
         eg_tv = findViewById(R.id.eg_tv);
-        title_mb = findViewById(R.id.title_mb);
         github = findViewById(R.id.github);
         start_command = findViewById(R.id.start_command);
         text_start = findViewById(R.id.text_start);
@@ -1465,11 +1573,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         zero_tier = findViewById(R.id.zero_tier);
         download_http = findViewById(R.id.download_http);
         vnc_start = findViewById(R.id.vnc_start);
-        zt_title = findViewById(R.id.zt_title);
         msg_tv = findViewById(R.id.msg_tv);
         xue_fragment = findViewById(R.id.xue_fragment);
-        mDataMessage = findViewById(R.id.data_message);
-        mDataMessageCard = findViewById(R.id.data_message_card);
         xue_hua = findViewById(R.id.xue_hua);
         xue_hua_start = findViewById(R.id.xue_hua_start);
         termux_pl = findViewById(R.id.termux_pl);
@@ -1520,19 +1625,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         beautify.setOnClickListener(this);
         shiyan_fun.setOnClickListener(this);
         mTerminalView.setOnFocusChangeListener(this);
-        zt_title.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                UUtils.showMsg(UUtils.getString(R.string.已开始打印APP实时delog));
-
-                mTerminalView.sendTextToTerminal("adb logcat * | find \"trace\" \n");
-                //  mTerminalView.sendTextToTerminal("adb shell \n");
-                return true;
-            }
-        });
 
         mTerminalView.setDoubleClickListener(this);
-        title_mb.setVisibility(View.GONE);
         String xieyi = SaveData.INSTANCE.getStringOther("xieyi");
         if (xieyi == null || xieyi.isEmpty() || xieyi.equals("def")) {
             ProtocolDialog protocolDialog = new ProtocolDialog(this);
@@ -1540,70 +1634,29 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             protocolDialog.setCancelable(false);
         }
         getServiceVs();
-        getDrawer().addDrawerListener(new DrawerLayout.DrawerListener() {
+        refStartCommandStat();
+        main_card.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDrawerSlide(@NonNull @NotNull View drawerView, float slideOffset) {
-                int i = (int) (slideOffset * 100);
-                if (getDrawer().isDrawerVisible(Gravity.LEFT)) {
-                    if (i < 50) {
-                        title_mb.setVisibility(View.GONE);
-                    } else {
-                        title_mb.setVisibility(View.VISIBLE);
-                        ip_status.setText(UUtils.getHostIP());
-                    }
-                }
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull @NotNull View drawerView) {
-                //  title_mb.setVisibility(View.VISIBLE);
-                WindowUtils.setImmersionBar(TermuxActivity.this, 0.6f);
-                setEgInstallStatus();
-                layout_menu.setFocusable(true);
-                dataMessage();
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull @NotNull View drawerView) {
-                WindowUtils.setImmersionBar(TermuxActivity.this, 0.1f);
-                //  title_mb.setVisibility(View.GONE);
-                setEgInstallStatus();
-                layout_menu.setFocusable(false);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
+            public void onClick(View v) {
+                startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class));
             }
         });
-        refStartCommandStat();
 
-    }
-
-    private void dataMessage() {
-        new Thread(new Runnable() {
+        ip_card.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                String dataMessageFileString = FileIOUtils.INSTANCE.getDataMessageFileString();
-                if (dataMessageFileString != null && !(dataMessageFileString.trim().isEmpty())) {
-                    UUtils.getHandler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDataMessageCard.setVisibility(View.VISIBLE);
-                            mDataMessage.setText(UUtils.getString(R.string.data_message) + "\n\n" + dataMessageFileString);
-                        }
-                    });
+            public void onClick(View v) {
+                if (info_card.getVisibility() == View.GONE) {
+                    info_card.setVisibility(View.VISIBLE);
+                    open_image.setRotation(180);
                 } else {
-                    UUtils.getHandler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDataMessageCard.setVisibility(View.GONE);
-                        }
-                    });
+                    info_card.setVisibility(View.GONE);
+                    open_image.setRotation(0);
                 }
             }
-        }).start();
+        });
+        setEgInstallStatus();
     }
+
 
     private void setEgInstallStatus() {
         version.setText(UUtils.getString(R.string.版本) + " : " + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
@@ -1631,6 +1684,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             xue_fragment.removeAllViews();
             xue_fragment.addView(snowView);
         }
+        mTerminalView.setOneClickListener(new TerminalView.OneClickListener() {
+            @Override
+            public void onClick() {
+                if (UserSetManage.Companion.get().getZTUserBean().isInputMethodTriggerClose() && !(getDrawer().isClosed())) {
+                    getDrawer().smoothClose();
+                    com.zp.z_file.util.LogUtils.e(TAG, "setOneClickListener Drawer is close." );
+                }
+            }
+        });
     }
 
 
@@ -1693,7 +1755,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
              *
              */
             case R.id.rongqi:
-                getDrawer().closeDrawer(Gravity.LEFT);
                 startActivity(new Intent(this, SwitchActivity.class));
                 break;
 
@@ -1703,7 +1764,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
              *
              */
             case R.id.back_res:
-                getDrawer().closeDrawer(Gravity.LEFT);
                 //  startActivity(new Intent(this, BackNewActivity.class));
                 BackRestoreDialog backRestoreDialog = new BackRestoreDialog(this);
                 backRestoreDialog.setCreateConversationListener(new CreateConversationListener() {
@@ -1718,7 +1778,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 backRestoreDialog.createStoragePath();
                 break;
             case R.id.linux_online:
-                getDrawer().closeDrawer(Gravity.LEFT);
                 LoadingDialog loadingDialog = new LoadingDialog(this);
                 loadingDialog.show();
                 loadingDialog.setCancelable(false);
@@ -1773,8 +1832,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
             case R.id.moe:
-
-                getDrawer().closeDrawer(Gravity.LEFT);
                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunMoeSh());
 
                 break;
@@ -1797,13 +1854,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
-
-                    try {
-                        installApk(getAssets().open("apk/utermux_file_plug.ip"), "files");
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-
+                    UUtils.showMsg(UUtils.getString(R.string.zt_install_file));
                 }
 
 
@@ -1831,29 +1882,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
             case R.id.xuanfu:
-
-
                 try {
                     Intent intent1 = new Intent();
                     intent1.setAction("com.zero_float.action.ENTER");
                     startActivity(intent1);
                 } catch (Exception e) {
                     e.printStackTrace();
-
-                    try {
-                        installApk(getAssets().open("apk/zero_float.ip"), "zeroFloat");
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-
+                   UUtils.showMsg(UUtils.getString(R.string.zt_install_float));
                 }
-
-
                 break;
 
             case R.id.ziti:
-                getDrawer().close();
-                title_mb.setVisibility(View.GONE);
                 startActivity(new Intent(this, FontActivity.class));
                 break;
 
@@ -1990,7 +2029,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             //底层弹窗
             case R.id.zero_fun:
-                getDrawer().close();
 
                 BoomZeroTermuxDialog boomZeroTermuxDialog = new BoomZeroTermuxDialog(this);
                 boomZeroTermuxDialog.show();
@@ -2009,7 +2047,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             case R.id.online_sh:
 
-                getDrawer().close();
 
                 OnLineShDialog mOnLineShDialog = new OnLineShDialog(this);
 
@@ -2037,9 +2074,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 this.startActivity(intent1);
                 break;
             case R.id.beautify:
-
-                getDrawer().close();
-
+                if (UserSetManage.Companion.get().getZTUserBean().isStyleTriggerOff()) {
+                    getDrawer().smoothClose();
+                    com.zp.z_file.util.LogUtils.e(TAG, "onClick beautify Drawer is Close.");
+                }
                 BeautifySettingDialog mBeautifySettingDialog = new BeautifySettingDialog(this);
 
                 mBeautifySettingDialog.setBackColorChange(new BeautifySettingDialog.BackColorChange() {
@@ -2160,8 +2198,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     protected void onPause() {
         super.onPause();
         VideoUtils.getInstance().pause();
-        title_mb.setVisibility(View.GONE);
-        getDrawer().close();
+        getDrawer().smoothClose();
 
     }
 
@@ -2307,7 +2344,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             //qemu
             case 5:
-                getDrawer().closeDrawer(Gravity.LEFT);
 
 
                 SwitchDialog msgQemuLine = switchDialogShow(UUtils.getString(R.string.选择方式), UUtils.getString(R.string.要获取最新版本));
@@ -2370,7 +2406,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                     zeroTermuxShare.mkdirs();
                                 }
 
-                                getDrawer().closeDrawer(Gravity.LEFT);
                                 UUtils.writerFile("qemu/qemu_win7.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/qemu_win7.sh"));
                                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWin7Sh());
 
@@ -2411,7 +2446,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                     zeroTermuxShare.mkdirs();
                                 }
 
-                                getDrawer().closeDrawer(Gravity.LEFT);
                                 UUtils.writerFile("qemu/qemu_winxp.sh", new File(FileUrl.INSTANCE.getMainHomeUrl(), "/qemu_winxp.sh"));
                                 mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunWinXPSh());
 
@@ -2436,7 +2470,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
             case 6:
-                getDrawer().closeDrawer(Gravity.LEFT);
 
                 SwitchDialog msg = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.该操作有风险));
 
@@ -2478,7 +2511,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             //快速
             case 10:
                 UUtils.showLog("插件:快速");
-                getDrawer().closeDrawer(Gravity.LEFT);
                 try {
 
                     Intent intent = new Intent();
@@ -2503,7 +2535,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             //自定
             case 11:
-                getDrawer().closeDrawer(Gravity.LEFT);
 
 
                 VNCConnectionDialog vncConnectionDialog = new VNCConnectionDialog(this);
@@ -2541,7 +2572,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             //高级
             case 12:
-                getDrawer().closeDrawer(Gravity.LEFT);
 
                 try {
                     Intent intent = new Intent();
@@ -2558,53 +2588,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
             //API
-            case 20:
-                getDrawer().closeDrawer(Gravity.LEFT);
-                try {
-                    installApk(getAssets().open("apk/termux_api.ip"), "termux_api");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            //Tasker
-            case 21:
-                getDrawer().closeDrawer(Gravity.LEFT);
-                try {
-                    installApk(getAssets().open("apk/termux_tasker.ip"), "termux_tasker");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            //BOOT
-            case 22:
-                getDrawer().closeDrawer(Gravity.LEFT);
-                try {
-                    installApk(getAssets().open("apk/termux_boot.ip"), "termux_boot");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            //styling
-            case 23:
-                getDrawer().closeDrawer(Gravity.LEFT);
-                try {
-                    installApk(getAssets().open("apk/termux_styling.ip"), "termux_styling");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            //x11
-            case 24:
-                getDrawer().closeDrawer(Gravity.LEFT);
-                try {
-                    installApk(getAssets().open("apk/termux_x11.ip"), "termux_x11");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-
             //中文
             case 30:
                 //  Intent intent = new Intent(this, TermuxActivity.class);
@@ -2626,7 +2609,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private SwitchDialog switchDialogShow(String title, String msg) {
 
-        getDrawer().closeDrawer(Gravity.LEFT);
         SwitchDialog switchDialog = new SwitchDialog(this);
 
         switchDialog.getTitle().setText(title);
@@ -2652,12 +2634,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (x <= 100) {
 
-            getDrawer().openDrawer(Gravity.LEFT);
+            getDrawer().smoothLeftOpen();
             return;
         }
 
         if (x >= width - 100) {
-            getDrawer().openDrawer(Gravity.RIGHT);
+            getDrawer().smoothRightOpen();
             return;
         }
         BoomWindow.SWITCH = false;
@@ -2705,7 +2687,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void onClick(View v) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                getDrawer().closeDrawers();
+                getDrawer().smoothClose();
                 popupWindow[0].dismiss();
             }
         });
@@ -2852,13 +2834,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (msg.equals("left")) {
 
-            getDrawer().openDrawer(Gravity.LEFT);
+            getDrawer().smoothLeftOpen();
 
         }
 
         if (msg.equals("right")) {
 
-            getDrawer().openDrawer(Gravity.RIGHT);
+            getDrawer().smoothRightOpen();
 
         }
 
@@ -2866,87 +2848,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-    private void installApk(InputStream inputStream, String fileName) {
-
-
-        SwitchDialog switchDialog1 = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.您未安装该插件));
-
-        switchDialog1.getCancel().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchDialog1.dismiss();
-
-            }
-        });
-        switchDialog1.getOk().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchDialog1.dismiss();
-
-
-                XXPermissions.with(TermuxActivity.this)
-                    .permission(Permission.WRITE_EXTERNAL_STORAGE)
-                    .permission(Permission.READ_EXTERNAL_STORAGE)
-                    .permission(Permission.REQUEST_INSTALL_PACKAGES)
-                    .request(new OnPermissionCallback() {
-
-                        @Override
-                        public void onGranted(List<String> permissions, boolean all) {
-                            if (all) {
-                                if (!FileUrl.INSTANCE.getZeroTermuxApk().exists()) {
-                                    FileUrl.INSTANCE.getZeroTermuxApk().mkdirs();
-                                }
-                                File file1 = new File(Environment.getExternalStorageDirectory(), "/xinhao/apk/" + fileName + ".apk");
-                                LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
-                                loadingDialog.show();
-                                UUtils.writerFileRawInput(file1, inputStream);
-
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        try {
-                                            Thread.sleep(2000);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                loadingDialog.dismiss();
-                                                UUtils.installApk(UUtils.getContext(), file1.getAbsolutePath());
-                                            }
-                                        });
-
-                                    }
-                                }).start();
-
-
-                            } else {
-
-                                UUtils.showMsg("无权限");
-                            }
-                        }
-
-                        @Override
-                        public void onDenied(List<String> permissions, boolean never) {
-                            if (never) {
-                                UUtils.showMsg("无权限");
-                                // 如果是被永久拒绝就跳转到应用权限系统设置页面
-                                XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
-                            } else {
-                                UUtils.showMsg("无权限");
-                            }
-                        }
-                    });
-
-
-            }
-        });
-
-
-    }
 
 
     //创建目录
@@ -3074,13 +2975,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    /**
-     * 重新进入该窗口面板默认关闭
-     */
-    private void isShow() {
-        title_mb.setVisibility(View.GONE);
-        getDrawer().close();
-    }
 
     /**
      * 连接到服务器
@@ -3324,41 +3218,19 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_MENU)) {
-            if (getDrawer().isOpen()) {
-                getDrawer().closeDrawers();
+            if (getDrawer().isOpened()) {
+                getDrawer().smoothClose();
             } else {
-                getDrawer().openDrawer(Gravity.LEFT);
+                getDrawer().smoothLeftOpen();
             }
             return false;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void initScrollHandler() {
-        mDataMessage.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //canScrollVertically()方法为判断指定方向上是否可以滚动,参数为正数或负数,负数检查向上是否可以滚动,正数为检查向下是否可以滚动
-                if (mDataMessage.canScrollVertically(1) || mDataMessage.canScrollVertically(-1)) {
-                    v.getParent().requestDisallowInterceptTouchEvent(true);//requestDisallowInterceptTouchEvent();要求父类布局不在拦截触摸事件
-                    if (event.getAction() == MotionEvent.ACTION_UP) { //判断是否松开
-                        v.getParent().requestDisallowInterceptTouchEvent(false); //requestDisallowInterceptTouchEvent();让父类布局继续拦截触摸事件
-                    }
-                }
-                return false;
-            }
-        });
-
-    }
-
     //测试方法
     private void testFun() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FileHttpUtils.Companion.get().bootHttp();
-            }
-        }).start();
+
     }
 
     private void indexSwitch(int index) {
@@ -3388,7 +3260,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             ZTConfig.INSTANCE.setCloseListener(new CloseListener() {
                 @Override
                 public void close() {
-                    getDrawer().closeDrawers();
+                    getDrawer().smoothClose();
                 }
             });
         }

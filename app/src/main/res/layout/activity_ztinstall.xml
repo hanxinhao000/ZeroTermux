@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/color_2b2b2b"
+    tools:context=".zerocore.settings.ZtSettingsActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/color_ffffff"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/zt_install"
+                android:layout_height="wrap_content"/>
+
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:id="@+id/api"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Termux Api"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux Api"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:id="@+id/boot"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Termux Boot"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux Boot"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:id="@+id/styling"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Termux Styling"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux Styling"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tasker"
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Termux Tasker"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux Tasker"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/x11"
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Termux X11"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux X11"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/file"
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="(Zero)Utermux File Plug"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux Api"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/web"
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Web Start"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Web Start"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/float_card_view"
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="Termux Float"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="Termux Float"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:src="@mipmap/up_down"
+                            android:rotation="270"
+                            android:layout_height="15dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</LinearLayout>

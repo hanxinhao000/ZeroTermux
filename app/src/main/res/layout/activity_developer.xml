@@ -7,6 +7,31 @@
     android:layout_height="match_parent"
     tools:context=".zerocore.developer.DeveloperActivity">
 
+    <com.billy.android.swipe.SmartSwipeWrapper
+        android:layout_width="match_parent"
+        android:id="@+id/smart_swipe"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            app:swipe_gravity="right|left"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/star_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:background="#15BABA"/>
+            <Button
+                android:id="@+id/like_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:background="#CBECCC"/>
+        </LinearLayout>
+
+
+
+
+    </com.billy.android.swipe.SmartSwipeWrapper>
+
     <TextView
         android:layout_width="match_parent"
         android:gravity="center"

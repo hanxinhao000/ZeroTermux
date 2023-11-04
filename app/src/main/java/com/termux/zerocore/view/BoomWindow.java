@@ -38,7 +38,7 @@ import java.util.List;
 public class BoomWindow {
 
     public static String TAG = "BoomWindow";
-    public static boolean SWITCH = false;
+    public static boolean SWITCH = true;
     public TextView title;
     public RecyclerView recyclerView;
     public RecyclerView recyclerView_bag;

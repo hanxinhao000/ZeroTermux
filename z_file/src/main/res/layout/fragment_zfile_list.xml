@@ -6,80 +6,106 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/zfile_list_toolBar"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:visibility="visible"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/color_55000000"
-        app:popupTheme="@style/ZFile_ToolbarPopupTheme"
-        app:theme="@style/ZFile_ToolbarTheme"
-        app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
-        tools:layout_height="30dp">
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/color_55000000"
+        app:cardCornerRadius="6dp"
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/zfile_list_centerTitle"
-            style="@style/Base.DialogWindowTitle.AppCompat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/zfile_white"
-            android:textSize="13sp"
-            android:visibility="visible"
-            tools:text="@string/zfile_title"
-            tools:visibility="visible" />
-
-    </androidx.appcompat.widget.Toolbar>
-
- <LinearLayout
-     android:layout_width="match_parent"
-     android:orientation="horizontal"
-     android:layout_height="wrap_content">
-
-     <androidx.recyclerview.widget.RecyclerView
-         android:id="@+id/zfile_list_pathRecyclerView"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:paddingStart="@dimen/zfile_default_divider_padding"
-         android:paddingEnd="@dimen/zfile_default_divider_padding"
-         tools:itemCount="1"
-         tools:listitem="@layout/item_zfile_path" />
-
-
- </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/zfile_list_refreshLayout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/zfile_list_toolBar"
+                android:layout_width="match_parent"
+                android:visibility="visible"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ZFile_ToolbarPopupTheme"
+                app:theme="@style/ZFile_ToolbarTheme"
+                app:titleTextAppearance="@style/ZFile_ToolbarTitleTextStyle"
+                tools:layout_height="30dp">
+
+                <TextView
+                    android:id="@+id/zfile_list_centerTitle"
+                    style="@style/Base.DialogWindowTitle.AppCompat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@color/zfile_white"
+                    android:textSize="13sp"
+                    android:visibility="visible"
+                    tools:text="@string/zfile_title"
+                    tools:visibility="visible" />
+
+            </androidx.appcompat.widget.Toolbar>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/zfile_list_listRecyclerView"
+                android:id="@+id/zfile_list_pathRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/zfile_default_divider_padding"
+                android:paddingEnd="@dimen/zfile_default_divider_padding"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_zfile_path" />
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/color_55000000"
+        app:cardCornerRadius="6dp"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:padding="8dp"
+            android:layout_height="match_parent">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/zfile_list_refreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/zfile_list_listRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:scrollbarSize="5dp"
+                    tools:itemCount="15"
+                    tools:listitem="@layout/item_zfile_list_folder" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <ViewStub
+                android:id="@+id/zfile_list_emptyStub"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:scrollbarSize="5dp"
-                tools:itemCount="15"
-                tools:listitem="@layout/item_zfile_list_folder" />
+                tools:layout="@layout/layout_zfile_list_empty"/>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <ViewStub
+                android:id="@+id/zfile_list_noPermissionStub"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout="@layout/layout_zfile_list_permission"/>
 
-        <ViewStub
-            android:id="@+id/zfile_list_emptyStub"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/layout_zfile_list_empty"/>
+        </FrameLayout>
 
-        <ViewStub
-            android:id="@+id/zfile_list_noPermissionStub"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/layout_zfile_list_permission"/>
 
-    </FrameLayout>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>
