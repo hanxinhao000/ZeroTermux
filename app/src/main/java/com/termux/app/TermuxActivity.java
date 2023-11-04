@@ -1507,7 +1507,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout download_http;
     private LinearLayout vnc_start;
     private LinearLayout xue_hua;
-    private LinearLayout termux_pl;
     private LinearLayout quanping;
     private LinearLayout zero_fun;
     private LinearLayout yuyan;
@@ -1577,7 +1576,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         xue_fragment = findViewById(R.id.xue_fragment);
         xue_hua = findViewById(R.id.xue_hua);
         xue_hua_start = findViewById(R.id.xue_hua_start);
-        termux_pl = findViewById(R.id.termux_pl);
         quanping = findViewById(R.id.quanping);
         yuyan = findViewById(R.id.yuyan);
         ip_status = findViewById(R.id.ip_status);
@@ -1618,7 +1616,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         download_http.setOnClickListener(this);
         vnc_start.setOnClickListener(this);
         xue_hua.setOnClickListener(this);
-        termux_pl.setOnClickListener(this);
         quanping.setOnClickListener(this);
         zero_fun.setOnClickListener(this);
         yuyan.setOnClickListener(this);
@@ -1966,30 +1963,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     SaveData.INSTANCE.saveStringOther("xue_statues", "def");
                 }
 
-
-                break;
-            //官方插件
-            case R.id.termux_pl:
-
-
-                ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> menuphoneGfCj = new ArrayList<>();
-
-                MenuLeftPopuListWindow.MenuLeftPopuListData msg_api = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxApi), 20);
-                menuphoneGfCj.add(msg_api);
-
-                MenuLeftPopuListWindow.MenuLeftPopuListData msg_tasker = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxTasker), 21);
-                menuphoneGfCj.add(msg_tasker);
-
-                MenuLeftPopuListWindow.MenuLeftPopuListData msg_boot = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxBoot), 22);
-                menuphoneGfCj.add(msg_boot);
-
-                MenuLeftPopuListWindow.MenuLeftPopuListData msg_styling = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.drawable.ic_launcher, UUtils.getString(R.string.TermuxStyling), 23);
-                menuphoneGfCj.add(msg_styling);
-
-                MenuLeftPopuListWindow.MenuLeftPopuListData msg_x11 = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.termux_x11, UUtils.getString(R.string.termux_x11), 24);
-                menuphoneGfCj.add(msg_x11);
-
-                showMenuDialog(menuphoneGfCj, termux_pl);
 
                 break;
 

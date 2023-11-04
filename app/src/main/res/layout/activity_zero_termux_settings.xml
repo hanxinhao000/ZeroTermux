@@ -45,6 +45,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:orientation="vertical"
+                        android:layout_marginRight="70dp"
                         android:id="@+id/zt_download_services_ll"
                         android:padding="10dp"
                         android:layout_height="wrap_content">
@@ -132,6 +133,7 @@
                         android:id="@+id/input_method_trigger_close_ll"
                         android:layout_width="match_parent"
                         android:orientation="vertical"
+                        android:layout_marginRight="70dp"
                         android:padding="10dp"
                         android:layout_height="wrap_content">
 
@@ -186,6 +188,7 @@
                         android:id="@+id/style_trigger_off_ll"
                         android:layout_width="match_parent"
                         android:orientation="vertical"
+                        android:layout_marginRight="70dp"
                         android:padding="10dp"
                         android:layout_height="wrap_content">
 
@@ -241,6 +244,7 @@
                         android:layout_width="match_parent"
                         android:orientation="vertical"
                         android:padding="10dp"
+                        android:layout_marginRight="70dp"
                         android:layout_height="wrap_content">
 
                         <TextView
@@ -405,6 +409,7 @@
                         android:id="@+id/log_output_ll"
                         android:layout_width="match_parent"
                         android:orientation="vertical"
+                        android:layout_marginRight="70dp"
                         android:padding="10dp"
                         android:layout_height="wrap_content">
 
