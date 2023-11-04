@@ -387,14 +387,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
         // app has been opened.
         TermuxUtils.sendTermuxOpenedBroadcast(this);
-
+        ZeroCoreManage.initEngineManage();
         createFiles();
         initZeroView();
         initStatue();
         initColorConfig();
         initListener();
-        //默认应该关闭 19956端口
-        //testFun();
         initStatusBarHeight();
     }
 
@@ -673,8 +671,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void onResume() {
         super.onResume();
         //初始化ZeroTermux 引擎
-        ZeroCoreManage.initEngineManage();
-
         Logger.logVerbose(LOG_TAG, "onResume");
 
         VideoUtils.getInstance().onResume();
