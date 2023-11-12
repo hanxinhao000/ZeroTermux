@@ -501,9 +501,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         final LoadingDialog[] loadingDialog = {null};
         CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
         mCommonCommandsDialog.show();
-        if (index > 0) {
-            mCommonCommandsDialog.selectIndex(index);
-        }
         mCommonCommandsDialog.setCancelable(true);
         mCommonCommandsDialog.setFindKey(findKey);
         mCommonCommandsDialog.setCommonDialogListener(new ItemMenuAdapter.CommonDialogListener() {
@@ -591,6 +588,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             }
         });
+        if (index > 0) {
+            mCommonCommandsDialog.selectIndex(index);
+        }
     }
 
     public void initColorConfig() {

@@ -31,6 +31,7 @@ class ZTInstallActivity : AppCompatActivity(), View.OnClickListener {
         findViewById<CardView>(R.id.file).setOnClickListener(this)
         findViewById<CardView>(R.id.web).setOnClickListener(this)
         findViewById<CardView>(R.id.float_card_view).setOnClickListener(this)
+        findViewById<CardView>(R.id.widget_card_view).setOnClickListener(this)
 
     }
 
@@ -87,6 +88,14 @@ class ZTInstallActivity : AppCompatActivity(), View.OnClickListener {
            R.id.web -> {
                try{
                    installApk(getAssets().open("apk/WebStart.ip"), "WebStart")
+               } catch (e: IOException) {
+                   e.printStackTrace();
+                   LogUtils.e(TAG, "installApk WebStart error! $e")
+               }
+           }
+           R.id.widget_card_view -> {
+               try{
+                   installApk(getAssets().open("apk/termux-widge.ip"), "termux-widge")
                } catch (e: IOException) {
                    e.printStackTrace();
                    LogUtils.e(TAG, "installApk WebStart error! $e")
