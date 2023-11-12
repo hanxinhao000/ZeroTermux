@@ -1,9 +1,12 @@
 package com.termux.zerocore.dialog
 
 import android.content.Context
+import android.os.Handler
+import android.os.Message
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +24,8 @@ import com.termux.zerocore.utils.WindowsUtils.getGridNumber
 
 class CommonCommandsDialog : BaseDialogDown {
 
-    object CommonCommandsDialogConstant{
+    public object CommonCommandsDialogConstant{
+        @JvmField
         public val VIDEO_KEY = 1000
         public val KEYBOARD_KEY = 1001
         public val X86_ALPINE_KEY = 1002
@@ -58,6 +62,19 @@ class CommonCommandsDialog : BaseDialogDown {
     private var mVShellDialogListener: ItemMenuAdapter.VShellDialogListener? = null
     private var mKeyViewListener: ItemMenuAdapter.KeyViewListener? = null
     private var mClearStyleListener: ItemMenuAdapter.ClearStyleListener? = null
+    private var mList:ArrayList<ItemMenuBean.Data> = ArrayList()
+    private val mHandlerNotifyDataSetChanged: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            val key = msg.obj as Int
+            mList.forEach { data ->
+                if (data.key == key) {
+                    data.isBackAnim = true
+                }
+            }
+            mItemMenuAdapter?.notifyDataSetChanged()
+        }
+    }
 
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
@@ -81,7 +98,7 @@ class CommonCommandsDialog : BaseDialogDown {
     }
 
     private fun initMenuData() {
-        var mList:ArrayList<ItemMenuBean.Data> = ArrayList()
+
         /**
          * 安装模块
          */
@@ -342,8 +359,13 @@ class CommonCommandsDialog : BaseDialogDown {
     override fun getContentView(): Int {
         return R.layout.dialog_common_command
     }
+    public fun setFindKey(key: Int) {
+        val message = Message()
+        message.obj = key
+        mHandlerNotifyDataSetChanged.sendMessageDelayed(message, 500)
+    }
 
-    private fun selectIndex(index: Int) {
+    public fun selectIndex(index: Int) {
         select_1_ll?.setBackgroundResource(R.drawable.shape_line_2e84e6)
         select_2_ll?.setBackgroundResource(R.drawable.shape_line_2e84e6)
         when (index) {

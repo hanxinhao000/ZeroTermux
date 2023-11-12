@@ -2,7 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_termux_root_view"
     android:layout_width="match_parent"
-    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -15,6 +14,7 @@
             android:id="@+id/activity_termux_root_relative_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             android:layout_marginHorizontal="3dp"
             android:layout_marginVertical="0dp"
             android:orientation="vertical">

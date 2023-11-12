@@ -10,5 +10,7 @@ public class ItemMenuBean {
         public int key;
         public boolean isEg = false;
         public int backColor = -1;
+
+        public boolean isBackAnim = false;
     }
 }

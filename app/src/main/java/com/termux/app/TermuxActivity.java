@@ -487,98 +487,108 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTerminalView.setActionPointer2ClickListener(new TerminalView.ActionPointer2ClickListener() {
             @Override
             public void pointer2Click() {
-                if (UserSetManage.Companion.get().getZTUserBean().isToolShow()) {
+                openToolDialog(true, 0, -1);
+            }
+        });
+    }
+
+    private void openToolDialog(boolean isShowToolDialog, int index, int findKey) {
+        if (isShowToolDialog) {
+            if (UserSetManage.Companion.get().getZTUserBean().isToolShow()) {
+                return;
+            }
+        }
+        final LoadingDialog[] loadingDialog = {null};
+        CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
+        mCommonCommandsDialog.show();
+        if (index > 0) {
+            mCommonCommandsDialog.selectIndex(index);
+        }
+        mCommonCommandsDialog.setCancelable(true);
+        mCommonCommandsDialog.setFindKey(findKey);
+        mCommonCommandsDialog.setCommonDialogListener(new ItemMenuAdapter.CommonDialogListener() {
+            @Override
+            public void video(@NonNull File file) {
+                VideoUtils.getInstance().setVideoView(back_video);
+                VideoUtils.getInstance().start(file);
+                back_video.setVisibility(View.VISIBLE);
+                back_img.setVisibility(View.GONE);
+                LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
+            }
+        });
+        mCommonCommandsDialog.setClearStyleListener(new ItemMenuAdapter.ClearStyleListener() {
+            @Override
+            public void clear() {
+                VideoUtils.getInstance().onDestroy();
+                back_video.setVisibility(View.GONE);
+                back_img.setVisibility(View.GONE);
+                back_color.setVisibility(View.GONE);
+                TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
+                ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
+                mTerminalView.invalidate();
+                if (mExtraKeysView != null) {
+                    mExtraKeysView.setColorButton();
+                    mExtraKeysView.invalidate();
+                }
+                if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
+                    mCommonCommandsDialog.dismiss();
+                }
+            }
+        });
+        mCommonCommandsDialog.setKeyViewListener(new ItemMenuAdapter.KeyViewListener() {
+            @Override
+            public void view(@NonNull View mView) {
+                if (mView == null) {
+                    LogUtils.d(TAG, "key View is null, return.");
                     return;
                 }
-                final LoadingDialog[] loadingDialog = {null};
-                CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
-                mCommonCommandsDialog.show();
-                mCommonCommandsDialog.setCancelable(true);
-                mCommonCommandsDialog.setCommonDialogListener(new ItemMenuAdapter.CommonDialogListener() {
-                    @Override
-                    public void video(@NonNull File file) {
-                        VideoUtils.getInstance().setVideoView(back_video);
-                        VideoUtils.getInstance().start(file);
-                        back_video.setVisibility(View.VISIBLE);
-                        back_img.setVisibility(View.GONE);
-                        LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
-                    }
-                });
-                mCommonCommandsDialog.setClearStyleListener(new ItemMenuAdapter.ClearStyleListener() {
-                    @Override
-                    public void clear() {
-                        VideoUtils.getInstance().onDestroy();
-                        back_video.setVisibility(View.GONE);
-                        back_img.setVisibility(View.GONE);
-                        back_color.setVisibility(View.GONE);
-                        TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
-                        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
-                        mTerminalView.invalidate();
-                        if (mExtraKeysView != null) {
-                            mExtraKeysView.setColorButton();
-                            mExtraKeysView.invalidate();
-                        }
-                        if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
-                            mCommonCommandsDialog.dismiss();
-                        }
-                    }
-                });
-                mCommonCommandsDialog.setKeyViewListener(new ItemMenuAdapter.KeyViewListener() {
-                    @Override
-                    public void view(@NonNull View mView) {
-                        if (mView == null) {
-                            LogUtils.d(TAG, "key View is null, return.");
-                            return;
-                        }
-                        if (key_bord.getChildCount() > 0) {
-                            key_bord.removeAllViews();
-                            getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
-                            mTerminalView.stopTextSelectionMode();
+                if (key_bord.getChildCount() > 0) {
+                    key_bord.removeAllViews();
+                    getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
+                    mTerminalView.stopTextSelectionMode();
 
-                            KeyboardUtils.clearDisableSoftKeyboardFlags(TermuxActivity.this);
-                            KeyboardUtils.toggleSoftKeyboard(TermuxActivity.this);
-                        } else {
-                            try {
-                                key_bord.addView(mView);
-                                getTerminalToolbarViewPager().setVisibility(View.GONE);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                key_bord.removeAllViews();
-                            }
-
-                            KeyboardUtils.disableSoftKeyboard(TermuxActivity.this, mTerminalView);
-                        }
-                        if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
-                            mCommonCommandsDialog.dismiss();
-                        }
-
-                    }
-                });
-                mCommonCommandsDialog.setVShellDialogListener(new ItemMenuAdapter.VShellDialogListener() {
-                    @Override
-                    public void showDialog(boolean b) {
-                        if (b) {
-                            loadingDialog[0] = new LoadingDialog(TermuxActivity.this);
-                            loadingDialog[0].show();
-                        } else {
-                            if (loadingDialog[0] != null && loadingDialog[0].isShowing()) {
-                                loadingDialog[0].dismiss();
-                            }
-                        }
+                    KeyboardUtils.clearDisableSoftKeyboardFlags(TermuxActivity.this);
+                    KeyboardUtils.toggleSoftKeyboard(TermuxActivity.this);
+                } else {
+                    try {
+                        key_bord.addView(mView);
+                        getTerminalToolbarViewPager().setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        key_bord.removeAllViews();
                     }
 
-                    @Override
-                    public void vShell(@NonNull ArrayList<String> environment, @NonNull ArrayList<String> processArgs) {
-                        if (environment == null || processArgs == null) {
-                            return;
-                        }
-                        mTerminalView.sendTextToTerminal(UUtils.arrayListToStringShell(processArgs) + "\n");
-                        if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
-                            mCommonCommandsDialog.dismiss();
-                        }
+                    KeyboardUtils.disableSoftKeyboard(TermuxActivity.this, mTerminalView);
+                }
+                if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
+                    mCommonCommandsDialog.dismiss();
+                }
 
+            }
+        });
+        mCommonCommandsDialog.setVShellDialogListener(new ItemMenuAdapter.VShellDialogListener() {
+            @Override
+            public void showDialog(boolean b) {
+                if (b) {
+                    loadingDialog[0] = new LoadingDialog(TermuxActivity.this);
+                    loadingDialog[0].show();
+                } else {
+                    if (loadingDialog[0] != null && loadingDialog[0].isShowing()) {
+                        loadingDialog[0].dismiss();
                     }
-                });
+                }
+            }
+
+            @Override
+            public void vShell(@NonNull ArrayList<String> environment, @NonNull ArrayList<String> processArgs) {
+                if (environment == null || processArgs == null) {
+                    return;
+                }
+                mTerminalView.sendTextToTerminal(UUtils.arrayListToStringShell(processArgs) + "\n");
+                if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
+                    mCommonCommandsDialog.dismiss();
+                }
+
             }
         });
     }
@@ -1503,6 +1513,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout download_http;
     private LinearLayout vnc_start;
     private LinearLayout xue_hua;
+    private LinearLayout video_back_menu;
     private LinearLayout quanping;
     private LinearLayout zero_fun;
     private LinearLayout yuyan;
@@ -1571,6 +1582,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         msg_tv = findViewById(R.id.msg_tv);
         xue_fragment = findViewById(R.id.xue_fragment);
         xue_hua = findViewById(R.id.xue_hua);
+        video_back_menu = findViewById(R.id.video_back_menu);
         xue_hua_start = findViewById(R.id.xue_hua_start);
         quanping = findViewById(R.id.quanping);
         yuyan = findViewById(R.id.yuyan);
@@ -1612,6 +1624,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         download_http.setOnClickListener(this);
         vnc_start.setOnClickListener(this);
         xue_hua.setOnClickListener(this);
+        video_back_menu.setOnClickListener(this);
         quanping.setOnClickListener(this);
         zero_fun.setOnClickListener(this);
         yuyan.setOnClickListener(this);
@@ -1958,8 +1971,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     xue_fragment.removeAllViews();
                     SaveData.INSTANCE.saveStringOther("xue_statues", "def");
                 }
+                break;
 
-
+            case R.id.video_back_menu:
+                getDrawer().smoothClose();
+                openToolDialog(false, 1,
+                    CommonCommandsDialog.CommonCommandsDialogConstant.VIDEO_KEY);
                 break;
 
             //全屏 WindowUtils

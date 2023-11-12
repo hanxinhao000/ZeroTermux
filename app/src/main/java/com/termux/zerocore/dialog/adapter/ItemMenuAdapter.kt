@@ -10,6 +10,7 @@ import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
@@ -65,6 +66,17 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
     private var mClearStyleListener: ClearStyleListener? = null
     private var mCommonCommandsDialogDismissListener: CommonCommandsDialogDismissListener? = null
     private var mKeyViewListener: KeyViewListener? = null
+    private val mHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            val obj = msg.obj
+            if (obj != null && obj is CardView) {
+                val cardView = obj as CardView
+                cardView.setCardBackgroundColor(cardView.context.getColor(R.color.color_55000000))
+            }
+        }
+    }
+
     constructor(mList:ArrayList<ItemMenuBean.Data>?, mContext: Context, mCommonCommandsDialog:CommonCommandsDialog) : super() {
         this.mList = mList
         this.mContext = mContext
@@ -82,6 +94,12 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
             holder.eg_install_tv?.visibility = View.VISIBLE
         } else {
             holder.eg_install_tv?.visibility = View.INVISIBLE
+        }
+        if (mList!![position].isBackAnim) {
+            val message = Message()
+            message.obj = holder.card_view
+            holder.card_view?.setCardBackgroundColor(holder.itemView.context.getColor(R.color.color_8850b397))
+            mHandler.sendMessageDelayed(message, 1000)
         }
         holder.itemView.setOnClickListener {
             LogUtils.d(TAG, "onBindViewHolder itemView click key is:${mList!![position].key}")

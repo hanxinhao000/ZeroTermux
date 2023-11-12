@@ -18,7 +18,7 @@ import com.termux.R;
 public class ZeroTermuxBackLayout extends RelativeLayout {
     private View back_color;
     private ImageView back_img;
-    private VideoView back_video;
+    private CustomerVideoView back_video;
 
     public ZeroTermuxBackLayout(Context context) {
         super(context);

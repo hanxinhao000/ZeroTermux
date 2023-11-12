@@ -35,7 +35,7 @@ public class VideoUtils implements MediaPlayer.OnPreparedListener, MediaPlayer.O
 
     public void setVideoView(VideoView mVideoView) {
         this.mVideoView = mVideoView;
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);

@@ -742,11 +742,37 @@
 
                     </LinearLayout>
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:visibility="invisible"
-                        android:layout_height="wrap_content"/>
+                        android:orientation="vertical"
+                        android:layout_gravity="center"
+                        android:id="@+id/video_back_menu"
+                        android:gravity="center"
+                        android:layout_height="80dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:src="@mipmap/video_img_menu"
+                            android:layout_height="40dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:padding="2dp"
+                            android:paddingLeft="10dp"
+                            android:textStyle="bold"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:text="@string/vedio_select_name"
+                            android:layout_alignParentRight="true"
+                            android:textColor="@color/color_ffffff"
+                            android:textSize="10sp" />
+
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
