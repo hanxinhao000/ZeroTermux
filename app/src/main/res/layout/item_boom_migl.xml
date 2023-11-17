@@ -22,7 +22,7 @@
            app:cardElevation="0dp"
            app:cardBackgroundColor="@color/color_553E3E3E"
            app:cardCornerRadius="5dp"
-           android:layout_height="65dp">
+           android:layout_height="55dp">
 
            <RelativeLayout
                android:layout_width="match_parent"
@@ -81,9 +81,10 @@
 
 
                <ImageView
-                   android:layout_width="30dp"
-                   android:layout_height="30dp"
+                   android:layout_width="20dp"
+                   android:layout_height="20dp"
                    android:layout_centerVertical="true"
+                   android:alpha="0.5"
                    android:id="@+id/pin_top"
                    android:layout_marginRight="10dp"
                    android:layout_alignParentRight="true"
