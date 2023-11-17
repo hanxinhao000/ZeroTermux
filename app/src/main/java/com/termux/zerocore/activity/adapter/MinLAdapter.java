@@ -53,9 +53,9 @@ public class MinLAdapter extends RecyclerView.Adapter<MinLViewHolder> {
 
 
         if(dataNum.get(position).isChecked){
-            minLViewHolder.beijin.setVisibility(View.VISIBLE);
+            minLViewHolder.enter.setVisibility(View.VISIBLE);
         }else{
-            minLViewHolder.beijin.setVisibility(View.GONE);
+            minLViewHolder.enter.setVisibility(View.GONE);
         }
 
 

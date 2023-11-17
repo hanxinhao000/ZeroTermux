@@ -21,12 +21,14 @@ public class MinLViewHolder extends RecyclerView.ViewHolder {
     public TextView name;
     public TextView value;
     public CardView item_card;
-    public ImageView beijin;
+    public ImageView enter;
+    public ImageView pin_top;
     public MinLViewHolder(@NonNull View itemView) {
         super(itemView);
         name = itemView.findViewById(R.id.name);
         value = itemView.findViewById(R.id.value);
         item_card = itemView.findViewById(R.id.item_card);
-        beijin = itemView.findViewById(R.id.beijin);
+        enter = itemView.findViewById(R.id.enter);
+        pin_top = itemView.findViewById(R.id.pin_top);
     }
 }

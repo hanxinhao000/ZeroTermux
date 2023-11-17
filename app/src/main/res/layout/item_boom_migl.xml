@@ -9,12 +9,12 @@
 
 
    <RelativeLayout
-       android:layout_width="90dp"
-       android:layout_height="50dp">
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
 
 
        <androidx.cardview.widget.CardView
-           android:layout_width="90dp"
+           android:layout_width="match_parent"
            android:layout_weight="1"
            android:layout_marginLeft="5dp"
            android:layout_marginRight="5dp"
@@ -22,11 +22,11 @@
            app:cardElevation="0dp"
            app:cardBackgroundColor="@color/color_553E3E3E"
            app:cardCornerRadius="5dp"
-           android:layout_height="50dp">
+           android:layout_height="65dp">
 
            <RelativeLayout
                android:layout_width="match_parent"
-               android:layout_height="50dp">
+               android:layout_height="match_parent">
 
                <LinearLayout
                    android:layout_width="wrap_content"
@@ -54,14 +54,13 @@
                    <TextView
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:layout_marginTop="6dp"
                        android:layout_weight="1"
                        style="@style/textEllipsis"
                        android:gravity="center"
                        android:id="@+id/name"
                        android:text="@string/添加一个命令"
                        android:textColor="#fff"
-                       android:textSize="10sp"
+                       android:textSize="14sp"
                        android:textStyle="bold" />
 
                    <TextView
@@ -81,41 +80,28 @@
 
 
 
-               <androidx.cardview.widget.CardView
-                   android:layout_width="wrap_content"
-                   android:layout_marginTop="10dp"
-                   android:layout_marginLeft="5dp"
-                   android:layout_marginRight="5dp"
-                   android:layout_marginBottom="5dp"
-                   android:layout_alignParentBottom="true"
+               <ImageView
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:layout_centerVertical="true"
+                   android:id="@+id/pin_top"
+                   android:layout_marginRight="10dp"
                    android:layout_alignParentRight="true"
-                   android:visibility="gone"
-                   app:cardElevation="0dp"
-                   app:cardBackgroundColor="@color/color_553E3E3E"
-                   app:cardCornerRadius="5dp"
-                   android:layout_height="wrap_content">
-
-                   <ImageView
-                       android:layout_width="20dp"
-                       android:layout_height="20dp"
-
-                       android:visibility="invisible"
-                       android:background="@color/color_FFFFFF"
-                       android:src="@mipmap/jiandan_beij" />
-
-               </androidx.cardview.widget.CardView>
+                   android:visibility="visible"
+                   android:src="@mipmap/pin_top" />
 
 
                <ImageView
-                   android:layout_width="8dp"
-                   android:layout_marginLeft="5dp"
-                   android:layout_marginTop="5dp"
+                   android:layout_width="10dp"
+                   android:layout_marginLeft="8dp"
+                   android:layout_marginTop="8dp"
+                   android:layout_marginRight="5dp"
                    android:layout_alignParentBottom="true"
                    android:layout_alignParentRight="true"
-                   android:id="@+id/beijin"
+                   android:id="@+id/enter"
                    android:src="@mipmap/huiche"
                    android:layout_marginBottom="3dp"
-                   android:layout_height="8dp"/>
+                   android:layout_height="10dp"/>
            </RelativeLayout>
 
 

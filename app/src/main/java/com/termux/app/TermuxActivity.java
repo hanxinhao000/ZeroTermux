@@ -2629,20 +2629,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return;
         }
         BoomWindow.SWITCH = false;
-        showBoomDialog(false);
+        showBoomDialog();
     }
 
-    private void showBoomDialog(boolean bln) {
+    private void showBoomDialog() {
         final PopupWindow[] popupWindow = {new PopupWindow()};
         final BoomWindow[] boomWindow = {new BoomWindow()};
-        boomWindow[0].setCalculateWindows(new BoomWindow.CalculateWindows() {
-            @Override
-            public void windowsVariety(boolean bln) {
-                popupWindow[0].dismiss();
-                popupWindow[0] = null;
-                showBoomDialog(bln);
-            }
-        });
         popupWindow[0].setContentView(boomWindow[0].getView(new BoomMinLAdapter.CloseLiftListener() {
             @Override
             public void close() {
@@ -2650,10 +2642,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         }, TermuxActivity.this, popupWindow[0]));
         popupWindow[0].setOutsideTouchable(true);
-        //  popupWindow.setAnimationStyle(R.style.Animation);
         popupWindow[0].setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow[0].setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow[0].showAsDropDown(mTerminalView, 0, -boomWindow[0].getHigh(bln));
+        popupWindow[0].showAsDropDown(mTerminalView, 0, -boomWindow[0].getHigh());
         popupWindow[0].setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {

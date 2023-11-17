@@ -54,10 +54,25 @@ public class BoomMinLAdapter extends RecyclerView.Adapter<MinLViewHolder> {
 
 
         if(dataNum.get(position).isChecked){
-            minLViewHolder.beijin.setVisibility(View.VISIBLE);
+            minLViewHolder.enter.setVisibility(View.VISIBLE);
         }else{
-            minLViewHolder.beijin.setVisibility(View.GONE);
+            minLViewHolder.enter.setVisibility(View.GONE);
         }
+
+        if(dataNum.get(position).isPinTop){
+            minLViewHolder.pin_top.setImageResource(R.mipmap.pin_top_true);
+        } else {
+            minLViewHolder.pin_top.setImageResource(R.mipmap.pin_top);
+        }
+        minLViewHolder.pin_top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataNum.get(position).isPinTop = !dataNum.get(position).isPinTop;
+                if (mPinTopListener != null) {
+                    mPinTopListener.itemPinTopRefresh();
+                }
+            }
+        });
 
 
         minLViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -199,17 +214,23 @@ public class BoomMinLAdapter extends RecyclerView.Adapter<MinLViewHolder> {
 
 
     private SXListener mSXListener;
+    private PinTopListener mPinTopListener;
 
     public void setSXListener(SXListener mSXListener){
         this.mSXListener = mSXListener;
     }
+    public void setPinTopListener(PinTopListener pinTopListener) {
+        this.mPinTopListener = pinTopListener;
+    }
     public interface CloseLiftListener{
-
         void close();
     }
 
     public interface SXListener{
-
         void sx();
+    }
+
+    public static interface PinTopListener {
+        void itemPinTopRefresh();
     }
 }
