@@ -65,9 +65,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name=".zerocore.settings.ZTInstallActivity"
+            android:name=".zerocore.settings.TimerActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" />
+        <activity
+            android:name=".zerocore.settings.ZTInstallActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".zerocore.settings.ZTAboutActivity"
             android:exported="false"

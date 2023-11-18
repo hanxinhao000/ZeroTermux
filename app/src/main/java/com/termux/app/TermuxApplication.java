@@ -30,6 +30,7 @@ import com.termux.zerocore.bean.SaveDataZeroEngine;
 import com.termux.zerocore.bosybox.BusyBoxManager;
 import com.termux.zerocore.filetype.MyFileImageListener;
 import com.termux.zerocore.ftp.utils.UserSetManage;
+import com.termux.zerocore.libsu.LibSuManage;
 import com.termux.zerocore.utils.ClipBoardUtil;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import com.zp.z_file.common.ZFileManageHelp;
@@ -135,6 +136,8 @@ public class TermuxApplication extends XHApplication {
 
             }
         });
+        //初始化定时器
+        LibSuManage.getInstall().initTimer();
 
         new ClipBoardUtil().registerClipEvents();
 

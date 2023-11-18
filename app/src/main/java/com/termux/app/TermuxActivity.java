@@ -131,6 +131,7 @@ import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
+import com.termux.zerocore.settings.TimerActivity;
 import com.termux.zerocore.settings.ZtSettingsActivity;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
@@ -1517,6 +1518,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout quanping;
     private LinearLayout zero_fun;
     private LinearLayout yuyan;
+    private LinearLayout timer;
     private LinearLayout shiyan_fun;
     private LinearLayout zerotermux_bbs;
     private LinearLayout key_bord;
@@ -1584,6 +1586,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         xue_hua = findViewById(R.id.xue_hua);
         video_back_menu = findViewById(R.id.video_back_menu);
         xue_hua_start = findViewById(R.id.xue_hua_start);
+        timer = findViewById(R.id.timer);
         quanping = findViewById(R.id.quanping);
         yuyan = findViewById(R.id.yuyan);
         ip_status = findViewById(R.id.ip_status);
@@ -1630,6 +1633,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         yuyan.setOnClickListener(this);
         beautify.setOnClickListener(this);
         shiyan_fun.setOnClickListener(this);
+        timer.setOnClickListener(this);
         mTerminalView.setOnFocusChangeListener(this);
 
         mTerminalView.setDoubleClickListener(this);
@@ -2058,6 +2062,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 intent1.setData(Uri.parse("https://t.me/ztcommunity"));
                 intent1.setAction(Intent.ACTION_VIEW);
                 this.startActivity(intent1);
+                break;
+            case R.id.timer:
+                startActivity(new Intent(this, TimerActivity.class));
                 break;
             case R.id.beautify:
                 if (UserSetManage.Companion.get().getZTUserBean().isStyleTriggerOff()) {
@@ -2995,7 +3002,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onSuccessful(@NotNull Message msg, int mWhat) {
                 loadingDialog.dismiss();
-                UUtils.showLog("连接成功:" + msg.obj);
+             //   UUtils.showLog("连接成功:" + msg.obj);
 
                 try {
                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
@@ -3049,7 +3056,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             @Override
                             public void onSuccessful(@NotNull Message msg, int mWhat) {
                                 loadingDialog.dismiss();
-                                UUtils.showLog("连接成功:" + msg.obj);
+                            //    UUtils.showLog("连接成功:" + msg.obj);
 
                                 try {
                                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
@@ -3106,7 +3113,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onSuccessful(@NotNull Message msg, int mWhat) {
 
-                UUtils.showLog("连接成功:" + msg.obj);
+              //  UUtils.showLog("连接成功:" + msg.obj);
                 LogUtils.d(TAG, "getServiceVs onSuccessful connection succeeded");
 
                 try {

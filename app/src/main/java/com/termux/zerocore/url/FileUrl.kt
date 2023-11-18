@@ -68,6 +68,9 @@ object FileUrl {
     public val openLeft = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/bin/openleftwindow"
     //打开右边工具
     public val openRight = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/bin/openrightwindow"
+    //定时器目录
+    public val timerDir = "${mainHomeUrl}/.timerdir"
+    public val timerFile = "${mainHomeUrl}/.timerdir/bashrc.sh"
 
 
     //获取短信的目录

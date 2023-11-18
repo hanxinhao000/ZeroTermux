@@ -697,7 +697,7 @@ class DownLoadDialogBoom : BaseDialogDown, DownLoadMuTILS.DownLoadMuTILSListener
         BaseHttpUtils().getUrl("$ip", object : HttpResponseListenerBase {
             override fun onSuccessful(msg: Message, mWhat: Int) {
                 pro?.visibility = View.GONE
-                UUtils.showLog("连接成功:" + msg.obj)
+               // UUtils.showLog("连接成功:" + msg.obj)
                 try {
                     val serviceName = Gson().fromJson(msg.obj as String, ZDYDataBean::class.java)
 

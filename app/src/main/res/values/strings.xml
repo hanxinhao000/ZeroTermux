@@ -913,6 +913,22 @@
     <string name="zt_install">还原/扩展官方版本</string>
     <string name="zt_install_float">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> Termux Float】安装插件</string>
     <string name="zt_install_file">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> (Zero)Utermux File Plug】安装插件</string>
+    <string name="zt_timer">定时任务</string>
+    <string name="zt_timer_settings">定时任务设置</string>
+    <string name="zt_timer_edit">编辑定时任务代码</string>
+    <string name="zt_timer_edit_sum">按照你的喜好，编辑属于自己的定时任务代码</string>
+    <string name="zt_timer_start">启动定时任务</string>
+    <string name="zt_timer_start_sum">启动定时任务到达时间会执行一次命令代码</string>
+    <string name="zt_timer_this_check">当前选择</string>
+    <string name="zt_timer_30_second">30秒</string>
+    <string name="zt_timer_1_minute">1分钟</string>
+    <string name="zt_timer_10_minute">10分钟</string>
+    <string name="zt_timer_30_minute">30分钟</string>
+    <string name="zt_timer_1_hour">1小时</string>
+    <string name="zt_timer_customize">自定义</string>
+    <string name="zt_timer_message">自定义单位为秒\n1 分钟 = 60 秒\n1 小时 = 60 分钟 * 60 秒 = 3600 秒 \n1 天 = 24 小时 * 60 分钟 * 60 秒 = 86400秒</string>
+    <string name="zt_timer_log">查询当前日志</string>
+    <string name="zt_timer_log_sum">查询当前定时任务日志</string>
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>
         <item>1280x720</item>

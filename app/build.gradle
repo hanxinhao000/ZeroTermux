@@ -48,6 +48,7 @@ android {
 
 
     dependencies {
+        def libsuVersion = '5.2.1'
         implementation fileTree(include: ['*.jar'], dir: 'libs')
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.9.0-alpha05"
@@ -66,6 +67,13 @@ android {
 
         implementation 'me.laoyuyu.aria:core:3.8.16'
         annotationProcessor 'me.laoyuyu.aria:compiler:3.8.16'
+
+        // The core module that provides APIs to a shell
+        implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
+        // Optional: APIs for creating root services. Depends on ":core"
+        implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
+        // Optional: Provides remote file system support
+        implementation "com.github.topjohnwu.libsu:nio:${libsuVersion}"
 
 
         debugImplementation 'com.github.getActivity:Logcat:9.6'

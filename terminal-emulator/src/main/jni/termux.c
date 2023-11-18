@@ -9,11 +9,20 @@
 #include <sys/wait.h>
 #include <termios.h>
 #include <unistd.h>
+#include<android/log.h>
 
 #define TERMUX_UNUSED(x) x __attribute__((__unused__))
 #ifdef __APPLE__
 # define LACKS_PTSNAME_R
 #endif
+
+
+#define TAG "ZeroTermux" // 这个是自定义的LOG的标识
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__) // 定义LOGD类型
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,TAG ,__VA_ARGS__) // 定义LOGI类型
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,TAG ,__VA_ARGS__) // 定义LOGW类型
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,TAG ,__VA_ARGS__) // 定义LOGE类型
+#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL,TAG ,__VA_ARGS__) // 定义LOGF类型
 
 static int throw_runtime_exception(JNIEnv* env, char const* message)
 {
@@ -61,12 +70,18 @@ static int create_subprocess(JNIEnv* env,
     ioctl(ptm, TIOCSWINSZ, &sz);
 
     pid_t pid = fork();
+    LOGI("dddddddddddddddddddddddd pid_t1");
+    LOGE("ddddddddddddddddddddddddee %s", cmd);
+    LOGE("ddddddddddddddddddddddddee %s", cmd);
     if (pid < 0) {
+        LOGI("dddddddddddddddddddddddd pid_t2");
         return throw_runtime_exception(env, "Fork failed");
     } else if (pid > 0) {
+        LOGI("dddddddddddddddddddddddd pid_t3");
         *pProcessId = (int) pid;
         return ptm;
     } else {
+        LOGI("dddddddddddddddddddddddd pid_t4");
         // Clear signals which the Android java process may have blocked:
         sigset_t signals_to_unblock;
         sigfillset(&signals_to_unblock);
@@ -92,10 +107,8 @@ static int create_subprocess(JNIEnv* env,
             }
             closedir(self_dir);
         }
-
         clearenv();
         if (envp) for (; *envp; ++envp) putenv(*envp);
-
         if (chdir(cwd) != 0) {
             char* error_message;
             // No need to free asprintf()-allocated memory since doing execvp() or exit() below.
@@ -103,6 +116,8 @@ static int create_subprocess(JNIEnv* env,
             perror(error_message);
             fflush(stderr);
         }
+
+       // LOGI("execvp_argv %s", argv);
         execvp(cmd, argv);
         // Show terminal output about failing exec() call:
         char* error_message;
@@ -133,6 +148,10 @@ JNIEXPORT jint JNICALL Java_com_termux_terminal_JNI_createSubprocess(
             char const* arg_utf8 = (*env)->GetStringUTFChars(env, arg_java_string, NULL);
             if (!arg_utf8) return throw_runtime_exception(env, "GetStringUTFChars() failed for argv");
             argv[i] = strdup(arg_utf8);
+            //const char *str = (*env)->GetStringUTFChars(env, arg_java_string, 0);
+            LOGI("ddddddddddddddddddd: %s", arg_utf8);
+            LOGI("ddddddddddddddddddd: %d", rows);
+            LOGI("ddddddddddddddddddd: %d", columns);
             (*env)->ReleaseStringUTFChars(env, arg_java_string, arg_utf8);
         }
         argv[size] = NULL;
@@ -148,6 +167,8 @@ JNIEXPORT jint JNICALL Java_com_termux_terminal_JNI_createSubprocess(
             char const* env_utf8 = (*env)->GetStringUTFChars(env, env_java_string, 0);
             if (!env_utf8) return throw_runtime_exception(env, "GetStringUTFChars() failed for env");
             envp[i] = strdup(env_utf8);
+            //const char *str = (*env)->GetStringUTFChars(env, env_java_string, 0);
+            //LOGI("zerotermux____env = %s", str);
             (*env)->ReleaseStringUTFChars(env, env_java_string, env_utf8);
         }
         envp[size] = NULL;
