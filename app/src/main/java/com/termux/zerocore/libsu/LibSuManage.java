@@ -73,7 +73,7 @@ public class LibSuManage {
         if (timerFile.exists()) {
             return true;
         }
-        UUtils.writerFileRaw(timerFile, R.raw.bashrc);
+        UUtils.writerFileRaw(timerFile, R.raw.termux_timer);
         return timerFile.exists();
     }
 
@@ -83,7 +83,7 @@ public class LibSuManage {
         if (!timerDir.exists()) {
             timerDir.mkdirs();
         }
-        UUtils.writerFileRaw(timerFile, R.raw.bashrc);
+        UUtils.writerFileRaw(timerFile, R.raw.termux_timer);
         return timerFile.exists();
     }
 
@@ -104,8 +104,7 @@ public class LibSuManage {
         }
         @Override
         public void run() {
-
-            Shell.cmd(mFunName).to(mConsoleList).exec();
+            Shell.sh(mFunName).to(mConsoleList).exec();
         }
     }
 
@@ -118,7 +117,7 @@ public class LibSuManage {
         }
         @Override
         public void run() {
-            Shell.cmd(mFunName).to(mConsoleList).submit();
+            Shell.sh(mFunName).to(mConsoleList).submit();
         }
     }
 
@@ -126,19 +125,8 @@ public class LibSuManage {
         @Override
         public boolean onInit(@NonNull Context context, @NonNull Shell shell) {
             // Load our init script
-           // InputStream bashrc = context.getResources().openRawResource(R.raw.bashrc);
-            File timerFile = new File(FileUrl.INSTANCE.getTimerFile());
-            if (!timerFile.exists()) {
-                LogUtils.e(TAG, "onInit timer file init fail, not is exists..");
-                return false;
-            }
-            try {
-                FileInputStream fileInputStream = new FileInputStream(timerFile);
-                shell.newJob().add(fileInputStream).exec();
-            } catch (FileNotFoundException e) {
-                LogUtils.e(TAG, "onInit timer file init fail, " + e);
-                return false;
-            }
+            InputStream bashrc = context.getResources().openRawResource(R.raw.bashrc);
+           shell.newJob().add(bashrc).exec();
             return true;
         }
     }

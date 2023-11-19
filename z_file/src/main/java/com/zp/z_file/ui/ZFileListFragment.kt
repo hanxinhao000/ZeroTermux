@@ -743,7 +743,6 @@ class ZFileListFragment : Fragment() {
                     d.dismiss()
                     if (zFragmentListener == null) {
                         requireContext().toast(requireContext() getStringById R.string.zfile_11_bad)
-                        mActivity.finish()
                     } else {
                         zFragmentListener?.onExternalStorageManagerFiled(mActivity)
                     }
