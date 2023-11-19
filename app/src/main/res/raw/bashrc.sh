@@ -1,4 +1,7 @@
 #!/system/bin/sh
+#################ZeroTermux###########
+#    ZeroTermux Shell 增加会话脚本     #
+######################################
 shell_main() {
 export PREFIX='/data/data/com.termux/files/usr'
 export HOME='/data/data/com.termux/files/home'
