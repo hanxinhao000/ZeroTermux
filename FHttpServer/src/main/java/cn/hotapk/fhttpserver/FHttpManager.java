@@ -12,12 +12,7 @@ import cn.hotapk.fhttpserver.annotation.RequestMapping;
 import cn.hotapk.fhttpserver.utils.FHttpServerUtils;
 import cn.hotapk.fhttpserver.utils.FStaticResUtils;
 
-/**
- * @author laijian
- * @version 2017/12/1
- * @Copyright (C)下午11:20 , www.hotapk.cn
- * 管理类
- */
+
 public class FHttpManager {
     private static FHttpManager fHttpManager;
     private FHttpServer fHttpServer;
