@@ -24,3 +24,6 @@ shell_kill() {
 echo ">>>>>>>>>>>>>>>>>shell_kill"
 kill -9 pid
 }
+shell_chmod() {
+    chmod 777 /data/data/com.termux/files/execTermuxEnv.sh
+}

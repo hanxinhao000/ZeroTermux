@@ -75,6 +75,8 @@ object FileUrl {
     public val timerShellDir = "${mainHomeUrl}/.timerdir"
     public val timerShellFile = "${mainHomeUrl}/.timerdir/shell_timer.sh"
     public val timerShellLogDir = "${mainHomeUrl}/.timerdir/log"
+    public val timerShellExecDir = "${mainFilesUrl}"
+    public val timerShellExecFile = "${mainFilesUrl}/execTermuxEnv.sh"
 
 
     //获取短信的目录

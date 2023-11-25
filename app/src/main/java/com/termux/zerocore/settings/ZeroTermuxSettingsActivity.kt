@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.ftp.utils.UserSetManage
+import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.FileHttpUtils.Companion.get
+import com.topjohnwu.superuser.Shell
 import com.zp.z_file.util.LogUtils
+import java.io.File
 
 class ZeroTermuxSettingsActivity : AppCompatActivity() {
 
@@ -29,6 +33,9 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
     private val logOutputSwitch by lazy {findViewById<SwitchCompat>(R.id.log_output_switch)}
     private val logOutputLl by lazy {findViewById<LinearLayout>(R.id.log_output_ll)}
 
+    private val shellTermuxSwitch by lazy {findViewById<SwitchCompat>(R.id.shell_termux_switch)}
+    private val shellTermuxLl by lazy {findViewById<LinearLayout>(R.id.shell_termux_ll)}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_zero_termux_settings)
@@ -43,6 +50,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         setSwitchStatus(isToolShowSwitch, isToolShowLl)
         setSwitchStatus(forceUseNumpadSwitch, forceUseNumpadLl)
         setSwitchStatus(logOutputSwitch, logOutputLl)
+        setSwitchStatus(shellTermuxSwitch, shellTermuxLl)
     }
 
     private fun initStatus() {
@@ -53,6 +61,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         isToolShowSwitch.isChecked = ztUserBean.isToolShow
         forceUseNumpadSwitch.isChecked = ztUserBean.isForceUseNumpad
         logOutputSwitch.isChecked = ztUserBean.isOutputLOG
+        shellTermuxSwitch.isChecked = isShellTermux()
     }
 
     private fun setSwitchStatus(switchCompat: SwitchCompat, linearLayout: LinearLayout) {
@@ -90,9 +99,30 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
                     ztUserBean.isOutputLOG = switchCompat.isChecked
                     LogUtils.isShow = switchCompat.isChecked
                 }
+                shellTermuxSwitch -> {
+                    if (shellTermuxSwitch.isChecked) {
+                        writerShellTermux()
+                    } else {
+                        File(FileUrl.timerShellExecFile).delete()
+                    }
+
+                }
             }
             UserSetManage.get().setZTUserBean(ztUserBean)
         }
+    }
+
+    private fun writerShellTermux() {
+        val file = File(FileUrl.timerShellExecFile)
+        if (!file.exists()) {
+            UUtils.writerFile("runcommand/execTermuxEnv.sh", file)
+            Shell.cmd("shell_chmod").exec()
+        }
+    }
+
+    private fun isShellTermux(): Boolean {
+        val file = File(FileUrl.timerShellExecFile)
+        return file.exists()
     }
 
 }
