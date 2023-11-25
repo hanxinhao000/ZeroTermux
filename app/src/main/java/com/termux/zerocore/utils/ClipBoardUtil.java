@@ -26,28 +26,33 @@ public class ClipBoardUtil {
         mOnPrimaryClipChangedListener = new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
             public void onPrimaryClipChanged() {
-                if (mClipboardManager.hasPrimaryClip()
-                    && mClipboardManager.getPrimaryClip().getItemCount() > 0) {
-                    // 获取复制、剪切的文本内容
-                    CharSequence content =
-                        mClipboardManager.getPrimaryClip().getItemAt(0).getText();
-                    LogUtils.d(TAG, "registerClipEvents Clipboard text is:" + content);
+                try {
+                    if (mClipboardManager.hasPrimaryClip()
+                        && mClipboardManager.getPrimaryClip().getItemCount() > 0) {
+                        // 获取复制、剪切的文本内容
+                        CharSequence content =
+                            mClipboardManager.getPrimaryClip().getItemAt(0).getText();
+                        LogUtils.d(TAG, "registerClipEvents Clipboard text is:" + content);
 
-                    if (timeMillis != 0) {
-                        long timeTemp = System.currentTimeMillis();
-                        if (timeTemp - timeMillis < 500) {
-                            LogUtils.d(TAG, "registerClipEvents onPrimaryClipChanged is more");
+                        if (timeMillis != 0) {
+                            long timeTemp = System.currentTimeMillis();
+                            if (timeTemp - timeMillis < 500) {
+                                LogUtils.d(TAG, "registerClipEvents onPrimaryClipChanged is more");
+                                return;
+                            }
+                        }
+                        timeMillis = System.currentTimeMillis();
+                        if (TextUtils.isEmpty(content)){
+                            UUtils.showMsg(UUtils.getString(R.string.clipboard_empty_copy));
                             return;
                         }
-                    }
-                    timeMillis = System.currentTimeMillis();
-                    if (TextUtils.isEmpty(content)){
-                        UUtils.showMsg(UUtils.getString(R.string.clipboard_empty_copy));
-                        return;
-                    }
-                    FileIOUtils.INSTANCE.setClipBoardString(content.toString());
+                        FileIOUtils.INSTANCE.setClipBoardString(content.toString());
 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
         };
         mClipboardManager.addPrimaryClipChangedListener(mOnPrimaryClipChangedListener);
