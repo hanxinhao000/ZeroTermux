@@ -914,9 +914,8 @@
     <string name="zt_install_float">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> Termux Float】安装插件</string>
     <string name="zt_install_file">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> (Zero)Utermux File Plug】安装插件</string>
     <string name="zt_timer">定时任务</string>
-    <string name="zt_timer_settings">定时任务设置</string>
-    <string name="zt_timer_edit">编辑定时任务代码</string>
-    <string name="zt_timer_edit_sum">按照你的喜好，编辑属于自己的定时任务代码</string>
+    <string name="zt_timer_settings">定时任务设置(BATE)</string>
+
     <string name="zt_timer_start">启动定时任务</string>
     <string name="zt_timer_start_sum">启动定时任务到达时间会执行一次命令代码</string>
     <string name="zt_timer_this_check">当前选择</string>
@@ -924,11 +923,24 @@
     <string name="zt_timer_1_minute">1分钟</string>
     <string name="zt_timer_10_minute">10分钟</string>
     <string name="zt_timer_30_minute">30分钟</string>
+    <string name="zt_timer_minute">分钟</string>
     <string name="zt_timer_1_hour">1小时</string>
     <string name="zt_timer_customize">自定义</string>
     <string name="zt_timer_message">自定义单位为秒\n1 分钟 = 60 秒\n1 小时 = 60 分钟 * 60 秒 = 3600 秒 \n1 天 = 24 小时 * 60 分钟 * 60 秒 = 86400秒</string>
-    <string name="zt_timer_log">查询当前日志</string>
-    <string name="zt_timer_log_sum">查询当前定时任务日志</string>
+
+    <string name="zt_timer_log">日志目录</string>
+    <string name="zt_timer_log_sum">LOG目录在:\n~/.timerdir/log/,请查看此处LOG运行情况.</string>
+    <string name="zt_timer_edit">脚本目录</string>
+    <string name="zt_timer_edit_sum">请手动修改Termux目录下：\nZT环境下：~/.timerdir/termux_timer.sh\nSHELL环境下：~/.timerdir/shell_timer.sh\n注意！注意！注意\n在ZeroTermux 环境下请不要授予APP ROOT权限，否则无法运行!</string>
+
+    <string name="zt_timer_environment">当前运行环境</string>
+    <string name="zt_timer_environment_sum">当前运行环境为:</string>
+    <string name="zt_timer_other_title_dialog">自定义时常(秒)</string>
+    <string name="zt_timer_other_input_numer_dialog">请输入数字或者输入数字大于long最大值(单位为秒)</string>
+    <string name="zt_timer_notification_timer_title">(ZT)定时任务当前正在运行</string>
+    <string name="zt_timer_notification_timer_sum">当前计划时间间隔:</string>
+    <string name="zt_timer_notification_timer_cunt">当前执行次数:</string>
+    <string name="zt_timer_notification_timer_kill">正在强制关闭当前任务！</string>
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>
         <item>1280x720</item>

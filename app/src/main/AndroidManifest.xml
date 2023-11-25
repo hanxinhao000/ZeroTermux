@@ -64,10 +64,15 @@
         android:theme="@style/Theme.TermuxApp.DayNight.DarkActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <service
+            android:name=".zerocore.settings.services.TimerExeService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".zerocore.settings.TimerActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="false" />
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".zerocore.settings.ZTInstallActivity"
             android:exported="false"

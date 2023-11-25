@@ -84,10 +84,10 @@
 
             </androidx.cardview.widget.CardView>
 
-
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 app:cardElevation="0dp"
+                android:id="@+id/start_switch_environment"
                 android:layout_marginTop="10dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="6dp"
@@ -100,8 +100,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:orientation="vertical"
+                        android:layout_marginRight="70dp"
                         android:padding="10dp"
-                        android:layout_marginRight="50dp"
                         android:layout_height="wrap_content">
 
                         <TextView
@@ -109,16 +109,17 @@
                             android:textColor="@color/color_ffffff"
                             android:textStyle="bold"
                             android:textSize="15sp"
-                            android:text="@string/zt_timer_edit"
+                            android:text="@string/zt_timer_environment"
                             android:layout_height="wrap_content"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_marginTop="10dp"
+                            android:id="@+id/start_switch_environment_sum"
                             android:textColor="@color/md_grey_500"
                             android:textStyle="bold"
                             android:textSize="13sp"
-                            android:text="@string/zt_timer_edit_sum"
+                            android:text="@string/zt_timer_environment_sum"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
 
@@ -129,72 +130,71 @@
                         android:layout_centerVertical="true"
                         android:orientation="vertical"
                         android:layout_marginRight="10dp">
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:src="@mipmap/up_down"
-                            android:rotation="270"
-                            android:layout_height="15dp"/>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:layout_width="wrap_content"
+                            android:id="@+id/start_switch_environment_switch"
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
 
                 </RelativeLayout>
 
             </androidx.cardview.widget.CardView>
+
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 app:cardElevation="0dp"
-                android:id="@+id/zt_timer_log"
-                android:layout_marginTop="10dp"
+                android:id="@+id/edit_code"
+                android:layout_marginTop="20dp"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="6dp"
                 android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:padding="10dp"
+                   android:orientation="vertical"
+                   android:layout_height="wrap_content">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:orientation="vertical"
-                        android:padding="10dp"
-                        android:layout_marginRight="50dp"
-                        android:layout_height="wrap_content">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:textColor="@color/color_ffffff"
-                            android:textStyle="bold"
-                            android:textSize="15sp"
-                            android:text="@string/zt_timer_log"
-                            android:layout_height="wrap_content"/>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:textColor="@color/color_ffffff"
+                       android:textStyle="bold"
+                       android:textSize="15sp"
+                       android:text="@string/zt_timer_edit"
+                       android:layout_height="wrap_content"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:textColor="@color/md_grey_500"
-                            android:textStyle="bold"
-                            android:textSize="13sp"
-                            android:text="@string/zt_timer_log_sum"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_marginTop="10dp"
+                       android:textColor="@color/md_grey_500"
+                       android:textStyle="bold"
+                       android:textSize="13sp"
+                       android:text="@string/zt_timer_edit_sum"
+                       android:layout_height="wrap_content"/>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical"
-                        android:layout_marginRight="10dp">
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:src="@mipmap/up_down"
-                            android:rotation="270"
-                            android:layout_height="15dp"/>
-                    </LinearLayout>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:textColor="@color/color_ffffff"
+                       android:textStyle="bold"
+                       android:textSize="15sp"
+                       android:layout_marginTop="10dp"
+                       android:text="@string/zt_timer_log"
+                       android:layout_height="wrap_content"/>
 
-                </RelativeLayout>
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_marginTop="10dp"
+                       android:textColor="@color/md_grey_500"
+                       android:textStyle="bold"
+                       android:textSize="13sp"
+                       android:text="@string/zt_timer_log_sum"
+                       android:layout_height="wrap_content"/>
+               </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -228,6 +228,7 @@
                             android:layout_marginTop="10dp"
                             android:textColor="@color/md_grey_500"
                             android:textStyle="bold"
+                            android:id="@+id/check_timer_sum"
                             android:textSize="13sp"
                             android:text="@string/zt_timer_10_minute"
                             android:layout_height="wrap_content"/>
@@ -276,6 +277,7 @@
                         android:layout_weight="1"
                         android:layout_marginRight="5dp"
                         android:layout_height="30dp"
+                        android:id="@+id/s_30"
                         android:background="@drawable/shape_line_8cff5a"
                         android:gravity="center">
 
@@ -306,6 +308,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="30dp"
+                        android:id="@+id/m_1"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/shape_line_2e84e6"
                         android:gravity="center"
@@ -337,6 +340,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_weight="1"
+                        android:id="@+id/m_10"
                         android:layout_height="30dp"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/shape_line_2e84e6"
@@ -369,6 +373,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="30dp"
+                        android:id="@+id/m_30"
                         android:layout_marginRight="5dp"
                         android:background="@drawable/shape_line_2e84e6"
                         android:gravity="center"
@@ -406,6 +411,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="30dp"
+                    android:id="@+id/other"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/shape_line_2e84e6"
                     android:gravity="center"
