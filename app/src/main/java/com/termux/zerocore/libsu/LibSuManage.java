@@ -59,6 +59,8 @@ public class LibSuManage {
     private Thread mThread;
     private ShellLogRunnable mShellLogRunnable;
 
+    private boolean isRun = false;
+
     private LibSuManage(){
 
     }
@@ -166,6 +168,13 @@ public class LibSuManage {
             mShellLogRunnable.stop();
             mShellLogRunnable = null;
         }
+    }
+
+    public boolean isRun() {
+        if (mShellLogRunnable == null) {
+            return false;
+        }
+        return !mShellLogRunnable.isStop;
     }
 
     public void shellCommandSubmit(String funName) {

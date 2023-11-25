@@ -59,6 +59,7 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         mOther.setOnClickListener(this)
         val ztTimerBean = TimerSetManage.get().getZTTimerBean()
         mStartSwitchEnvironmentSwitch.isChecked = TimerSetManage.get().getZTTimerBean().isZeroTermux
+        mStartTimerSwitch.isChecked = mLibSuManage!!.isRun
         if (TimerSetManage.get().getZTTimerBean().timerNumber != TimerBean.TIMER_OTHER) {
             switchIndex(ztTimerBean.timerNumber)
         } else {
@@ -87,6 +88,9 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         switchCompat.setOnCheckedChangeListener { buttonView, isChecked ->
             when (switchCompat) {
                 mStartTimerSwitch -> {
+                    if (mLibSuManage!!.isRun) {
+                        return@setOnCheckedChangeListener
+                    }
                     if (mStartTimerSwitch.isChecked) {
                         LogUtils.e(TAG, "onAddElement: start")
                        // mLibSuManage?.writerDebugFile()
