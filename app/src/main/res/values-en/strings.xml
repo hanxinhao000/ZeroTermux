@@ -971,4 +971,35 @@ Reset successfully</string>
 
     <string name="copy_uri_error">URI duplication error, please wait for the developer to fix it...</string>
 
+    <string name="zt_timer">scheduled tasks</string>
+    <string name="zt_timer_settings">Scheduled task settings(BATE)</string>
+
+    <string name="zt_timer_start">Start a scheduled task</string>
+    <string name="zt_timer_start_sum">The command code will be executed once when the scheduled task is started.</string>
+    <string name="zt_timer_this_check">Current selection</string>
+    <string name="zt_timer_30_second">30 seconds</string>
+    <string name="zt_timer_1_minute">1 minute</string>
+    <string name="zt_timer_10_minute">10 minute</string>
+    <string name="zt_timer_30_minute">30 minute</string>
+    <string name="zt_timer_minute">minute</string>
+    <string name="zt_timer_1_hour">1 hour</string>
+    <string name="zt_timer_customize">customize</string>
+    <string name="zt_timer_message">The custom unit is seconds\n1 minute = 60 seconds\n1 hour = 60 minutes * 60 seconds = 3600 seconds \n1 day = 24 hours * 60 minutes * 60 seconds = 86400 seconds</string>
+
+    <string name="zt_timer_log">Log directory</string>
+    <string name="zt_timer_log_sum">The LOG directory is:\n~/.timerdir/log/, please check the LOG operation status here.</string>
+    <string name="zt_timer_edit">script directory</string>
+    <string name="zt_timer_edit_sum">Please manually modify the Termux directory:\nZT environment: ~/.timerdir/termux_timer.sh\nSHELL environment: ~/.timerdir/shell_timer.sh\nAttention! Notice! Note\nPlease do not grant ROOT permission to APP in ZeroTermux environment, otherwise it will not run!</string>
+
+    <string name="zt_timer_environment">Current operating environment</string>
+    <string name="zt_timer_environment_sum">The current operating environment is:</string>
+    <string name="zt_timer_other_title_dialog">Custom time (seconds)</string>
+    <string name="zt_timer_other_input_numer_dialog">Please enter a number or enter a number greater than the maximum value of long (unit is seconds)</string>
+    <string name="zt_timer_notification_timer_title">(ZT) The scheduled task is currently running</string>
+    <string name="zt_timer_notification_timer_sum">Current scheduled interval:</string>
+    <string name="zt_timer_notification_timer_cunt">Current execution count:</string>
+    <string name="zt_timer_notification_timer_kill">Forcefully closing the current task！</string>
+    <string name="zt_env_shell_title">ADB Shell runs Termux</string>
+    <string name="zt_env_shell_sum">Turn this option on to output the sh script to the specified directory\nClose it to cancel this script output</string>
+    <string name="zt_env_shell_sum_msg">Open adb shell and run the following command:\n1.adb shell\n2.</string>
 </resources>
