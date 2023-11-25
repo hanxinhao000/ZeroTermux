@@ -3,12 +3,7 @@ package cn.hotapk.fhttpserver.utils;
 import java.io.InputStream;
 import java.util.Map;
 
-/**
- * @author laijian
- * @version 2017/12/6
- * @Copyright (C)上午10:02 , www.hotapk.cn
- * 静态资源文件处理
- */
+
 public class FStaticResUtils {
 
     /**

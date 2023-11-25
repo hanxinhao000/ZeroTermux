@@ -6,11 +6,7 @@ import java.util.Map;
 
 import cn.hotapk.fhttpserver.NanoHTTPD;
 
-/**
- * @author laijian
- * @version 2017/12/6
- * @Copyright (C)下午6:38 , www.hotapk.cn
- */
+
 public class FFileUploadUtils {
 
     /**

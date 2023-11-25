@@ -11,12 +11,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author laijian
- * @version 2017/9/11
- * @Copyright (C)下午12:02 , www.hotapk.cn
- * 文件操作工具类
- */
+
 public class FFileUtils {
 
     /**

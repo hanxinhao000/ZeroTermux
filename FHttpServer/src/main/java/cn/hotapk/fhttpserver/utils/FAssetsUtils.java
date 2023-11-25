@@ -5,12 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author laijian
- * @version 2017/9/12
- * @Copyright (C)上午11:18 , www.hotapk.cn
- * assets 相关操作类
- */
+
 public final class FAssetsUtils {
 
 

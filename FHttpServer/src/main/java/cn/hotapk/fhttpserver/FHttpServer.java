@@ -12,11 +12,6 @@ import cn.hotapk.fhttpserver.annotation.RequestParam;
 import cn.hotapk.fhttpserver.annotation.ResponseBody;
 import cn.hotapk.fhttpserver.utils.FStaticResUtils;
 
-/**
- * @author laijian
- * @version 2017/11/30
- * @Copyright (C)下午5:03 , www.hotapk.cn
- */
 public class FHttpServer extends NanoHTTPD {
 
     public FHttpServer(int port) {
