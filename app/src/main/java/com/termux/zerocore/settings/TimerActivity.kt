@@ -88,10 +88,10 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         switchCompat.setOnCheckedChangeListener { buttonView, isChecked ->
             when (switchCompat) {
                 mStartTimerSwitch -> {
-                    if (mLibSuManage!!.isRun) {
-                        return@setOnCheckedChangeListener
-                    }
                     if (mStartTimerSwitch.isChecked) {
+                        if (mLibSuManage!!.isRun) {
+                            return@setOnCheckedChangeListener
+                        }
                         LogUtils.e(TAG, "onAddElement: start")
                        // mLibSuManage?.writerDebugFile()
                        // mLibSuManage?.shellCommandExec("shell_main")
