@@ -52,7 +52,7 @@
                            android:layout_marginTop="5dp"
                            android:layout_alignParentBottom="true"
                            android:layout_alignParentRight="true"
-                           android:id="@+id/beijin"
+                           android:id="@+id/enter"
                            android:src="@mipmap/huiche"
                            android:layout_height="8dp"/>
 

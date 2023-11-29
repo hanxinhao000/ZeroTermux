@@ -40,7 +40,7 @@ public class MinLAdapter extends RecyclerView.Adapter<MinLViewHolder> {
     @NonNull
     @Override
     public MinLViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MinLViewHolder(UUtils.getViewLayViewGroup(R.layout.item_migl,parent));
+        return new MinLViewHolder(UUtils.getViewLayViewGroup(R.layout.item_migl, parent));
     }
 
     @Override
