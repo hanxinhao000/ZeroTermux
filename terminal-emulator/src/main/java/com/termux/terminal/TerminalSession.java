@@ -6,7 +6,6 @@ import android.os.Message;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -126,10 +124,6 @@ public final class TerminalSession extends TerminalOutput {
         mEmulator = new TerminalEmulator(this, columns, rows, mTranscriptRows, mClient);
 
         int[] processId = new int[1];
-        Log.e("TAG", "initializeEmulator mShellPath: " + mShellPath);
-        Log.e("TAG", "initializeEmulator mCwd: " + mCwd);
-        Log.e("TAG", "initializeEmulator mArgs: " + Arrays.toString(mArgs));
-        Log.e("TAG", "initializeEmulator mEnv: " + Arrays.toString(mEnv));
         mTerminalFileDescriptor = JNI.createSubprocess(mShellPath, mCwd, mArgs, mEnv, processId, rows, columns);
         mShellPid = processId[0];
         mClient.setTerminalShellPid(this, mShellPid);
