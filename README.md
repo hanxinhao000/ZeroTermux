@@ -8,6 +8,9 @@
 
 https://od.ixcmstudio.cn/repository/main/ZeroTermux/
 
+## ZeroTermux 签名文件(与Utermux共用同一个签名)
+https://github.com/hanxinhao000/Termux-app-UpgradedVersion/tree/master/%E7%AD%BE%E5%90%8D%E6%96%87%E4%BB%B6
+
 ## 软件意图(Software intent)
 
 ##  ZeroTermux 是根据 Termux 二次开发的一个非盈利性的软件 (ZeroTermux is a non-profit software developed based on Termux)
