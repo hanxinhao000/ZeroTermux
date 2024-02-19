@@ -1002,4 +1002,5 @@ Reset successfully</string>
     <string name="zt_env_shell_title">ADB Shell runs Termux</string>
     <string name="zt_env_shell_sum">Turn this option on to output the sh script to the specified directory\nClose it to cancel this script output</string>
     <string name="zt_env_shell_sum_msg">Open adb shell and run the following command:\n1.adb shell\n2.</string>
+    <string name="zt_particle_animation">particle animation</string>
 </resources>

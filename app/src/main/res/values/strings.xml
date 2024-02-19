@@ -944,6 +944,8 @@
     <string name="zt_env_shell_title">ADB Shell运行Termux</string>
     <string name="zt_env_shell_sum">打开此选项输出sh脚本到指定目录\n关闭则取消此脚本输出</string>
     <string name="zt_env_shell_sum_msg">打开adb shell 运行以下命令:\n1.adb shell\n2.</string>
+    <string name="zt_particle_animation">粒子动画</string>
+
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>
         <item>1280x720</item>

@@ -109,6 +109,8 @@ import com.termux.zerocore.activity.WebViewActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.back.BackRestoreDialog;
 import com.termux.zerocore.back.listener.CreateConversationListener;
+import com.termux.zerocore.background.FireworkView;
+import com.termux.zerocore.background.ParticleLayer;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.bean.ZTUserBean;
@@ -1514,6 +1516,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout download_http;
     private LinearLayout vnc_start;
     private LinearLayout xue_hua;
+    private LinearLayout rain_back;
     private LinearLayout video_back_menu;
     private LinearLayout quanping;
     private LinearLayout zero_fun;
@@ -1531,6 +1534,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView double_tishi;
     private TextView xue_hua_start;
     private FrameLayout xue_fragment;
+    private FireworkView firework_view;
     private LinearLayout online_sh;
     private LinearLayout beautify;
     private View back_color;
@@ -1583,7 +1587,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         vnc_start = findViewById(R.id.vnc_start);
         msg_tv = findViewById(R.id.msg_tv);
         xue_fragment = findViewById(R.id.xue_fragment);
+        firework_view = findViewById(R.id.firework_view);
         xue_hua = findViewById(R.id.xue_hua);
+        rain_back = findViewById(R.id.rain_back);
         video_back_menu = findViewById(R.id.video_back_menu);
         xue_hua_start = findViewById(R.id.xue_hua_start);
         timer = findViewById(R.id.timer);
@@ -1627,6 +1633,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         download_http.setOnClickListener(this);
         vnc_start.setOnClickListener(this);
         xue_hua.setOnClickListener(this);
+        rain_back.setOnClickListener(this);
         video_back_menu.setOnClickListener(this);
         quanping.setOnClickListener(this);
         zero_fun.setOnClickListener(this);
@@ -1683,9 +1690,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
 
     private void initStatue() {
-        String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
-
-        if (xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")) {
+        boolean snowflakeShow = UserSetManage.Companion.get().getZTUserBean().isSnowflakeShow();
+        if (!snowflakeShow) {
             xue_hua_start.setText(UUtils.getString(R.string.雪花关));
             xue_fragment.removeAllViews();
         } else {
@@ -1693,6 +1699,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             SnowView snowView = new SnowView(TermuxActivity.this);
             xue_fragment.removeAllViews();
             xue_fragment.addView(snowView);
+        }
+        ZTUserBean ztRainUserBean = UserSetManage.Companion.get().getZTUserBean();
+        xue_fragment.removeAllViews();
+        if (ztRainUserBean.isRainShow()) {
+            firework_view.setVisibility(View.VISIBLE);
+        } else {
+            firework_view.setVisibility(View.GONE);
         }
         mTerminalView.setOneClickListener(new TerminalView.OneClickListener() {
             @Override
@@ -1961,19 +1974,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
 
             case R.id.xue_hua:
-
-                String xue_statues = SaveData.INSTANCE.getStringOther("xue_statues");
-
-                if (xue_statues == null || xue_statues.isEmpty() || xue_statues.equals("def")) {
+                ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
+                ztUserBean.setRainShow(false);
+                firework_view.setVisibility(View.GONE);
+                if (!ztUserBean.isSnowflakeShow()) {
                     xue_hua_start.setText(UUtils.getString(R.string.雪花开));
                     SnowView snowView = new SnowView(TermuxActivity.this);
                     xue_fragment.removeAllViews();
                     xue_fragment.addView(snowView);
-                    SaveData.INSTANCE.saveStringOther("xue_statues", "true");
+                    ztUserBean.setSnowflakeShow(true);
+                    UserSetManage.Companion.get().setZTUserBean(ztUserBean);
                 } else {
                     xue_hua_start.setText(UUtils.getString(R.string.雪花关));
                     xue_fragment.removeAllViews();
-                    SaveData.INSTANCE.saveStringOther("xue_statues", "def");
+                    ztUserBean.setSnowflakeShow(false);
+                    UserSetManage.Companion.get().setZTUserBean(ztUserBean);
                 }
                 break;
 
@@ -1982,7 +1997,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 openToolDialog(false, 1,
                     CommonCommandsDialog.CommonCommandsDialogConstant.VIDEO_KEY);
                 break;
-
+            case R.id.rain_back:
+                ZTUserBean ztRainUserBean = UserSetManage.Companion.get().getZTUserBean();
+                ztRainUserBean.setSnowflakeShow(false);
+                xue_fragment.removeAllViews();
+                if (!ztRainUserBean.isRainShow()) {
+                    firework_view.setVisibility(View.VISIBLE);
+                    ztRainUserBean.setRainShow(true);
+                    UserSetManage.Companion.get().setZTUserBean(ztRainUserBean);
+                } else {
+                    firework_view.setVisibility(View.GONE);
+                    ztRainUserBean.setRainShow(false);
+                    UserSetManage.Companion.get().setZTUserBean(ztRainUserBean);
+                }
+                break;
             //全屏 WindowUtils
             case R.id.quanping:
                 if (quanping.getTag() == null) {

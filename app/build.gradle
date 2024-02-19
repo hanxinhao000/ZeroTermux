@@ -108,6 +108,8 @@ android {
         //Zip解压
         implementation 'com.hzy:un7zip:+'
         implementation 'me.testica:codeeditor:1.0.2'
+        // 线性背景
+        implementation 'com.googlecode.plist:dd-plist:1.16'
 
         implementation 'com.tananaev:adblib:1.3'
 

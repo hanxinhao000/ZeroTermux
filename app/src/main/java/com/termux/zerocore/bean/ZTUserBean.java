@@ -15,6 +15,28 @@ public class ZTUserBean {
     private boolean forceUseNumpad = false;
     //是否输出显示LOG
     private boolean isOutputLOG = false;
+    //是否显示雪花
+    private boolean isSnowflakeShow = false;
+
+    public boolean isSnowflakeShow() {
+        return isSnowflakeShow;
+    }
+
+    public void setSnowflakeShow(boolean snowflakeShow) {
+        isSnowflakeShow = snowflakeShow;
+    }
+
+    public boolean isRainShow() {
+        return isRainShow;
+    }
+
+    public void setRainShow(boolean rainShow) {
+        isRainShow = rainShow;
+    }
+
+    //是否显示下雨
+    private boolean isRainShow = false;
+
 
     public boolean isOutputLOG() {
         return isOutputLOG;

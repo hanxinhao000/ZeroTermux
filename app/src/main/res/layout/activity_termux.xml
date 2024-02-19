@@ -40,6 +40,13 @@
                     android:layout_width="match_parent"
                     android:id="@+id/xue_fragment"
                     android:layout_height="match_parent"/>
+                <com.termux.zerocore.background.FireworkView
+                    android:layout_width="match_parent"
+                    android:id="@+id/firework_view"
+                    android:visibility="gone"
+                    android:layout_height="match_parent"
+                    app:texture="@drawable/rain_texture"
+                    app:plistFile="@raw/rain"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
