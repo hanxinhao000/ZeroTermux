@@ -99,188 +99,188 @@ class CommonCommandsDialog : BaseDialogDown {
 
     private fun initMenuData() {
 
-        /**
-         * 安装模块
-         */
-        var mInstallModule: ItemMenuBean.Data = ItemMenuBean.Data()
-        mInstallModule.title = UUtils.getString(R.string.install_module)
-        mInstallModule.id = R.mipmap.install_module
-        mInstallModule.isEg = false
-        mInstallModule.key = CommonCommandsDialogConstant.ITEM_CLICK_INSTALL_MODULE
-        mList.add(mInstallModule)
-        /**
-         * 恢复到默认启动文件
-         */
-        var mDefBash: ItemMenuBean.Data = ItemMenuBean.Data()
-        mDefBash.title = UUtils.getString(R.string.install_def_bash)
-        mDefBash.id = R.mipmap.def_bash
-        mDefBash.isEg = false
-        mDefBash.key = CommonCommandsDialogConstant.ITEM_CLICK_DEF_BASH
-        mList.add(mDefBash)
-        /**
-         * 修改bash
-         */
-        var mChangBash: ItemMenuBean.Data = ItemMenuBean.Data()
-        mChangBash.title = UUtils.getString(R.string.changed_bash)
-        mChangBash.id = R.mipmap.bash_change
-        mChangBash.isEg = false
-        mChangBash.key = CommonCommandsDialogConstant.ITEM_CLICK_BASH_CHANGE
-        mList.add(mChangBash)
+        if (mList.isEmpty()) {
+            /**
+             * 安装模块
+             */
+            var mInstallModule: ItemMenuBean.Data = ItemMenuBean.Data()
+            mInstallModule.title = UUtils.getString(R.string.install_module)
+            mInstallModule.id = R.mipmap.install_module
+            mInstallModule.isEg = false
+            mInstallModule.key = CommonCommandsDialogConstant.ITEM_CLICK_INSTALL_MODULE
+            mList.add(mInstallModule)
+            /**
+             * 恢复到默认启动文件
+             */
+            var mDefBash: ItemMenuBean.Data = ItemMenuBean.Data()
+            mDefBash.title = UUtils.getString(R.string.install_def_bash)
+            mDefBash.id = R.mipmap.def_bash
+            mDefBash.isEg = false
+            mDefBash.key = CommonCommandsDialogConstant.ITEM_CLICK_DEF_BASH
+            mList.add(mDefBash)
+            /**
+             * 修改bash
+             */
+            var mChangBash: ItemMenuBean.Data = ItemMenuBean.Data()
+            mChangBash.title = UUtils.getString(R.string.changed_bash)
+            mChangBash.id = R.mipmap.bash_change
+            mChangBash.isEg = false
+            mChangBash.key = CommonCommandsDialogConstant.ITEM_CLICK_BASH_CHANGE
+            mList.add(mChangBash)
 
-        /**
-         * 修改欢迎语
-         */
-        var mChangStartMsg: ItemMenuBean.Data = ItemMenuBean.Data()
-        mChangStartMsg.title = UUtils.getString(R.string.start_msg)
-        mChangStartMsg.id = R.mipmap.start_msg_ico
-        mChangStartMsg.isEg = false
-        mChangStartMsg.key = CommonCommandsDialogConstant.ITEM_CLICK_START_MSG
-        mList.add(mChangStartMsg)
-        /**
-         * 视屏背景
-         */
-        var mVideoBackData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mVideoBackData.title = UUtils.getString(R.string.vedio_select_name)
-        mVideoBackData.id = R.mipmap.video_img_menu
-        mVideoBackData.isEg = false
-        mVideoBackData.key = CommonCommandsDialogConstant.VIDEO_KEY
-        mList.add(mVideoBackData)
+            /**
+             * 修改欢迎语
+             */
+            var mChangStartMsg: ItemMenuBean.Data = ItemMenuBean.Data()
+            mChangStartMsg.title = UUtils.getString(R.string.start_msg)
+            mChangStartMsg.id = R.mipmap.start_msg_ico
+            mChangStartMsg.isEg = false
+            mChangStartMsg.key = CommonCommandsDialogConstant.ITEM_CLICK_START_MSG
+            mList.add(mChangStartMsg)
+            /**
+             * 视屏背景
+             */
+            var mVideoBackData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mVideoBackData.title = UUtils.getString(R.string.vedio_select_name)
+            mVideoBackData.id = R.mipmap.video_img_menu
+            mVideoBackData.isEg = false
+            mVideoBackData.key = CommonCommandsDialogConstant.VIDEO_KEY
+            mList.add(mVideoBackData)
 
-        /**
-         * 清空美化
-         */
-        var mClearStyleBackData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mClearStyleBackData.title = UUtils.getString(R.string.clear_style_dialog)
-        mClearStyleBackData.id = R.mipmap.clear_style
-        mClearStyleBackData.isEg = false
-        mClearStyleBackData.key = CommonCommandsDialogConstant.CLEAR_STYLE
-        mList.add(mClearStyleBackData)
+            /**
+             * 清空美化
+             */
+            var mClearStyleBackData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mClearStyleBackData.title = UUtils.getString(R.string.clear_style_dialog)
+            mClearStyleBackData.id = R.mipmap.clear_style
+            mClearStyleBackData.isEg = false
+            mClearStyleBackData.key = CommonCommandsDialogConstant.CLEAR_STYLE
+            mList.add(mClearStyleBackData)
 
-     /*   *
-         * 内置键盘*/
-
-
-        var mKeyData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mKeyData.title = UUtils.getString(R.string.keyboard_select_name)
-        mKeyData.id = R.mipmap.keyboard_img_menu
-        mKeyData.isEg = true
-        mKeyData.key = CommonCommandsDialogConstant.KEYBOARD_KEY
-        mList.add(mKeyData)
-
-        /**
-         * WEB终端
-         */
-        var mWebData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mWebData.title = UUtils.getString(R.string.web_linux)
-        mWebData.id = R.mipmap.web_linux
-        mWebData.isEg = false
-        mWebData.key = CommonCommandsDialogConstant.WEB_LINUX
-        mList.add(mWebData)
-
-        /**
-         * 文件网络浏览器
-         */
-        var mFileBrowser: ItemMenuBean.Data = ItemMenuBean.Data()
-        mFileBrowser.title = UUtils.getString(R.string.网络访问linux目录)
-        mFileBrowser.id = R.mipmap.filebrowser_ico
-        mFileBrowser.isEg = true
-        mFileBrowser.key = CommonCommandsDialogConstant.ITEM_CLICK_FILE_BROWSER
-        mList.add(mFileBrowser)
-
-        /**
-         * X86 系统
-         *
-         */
-        var mX86AlpineData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mX86AlpineData.title = UUtils.getString(R.string.x86_alpine_run)
-        mX86AlpineData.id = R.mipmap.alpine_run
-        mX86AlpineData.isEg = true
-        mX86AlpineData.key = CommonCommandsDialogConstant.X86_ALPINE_KEY
-        mList.add(mX86AlpineData)
-
-        /**
-         * FTP
-         *
-         */
-        var mFtpData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mFtpData.title = UUtils.getString(R.string.ftp)
-        mFtpData.id = R.mipmap.ftp_web
-        mFtpData.isEg = false
-        mFtpData.backColor = UUtils.getColor(R.color.color_8850b397)
-        mFtpData.key = CommonCommandsDialogConstant.ITEM_CLICK_FTP
-        mList.add(mFtpData)
-
-        /**
-         * 常用
-         *
-         */
-        var mCommonlyUsedSoftLinksData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mCommonlyUsedSoftLinksData.title = UUtils.getString(R.string.commonly_used_soft_links)
-        mCommonlyUsedSoftLinksData.id = R.mipmap.link_ico
-        mCommonlyUsedSoftLinksData.isEg = false
-        mCommonlyUsedSoftLinksData.backColor = UUtils.getColor(R.color.color_8850b397)
-        mCommonlyUsedSoftLinksData.key = CommonCommandsDialogConstant.ITEM_CLICK_SOFT_LINKS
-        mList.add(mCommonlyUsedSoftLinksData)
-
-        /**
-         * 自定义创建快捷方式
-         *
-         */
-        var mMyUsedSoftLinksData: ItemMenuBean.Data = ItemMenuBean.Data()
-        mMyUsedSoftLinksData.title = UUtils.getString(R.string.my_commonly_used_soft_links)
-        mMyUsedSoftLinksData.id = R.mipmap.link_ico
-        mMyUsedSoftLinksData.isEg = false
-        mMyUsedSoftLinksData.backColor = UUtils.getColor(R.color.color_8850b397)
-        mMyUsedSoftLinksData.key = CommonCommandsDialogConstant.ITEM_CLICK_MY_SOFT_LINKS
-        mList.add(mMyUsedSoftLinksData)
-
-        /**
-         * 创建数据包信息
-         *
-         */
-        var mDataMessage: ItemMenuBean.Data = ItemMenuBean.Data()
-        mDataMessage.title = UUtils.getString(R.string.create_data_message)
-        mDataMessage.id = R.mipmap.data_msg
-        mDataMessage.isEg = false
-        mDataMessage.backColor = UUtils.getColor(R.color.color_8850b397)
-        mDataMessage.key = CommonCommandsDialogConstant.ITEM_CLICK_DATA_MSG
-        mList.add(mDataMessage)
-        /**
-         * 一键卸载ZeroTermux
-         *
-         */
-        var mUnInstall: ItemMenuBean.Data = ItemMenuBean.Data()
-        mUnInstall.title = UUtils.getString(R.string.zero_uninstall)
-        mUnInstall.id = R.mipmap.uninstall
-        mUnInstall.isEg = false
-        mUnInstall.backColor = UUtils.getColor(R.color.color_8850b397)
-        mUnInstall.key = CommonCommandsDialogConstant.ITEM_CLICK_UNINSTALL
-        mList.add(mUnInstall)
-        /**
-         * 检查是否可以安装docker
-         *
-         */
-        var mDocker: ItemMenuBean.Data = ItemMenuBean.Data()
-        mDocker.title = UUtils.getString(R.string.docker_check)
-        mDocker.id = R.mipmap.docker
-        mDocker.isEg = false
-        mDocker.backColor = UUtils.getColor(R.color.color_8850b397)
-        mDocker.key = CommonCommandsDialogConstant.ITEM_CLICK_DOCKER_CHECK
-        mList.add(mDocker)
-
-        /**
-         * 远程连接
-         *
-         */
-        var mRemoteConnection: ItemMenuBean.Data = ItemMenuBean.Data()
-        mRemoteConnection.title = UUtils.getString(R.string.remote_connection)
-        mRemoteConnection.id = R.mipmap.yc_connect
-        mRemoteConnection.isEg = false
-        mRemoteConnection.backColor = UUtils.getColor(R.color.color_8850b397)
-        mRemoteConnection.key = CommonCommandsDialogConstant.ITEM_CLICK_REMOTE_CONNECTION
-        mList.add(mRemoteConnection)
+            /*   *
+                * 内置键盘*/
 
 
+            var mKeyData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mKeyData.title = UUtils.getString(R.string.keyboard_select_name)
+            mKeyData.id = R.mipmap.keyboard_img_menu
+            mKeyData.isEg = true
+            mKeyData.key = CommonCommandsDialogConstant.KEYBOARD_KEY
+            mList.add(mKeyData)
+
+            /**
+             * WEB终端
+             */
+            var mWebData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mWebData.title = UUtils.getString(R.string.web_linux)
+            mWebData.id = R.mipmap.web_linux
+            mWebData.isEg = false
+            mWebData.key = CommonCommandsDialogConstant.WEB_LINUX
+            mList.add(mWebData)
+
+            /**
+             * 文件网络浏览器
+             */
+            var mFileBrowser: ItemMenuBean.Data = ItemMenuBean.Data()
+            mFileBrowser.title = UUtils.getString(R.string.网络访问linux目录)
+            mFileBrowser.id = R.mipmap.filebrowser_ico
+            mFileBrowser.isEg = true
+            mFileBrowser.key = CommonCommandsDialogConstant.ITEM_CLICK_FILE_BROWSER
+            mList.add(mFileBrowser)
+
+            /**
+             * X86 系统
+             *
+             */
+            var mX86AlpineData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mX86AlpineData.title = UUtils.getString(R.string.x86_alpine_run)
+            mX86AlpineData.id = R.mipmap.alpine_run
+            mX86AlpineData.isEg = true
+            mX86AlpineData.key = CommonCommandsDialogConstant.X86_ALPINE_KEY
+            mList.add(mX86AlpineData)
+
+            /**
+             * FTP
+             *
+             */
+            var mFtpData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mFtpData.title = UUtils.getString(R.string.ftp)
+            mFtpData.id = R.mipmap.ftp_web
+            mFtpData.isEg = false
+            mFtpData.backColor = UUtils.getColor(R.color.color_8850b397)
+            mFtpData.key = CommonCommandsDialogConstant.ITEM_CLICK_FTP
+            mList.add(mFtpData)
+
+            /**
+             * 常用
+             *
+             */
+            var mCommonlyUsedSoftLinksData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mCommonlyUsedSoftLinksData.title = UUtils.getString(R.string.commonly_used_soft_links)
+            mCommonlyUsedSoftLinksData.id = R.mipmap.link_ico
+            mCommonlyUsedSoftLinksData.isEg = false
+            mCommonlyUsedSoftLinksData.backColor = UUtils.getColor(R.color.color_8850b397)
+            mCommonlyUsedSoftLinksData.key = CommonCommandsDialogConstant.ITEM_CLICK_SOFT_LINKS
+            mList.add(mCommonlyUsedSoftLinksData)
+
+            /**
+             * 自定义创建快捷方式
+             *
+             */
+            var mMyUsedSoftLinksData: ItemMenuBean.Data = ItemMenuBean.Data()
+            mMyUsedSoftLinksData.title = UUtils.getString(R.string.my_commonly_used_soft_links)
+            mMyUsedSoftLinksData.id = R.mipmap.link_ico
+            mMyUsedSoftLinksData.isEg = false
+            mMyUsedSoftLinksData.backColor = UUtils.getColor(R.color.color_8850b397)
+            mMyUsedSoftLinksData.key = CommonCommandsDialogConstant.ITEM_CLICK_MY_SOFT_LINKS
+            mList.add(mMyUsedSoftLinksData)
+
+            /**
+             * 创建数据包信息
+             *
+             */
+            var mDataMessage: ItemMenuBean.Data = ItemMenuBean.Data()
+            mDataMessage.title = UUtils.getString(R.string.create_data_message)
+            mDataMessage.id = R.mipmap.data_msg
+            mDataMessage.isEg = false
+            mDataMessage.backColor = UUtils.getColor(R.color.color_8850b397)
+            mDataMessage.key = CommonCommandsDialogConstant.ITEM_CLICK_DATA_MSG
+            mList.add(mDataMessage)
+            /**
+             * 一键卸载ZeroTermux
+             *
+             */
+            var mUnInstall: ItemMenuBean.Data = ItemMenuBean.Data()
+            mUnInstall.title = UUtils.getString(R.string.zero_uninstall)
+            mUnInstall.id = R.mipmap.uninstall
+            mUnInstall.isEg = false
+            mUnInstall.backColor = UUtils.getColor(R.color.color_8850b397)
+            mUnInstall.key = CommonCommandsDialogConstant.ITEM_CLICK_UNINSTALL
+            mList.add(mUnInstall)
+            /**
+             * 检查是否可以安装docker
+             *
+             */
+            var mDocker: ItemMenuBean.Data = ItemMenuBean.Data()
+            mDocker.title = UUtils.getString(R.string.docker_check)
+            mDocker.id = R.mipmap.docker
+            mDocker.isEg = false
+            mDocker.backColor = UUtils.getColor(R.color.color_8850b397)
+            mDocker.key = CommonCommandsDialogConstant.ITEM_CLICK_DOCKER_CHECK
+            mList.add(mDocker)
+
+            /**
+             * 远程连接
+             *
+             */
+            var mRemoteConnection: ItemMenuBean.Data = ItemMenuBean.Data()
+            mRemoteConnection.title = UUtils.getString(R.string.remote_connection)
+            mRemoteConnection.id = R.mipmap.yc_connect
+            mRemoteConnection.isEg = false
+            mRemoteConnection.backColor = UUtils.getColor(R.color.color_8850b397)
+            mRemoteConnection.key = CommonCommandsDialogConstant.ITEM_CLICK_REMOTE_CONNECTION
+            mList.add(mRemoteConnection)
+        }
         mItemMenuAdapter = ItemMenuAdapter(mList, mContext, this)
         mItemMenuAdapter?.setCommonDialogListener(mCommonDialogListener)
         mItemMenuAdapter?.setVShellDialogListener(mVShellDialogListener)
