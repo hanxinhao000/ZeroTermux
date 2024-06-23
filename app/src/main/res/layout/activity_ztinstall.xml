@@ -146,7 +146,7 @@
                 android:id="@+id/styling"
                 app:cardElevation="0dp"
                 android:layout_marginTop="10dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:cardBackgroundColor="@color/color_55000000"
                 app:cardCornerRadius="6dp"
                 android:layout_height="wrap_content">
