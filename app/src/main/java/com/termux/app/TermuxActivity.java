@@ -183,8 +183,10 @@ import java.util.Locale;
  * </ul>
  * about memory leaks.
  */
+ // ZeroTermux add {@
+ //public final class TermuxActivity extends AppCompatActivity implements ServiceConnection {
 public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener, TerminalView.DoubleClickListener, View.OnFocusChangeListener {
-
+ //@}
     /**
      * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
      * {@link #bindService(Intent, ServiceConnection, int)}, and obtained and stored in
@@ -195,16 +197,27 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     /**
      * The {@link TerminalView} shown in  {@link TermuxActivity} that displays the terminal.
      */
+	// ZeroTermux add {@
     public static TerminalView mTerminalView;
+	// TerminalView mTerminalView;
+	// @}
 
     /**
      * The {@link TerminalViewClient} interface implementation to allow for communication between
      * {@link TerminalView} and {@link TermuxActivity}.
      */
     TermuxTerminalViewClient mTermuxTerminalViewClient;
-
+	// ZeroTermux add {@
     LocalBroadcastManager localBroadcastManager;
     LocalReceiver localReceiver;
+	// @}
+
+
+    /**
+     * The {@link TerminalSessionClient} interface implementation to allow for communication between
+     * {@link TerminalSession} and {@link TermuxActivity}.
+     */
+    TermuxTerminalSessionActivityClient mTermuxTerminalSessionActivityClient;
 
     /**
      * Termux app shared preferences manager.
@@ -217,19 +230,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TermuxAppSharedProperties mProperties;
 
     /**
-     * The client for the {@link #mExtraKeysView}.
-     */
-    public static TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
-
-    /**
      * The root view of the {@link TermuxActivity}.
      */
     TermuxActivityRootView mTermuxActivityRootView;
-
-    private SlidingConsumer mSlidingConsumer;
-
+	// ZeroTermux add {@
+	private SlidingConsumer mSlidingConsumer;
     private View mLayoutMenuAll;
     private View mIncludeRightMenu;
+	// @}
 
     /**
      * The space at the bottom of {@link @mTermuxActivityRootView} of the {@link TermuxActivity}.
@@ -240,6 +248,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      * The terminal extra keys view.
      */
     ExtraKeysView mExtraKeysView;
+
+    /**
+	 * The client for the {@link #mExtraKeysView}.
+     */
+	// ZeroTermux add {@
+	// TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
+    public static TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
+	// @}
 
     /**
      * The termux sessions list controller.
@@ -255,13 +271,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      * The last toast shown, used cancel current toast before showing new in {@link #showToast(String, boolean)}.
      */
     Toast mLastToast;
-
-
-    /**
-     * The {@link TerminalSessionClient} interface implementation to allow for communication between
-     * {@link TerminalSession} and {@link TermuxActivity}.
-     */
-    TermuxTerminalSessionActivityClient mTermuxTerminalSessionActivityClient;
 
     /**
      * If between onResume() and onStop(). Note that only one session is in the foreground of the terminal view at the
@@ -287,8 +296,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private boolean mIsInvalidState;
 
     private int mNavBarHeight;
-
+	// ZeroTermux add {@
+	//  private float mTerminalToolbarDefaultHeight;
     private int mTerminalToolbarDefaultHeight;
+	// @}
 
 
     private static final int CONTEXT_MENU_SELECT_URL_ID = 0;
@@ -306,10 +317,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private static final String ARG_TERMINAL_TOOLBAR_TEXT_INPUT = "terminal_toolbar_text_input";
     private static final String ARG_ACTIVITY_RECREATED = "activity_recreated";
-
+	// ZeroTermux add {@
     private static final String LOG_TAG = "Termux--Apk:TermuxActivity";
     private static final String TAG = "TermuxActivity";
     private OTGManager mOTGManager;
+	// @}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -335,7 +347,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_termux);
+		// ZeroTermux add {@
         initSmartSwipe();
+		// @}
         // Load termux shared preferences
         // This will also fail if TermuxConstants.TERMUX_PACKAGE_NAME does not equal applicationId
         mPreferences = TermuxAppSharedPreferences.build(this, true);
@@ -348,7 +362,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         mTermuxActivityRootView = findViewById(R.id.activity_termux_root_view);
         mTermuxActivityRootView.setActivity(this);
+		// ZeroTermux add {@
         mOTGManager = new OTGManager();
+		// @}
         mTermuxActivityBottomSpaceView = findViewById(R.id.activity_termux_bottom_space_view);
         mTermuxActivityRootView.setOnApplyWindowInsetsListener(new TermuxActivityRootView.WindowInsetsListener());
 
@@ -361,10 +377,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mProperties.isUsingFullScreen()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+		// ZeroTermux add {@
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getWindow().setDecorFitsSystemWindows(false);
         }
         WindowUtils.setImmersionBar(TermuxActivity.this, 0.1f);
+		// @}
 
         setTermuxTerminalViewAndClients();
 
@@ -389,6 +407,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
         // app has been opened.
+		// ZeroTermux add {@
         TermuxUtils.sendTermuxOpenedBroadcast(this);
         ZeroCoreManage.initEngineManage();
         createFiles();
@@ -397,8 +416,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initColorConfig();
         initListener();
         initStatusBarHeight();
+		// @}
     }
-
+	
+    // ZeroTermux add {@
     private void initStatusBarHeight() {
         int statusBarHeight = UUtils.getStatusBarHeight(this);
         int navigationBarHeight = UUtils.getNavigationBarHeight(this);
@@ -656,6 +677,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 back_img.setVisibility(View.VISIBLE);
             }
         }
+		// @}
     }
 
     @Override
@@ -685,9 +707,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         super.onResume();
         //初始化ZeroTermux 引擎
         Logger.logVerbose(LOG_TAG, "onResume");
-
+        // ZeroTermux add {@
         VideoUtils.getInstance().onResume();
         initUserData();
+		// @}
 
         if (mIsInvalidState) return;
 
@@ -702,19 +725,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         TermuxCrashUtils.notifyAppCrashFromCrashLogFile(this, LOG_TAG);
 
         mIsOnResumeAfterOnCreate = false;
-
-        /**
-         *
-         * OTG
-         *
-         *
-         */
-
+        // ZeroTermux add OTG{@
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         filter.addAction(OTGManager.OTGManagerConstant.INSTANCE.getACTION_USB_PERMISSION());
         registerReceiver(mUsbReceiver, filter);
+		// @}
 
     }
 
@@ -735,10 +752,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
     //@}
 
+  // ZeroTermux add {@
     @Override
     protected void onRestart() {
         super.onRestart();
     }
+	// @}
 
     @Override
     protected void onStop() {
@@ -759,7 +778,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         removeTermuxActivityRootViewGlobalLayoutListener();
 
         unregisterTermuxActivityBroadcastReceiver();
+        // ZeroTermux add {@
+        //getDrawer().closeDrawers();
         getDrawer().smoothClose();
+        // @}
     }
 
     @Override
@@ -767,8 +789,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         super.onDestroy();
 
         Logger.logDebug(LOG_TAG, "onDestroy");
-
+        // ZeroTermux add {@
         VideoUtils.getInstance().onDestroy();
+		// @}
         if (mIsInvalidState) return;
 
         if (mTermuxService != null) {
@@ -776,25 +799,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxService.unsetTermuxTerminalSessionClient();
             mTermuxService = null;
         }
+		// ZeroTermux add {@
         unregisterReceiver(mUsbReceiver);
         if (localBroadcastManager!= null) {
             localBroadcastManager.unregisterReceiver(localReceiver);
         }
+		// @}
 
         try {
             unbindService(this);
         } catch (Exception e) {
             // ignore.
         }
-
-        /**
-         *
-         * OTG
-         *
-         *
-         */
-
+        // ZeroTermux add TODO{@
         //  unregisterReceiver(mUsbReceiver);
+		// @}
     }
 
     @Override
@@ -814,16 +833,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder service) {
-
         Logger.logDebug(LOG_TAG, "onServiceConnected");
-        Log.e(TAG, "onServiceConnected: onServiceConnected" );
 
         mTermuxService = ((TermuxService.LocalBinder) service).service;
 
         setTermuxSessionsListView();
-
+        // ZeroTermux add {@
         fileManager();
         locaBroadcast();
+		// @}
         final Intent intent = getIntent();
         setIntent(null);
 
@@ -864,12 +882,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-
         Logger.logDebug(LOG_TAG, "onServiceDisconnected");
 
         // Respect being stopped from the {@link TermuxService} notification action.
         finishActivityIfNotFinishing();
     }
+
+
+
+
 
 
     private void reloadProperties() {
@@ -878,6 +899,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mTermuxTerminalViewClient != null)
             mTermuxTerminalViewClient.onReloadProperties();
     }
+
 
 
     private void setActivityTheme() {
@@ -919,6 +941,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (mTermuxTerminalViewClient != null)
             mTermuxTerminalViewClient.onCreate();
+		// ZeroTermux add {@
         if (mTermuxTerminalViewClient != null) {
             mTermuxTerminalViewClient.setKeyUpDown(new TermuxTerminalViewClient.KeyUpDown() {
                 @Override
@@ -938,6 +961,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     }
                 }
             });
+			// @}
         }
 
         if (mTermuxTerminalSessionActivityClient != null)
@@ -958,8 +982,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxTerminalViewClient, mTermuxTerminalSessionActivityClient);
 
         final ViewPager terminalToolbarViewPager = getTerminalToolbarViewPager();
-        if (mPreferences.shouldShowTerminalToolbar())
-            terminalToolbarViewPager.setVisibility(View.VISIBLE);
+        if (mPreferences.shouldShowTerminalToolbar()) terminalToolbarViewPager.setVisibility(View.VISIBLE);
 
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
         mTerminalToolbarDefaultHeight = layoutParams.height;
@@ -998,17 +1021,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-
     private void saveTerminalToolbarTextInput(Bundle savedInstanceState) {
         if (savedInstanceState == null) return;
 
         final EditText textInputView = findViewById(R.id.terminal_toolbar_text_input);
         if (textInputView != null) {
             String textInput = textInputView.getText().toString();
-            if (!textInput.isEmpty())
-                savedInstanceState.putString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT, textInput);
+            if (!textInput.isEmpty()) savedInstanceState.putString(ARG_TERMINAL_TOOLBAR_TEXT_INPUT, textInput);
         }
     }
+
 
 
     private void setSettingsButtonView() {
@@ -1032,29 +1054,39 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void setToggleKeyboardView() {
         findViewById(R.id.toggle_keyboard_button).setOnClickListener(v -> {
+		  // ZeroTermux add {@
           /*  mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
             getDrawer().closeDrawers();*/
             indexSwitch(0);
+			// @}
         });
 
         findViewById(R.id.toggle_keyboard_button).setOnLongClickListener(v -> {
+		  // ZeroTermux add {@
             //toggleTerminalToolbar();
+			// @}
             return true;
         });
+		  // ZeroTermux add {@
         findViewById(R.id.select_new_session_button).setOnClickListener(v -> {
             indexSwitch(1);
         });
+		// @}
     }
 
 
     @SuppressLint("RtlHardcoded")
     @Override
     public void onBackPressed() {
+        // ZeroTermux add {@
+       // if (getDrawer().isDrawerOpen(Gravity.LEFT)) {
+       //     getDrawer().closeDrawers();
         if (getDrawer().isOpened()) {
             getDrawer().smoothClose();
         } else {
             finishActivityIfNotFinishing();
         }
+        // @}
     }
 
     public void finishActivityIfNotFinishing() {
@@ -1064,9 +1096,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    /**
-     * Show a toast and dismiss the last one if still visible.
-     */
+    /** Show a toast and dismiss the last one if still visible. */
     public void showToast(String text, boolean longDuration) {
         if (text == null || text.isEmpty()) return;
         if (mLastToast != null) mLastToast.cancel();
@@ -1074,6 +1104,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mLastToast.setGravity(Gravity.TOP, 0, 0);
         mLastToast.show();
     }
+
 
 
     @Override
@@ -1104,9 +1135,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         menu.add(Menu.NONE, CONTEXT_MENU_REPORT_ID, Menu.NONE, R.string.action_report_issue);
     }
 
-    /**
-     * Hook system menu to show context menu instead.
-     */
+    /** Hook system menu to show context menu instead. */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         mTerminalView.showContextMenu();
@@ -1201,7 +1230,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 .setNegativeButton(android.R.string.cancel, null).show();
         }
     }
-
     private void toggleKeepScreenOn() {
         if (mTerminalView.getKeepScreenOn()) {
             mTerminalView.setKeepScreenOn(false);
@@ -1222,6 +1250,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
+
     /**
      * For processes to access primary external storage (/sdcard, /storage/emulated/0, ~/storage/shared),
      * termux needs to be granted legacy WRITE_EXTERNAL_STORAGE or MANAGE_EXTERNAL_STORAGE permissions
@@ -1235,7 +1264,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 int requestCode = isPermissionCallback ? -1 : PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION;
 
                 // If permission is granted, then also setup storage symlinks.
-                if (PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
+                if(PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
                     TermuxActivity.this, requestCode, !isPermissionCallback)) {
                     if (isPermissionCallback)
                         Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
@@ -1254,7 +1283,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Logger.logVerbose(LOG_TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode + ", data: " + IntentUtils.getIntentString(data));
+        Logger.logVerbose(LOG_TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: "  + resultCode + ", data: "  + IntentUtils.getIntentString(data));
         if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
             requestStoragePermission(true);
         }
@@ -1263,11 +1292,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Logger.logVerbose(LOG_TAG, "onRequestPermissionsResult: requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays.toString(grantResults));
+        Logger.logVerbose(LOG_TAG, "onRequestPermissionsResult: requestCode: " + requestCode + ", permissions: "  + Arrays.toString(permissions) + ", grantResults: "  + Arrays.toString(grantResults));
         if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
             requestStoragePermission(true);
         }
     }
+
 
 
     public int getNavBarHeight() {
@@ -1293,10 +1323,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void setExtraKeysView(ExtraKeysView extraKeysView) {
         mExtraKeysView = extraKeysView;
     }
-
+	
+    // ZeroTermux add {@
     public SlidingConsumer getDrawer() {
         return mSlidingConsumer;
     }
+	// @}
 
 
     public ViewPager getTerminalToolbarViewPager() {
@@ -1487,9 +1519,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-    /**
-     * ZeroView
-     */
+    // ZeroTermux add {@
     private LinearLayout code_ll;
     private ScrollView scrollView_main;
     private LinearLayout file_layout;
@@ -3284,5 +3314,5 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         localReceiver = new LocalReceiver();
         localBroadcastManager.registerReceiver(localReceiver,intentFilter);
     }
-
+ // @}
 }

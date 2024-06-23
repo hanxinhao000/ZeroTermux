@@ -46,36 +46,45 @@ import java.util.concurrent.TimeUnit;
 import cn.hotapk.fastandrutils.utils.FUtils;
 import okhttp3.OkHttpClient;
 
-
+// ZeroTermux add {@
+//public class TermuxApplication extends Application {
 public class TermuxApplication extends XHApplication {
+// @}
     private static final String LOG_TAG = "TermuxApplication";
 
 
     public void onCreate() {
         super.onCreate();
-
+        // ZeroTermux add {@
         FUtils.init(this);
+		// @}
 
 
         Context context = getApplicationContext();
 
         // Set crash handler for the app
         TermuxCrashUtils.setDefaultCrashHandler(this);
+		// ZeroTermux add {@
         ZFileUUtils.initUUtils(mContext, mHandler);
 
         LogUtils.isShow = UserSetManage.Companion.get().getZTUserBean().isOutputLOG();
 
         ZFileManageHelp.getInstance().init(new MyFileImageListener());
         ZFileConfiguration.Companion.setMApplicationContext(this);
+		// @}
         // Set log config for the app
         setLogConfig(context);
-
+        // ZeroTermux add {@
         Z7Extractor.init();
+		// @}
 
         Logger.logDebug("Starting Application");
 
         // Set TermuxBootstrap.TERMUX_APP_PACKAGE_MANAGER and TermuxBootstrap.TERMUX_APP_PACKAGE_VARIANT
-        TermuxBootstrap.setTermuxPackageManagerAndVariant("apt-android-7");
+        // ZeroTermux add {@
+		//TermuxBootstrap.setTermuxPackageManagerAndVariant(BuildConfig.TERMUX_PACKAGE_VARIANT);
+		TermuxBootstrap.setTermuxPackageManagerAndVariant("apt-android-7");
+		// @}
 
         // Init app wide SharedProperties loaded from termux.properties
         TermuxAppSharedProperties properties = TermuxAppSharedProperties.init(context);
@@ -111,6 +120,7 @@ public class TermuxApplication extends XHApplication {
         if (isTermuxFilesDirectoryAccessible) {
             TermuxShellEnvironment.writeEnvironmentToFile(this);
         }
+		// ZeroTermux add {@
         Aria.init(this);
         Aria.get(this).getDownloadConfig().setMaxSpeed(0);
         Aria.get(this).getDownloadConfig().setConvertSpeed(true);
@@ -147,6 +157,7 @@ public class TermuxApplication extends XHApplication {
                 BusyBoxManager.INSTANCE.init();
             }
         }).start();*/
+		// @}
 
     }
 
@@ -159,7 +170,7 @@ public class TermuxApplication extends XHApplication {
         preferences.setLogLevel(null, preferences.getLogLevel());
     }
 
-
+   // ZeroTermux add {@
     private String collectExceptionInfo(Exception extra) {
 
 
@@ -176,6 +187,7 @@ public class TermuxApplication extends XHApplication {
         }
         return "are.you.kidding.me.NoExceptionFoundException: This is a bug, please contact developers!";
     }
+	// @}
 
 
 }

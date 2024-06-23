@@ -326,8 +326,9 @@ public final class TermuxPropertyConstants {
     /** Defines the key for extra keys */
     public static final String KEY_EXTRA_KEYS =  "extra-keys"; // Default: "extra-keys"
     //public static final String DEFAULT_IVALUE_EXTRA_KEYS = "[[ESC, TAB, CTRL, ALT, {key: '-', popup: '|'}, DOWN, UP]]"; // Single row
+    // ZeroTermux add {@ 
     public static final String DEFAULT_IVALUE_EXTRA_KEYS  = "[['ESC', 'TAB', 'CTRL', 'ALT', '-', 'UP', 'ENTER'],['INS', 'END','SHIFT',':', 'LEFT', 'DOWN', 'RIGHT']]";  // Double row
-
+	// @}
     /** Defines the key for extra keys style */
     public static final String KEY_EXTRA_KEYS_STYLE =  "extra-keys-style"; // Default: "extra-keys-style"
     public static final String DEFAULT_IVALUE_EXTRA_KEYS_STYLE = "default";

@@ -254,9 +254,15 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || unicodeChar == 'p' /* previous */) {
                 mTermuxTerminalSessionActivityClient.switchToSession(false);
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                // ZeroTermux add {@
+                // mActivity.getDrawer().openDrawer(Gravity.LEFT);
                 mActivity.getDrawer().smoothRightOpen();
+                // @}
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                // ZeroTermux add {@
+                // mActivity.getDrawer().closeDrawers();
                 mActivity.getDrawer().smoothClose();
+                // @}
             } else if (unicodeChar == 'k'/* keyboard */) {
                 onToggleSoftKeyboardRequest();
             } else if (unicodeChar == 'm'/* menu */) {
@@ -309,18 +315,20 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             // Do not steal dedicated buttons from a full external keyboard.
             return false;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            //zerotermux
             mVirtualControlKeyDown = down;
+			// ZeroTermux add {@
             if (mKeyUpDown != null) {
                 mKeyUpDown.keyDown(keyCode);
             }
+			// @}
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             mVirtualFnKeyDown = down;
-            //zerotermux
+            // ZeroTermux add {@
             if (mKeyUpDown != null) {
                 mKeyUpDown.keyDown(keyCode);
             }
+			// @}
             return true;
         }
         return false;

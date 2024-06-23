@@ -61,7 +61,10 @@ import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR
  * <p/>
  * (5.2) For every other zip entry, extract it into $STAGING_PREFIX and set execute permissions if necessary.
  */
+// ZeroTermux add {@
+//final class TermuxInstaller {
 public final class TermuxInstaller {
+// @}
 
     private static final String LOG_TAG = "TermuxInstaller";
 
@@ -164,7 +167,6 @@ public final class TermuxInstaller {
                     try (ZipInputStream zipInput = new ZipInputStream(new ByteArrayInputStream(zipBytes))) {
                         ZipEntry zipEntry;
                         while ((zipEntry = zipInput.getNextEntry()) != null) {
-                          //  LogUtils.d(LOG_TAG, "setupBootstrapIfNeeded zipEntryName23:" + zipEntry.getName());
                             if (zipEntry.getName().equals("SYMLINKS.txt")) {
                                 BufferedReader symlinksReader = new BufferedReader(new InputStreamReader(zipInput));
                                 String line;
@@ -175,7 +177,7 @@ public final class TermuxInstaller {
                                     String oldPath = parts[0];
                                     String newPath = TERMUX_STAGING_PREFIX_DIR_PATH + "/" + parts[1];
                                     symlinks.add(Pair.create(oldPath, newPath));
-                                    LogUtils.d(LOG_TAG, "setupBootstrapIfNeeded oldPath:" + oldPath + ", newPath:" + newPath);
+
                                     error = ensureDirectoryExists(new File(newPath).getParentFile());
                                     if (error != null) {
                                         showBootstrapErrorDialog(activity, whenDone, Error.getErrorMarkdownString(error));
@@ -184,7 +186,6 @@ public final class TermuxInstaller {
                                 }
                             } else {
                                 String zipEntryName = zipEntry.getName();
-                              //  LogUtils.d(LOG_TAG, "setupBootstrapIfNeeded zipEntryName:" + zipEntryName);
                                 File targetFile = new File(TERMUX_STAGING_PREFIX_DIR_PATH, zipEntryName);
                                 boolean isDirectory = zipEntry.isDirectory();
 
@@ -213,7 +214,6 @@ public final class TermuxInstaller {
                     if (symlinks.isEmpty())
                         throw new RuntimeException("No SYMLINKS.txt encountered");
                     for (Pair<String, String> symlink : symlinks) {
-                      //  UUtils.setFileString(new File("/data/data/com.termux/files/t.txt") ,symlinks.toString() + "\n");
                         Os.symlink(symlink.first, symlink.second);
                     }
 
@@ -280,8 +280,10 @@ public final class TermuxInstaller {
                 TermuxUtils.getTermuxDebugMarkdownString(activity),
             true, false, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES, true);
     }
-
+    // ZeroTermux add {@
+	// static void setupStorageSymlinks(final Context context) {
     public static void setupStorageSymlinks(final Context context) {
+	// @}
         final String LOG_TAG = "termux-storage";
         final String title = TermuxConstants.TERMUX_APP_NAME + " Setup Storage Error";
 
@@ -389,12 +391,9 @@ public final class TermuxInstaller {
     }
 
     public static native byte[] getZip();
-    /**
-     *
-     * ZeroTermux
-     *
-     */
 
+
+     // ZeroTermux add {@
     public static String determineTermuxArchName() {
         // Note that we cannot use System.getProperty("os.arch") since that may give e.g. "aarch64"
         // while a 64-bit runtime may not be installed (like on the Samsung Galaxy S5 Neo).
@@ -418,5 +417,6 @@ public final class TermuxInstaller {
         throw new RuntimeException("Unable to determine arch from Build.SUPPORTED_ABIS =  " +
             Arrays.toString(Build.SUPPORTED_ABIS));
     }
+	// @}
 
 }

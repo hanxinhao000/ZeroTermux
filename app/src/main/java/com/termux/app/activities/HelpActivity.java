@@ -35,7 +35,9 @@ public final class HelpActivity extends AppCompatActivity {
         mWebView = new WebView(this);
         WebSettings settings = mWebView.getSettings();
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+		// ZeroTermux add {@
        // settings.setAppCacheEnabled(false);
+	   // @}
         setContentView(progressLayout);
         mWebView.clearCache(true);
 

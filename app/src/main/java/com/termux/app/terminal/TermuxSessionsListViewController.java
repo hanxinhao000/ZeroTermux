@@ -96,7 +96,10 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         TermuxSession clickedSession = getItem(position);
         mActivity.getTermuxTerminalSessionClient().setCurrentSession(clickedSession.getTerminalSession());
+        // ZeroTermux add {@
+        //mActivity.getDrawer().closeDrawers();
         mActivity.getDrawer().smoothClose();
+        // @}
     }
 
     @Override

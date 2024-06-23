@@ -66,8 +66,10 @@ import com.termux.zerocore.view.ZeroTermuxBackLayout;
  * hidden part equals the `header_height`. The updates to margins may cause a jitter in some cases
  * when the view is redrawn if the margin is incorrect, but logic has been implemented to avoid that.
  */
+ // ZeroTermux add {@
+ //public class TermuxActivityRootView extends LinearLayout implements ViewTreeObserver.OnGlobalLayoutListener {
 public class TermuxActivityRootView extends ZeroTermuxBackLayout implements ViewTreeObserver.OnGlobalLayoutListener {
-
+// @}
     public TermuxActivity mActivity;
     public Integer marginBottom;
     public Integer lastMarginBottom;
@@ -285,7 +287,7 @@ public class TermuxActivityRootView extends ZeroTermuxBackLayout implements View
             return v.onApplyWindowInsets(insets);
         }
     }
-
+    // ZeroTermux add {@
     public View getBack_color() {
         return this.getBackColor();
     }
@@ -297,5 +299,6 @@ public class TermuxActivityRootView extends ZeroTermuxBackLayout implements View
     public VideoView getBack_video() {
         return getBackVideo();
     }
+	// @}
 
 }

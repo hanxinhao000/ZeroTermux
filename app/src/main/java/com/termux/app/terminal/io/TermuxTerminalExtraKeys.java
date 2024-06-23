@@ -89,11 +89,17 @@ public class TermuxTerminalExtraKeys extends TerminalExtraKeys {
             if(mTermuxTerminalViewClient != null)
                 mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
         } else if ("DRAWER".equals(key)) {
+            // ZeroTermux add {@
+            // DrawerLayout drawerLayout = mTermuxTerminalViewClient.getActivity().getDrawer();
+            // if (drawerLayout.isDrawerOpen(Gravity.LEFT))
+            //     drawerLayout.closeDrawer(Gravity.LEFT);
             SlidingConsumer drawerLayout = mTermuxTerminalViewClient.getActivity().getDrawer();
             if (drawerLayout.isOpened())
                 drawerLayout.close();
             else
                 drawerLayout.close();
+               // drawerLayout.openDrawer(Gravity.LEFT);
+            // @}
         } else if ("PASTE".equals(key)) {
             if(mTermuxTerminalSessionActivityClient != null)
                 mTermuxTerminalSessionActivityClient.onPasteTextFromClipboard(null);

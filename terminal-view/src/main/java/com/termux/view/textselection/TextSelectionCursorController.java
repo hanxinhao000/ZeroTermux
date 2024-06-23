@@ -33,15 +33,15 @@ public class TextSelectionCursorController implements CursorController {
 
     private ActionMode mActionMode;
     public final int ACTION_COPY = 1;
+	// ZeroTermux add {@
+   // public final int ACTION_PASTE = 2;
+   // public final int ACTION_MORE = 3;
     public final int ACTION_ADD = 2;
     public final int ENABLE_TOOLBOX = 3;
     public final int ACTION_PASTE = 4;
     public final int ACTION_MORE = 5;
-    /**
-     *  Zerotermux hanxinhao000
-     * @return
-     */
     private AddCommend mAddCommend;
+	// @}
 
     public TextSelectionCursorController(TerminalView terminalView) {
         this.terminalView = terminalView;
@@ -121,12 +121,16 @@ public class TextSelectionCursorController implements CursorController {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 int show = MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT;
+				// ZeroTermux add {@
                 String data = SaveData.getData(SaveData.TOOL, mEndHandle.getContext());
+				// @}
                 ClipboardManager clipboard = (ClipboardManager) terminalView.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 menu.add(Menu.NONE, ACTION_COPY, Menu.NONE, R.string.copy_text).setShowAsAction(show);
+				// ZeroTermux add {@
                 menu.add(Menu.NONE, ACTION_ADD, Menu.NONE, R.string.add_text).setShowAsAction(show);
                 menu.add(Menu.NONE, ENABLE_TOOLBOX, Menu.NONE, R.string.enable_toolbox).setEnabled(data != null && !(data.isEmpty()) &&!(data.equals("def"))).setShowAsAction(show);
-                menu.add(Menu.NONE, ACTION_PASTE, Menu.NONE, R.string.paste_text).setEnabled(clipboard != null && clipboard.hasPrimaryClip()).setShowAsAction(show);
+                // @}
+				menu.add(Menu.NONE, ACTION_PASTE, Menu.NONE, R.string.paste_text).setEnabled(clipboard != null && clipboard.hasPrimaryClip()).setShowAsAction(show);
                 menu.add(Menu.NONE, ACTION_MORE, Menu.NONE, R.string.text_selection_more);
                 return true;
             }
@@ -162,6 +166,7 @@ public class TextSelectionCursorController implements CursorController {
                         // otherwise handles will show above popup
                         terminalView.stopTextSelectionMode();
                         terminalView.showContextMenu();
+						// ZeroTermux add {@
                         break;
                     case ACTION_ADD:
                         if (mAddCommend != null) {
@@ -173,6 +178,7 @@ public class TextSelectionCursorController implements CursorController {
                         SaveData.saveData(SaveData.TOOL, "def", mEndHandle.getContext());
                         Toast.makeText(mEndHandle.getContext(), mEndHandle.getContext().getResources().getString(R.string.enable_toolbox_msg), Toast.LENGTH_SHORT).show();
                         terminalView.stopTextSelectionMode();
+						// @}
                         break;
                 }
 
@@ -425,11 +431,7 @@ public class TextSelectionCursorController implements CursorController {
     public boolean isSelectionEndDragged() {
         return mEndHandle.isDragging();
     }
-
-    /**
-     *  Zerotermux hanxinhao000
-     * @return
-     */
+	 // ZeroTermux add {@
     public AddCommend getAddCommend() {
         return mAddCommend;
     }
@@ -441,4 +443,5 @@ public class TextSelectionCursorController implements CursorController {
     public interface AddCommend {
         void editCommend(String edit);
     }
+	// @}
 }

@@ -22,7 +22,9 @@ public final class TerminalRenderer {
     final int mTextSize;
     final Typeface mTypeface;
     private final Paint mTextPaint = new Paint();
+	// ZeroTermux add {@
     public static int COLOR_TEXT = Color.parseColor("#ffffff");
+	// @}
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
     /** The {@link Paint#getFontSpacing()}. See http://www.fampennings.nl/maarten/android/08numgrid/font.png */
@@ -231,13 +233,14 @@ public final class TerminalRenderer {
             mTextPaint.setUnderlineText(underline);
             mTextPaint.setTextSkewX(italic ? -0.35f : 0.f);
             mTextPaint.setStrikeThruText(strikeThrough);
+			// ZeroTermux add {@
             //mTextPaint.setColor(foreColor);
             if (foreColor == -1) {
                 mTextPaint.setColor(COLOR_TEXT);
             } else {
                 mTextPaint.setColor(foreColor);
             }
-
+			// @}
             // The text alignment is the default Paint.Align.LEFT.
             canvas.drawText(text, startCharIndex, runWidthChars, left, y - mFontLineSpacingAndAscent, mTextPaint);
         }
@@ -252,10 +255,11 @@ public final class TerminalRenderer {
     public int getFontLineSpacing() {
         return mFontLineSpacing;
     }
-
+    // ZeroTermux add {@
     private void initColor(){
 
 
 
     }
+	// @}
 }
