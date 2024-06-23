@@ -280,6 +280,11 @@ class CommonCommandsDialog : BaseDialogDown {
             mRemoteConnection.backColor = UUtils.getColor(R.color.color_8850b397)
             mRemoteConnection.key = CommonCommandsDialogConstant.ITEM_CLICK_REMOTE_CONNECTION
             mList.add(mRemoteConnection)
+        } else {
+            mList.forEach { data ->
+                // 禁止切换选项背景持续闪烁
+                data.isBackAnim = false
+            }
         }
         mItemMenuAdapter = ItemMenuAdapter(mList, mContext, this)
         mItemMenuAdapter?.setCommonDialogListener(mCommonDialogListener)
