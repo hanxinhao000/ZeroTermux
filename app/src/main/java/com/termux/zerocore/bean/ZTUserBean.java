@@ -17,6 +17,16 @@ public class ZTUserBean {
     private boolean isOutputLOG = false;
     //是否显示雪花
     private boolean isSnowflakeShow = false;
+    //是否还原音量加减
+    private boolean isResetVolume = false;
+
+    public boolean isResetVolume() {
+        return isResetVolume;
+    }
+
+    public void setResetVolume(boolean resetVolume) {
+        isResetVolume = resetVolume;
+    }
 
     public boolean isSnowflakeShow() {
         return isSnowflakeShow;

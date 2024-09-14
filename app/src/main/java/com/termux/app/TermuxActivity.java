@@ -943,22 +943,23 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mTermuxTerminalViewClient.onCreate();
 		// ZeroTermux add {@
         if (mTermuxTerminalViewClient != null) {
-            mTermuxTerminalViewClient.setKeyUpDown(new TermuxTerminalViewClient.KeyUpDown() {
-                @Override
-                public void keyDown(int key) {
-                    if (getDrawer().isOpened()) {
-                        getDrawer().smoothClose();
-                        return;
-                    }
-                    if (key == KeyEvent.KEYCODE_VOLUME_UP) {
-                        getDrawer().smoothLeftOpen();
-                        return;
-                    }
+            mTermuxTerminalViewClient.setKeyUpDown(key -> {
+                if (UserSetManage.Companion.get()
+                    .getZTUserBean().isResetVolume()) {
+                    return;
+                }
+                if (getDrawer().isOpened()) {
+                    getDrawer().smoothClose();
+                    return;
+                }
+                if (key == KeyEvent.KEYCODE_VOLUME_UP) {
+                    getDrawer().smoothLeftOpen();
+                    return;
+                }
 
-                    if (key == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                        getDrawer().smoothRightOpen();
-                        return;
-                    }
+                if (key == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                    getDrawer().smoothRightOpen();
+                    return;
                 }
             });
 			// @}

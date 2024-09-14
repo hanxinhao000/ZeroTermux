@@ -36,6 +36,9 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
     private val shellTermuxSwitch by lazy {findViewById<SwitchCompat>(R.id.shell_termux_switch)}
     private val shellTermuxLl by lazy {findViewById<LinearLayout>(R.id.shell_termux_ll)}
 
+    private val volumeFunctionSwitch by lazy {findViewById<SwitchCompat>(R.id.volume_function_switch)}
+    private val volumeFunctionLl by lazy {findViewById<LinearLayout>(R.id.volume_function_ll)}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_zero_termux_settings)
@@ -51,6 +54,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         setSwitchStatus(forceUseNumpadSwitch, forceUseNumpadLl)
         setSwitchStatus(logOutputSwitch, logOutputLl)
         setSwitchStatus(shellTermuxSwitch, shellTermuxLl)
+        setSwitchStatus(volumeFunctionSwitch, volumeFunctionLl)
     }
 
     private fun initStatus() {
@@ -62,6 +66,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         forceUseNumpadSwitch.isChecked = ztUserBean.isForceUseNumpad
         logOutputSwitch.isChecked = ztUserBean.isOutputLOG
         shellTermuxSwitch.isChecked = isShellTermux()
+        volumeFunctionSwitch.isChecked = ztUserBean.isResetVolume
     }
 
     private fun setSwitchStatus(switchCompat: SwitchCompat, linearLayout: LinearLayout) {
@@ -106,6 +111,9 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
                         File(FileUrl.timerShellExecFile).delete()
                     }
 
+                }
+                volumeFunctionSwitch -> {
+                    ztUserBean.isResetVolume = switchCompat.isChecked
                 }
             }
             UserSetManage.get().setZTUserBean(ztUserBean)
