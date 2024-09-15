@@ -2,6 +2,7 @@ package com.termux.zerocore.utermux_windows.qemu.dialog;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,7 +24,7 @@ import java.io.File;
  **/
 public class EditTextDialog extends BaseDialogCentre {
 
-    private TextView cancel;
+    private TextView mDefaultTv;
     private TextView commit;
     private TextView start;
     private TextView commit_file;
@@ -42,63 +43,36 @@ public class EditTextDialog extends BaseDialogCentre {
     @Override
     public void initViewDialog(View mView) {
 
-        cancel = mView.findViewById(R.id.cancel);
+        mDefaultTv = mView.findViewById(R.id.default_tv);
         close_img = mView.findViewById(R.id.close_img);
         commit = mView.findViewById(R.id.commit);
         commit_file = mView.findViewById(R.id.commit_file);
         start = mView.findViewById(R.id.start);
         edit_text = mView.findViewById(R.id.edit_text);
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+        mDefaultTv.setOnClickListener(v -> {
+            if (mSystemSwitchListener != null) {
                 mSystemSwitchListener.switchEdit(edit_text);
-
-
             }
         });
-
-        close_img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
+        close_img.setOnClickListener(v -> dismiss());
+        commit_file.setOnClickListener(v -> {
+            FileNameDialog fileNameDialog = new FileNameDialog(mContext);
+            fileNameDialog.show();
+            fileNameDialog.setOnSaveFileNameListener(name -> {
+                fileNameDialog.dismiss();
+                UUtils.setFileString(new File(Environment.getExternalStorageDirectory(),"/xinhao/windows_config/" + name + ".txt"),edit_text.getText().toString());
+            });
         });
-
-        commit_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                FileNameDialog fileNameDialog = new FileNameDialog(mContext);
-                fileNameDialog.show();
-                fileNameDialog.setOnSaveFileNameListener(new FileNameDialog.OnSaveFileNameListener() {
-                    @Override
-                    public void saveFileName(String name) {
-                        fileNameDialog.dismiss();
-                        UUtils.setFileString(new File(Environment.getExternalStorageDirectory(),"/xinhao/windows_config/" + name + ".txt"),edit_text.getText().toString());
-                    }
-                });
-
-
-            }
-        });
-
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mStartCommand != null)
+        start.setOnClickListener(v -> {
+            if(mStartCommand != null) {
                 mStartCommand.startCommand(edit_text.getText().toString());
             }
         });
-
-        commit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(mStartCommand != null)
+        commit.setOnClickListener(v -> {
+            Log.w("TAG", "initViewDialogxxxxxxxxxxxxxxxxxxx: " + mEditStartCommand);
+            if(mEditStartCommand != null) {
                 mEditStartCommand.editCommand(edit_text.getText().toString());
-
             }
         });
     }
@@ -119,11 +93,11 @@ public class EditTextDialog extends BaseDialogCentre {
     public void setVisible(boolean isVisible){
 
         if(!isVisible){
-            cancel.setVisibility(View.INVISIBLE);
+            mDefaultTv.setVisibility(View.INVISIBLE);
             commit.setVisibility(View.INVISIBLE);
             commit_file.setVisibility(View.VISIBLE);
         }else{
-            cancel.setVisibility(View.VISIBLE);
+            mDefaultTv.setVisibility(View.VISIBLE);
             commit.setVisibility(View.VISIBLE);
             commit_file.setVisibility(View.GONE);
         }

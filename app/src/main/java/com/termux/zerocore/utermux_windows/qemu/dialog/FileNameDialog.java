@@ -63,12 +63,9 @@ public class FileNameDialog extends BaseDialogCentre {
 
                     }
                 }
-
-
                 if(mOnSaveFileNameListener!= null){
                     mOnSaveFileNameListener.saveFileName(s);
                 }
-
             }
         });
 

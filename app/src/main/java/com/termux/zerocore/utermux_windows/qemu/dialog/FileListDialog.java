@@ -67,13 +67,6 @@ public class FileListDialog extends BaseDialogCentre {
             ListFileAdapter listFileAdapter = new ListFileAdapter(files1Array);
             list_view.setAdapter(listFileAdapter);
         }
-
-
-
-
-
-
-
     }
 
     public void setBoomBtnVisible(boolean btnVisible){
@@ -125,15 +118,9 @@ public class FileListDialog extends BaseDialogCentre {
                 }
             });
         }else{
-
             tv_empty.setVisibility(View.VISIBLE);
             tv_empty.setText(UUtils.getString(R.string.当前目录下没有镜像文件));
-
         }
-
-
-
-
         def_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

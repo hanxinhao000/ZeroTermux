@@ -52,6 +52,7 @@ object FileUrl {
     public val zeroTermuxWebConfig = File(Environment.getExternalStorageDirectory(), "/xinhao/web_config")
     //模块包目录
     public val zeroTermuxModule = File(Environment.getExternalStorageDirectory(), "/xinhao/module")
+     val zeroTermuxWindowsConfig = File(Environment.getExternalStorageDirectory(), "/xinhao/windows_config/")
 
     //官方 sources 路径[源路径]
     public val sourcesUrl = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/etc/apt/sources.list"

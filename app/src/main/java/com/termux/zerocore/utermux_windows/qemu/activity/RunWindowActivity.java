@@ -22,10 +22,12 @@ import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.zerocore.dialog.LoadingDialog;
+import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.data.TermuxData;
 import com.termux.zerocore.utermux_windows.qemu.dialog.EditTextDialog;
 import com.termux.zerocore.utermux_windows.qemu.dialog.EndDialog;
 import com.termux.zerocore.utermux_windows.qemu.dialog.FileListDialog;
+import com.termux.zerocore.utermux_windows.qemu.dialog.FileNameDialog;
 import com.termux.zerocore.utermux_windows.qemu.dialog.SwitchQemuDialog;
 import com.termux.zerocore.utils.SaveData;
 
@@ -152,22 +154,16 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                         fileListDialog1.dismiss();
                         UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
                         String fileString = UUtils.getFileString(file);
-
                         EditTextDialog editTextDialog = new EditTextDialog(RunWindowActivity.this);
-
                         editTextDialog.setStringData(fileString);
-
                         editTextDialog.setStartCommand(new EditTextDialog.StartCommand() {
                             @Override
                             public void startCommand(String string) {
                                 runCommite(string + "\n",true);
                             }
                         });
-
                         editTextDialog.show();
-
                         editTextDialog.setVisible(true);
-
                     }
                 });
 
@@ -211,16 +207,6 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
 
                     }
                 });
-
-
-
-
-
-
-
-
-
-
             }
         });
 
@@ -228,7 +214,6 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
         other.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 SwitchQemuDialog switchQemuDialog = new SwitchQemuDialog(RunWindowActivity.this);
                 switchQemuDialog.show();
                 final String[] cmd = {""};
@@ -240,91 +225,60 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                         FileListDialog fileListDialog = new FileListDialog(RunWindowActivity.this);
                         fileListDialog.show();
                         fileListDialog.setBoomBtnVisible(false);
-                        fileListDialog.setOnItemFileClickListener(new FileListDialog.OnItemFileClickListener() {
-                            @Override
-                            public void onItemClick(File file) {
-                                fileListDialog.dismiss();
-                                switch (string){
-
-                                    case "amd":
-                                        cmd[0] = "qemu-system-x86_64 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/"  + file.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
-                                        break;
-                                    case "i386":
-                                        cmd[0] = "qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/"  + file.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
-                                        break;
-                                    case "mac":
-                                        cmd[0] = "qemu-system-ppc -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/"  + file.getName() + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33";
-                                        break;
-
-                                }
-
-                                FileListDialog fileListDialog1 = new FileListDialog(RunWindowActivity.this);
-                                fileListDialog1.show();
-                                fileListDialog1.setFilePath(mWinConfig);
-                                fileListDialog1.setTitleText(UUtils.getString(R.string.请选择模拟器配置文件));
-
-                                fileListDialog1.setBoomBtnVisible(true);
-                                fileListDialog1.setOnItemFileClickListener(new FileListDialog.OnItemFileClickListener() {
-                                    @Override
-                                    public void onItemClick(File file) {
-                                        fileListDialog1.dismiss();
-                                        UUtils.showLog("获取文件目录:" + file.getAbsolutePath());
-                                        String fileString = UUtils.getFileString(file);
-
-                                        EditTextDialog editTextDialog = new EditTextDialog(RunWindowActivity.this);
-
-                                        editTextDialog.setStringData(fileString);
-
-                                        editTextDialog.setVisible(false);
-
-
-                                        editTextDialog.setStartCommand(new EditTextDialog.StartCommand() {
-                                            @Override
-                                            public void startCommand(String string) {
-                                                runCommite(string + "\n",true);
-                                            }
-                                        });
-
-                                        editTextDialog.show();
-
-                                        editTextDialog.setVisible(true);
-
-                                    }
-                                });
-
-                                fileListDialog1.setOnOnDefClickListener(new FileListDialog.OnDefClickListener() {
-                                    @Override
-                                    public void onDefClickListener(String file) {
-                                        //默认
-                                        fileListDialog1.dismiss();
-
-                                        EditTextDialog editTextDialog = new EditTextDialog(RunWindowActivity.this);
-
-                                        editTextDialog.setStringData(cmd[0]);
-
-                                        editTextDialog.setVisible(false);
-
-
-                                        editTextDialog.setStartCommand(new EditTextDialog.StartCommand() {
-                                            @Override
-                                            public void startCommand(String string) {
-                                                runCommite(string + "\n",true);
-                                            }
-                                        });
-
-                                        editTextDialog.show();
-
-                                        editTextDialog.setVisible(true);
-                                    }
-                                });
-
-
-
+                        fileListDialog.setOnItemFileClickListener(file -> {
+                            fileListDialog.dismiss();
+                            switch (string){
+                                case "amd":
+                                    cmd[0] = "qemu-system-x86_64 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/"  + file.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
+                                    break;
+                                case "i386":
+                                    cmd[0] = "qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/"  + file.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
+                                    break;
+                                case "mac":
+                                    cmd[0] = "qemu-system-ppc -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/"  + file.getName() + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33";
+                                    break;
                             }
+
+                            FileListDialog fileListDialog1 = new FileListDialog(RunWindowActivity.this);
+                            fileListDialog1.show();
+                            fileListDialog1.setFilePath(mWinConfig);
+                            fileListDialog1.setTitleText(UUtils.getString(R.string.请选择模拟器配置文件));
+
+                            fileListDialog1.setBoomBtnVisible(true);
+                            fileListDialog1.setOnItemFileClickListener(file12 -> {
+                                fileListDialog1.dismiss();
+                                UUtils.showLog("获取文件目录:" + file12.getAbsolutePath());
+                                String fileString = UUtils.getFileString(file12);
+                                EditTextDialog editTextDialog = new EditTextDialog(RunWindowActivity.this);
+                                editTextDialog.setStringData(fileString);
+                                editTextDialog.setVisible(false);
+                                editTextDialog.setStartCommand(string12 -> runCommite(string12 + "\n",true));
+                                editTextDialog.show();
+                                editTextDialog.setVisible(true);
+
+                            });
+
+                            fileListDialog1.setOnOnDefClickListener(file1 -> {
+                                //默认
+                                fileListDialog1.dismiss();
+                                EditTextDialog editTextDialog = new EditTextDialog(RunWindowActivity.this);
+                                editTextDialog.setStringData(cmd[0]);
+                                editTextDialog.setVisible(false);
+                                editTextDialog.setStartCommand(string1 -> runCommite(string1 + "\n",true));
+                                editTextDialog.setSystemSwitchListener(editText -> editTextDialog.setStringData(cmd[0]));
+                                editTextDialog.setEditStartCommand(string13 -> {
+                                    FileNameDialog fileNameDialog = new FileNameDialog(RunWindowActivity.this);
+                                    fileNameDialog.setOnSaveFileNameListener(name -> {
+                                            fileNameDialog.dismiss();
+                                            UUtils.setFileString(new File(FileUrl.INSTANCE.getZeroTermuxWindowsConfig(), name), string13);
+                                        });
+                                    fileNameDialog.show();
+                                });
+                                editTextDialog.show();
+                                editTextDialog.setVisible(true);
+                            });
+
                         });
-
-
-
                     }
                 });
 
@@ -475,10 +429,6 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
         qemu_install.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-
                 if (TermuxActivity.mTerminalView != null) {
                     TermuxActivity.mTerminalView.sendTextToTerminal("pkg update -y && pkg install x11-repo unstable-repo -y && pkg install qemu-utils qemu-system-x86_64-headless  qemu-system-i386-headless -y &&  termux-setup-storage\n");
                     TermuxActivity.mTerminalView.sendTextToTerminal("y\n");
@@ -491,7 +441,6 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                 }else{
                     UUtils.showMsg(UUtils.getString(R.string.系统初始化失败));
                 }
-
             }
         });
 
@@ -588,19 +537,6 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
 
                     }
                 });
-
-
-
-
-
-
-
-
-
-
-
-
-
             }
         });
 
@@ -698,17 +634,6 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
 
                     }
                 });
-
-
-
-
-
-
-
-
-
-
-
             }
         });
 

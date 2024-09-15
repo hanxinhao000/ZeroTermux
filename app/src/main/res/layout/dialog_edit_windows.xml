@@ -57,7 +57,7 @@
                         android:layout_width="match_parent"
                         android:text="@string/恢复默认命令"
                         android:textColor="#fff"
-                        android:id="@+id/cancel"
+                        android:id="@+id/default_tv"
                         android:gravity="center"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"/>
