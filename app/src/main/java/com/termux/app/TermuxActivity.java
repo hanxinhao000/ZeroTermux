@@ -1219,7 +1219,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void showStylingDialog() {
         Intent stylingIntent = new Intent();
-        stylingIntent.setClassName(TermuxConstants.TERMUX_STYLING_PACKAGE_NAME, TermuxConstants.TERMUX_STYLING.TERMUX_STYLING_ACTIVITY_NAME);
+        stylingIntent.setClassName(TermuxConstants.TERMUX_STYLING_PACKAGE_NAME, TermuxConstants.TERMUX_STYLING_APP.TERMUX_STYLING_ACTIVITY_NAME);
         try {
             startActivity(stylingIntent);
         } catch (ActivityNotFoundException | IllegalArgumentException e) {
@@ -1886,8 +1886,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 break;
             case R.id.moe:
-                mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunMoeSh());
-
+                SwitchDialog switchDialog = switchDialogShow(UUtils.getString(R.string.警告), UUtils.getString(R.string.zt_moe_remove));
+                switchDialog.getCancel().setOnClickListener(v1 -> switchDialog.dismiss());
+                switchDialog.getOk().setOnClickListener(v12 -> {
+                    switchDialog.dismiss();
+                    mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunMoeSh());
+                });
                 break;
 
             case R.id.msg:

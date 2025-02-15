@@ -939,7 +939,9 @@ Reset successfully</string>
     <string name="zt_install">Restore/expand official version</string>
     <string name="zt_install_float">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> Termux Float] to install the plug-in</string>
     <string name="zt_install_file">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> (Zero)Utermux File Plug] to install the plug-in</string>
-
+    <string name="zt_volume_function_title">Restore volume +- keys</string>
+    <string name="zt_volume_function_summary">Disable the current use of volume +- keys to pop up the left/right panel</string>
+    <string name="zt_moe_remove">MOE is no longer maintained by the author, and unpredictable errors may occur in ZeroTermux.</string>
 
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>

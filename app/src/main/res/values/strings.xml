@@ -947,6 +947,7 @@
     <string name="zt_particle_animation">粒子动画</string>
     <string name="zt_volume_function_title">还原音量+-键</string>
     <string name="zt_volume_function_summary">禁用当前使用音量+-键进行弹出左/右面板</string>
+    <string name="zt_moe_remove">MOE目前作者已经不在维护，可能会出现ZeroTermux不可预知的错误结果。</string>
 
     <string-array name="options_resolution_keys">
         <item>1920x1080</item>
