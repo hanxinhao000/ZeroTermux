@@ -215,7 +215,7 @@ class ZFileListFragment : Fragment() {
                     .createEditDialog(requireContext() getStringById R.string.zfile_new_file)
                 createEditDialog.yesTv.setOnClickListener {
                     val text = createEditDialog.inputSystemName.text
-                    if (text.isNullOrEmpty()) {
+                    if (text.isNullOrEmpty() || text.trim() == ".") {
                         Toast
                             .makeText(
                                 requireContext(),
