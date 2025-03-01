@@ -75,7 +75,7 @@ public class TermuxApplication extends XHApplication {
         // Set log config for the app
         setLogConfig(context);
         // ZeroTermux add {@
-        Z7Extractor.init();
+        // Z7Extractor.init();
 		// @}
 
         Logger.logDebug("Starting Application");

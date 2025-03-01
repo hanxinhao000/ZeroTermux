@@ -49,7 +49,7 @@ android {
 
     dependencies {
         def libsuVersion = '5.2.1'
-        implementation fileTree(include: ['*.jar'], dir: 'libs')
+        implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
         implementation "androidx.annotation:annotation:1.2.0"
         implementation "androidx.core:core:1.9.0-alpha05"
         implementation "androidx.drawerlayout:drawerlayout:1.1.1"
@@ -106,7 +106,6 @@ android {
         //https://github.com/gyf-dev/ImmersionBar
         implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
         //Zip解压
-        implementation 'com.hzy:un7zip:+'
         implementation 'me.testica:codeeditor:1.0.2'
         // 线性背景
         implementation 'com.googlecode.plist:dd-plist:1.16'
@@ -291,11 +290,11 @@ clean {
 
 task downloadBootstraps() {
     doLast {
-        def version = "2024.09.08-r1+apt-android-7"
-        downloadBootstrap("aarch64", "fa262d21b0e28825cd26dad95f1f42e773eb91bdbae544449662f5b1d4e440b0", version)
-        downloadBootstrap("arm", "c12f5d119228078de8a8053b6dd364d150249d083f1408336d26dcd9a5b5a899", version)
-        downloadBootstrap("i686", "5e1da8dba8bc828c24bbb4d22646ad3e2452fe61c9ee92f662c3fdd4e7e72895", version)
-        downloadBootstrap("x86_64", "d6b6d68d5d39577f4e7c9295313847fd17cef3ecba2df27130c4e92dfecc2018", version)
+        def version = "2025.02.23-r1+apt-android-7"
+        downloadBootstrap("aarch64", "517d59e7d7650b0626952762b4102b5aace7c0619444ad2961746d0853f50c6a", version)
+        downloadBootstrap("arm", "c2bceaf40c1bafef326366ac77c57bd3a3722a77a1b1f6e9e666c578a94efe68", version)
+        downloadBootstrap("i686", "1c0234df7adc1b2458a194e2785628e4d44167cca3987e864e673959f5666070", version)
+        downloadBootstrap("x86_64", "353af06e2c49fae32c3428097a395ba27f33bd6e40ba54716194cb4630ab184f", version)
     }
 }
 
