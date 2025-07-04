@@ -118,6 +118,8 @@ android {
         implementation 'org.nanohttpd:nanohttpd:2.3.1'
         provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
 
+        implementation 'com.hzy:un7zip:+'
+
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"
