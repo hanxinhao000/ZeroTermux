@@ -1683,12 +1683,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
         getServiceVs();
         refStartCommandStat();
-        main_card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class));
-            }
-        });
+        main_card.setOnClickListener(
+            v -> startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class)));
+        findViewById(R.id.settings).setOnClickListener(
+            v -> startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class)));
 
         ip_card.setOnClickListener(new View.OnClickListener() {
             @Override
