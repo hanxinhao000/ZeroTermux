@@ -1614,7 +1614,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // will be called again. Extra keys input text, terminal sessions and transcripts will be preserved.
         if (recreateActivity) {
             Logger.logDebug(LOG_TAG, "Recreating activity");
-            TermuxActivity.this.recreate();
+            // ZeroTermux TODO 目前重新创建当前activity会导致页面被finish掉，暂时注掉此处，后续版本分析详细原因
+            // {@
+            // TermuxActivity.this.recreate();
+            // @}
         }
     }
 
