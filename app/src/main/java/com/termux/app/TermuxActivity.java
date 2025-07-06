@@ -2325,7 +2325,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             case R.id.x11_environment:
                 // 复制环境
-                mTerminalView.sendTextToTerminal("pkg install x11-repo && pkg install termux-x11-nightly\n");
+                mTerminalView.sendTextToTerminal("pkg install x11-repo " +
+                    "&& pkg install termux-x11-nightly " +
+                    "&& pkg install xfce4-session" +
+                    "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
                 getDrawer().smoothClose();
                 break;
             case R.id.x11_so_install:
