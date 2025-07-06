@@ -1049,6 +1049,9 @@
     <string name="x11_so_install_ok">修复成功，请重新运行termux-x11</string>
     <string name="x11_so_install_not">环境状态正常，无需修复</string>
     <string name="x11_so_install_error">修复失败，请通过「左侧导航栏 → X11设置 → 切换通道」查看详细日志</string>
+
+    <string name="x11_install_apk">安装X11</string>
+    <string name="x11_install_apk_not">没有安装X11，请先安装X11 APK</string>
 </resources>
 
 

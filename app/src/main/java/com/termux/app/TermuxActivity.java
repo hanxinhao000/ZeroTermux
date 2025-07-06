@@ -141,6 +141,7 @@ import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.settings.TimerActivity;
+import com.termux.zerocore.settings.ZTInstallActivity;
 import com.termux.zerocore.settings.ZeroTermuxSettingsActivity;
 import com.termux.zerocore.settings.ZeroTermuxX11Settings;
 import com.termux.zerocore.settings.ZtSettingsActivity;
@@ -1688,6 +1689,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout x11_hide_terminal;
     private LinearLayout x11_environment;
     private LinearLayout x11_so_install;
+    private LinearLayout install_x11_apk;
 
     private FrameLayout frame_file;
     private RelativeLayout session_rl;
@@ -1755,6 +1757,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         x11_features_settings = findViewById(R.id.x11_features_settings);
         x11_environment = findViewById(R.id.x11_environment);
+        install_x11_apk = findViewById(R.id.install_x11_apk);
         x11_so_install = findViewById(R.id.x11_so_install);
         x11_display_terminal = findViewById(R.id.x11_display_terminal);
         x11_hide_terminal = findViewById(R.id.x11_hide_terminal);
@@ -1768,6 +1771,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         x11_so_install.setOnClickListener(this);
         x11_environment.setOnClickListener(this);
+        install_x11_apk.setOnClickListener(this);
         x11_features_settings.setOnClickListener(this);
         x11_display_terminal.setOnClickListener(this);
         x11_hide_terminal.setOnClickListener(this);
@@ -2325,11 +2329,26 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             case R.id.x11_environment:
                 // 复制环境
-                mTerminalView.sendTextToTerminal("pkg install x11-repo " +
-                    "&& pkg install termux-x11-nightly " +
-                    "&& pkg install xfce4-session" +
-                    "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
+                if (mInternalPassage) {
+                    mTerminalView.sendTextToTerminal("pkg install x11-repo " +
+                        "&& pkg install termux-x11-nightly " +
+                        "&& pkg install xfce4-session" +
+                        "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
+                } else {
+                    if (UUtils.isPackageInstalled(getApplicationContext(), "com.termux.x11")) {
+                        mTerminalView.sendTextToTerminal("pkg install x11-repo " +
+                            "&& pkg install termux-x11-nightly " +
+                            "&& pkg install xfce4-session" +
+                            "&& am start -a android.intent.action.zt.termux.x11" +
+                            "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
+                    } else {
+                        UUtils.showMsg(getString(R.string.x11_install_apk_not));
+                    }
+                }
                 getDrawer().smoothClose();
+                break;
+            case R.id.install_x11_apk:
+                startActivity(new Intent(TermuxActivity.this, ZTInstallActivity.class));
                 break;
             case R.id.x11_so_install:
                 //修复SO环境

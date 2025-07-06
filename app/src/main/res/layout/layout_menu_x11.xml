@@ -221,11 +221,37 @@
 
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
-                android:layout_height="wrap_content"/>
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/install_x11_apk"
+                android:layout_height="80dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:src="@drawable/ic_x11_icon"
+                    android:layout_height="32dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="2dp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/x11_install_apk"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="10sp" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 

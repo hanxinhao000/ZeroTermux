@@ -1051,4 +1051,7 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
     <string name="x11_so_install_ok">Repair successful. Please relaunch termux-x11.</string>
     <string name="x11_so_install_not">Environment status normal. No repair needed.</string>
     <string name="x11_so_install_error">Repair failed. View detailed logs via \"Left Navigation → X11 Settings → Switch Channel\"</string>
+
+    <string name="x11_install_apk">install X11</string>
+    <string name="x11_install_apk_not">X11 is not installed, please install X11 APK first</string>
 </resources>
