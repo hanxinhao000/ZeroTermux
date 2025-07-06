@@ -1005,4 +1005,50 @@ Reset successfully</string>
     <string name="zt_env_shell_sum">Turn this option on to output the sh script to the specified directory\nClose it to cancel this script output</string>
     <string name="zt_env_shell_sum_msg">Open adb shell and run the following command:\n1.adb shell\n2.</string>
     <string name="zt_particle_animation">particle animation</string>
+
+    <!-- X11 Features Module -->
+    <string name="x11_features">X11 Features</string>
+    <string name="x11_features_settings">X11 Settings</string>
+    <string name="x11_features_settings_internal">Internal Channel X11 Settings</string>
+    <string name="x11_features_settings_summary">Advanced (Native) Settings: Resolution, Bottom Keyboard Display, etc.</string>
+
+    <!-- Terminal Display Control -->
+    <string name="x11_display_terminal">Show Terminal</string>
+    <string name="x11_hide_terminal">Hide Terminal</string>
+
+    <!-- Environment Configuration -->
+    <string name="x11_environment">X11 Environment</string>
+    <string name="x11_not_connect">No X11 connection detected. Please establish a session and try again.</string>
+    <string name="x11_msg_error">Terminal display anomaly detected. Automatic recovery completed.</string>
+
+    <!-- Channel Selection -->
+    <string name="x11_internal_passage">Internal Channel</string>
+    <string name="x11_external_channels">External Channel</string>
+    <string name="x11_external_summary">
+Requires app restart to take effect\n\n
+• Internal Channel: X11 output displays directly on terminal background\n
+• External Channel: X11 output displays via Termux:X11 APK\n
+⚠️ Internal Channel may impact performance\n\n
+Known Issue: Rapid consecutive back operations may cause black screen in Internal Channel. Press back again and re-enter to recover.\n\n
+⚠️ Key Conflict: When Internal Channel is enabled, volume keys will be remapped to open left/right panels. To use native Termux volume key functions, disable Internal Channel.
+</string>
+
+    <!-- Error Messages -->
+    <string name="x11_internal_passage_install_error">Internal channel file installation failed. Please manually set permissions (path: /usr/libexec/termux-x11/loader.apk) to 444\nor reinstall component.</string>
+    <string name="x11_error">Base environment not detected. Please configure via \"X11 Environment\" in left navigation panel.</string>
+    <string name="x11_error_set_env">Environment configuration failed. Forced to enable Internal Channel! If this error persists, contact developer.</string>
+
+    <!-- Installation Logs -->
+    <string name="x11_environment_msg">Installation Log:</string>
+    <string name="x11_environment_error">Failed to delete loader.apk. Please manually delete: /usr/libexec/termux-x11/loader.apk</string>
+    <string name="x11_environment_error_x11">Failed to delete termux-x11. Please manually delete: /usr/bin/termux-x11</string>
+
+    <!-- Operation Confirmation -->
+    <string name="x11_dialog_reset">Switch successful. Requires restart to take effect. Restart now?</string>
+
+    <!-- Environment Repair -->
+    <string name="x11_so_install">Fix Environment Error</string>
+    <string name="x11_so_install_ok">Repair successful. Please relaunch termux-x11.</string>
+    <string name="x11_so_install_not">Environment status normal. No repair needed.</string>
+    <string name="x11_so_install_error">Repair failed. View detailed logs via \"Left Navigation → X11 Settings → Switch Channel\"</string>
 </resources>

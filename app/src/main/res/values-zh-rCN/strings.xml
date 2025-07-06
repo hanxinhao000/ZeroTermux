@@ -1003,6 +1003,52 @@
     <string name="zt_env_shell_sum">打开此选项输出sh脚本到指定目录\n关闭则取消此脚本输出</string>
     <string name="zt_env_shell_sum_msg">打开adb shell 运行以下命令:\n1.adb shell\n2.</string>
     <string name="zt_particle_animation">粒子动画</string>
+
+    <!-- X11功能模块 -->
+    <string name="x11_features">X11功能</string>
+    <string name="x11_features_settings">X11设置</string>
+    <string name="x11_features_settings_internal">内部通道X11设置</string>
+    <string name="x11_features_settings_summary">高级（原生）设置：分辨率、底部键盘显示等</string>
+
+    <!-- 终端显示控制 -->
+    <string name="x11_display_terminal">显示终端</string>
+    <string name="x11_hide_terminal">隐藏终端</string>
+
+    <!-- 环境配置 -->
+    <string name="x11_environment">X11环境</string>
+    <string name="x11_not_connect">X11未检测到连接，请建立会话后重试</string>
+    <string name="x11_msg_error">检测到终端显示异常，已自动恢复</string>
+
+    <!-- 通道选择 -->
+    <string name="x11_internal_passage">内部通道</string>
+    <string name="x11_external_channels">外部通道</string>
+    <string name="x11_external_summary">
+切换后需重启APP生效\n\n
+• 内部通道：X11输出直接显示在终端背景\n
+• 外部通道：X11输出通过Termux:X11 APK显示\n
+⚠️ 内部通道可能影响性能\n\n
+已知问题：快速连续返回操作可能导致内部通道黑屏，再次返回并重新进入即可恢复\n\n
+⚠️ 按键冲突：启用内部通道时，音量键将被强制映射为打开左/右面板。如需使用Termux原生音量键功能，请关闭内部通道
+</string>
+
+    <!-- 错误提示 -->
+    <string name="x11_internal_passage_install_error">内部通道文件安装失败，请手动设置权限(路径：/usr/libexec/termux-x11/loader.apk)为444\n或重新安装组件</string>
+    <string name="x11_error">未检测到基础环境，请通过左侧导航栏点击「X11环境」进行配置</string>
+    <string name="x11_error_set_env">环境配置失败，已强制启用内部通道！如持续出现此错误，请联系开发者</string>
+
+    <!-- 安装日志 -->
+    <string name="x11_environment_msg">安装日志：</string>
+    <string name="x11_environment_error">loader.apk删除失败，请手动删除：/usr/libexec/termux-x11/loader.apk</string>
+    <string name="x11_environment_error_x11">termux-x11删除失败，请手动删除：/usr/bin/termux-x11</string>
+
+    <!-- 操作确认 -->
+    <string name="x11_dialog_reset">切换成功，需要重启生效。是否立即重启？</string>
+
+    <!-- 环境修复 -->
+    <string name="x11_so_install">修复环境错误</string>
+    <string name="x11_so_install_ok">修复成功，请重新运行termux-x11</string>
+    <string name="x11_so_install_not">环境状态正常，无需修复</string>
+    <string name="x11_so_install_error">修复失败，请通过「左侧导航栏 → X11设置 → 切换通道」查看详细日志</string>
 </resources>
 
 
