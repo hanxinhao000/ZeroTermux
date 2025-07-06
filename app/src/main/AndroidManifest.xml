@@ -89,6 +89,12 @@
             android:name=".zerocore.settings.ZeroTermuxSettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity
+            android:name=".zerocore.settings.ZeroTermuxX11Settings"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity
             android:name=".zerocore.settings.ZtSettingsActivity"
             android:exported="false"

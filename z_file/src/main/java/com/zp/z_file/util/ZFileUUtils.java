@@ -621,33 +621,35 @@ public class ZFileUUtils {
         return Build.BRAND;
     }
 
-
-
-    //写出文件
-    public static void writerFile(String name, File mFile) {
-
+    public static boolean writerFile(String name, File mFile) {
         try {
-            InputStream open = getContext().getAssets().open(name);
+            // 获取Assets中的输入流
+            InputStream inputStream = getContext().getAssets().open(name);
 
-            int len = 0;
-
+            // 如果目标文件不存在，则创建
             if (!mFile.exists()) {
                 mFile.createNewFile();
             }
 
-            FileOutputStream fileOutputStream = new FileOutputStream(mFile);
+            // 使用缓冲区（2048字节）读写
+            FileOutputStream outputStream = new FileOutputStream(mFile);
+            byte[] buffer = new byte[2048]; // 缓冲区大小
+            int bytesRead; // 实际读取的字节数
 
-            while ((len = open.read()) != -1) {
-                fileOutputStream.write(len);
+            // 循环读取并写入文件
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead); // 写入实际读取的字节
             }
 
-            fileOutputStream.flush();
-            open.close();
-            fileOutputStream.close();
+            // 关闭流（确保资源释放）
+            outputStream.flush();
+            inputStream.close();
+            outputStream.close();
+            return true;
         } catch (Exception e) {
-
+            e.printStackTrace(); // 打印异常信息（实际项目中建议记录日志）
+            return false;
         }
-
     }
 
 

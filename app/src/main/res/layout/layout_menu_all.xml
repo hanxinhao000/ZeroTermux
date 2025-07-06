@@ -608,6 +608,7 @@
 
             </androidx.cardview.widget.CardView>
 
+            <include layout="@layout/layout_menu_x11"/>
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_marginTop="5dp"

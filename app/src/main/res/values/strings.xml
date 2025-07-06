@@ -977,5 +977,27 @@
         <item>1024000</item>
     </integer-array>
 
-
+    <string name="x11_features">X11功能</string>
+    <string name="x11_features_settings">X11设置</string>
+    <string name="x11_features_settings_internal">内部通道X11设置</string>
+    <string name="x11_features_settings_summary">详细(原生)设置，分辨率、底部键盘显示等</string>
+    <string name="x11_display_terminal">显示终端</string>
+    <string name="x11_hide_terminal">隐藏终端</string>
+    <string name="x11_environment">X11环境</string>
+    <string name="x11_not_connect">X11没有任何连接,请连接会话后重试</string>
+    <string name="x11_msg_error">查询到终端显示异常,现已恢复</string>
+    <string name="x11_internal_passage">内部通道</string>
+    <string name="x11_external_channels">外部通道</string>
+    <string name="x11_external_summary">切换完成请重启APP生效\n\n内部通道：使用内部通道X11显示输出直接会在终端背景显示\n外部通道：外部通道X11显示输出会在Termux:X11 APK 显示\n内部通道可能会影响一定的性能\n\n注意：已知问题，如果在终端连续返回进入，内部通道可能会黑屏，再次按返回键退出，重新进入即可恢复\n\n操作：如果开启内部通道，音量上下(加减)键会被强制替换成打开左/右面板,如需需要使用Termux 原生上下键功能，请关闭内部通道</string>
+    <string name="x11_internal_passage_install_error">内部通道文件安装失败，请手动设置权限(/usr/libexec/termux-x11/loader.apk)为444\n或重新安装</string>
+    <string name="x11_error">没有安装基础环境，请在左侧栏点击 “ X11环境 ”</string>
+    <string name="x11_error_set_env">环境设置失败，只能强制使用内部通道!如果一直提示此错误，请联系开发者</string>
+    <string name="x11_environment_msg">安装日志：</string>
+    <string name="x11_environment_error">Loader.apk删除失败，请手动删除目录下：/usr/libexec/termux-x11/loader.apk</string>
+    <string name="x11_environment_error_x11">termux-x11删除失败，请手动删除目录下：/usr/bin/termux-x11</string>
+    <string name="x11_dialog_reset">切换成功，需要重启生效，现在需要重启吗？</string>
+    <string name="x11_so_install">修环境报错</string>
+    <string name="x11_so_install_ok">libXlorie.so 修复成功</string>
+    <string name="x11_so_install_not">环境正常无需修复</string>
+    <string name="x11_so_install_error">修复失败，请在 左侧栏 -> X11设置 切换通道来显示详细信息</string>
 </resources>

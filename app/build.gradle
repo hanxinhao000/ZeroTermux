@@ -7,15 +7,13 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion project.properties.compileSdkVersion.toInteger()
-    ndkVersion project.properties.ndkVersion
+    ndkVersion '27.0.12077973'
 
     buildFeatures {
         viewBinding true
     }
     lintOptions {
-
         checkReleaseBuilds false
-
     }
     tasks.withType(JavaCompile) {
         options.fork = true

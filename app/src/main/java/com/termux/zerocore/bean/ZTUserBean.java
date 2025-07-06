@@ -19,6 +19,26 @@ public class ZTUserBean {
     private boolean isSnowflakeShow = false;
     //是否还原音量加减
     private boolean isResetVolume = false;
+    //显示/隐藏终端
+    private boolean isShowCommand = false;
+    //内部/外部通道
+    private boolean isInternalPassage = false;
+
+    public boolean isInternalPassage() {
+        return isInternalPassage;
+    }
+
+    public void setInternalPassage(boolean internalPassage) {
+        isInternalPassage = internalPassage;
+    }
+
+    public boolean isShowCommand() {
+        return isShowCommand;
+    }
+
+    public void setShowCommand(boolean showCommand) {
+        isShowCommand = showCommand;
+    }
 
     public boolean isResetVolume() {
         return isResetVolume;

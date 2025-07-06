@@ -23,6 +23,7 @@ import com.termux.app.TermuxActivity;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.view.ViewUtils;
 import com.termux.R;
+import com.termux.x11.MainActivity;
 import com.termux.zerocore.view.ZeroTermuxBackLayout;
 
 /**
@@ -298,6 +299,9 @@ public class TermuxActivityRootView extends ZeroTermuxBackLayout implements View
 
     public VideoView getBack_video() {
         return getBackVideo();
+    }
+    public MainActivity getMainActivity() {
+        return super.getMainActivity();
     }
 	// @}
 

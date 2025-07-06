@@ -8,6 +8,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -296,6 +297,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent e) {
+        Log.i("TAG", "handleKey termux onKeyUp...");
         // If emulator is not set, like if bootstrap installation failed and user dismissed the error
         // dialog, then just exit the activity, otherwise they will be stuck in a broken state.
         if (keyCode == KeyEvent.KEYCODE_BACK && mActivity.getTerminalView().mEmulator == null) {
