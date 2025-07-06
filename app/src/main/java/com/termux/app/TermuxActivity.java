@@ -2343,6 +2343,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                             "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
                     } else {
                         UUtils.showMsg(getString(R.string.x11_install_apk_not));
+                        return;
                     }
                 }
                 getDrawer().smoothClose();
