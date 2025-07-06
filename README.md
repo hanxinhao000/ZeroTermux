@@ -1,7 +1,12 @@
 # ZeroTermux
 
+<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="500" width="500">
+<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="500" width="500">
 
 <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg"  height="720" width="360">
+
+## 内部通道实现的X11 aar
+https://github.com/hanxinhao000/ZeroTermux-X11-aar
 
 # DOWNLOAD APK
 ## 不想自行编译的小伙版可下载已经编译好的版本(不要直接点击,复制地址在浏览器地址栏打开)：
