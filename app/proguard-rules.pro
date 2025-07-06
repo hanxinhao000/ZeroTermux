@@ -36,3 +36,25 @@
 
 -keep class org.apache.ftpserver.** { *; }
 -dontwarn org.apache.ftpserver.**
+
+# 保留 CmdEntryPoint 及其依赖
+-keep class com.termux.x11.CmdEntryPoint { *; }
+-keep class com.termux.x11.Loader { *; }
+
+# 保留所有native方法
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# 保留自定义异常类
+-keep public class * extends java.lang.Exception
+
+# 保留ActivityThread相关反射类
+-keep class android.app.ActivityThread { *; }
+-keepclassmembers class android.app.ActivityThread {
+    public static *** currentActivityThread();
+    public *** getSystemContext();
+}
+
+# 保留自定义工具类
+-keep class com.your.package.ContextUtil { *; }
