@@ -2343,22 +2343,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         Log.i("TAG", "installAisleFile delete: " + delete);
                     }
                     if (!ZFileUUtils.writerFile(mInternalPassage? "x11/aisle_zt_loader.apk"
-                        : "aisle_x11_loader.apk", aislePathAPKFile)) {
+                        : "x11/aisle_x11_loader.apk", aislePathAPKFile)) {
                         UUtils.runOnUIThread(() -> {
                            UUtils.showMsg(getString(R.string.x11_so_install_error));
                         });
                         return;
                     }
-                    if (!aislePathSo.exists()) {
-                        ZFileUUtils.writerFile("x11/libXlorie.so", aislePathSo);
-                        UUtils.runOnUIThread(() -> {
-                            UUtils.showMsg(getString(R.string.x11_so_install_ok));
-                        });
-                    } else {
-                        UUtils.runOnUIThread(() -> {
-                            UUtils.showMsg(getString(R.string.x11_so_install_not));
-                        });
+                    try {
+                        Os.chmod(aislePathAPKFile.getAbsolutePath(), 0444);
+                    } catch (ErrnoException e) {
+                        e.printStackTrace();
                     }
+                    ZFileUUtils.writerFile("x11/libXlorie.so", aislePathSo);
+                    UUtils.runOnUIThread(() -> {
+                        UUtils.showMsg(getString(R.string.x11_so_install_ok));
+                    });
                 });
                 break;
             case R.id.x11_display_terminal:

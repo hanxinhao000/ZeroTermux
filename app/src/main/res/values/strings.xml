@@ -997,7 +997,7 @@
     <string name="x11_environment_error_x11">termux-x11删除失败，请手动删除目录下：/usr/bin/termux-x11</string>
     <string name="x11_dialog_reset">切换成功，需要重启生效，现在需要重启吗？</string>
     <string name="x11_so_install">修环境报错</string>
-    <string name="x11_so_install_ok">libXlorie.so 修复成功</string>
+    <string name="x11_so_install_ok">修复成功，请使用termux-x11重试</string>
     <string name="x11_so_install_not">环境正常无需修复</string>
     <string name="x11_so_install_error">修复失败，请在 左侧栏 -> X11设置 切换通道来显示详细信息</string>
 </resources>
