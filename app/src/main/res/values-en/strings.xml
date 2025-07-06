@@ -1031,7 +1031,8 @@ Requires app restart to take effect\n\n
 ⚠️ Internal Channel may impact performance\n\n
 Known Issue: Rapid consecutive back operations may cause black screen in Internal Channel. Press back again and re-enter to recover.\n\n
 ⚠️ Key Conflict: When Internal Channel is enabled, volume keys will be remapped to open left/right panels. To use native Termux volume key functions, disable Internal Channel.
-</string>
+    \n ⚠️ Background conflict: The internal channel will affect the background video/background image display, switch to the external channel to restore
+    </string>
 
     <!-- Error Messages -->
     <string name="x11_internal_passage_install_error">Internal channel file installation failed. Please manually set permissions (path: /usr/libexec/termux-x11/loader.apk) to 444\nor reinstall component.</string>

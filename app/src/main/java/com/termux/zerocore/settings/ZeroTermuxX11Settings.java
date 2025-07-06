@@ -57,28 +57,34 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
         switchAisle(internalPassage);
         mIsEnable = internalPassage;
         internal_passage.setOnClickListener(view -> {
-            switchAisle(true);
-            installAisleFile(true, (isSes) -> {
+            boolean b = installAisleFile(true, (isSes) -> {
                 UUtils.runOnUIThread(() -> {
                     if (isSes) {
                         showCloseDialog();
                     }
                 });
             });
+            if (!b) {
+                return;
+            }
+            switchAisle(true);
             ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
             ztUserBean.setInternalPassage(true);
             setX11SettingsEnable(true);
             UserSetManage.Companion.get().setZTUserBean(ztUserBean);
         });
         external_channels.setOnClickListener(view -> {
-            switchAisle(false);
-            installAisleFile(false, (isSes) -> {
+            boolean b = installAisleFile(false, (isSes) -> {
                 UUtils.runOnUIThread(() -> {
                     if (isSes) {
                         showCloseDialog();
                     }
                 });
             });
+            if (!b) {
+                return;
+            }
+            switchAisle(false);
             setX11SettingsEnable(false);
             ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
             ztUserBean.setInternalPassage(false);
@@ -101,6 +107,7 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
         File aislePathSo = new File(FileUrl.INSTANCE.getAislePathSo());
 
         if (!aislePathAPKFile.exists()) {
+            loadingDialog.dismiss();
             UUtils.showMsg(getString(R.string.x11_error));
             return false;
         }

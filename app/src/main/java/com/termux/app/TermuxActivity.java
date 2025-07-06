@@ -2329,23 +2329,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             case R.id.x11_environment:
                 // 复制环境
-                if (mInternalPassage) {
-                    mTerminalView.sendTextToTerminal("pkg install x11-repo " +
-                        "&& pkg install termux-x11-nightly " +
-                        "&& pkg install xfce4-session" +
-                        "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
-                } else {
-                    if (UUtils.isPackageInstalled(getApplicationContext(), "com.termux.x11")) {
-                        mTerminalView.sendTextToTerminal("pkg install x11-repo " +
-                            "&& pkg install termux-x11-nightly " +
-                            "&& pkg install xfce4-session" +
-                            "&& am start -a android.intent.action.zt.termux.x11" +
-                            "&& termux-x11 :1 -xstartup \"xfce4-session\"\n");
-                    } else {
-                        UUtils.showMsg(getString(R.string.x11_install_apk_not));
-                        return;
-                    }
-                }
+                // am start -a android.intent.action.zt.termux.x11
+                mTerminalView.sendTextToTerminal("pkg install x11-repo " +
+                    "&& pkg install termux-x11-nightly " +
+                    "&& termux-x11 \n");
                 getDrawer().smoothClose();
                 break;
             case R.id.install_x11_apk:
