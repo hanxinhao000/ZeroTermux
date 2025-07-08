@@ -38,13 +38,13 @@ android {
         }
     }
 
-  /*  splits.abi {
+    splits.abi {
         enable true
         reset()
 
         include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
         universalApk true
-    }*/
+    }
 
     /*  sourceSets {
           main {
@@ -141,7 +141,7 @@ android {
         minSdkVersion project.properties.minSdkVersion.toInteger()
         targetSdkVersion project.properties.targetSdkVersion.toInteger()
         versionCode 117
-        versionName "0.118.1.45"
+        versionName "0.118.3.46"
 
         manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
         manifestPlaceholders.TERMUX_APP_NAME = "Termux"
