@@ -80,25 +80,18 @@ android {
         implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
         // Optional: Provides remote file system support
         implementation "com.github.topjohnwu.libsu:nio:${libsuVersion}"
-
-
         debugImplementation 'com.github.getActivity:Logcat:9.6'
-
         implementation 'com.scottyab:rootbeer-lib:0.1.0'
-
         //OTG0
         implementation 'me.jahnen:libaums:0.8.0'
         implementation 'me.jahnen:libaums-httpserver:0.5.3'
         implementation 'me.jahnen:libaums-storageprovider:0.5.1'
         implementation  'uk.co.alt236:usbdeviceenumerator:2.0.0'
-
         //webview框架
         implementation 'com.just.agentweb:agentweb:4.0.2'
         implementation 'com.just.agentweb:download:4.0.2'
-
         //颜色取色器
         implementation 'com.github.rtugeek:colorseekbar:2.0.3'
-
         //图片/视频选择器
         implementation 'com.lcw.library:imagepicker:2.2.7'
         //滑动器
@@ -106,8 +99,8 @@ android {
 //compat for android support library
         implementation 'com.billy.android:smart-swipe-x:1.1.0'
         //glide
-        implementation 'com.github.bumptech.glide:glide:4.8.0'
-        annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+        implementation 'com.github.bumptech.glide:glide:4.10.0'
+        annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
         //状态栏
         //https://github.com/gyf-dev/ImmersionBar
         implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
@@ -115,16 +108,15 @@ android {
         implementation 'me.testica:codeeditor:1.0.2'
         // 线性背景
         implementation 'com.googlecode.plist:dd-plist:1.16'
-
         implementation 'com.tananaev:adblib:1.3'
-
         implementation 'org.samba.jcifs:jcifs:1.3.3'
-
         implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.1'
         implementation 'org.nanohttpd:nanohttpd:2.3.1'
         provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
-
         implementation 'com.hzy:un7zip:+'
+
+        //ZFlie
+        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
@@ -140,8 +132,8 @@ android {
 
         implementation project(":terminal-view")
         implementation project(":termux-shared")
-        implementation project(":FHttpServer")
-        implementation project(":z_file")
+//        implementation project(":FHttpServer")
+ //       implementation project(":z_file")
     }
 
     defaultConfig {
@@ -220,7 +212,7 @@ android {
 
 dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation project(path: ':xh_lib')
+//    implementation project(path: ':xh_lib')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'

@@ -1,8 +1,2 @@
 include ':app', ':termux-shared', ':terminal-emulator', ':terminal-view'
-include ':qrcodecore'
-include ':zxing'
-include ':xh_lib'
 include ':plugin-locale'
-include ':FHttpServer'
-include ':z_file'
-include ':server'
