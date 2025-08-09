@@ -1002,4 +1002,6 @@
     <string name="x11_so_install_error">修复失败，请在 左侧栏 -> X11设置 切换通道来显示详细信息</string>
     <string name="x11_install_apk">安装X11</string>
     <string name="x11_install_apk_not">没有安装X11，请先安装X11 APK</string>
+    <string name="x11_boom_keyboard_gone">隐藏键盘</string>
+    <string name="x11_boom_keyboard_visible">显示键盘</string>
 </resources>

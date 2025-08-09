@@ -1693,6 +1693,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private LinearLayout x11_environment;
     private LinearLayout x11_so_install;
     private LinearLayout install_x11_apk;
+    private LinearLayout x11_keyboard_visible;
+    private LinearLayout x11_keyboard_gone;
 
     private FrameLayout frame_file;
     private RelativeLayout session_rl;
@@ -1704,6 +1706,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void initZeroView() {
         code_ll = findViewById(R.id.code_ll);
+        x11_keyboard_visible = findViewById(R.id.x11_keyboard_visible);
+        x11_keyboard_gone = findViewById(R.id.x11_keyboard_gone);
         scrollView_main = findViewById(R.id.scrollView_main);
         file_layout = findViewById(R.id.file_layout);
         main_card = findViewById(R.id.main_card);
@@ -1772,6 +1776,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             e.printStackTrace();
         }
 
+        x11_keyboard_visible.setOnClickListener(this);
+        x11_keyboard_gone.setOnClickListener(this);
         x11_so_install.setOnClickListener(this);
         x11_environment.setOnClickListener(this);
         install_x11_apk.setOnClickListener(this);
@@ -2421,6 +2427,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 }
 
                 UserSetManage.Companion.get().setZTUserBean(ztUserBeanHide);
+                break;
+
+            case R.id.x11_keyboard_visible:
+                if (MainActivity.isConnected()) {
+                    mMainActivity.setTerminalToolbarViewVisible(true);
+                } else {
+                    UUtils.showMsg(getString(R.string.x11_not_connect));
+                }
+                break;
+            case R.id.x11_keyboard_gone:
+                if (MainActivity.isConnected()) {
+                    mMainActivity.setTerminalToolbarViewVisible(false);
+                } else {
+                    UUtils.showMsg(getString(R.string.x11_not_connect));
+                }
                 break;
 
 
