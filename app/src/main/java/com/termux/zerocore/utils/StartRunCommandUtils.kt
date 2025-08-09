@@ -1,5 +1,6 @@
 package com.termux.zerocore.utils
 
+import android.system.Os
 import com.example.xh_lib.utils.SaveData
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
@@ -34,21 +35,17 @@ object StartRunCommandUtils {
         var fileString = UUtils.getFileString(smsBashrcFile)
 
         fileString += "\n cd ~ > /dev/null && ./.xinhao_history/start_command.sh"
-
         UUtils.setFileString(smsBashrcFile,fileString)
-
         SaveData.saveStringOther("start_command","true")
-
         UUtils.writerFile("runcommand/start_command.sh",smsZeroBashrcFile)
-
         TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.runstartSh)
-
-
+        try {
+            Os.chmod(FileUrl.smsZeroBashrcFile, 448)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         UUtils.showMsg(UUtils.getString(R.string.已打开开机启动命令))
-
-
-
         isRun = true
 
     }

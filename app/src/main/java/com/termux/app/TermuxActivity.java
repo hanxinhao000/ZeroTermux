@@ -2465,19 +2465,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
 
     private void refStartCommandStat() {
-
-
         if (StartRunCommandUtils.INSTANCE.isRun()) {
-
             text_start.setText(UUtils.getString(R.string.开机启动开));
-
         } else {
-
             text_start.setText(UUtils.getString(R.string.开机启动));
-
         }
-
-
     }
 
 
