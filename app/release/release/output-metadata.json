@@ -11,7 +11,7 @@
       "type": "UNIVERSAL",
       "filters": [],
       "versionCode": 117,
-      "versionName": "0.118.3.48",
+      "versionName": "0.118.3.49",
       "outputFile": "app-universal-release.apk"
     },
     {
@@ -23,7 +23,7 @@
         }
       ],
       "versionCode": 117,
-      "versionName": "0.118.3.48",
+      "versionName": "0.118.3.49",
       "outputFile": "app-arm64-v8a-release.apk"
     },
     {
@@ -35,7 +35,7 @@
         }
       ],
       "versionCode": 117,
-      "versionName": "0.118.3.48",
+      "versionName": "0.118.3.49",
       "outputFile": "app-armeabi-v7a-release.apk"
     },
     {
@@ -47,7 +47,7 @@
         }
       ],
       "versionCode": 117,
-      "versionName": "0.118.3.48",
+      "versionName": "0.118.3.49",
       "outputFile": "app-x86-release.apk"
     },
     {
@@ -59,7 +59,7 @@
         }
       ],
       "versionCode": 117,
-      "versionName": "0.118.3.48",
+      "versionName": "0.118.3.49",
       "outputFile": "app-x86_64-release.apk"
     }
   ]

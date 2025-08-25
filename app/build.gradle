@@ -80,7 +80,7 @@ android {
         implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
         // Optional: Provides remote file system support
         implementation "com.github.topjohnwu.libsu:nio:${libsuVersion}"
-        debugImplementation 'com.github.getActivity:Logcat:9.6'
+        // debugImplementation 'com.github.getActivity:Logcat:9.6'
         implementation 'com.scottyab:rootbeer-lib:0.1.0'
         //OTG0
         implementation 'me.jahnen:libaums:0.8.0'
