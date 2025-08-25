@@ -56,7 +56,6 @@
         android:allowBackup="true"
         android:banner="@drawable/banner"
         android:extractNativeLibs="true"
-        android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
