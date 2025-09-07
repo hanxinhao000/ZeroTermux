@@ -1,3 +1,8 @@
+# 联系方式
+
+潜水群248022558（推荐先加）
+①群1062337587
+②群885832352
 # ZeroTermux
 
 <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="500" width="500">
