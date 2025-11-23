@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.window.layout.WindowMetricsCalculator;
+import androidx.window.layout.WindowMetrics;
 
 import com.termux.shared.logger.Logger;
 
@@ -173,24 +175,32 @@ public class ViewUtils {
     }
 
     /**
-     * Get device display size.
+     * 获取设备屏幕尺寸。
      *
-     * @param context The {@link Context} to check with. It must be {@link Activity} context, otherwise
-     *                android will throw:
-     *                `java.lang.IllegalArgumentException: Used non-visual Context to obtain an instance of WindowManager. Please use an Activity or a ContextWrapper around one instead.`
-     * @param activitySize The set to {@link true}, then size returned will be that of the activity
-     *                     and can be smaller than physical display size in multi-window mode.
-     * @return Returns the display size as {@link Point}.
+     * @param context      用于查询的 {@link Context}。建议使用 {@link Activity} 上下文。
+     *                     如果提供的不是 Activity 上下文，此方法可能会回退到旧版的显示指标获取方式，
+     *                     在多窗口模式下准确性可能较低。
+     * @param activitySize 如果设置为 {@link true}，则返回的尺寸将是 Activity 的实际窗口尺寸；
+     *                     在多窗口模式下，该尺寸可能小于物理屏幕尺寸。
+     * @return 以 {@link Point} 形式返回显示尺寸。
      */
     public static Point getDisplaySize( @NonNull Context context, boolean activitySize) {
-        // android.view.WindowManager.getDefaultDisplay() and Display.getSize() are deprecated in
-        // API 30 and give wrong values in API 30 for activitySize=false in multi-window
-        androidx.window.WindowManager windowManager = new androidx.window.WindowManager(context);
-        androidx.window.WindowMetrics windowMetrics;
-        if (activitySize)
-            windowMetrics = windowManager.getCurrentWindowMetrics();
-        else
-            windowMetrics = windowManager.getMaximumWindowMetrics();
+        Activity activity = getActivity(context);
+        if (activity == null) {
+            try {
+                android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                return new Point(metrics.widthPixels, metrics.heightPixels);
+            } catch (Exception e) {
+                return new Point(0, 0);
+            }
+        }
+        WindowMetricsCalculator calculator = WindowMetricsCalculator.getOrCreate();
+        WindowMetrics windowMetrics;
+        if (activitySize) {
+            windowMetrics = calculator.computeCurrentWindowMetrics(activity);
+        } else {
+            windowMetrics = calculator.computeMaximumWindowMetrics(activity);
+        }
         return new Point(windowMetrics.getBounds().width(), windowMetrics.getBounds().height());
     }
 

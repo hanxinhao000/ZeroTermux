@@ -59,6 +59,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "androidx.annotation:annotation:1.7.0"
     implementation "androidx.core:core:1.9.0"
+    implementation "androidx.window:window:1.2.0"
+    implementation "androidx.window:window-java:1.2.0"
     implementation "com.google.android.material:material:1.10.0"
     implementation "com.google.guava:guava:31.0.1-jre"
 
@@ -71,7 +73,7 @@ dependencies {
 
     // Do not increment version higher than 1.0.0-alpha09 since it will break ViewUtils and needs to be looked into
     // noinspection GradleDependency
-    implementation "androidx.window:window:1.0.0-alpha09"
+    // implementation "androidx.window:window:1.0.0-alpha09" 冲突，已被替代
 
     // Do not increment version higher than 2.5 or there
     // will be runtime exceptions on android < 8
