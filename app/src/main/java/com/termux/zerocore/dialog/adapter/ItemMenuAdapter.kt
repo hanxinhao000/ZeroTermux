@@ -447,16 +447,17 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
     }
 
     private fun commonShortcuts() {
+        val context = mContext ?: return
 
-        val switchDialog = SwitchDialog(mContext!!)
+        val switchDialog = SwitchDialog(context)
         switchDialog.createSwitchDialog(UUtils.getString(R.string.create_soft_links))
         switchDialog.ok?.setOnClickListener {
             switchDialog.dismiss()
-            XXPermissions.with(mContext)
+            XXPermissions.with(context)
                 .permission(Permission.WRITE_EXTERNAL_STORAGE)
                 .permission(Permission.READ_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: List<String>, all: Boolean) {
+                    override fun onGranted(permissions: MutableList<String>, all: Boolean) {
                         val xinhaoLinkPath = FileIOUtils.getXinhaoLinkPath(UUtils.getContext())
                         val file = File(xinhaoLinkPath)
                         if (!file.exists()) {
@@ -480,8 +481,7 @@ class ItemMenuAdapter :RecyclerView.Adapter<ItemMenuViewHolder> {
                         UUtils.showMsg(UUtils.getString(R.string.成功))
                     }
 
-                    override fun onDenied(permissions: List<String>, never: Boolean) {
-
+                    override fun onDenied(permissions: MutableList<String>, never: Boolean) {
                     }
                 })
         }

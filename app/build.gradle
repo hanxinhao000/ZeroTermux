@@ -1,156 +1,76 @@
 plugins {
     id "com.android.application"
-
+    id "org.jetbrains.kotlin.android"
+    id "kotlin-kapt"
 }
-apply plugin: 'kotlin-android'
-
 
 android {
-    compileSdkVersion project.properties.compileSdkVersion.toInteger()
-    ndkVersion '27.0.12077973'
+    namespace "com.termux"
+    compileSdk project.properties.compileSdkVersion.toInteger()
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
-    lintOptions {
+
+    lint {
         checkReleaseBuilds false
+        abortOnError false
+        disable 'ProtectedPermissions'
     }
-    tasks.withType(JavaCompile) {
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    tasks.withType(JavaCompile).configureEach {
         options.fork = true
         options.forkOptions.jvmArgs += ["-Duser.language=en"]
     }
-    packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        resources {
+            excludes += ['META-INF/LICENSE', 'META-INF/DEPENDENCIES']
+        }
     }
+
     signingConfigs {
         release {
-            keyAlias 'phone1'
-            keyPassword '654321'
-            storeFile file('D:\\签名文件\\phone.jks')
-            storePassword '123456'
+            keyAlias System.getenv("KEY_ALIAS") ?: 'phone1'
+            keyPassword System.getenv("KEY_PASSWORD") ?: '654321'
+            storeFile rootProject.file("phone.jks")
+            storePassword System.getenv("STORE_PASSWORD") ?: '123456'
         }
         debug {
-            keyAlias 'phone1'
-            keyPassword '654321'
-            storeFile file('D:\\签名文件\\phone.jks')
-            storePassword '123456'
+            keyAlias System.getenv("KEY_ALIAS") ?: 'phone1'
+            keyPassword System.getenv("KEY_PASSWORD") ?: '654321'
+            storeFile rootProject.file("phone.jks")
+            storePassword System.getenv("STORE_PASSWORD") ?: '123456'
         }
     }
 
-    splits.abi {
-        enable true
-        reset()
-
-        include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
-        universalApk true
-    }
-
-    /*  sourceSets {
-          main {
-              jniLibs.srcDirs = ['libs']
-          }
-      }*/
-
-
-    dependencies {
-        def libsuVersion = '5.2.1'
-        implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
-        implementation "androidx.annotation:annotation:1.2.0"
-        implementation "androidx.core:core:1.9.0-alpha05"
-        implementation "androidx.drawerlayout:drawerlayout:1.1.1"
-        implementation "androidx.preference:preference:1.1.1"
-        implementation "androidx.viewpager:viewpager:1.0.0"
-        implementation "com.google.guava:guava:31.0.1-jre"
-        implementation 'com.google.code.gson:gson:2.8.6'
-        //网络框架
-        implementation 'com.lzy.net:okgo:3.0.4'
-        //switch Btn
-        implementation 'com.github.iielse:switchbutton:1.0.4'
-
-        implementation 'com.github.getActivity:XXPermissions:11.5'
-        implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
-
-        implementation 'me.laoyuyu.aria:core:3.8.16'
-        annotationProcessor 'me.laoyuyu.aria:compiler:3.8.16'
-
-        // The core module that provides APIs to a shell
-        implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
-        // Optional: APIs for creating root services. Depends on ":core"
-        implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
-        // Optional: Provides remote file system support
-        implementation "com.github.topjohnwu.libsu:nio:${libsuVersion}"
-        // debugImplementation 'com.github.getActivity:Logcat:9.6'
-        implementation 'com.scottyab:rootbeer-lib:0.1.0'
-        //OTG0
-        implementation 'me.jahnen:libaums:0.8.0'
-        implementation 'me.jahnen:libaums-httpserver:0.5.3'
-        implementation 'me.jahnen:libaums-storageprovider:0.5.1'
-        implementation  'uk.co.alt236:usbdeviceenumerator:2.0.0'
-        //webview框架
-        implementation 'com.just.agentweb:agentweb:4.0.2'
-        implementation 'com.just.agentweb:download:4.0.2'
-        //颜色取色器
-        implementation 'com.github.rtugeek:colorseekbar:2.0.3'
-        //图片/视频选择器
-        implementation 'com.lcw.library:imagepicker:2.2.7'
-        //滑动器
-        implementation 'com.billy.android:smart-swipe:1.1.0'
-//compat for android support library
-        implementation 'com.billy.android:smart-swipe-x:1.1.0'
-        //glide
-        implementation 'com.github.bumptech.glide:glide:4.10.0'
-        annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-        //状态栏
-        //https://github.com/gyf-dev/ImmersionBar
-        implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
-        //Zip解压
-        implementation 'me.testica:codeeditor:1.0.2'
-        // 线性背景
-        implementation 'com.googlecode.plist:dd-plist:1.16'
-        implementation 'com.tananaev:adblib:1.3'
-        implementation 'org.samba.jcifs:jcifs:1.3.3'
-        implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.1'
-        implementation 'org.nanohttpd:nanohttpd:2.3.1'
-        provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
-        implementation 'com.hzy:un7zip:+'
-
-        //ZFlie
-        implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-
-
-        implementation 'com.mallotec.reb:plugin-locale:1.0.12'
-        implementation "io.noties.markwon:core:$markwonVersion"
-        implementation "io.noties.markwon:ext-strikethrough:$markwonVersion"
-        implementation "io.noties.markwon:linkify:$markwonVersion"
-        implementation "io.noties.markwon:recycler:$markwonVersion"
-
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-        compile('cn.hotapk:fastandrutils:0.8.0') {
-            exclude group: 'com.android.support'
-        }
-
-        implementation project(":terminal-view")
-        implementation project(":termux-shared")
-//        implementation project(":FHttpServer")
- //       implementation project(":z_file")
-    }
 
     defaultConfig {
         applicationId "com.termux"
-        minSdkVersion project.properties.minSdkVersion.toInteger()
-        targetSdkVersion project.properties.targetSdkVersion.toInteger()
+        minSdk project.properties.minSdkVersion.toInteger()
+        targetSdk project.properties.targetSdkVersion.toInteger()
+
         versionCode 117
         versionName "0.118.3.49"
 
-        manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux"
-        manifestPlaceholders.TERMUX_APP_NAME = "Termux"
-        manifestPlaceholders.TERMUX_API_APP_NAME = "Termux:API"
-        manifestPlaceholders.TERMUX_BOOT_APP_NAME = "Termux:Boot"
-        manifestPlaceholders.TERMUX_FLOAT_APP_NAME = "Termux:Float"
-        manifestPlaceholders.TERMUX_STYLING_APP_NAME = "Termux:Styling"
-        manifestPlaceholders.TERMUX_TASKER_APP_NAME = "Termux:Tasker"
-        manifestPlaceholders.TERMUX_WIDGET_APP_NAME = "Termux:Widget"
+        manifestPlaceholders = [
+            TERMUX_PACKAGE_NAME : "com.termux",
+            TERMUX_APP_NAME : "Termux",
+            TERMUX_API_APP_NAME : "Termux:API",
+            TERMUX_BOOT_APP_NAME : "Termux:Boot",
+            TERMUX_FLOAT_APP_NAME : "Termux:Float",
+            TERMUX_STYLING_APP_NAME : "Termux:Styling",
+            TERMUX_TASKER_APP_NAME : "Termux:Tasker",
+            TERMUX_WIDGET_APP_NAME : "Termux:Widget"
+        ]
 
         externalNativeBuild {
             ndkBuild {
@@ -163,14 +83,6 @@ android {
         ndk {
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
         }
-
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                includeCompileClasspath true
-            }
-        }
-
     }
 
 
@@ -180,6 +92,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
 
         debug {
@@ -188,8 +101,9 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     externalNativeBuild {
@@ -198,8 +112,11 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'ProtectedPermissions'
+    splits.abi {
+        enable true
+        reset()
+        include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
+        universalApk true
     }
 
     testOptions {
@@ -211,11 +128,96 @@ android {
 }
 
 dependencies {
+    def libsuVersion = '5.2.1'
+    def markwonVersion = '4.6.2'
+
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.3"
+
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    implementation "androidx.annotation:annotation:1.7.0"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.drawerlayout:drawerlayout:1.2.0"
+    implementation "androidx.preference:preference:1.2.1"
+    implementation "androidx.viewpager:viewpager:1.0.0"
+
+    implementation "com.google.guava:guava:31.0.1-jre"
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.lzy.net:okgo:3.0.4'
+    //switch Btn
+    implementation 'com.github.iielse:switchbutton:1.0.4'
+    implementation 'com.github.getActivity:XXPermissions:18.5'
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+
+    implementation 'me.laoyuyu.aria:core:3.8.16'
+    kapt 'me.laoyuyu.aria:compiler:3.8.16'
+
+    // The core module that provides APIs to a shell
+    implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
+    // Optional: APIs for creating root services. Depends on ":core"
+    implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
+    // Optional: Provides remote file system support
+    implementation "com.github.topjohnwu.libsu:nio:${libsuVersion}"
+    // debugImplementation 'com.github.getActivity:Logcat:9.6'
+    implementation 'com.scottyab:rootbeer-lib:0.1.0'
+    //OTG0
+    implementation 'me.jahnen:libaums:0.8.0'
+    implementation 'me.jahnen:libaums-httpserver:0.5.3'
+    implementation 'me.jahnen:libaums-storageprovider:0.5.1'
+    implementation 'uk.co.alt236:usbdeviceenumerator:2.0.0'
+    //webview框架
+    implementation 'com.just.agentweb:agentweb:4.0.2'
+    implementation 'com.just.agentweb:download:4.0.2'
+    //颜色取色器
+    implementation 'com.github.rtugeek:colorseekbar:2.0.3'
+    //图片/视频选择器
+    implementation 'com.lcw.library:imagepicker:2.2.7'
+    //滑动器
+    implementation 'com.billy.android:smart-swipe:1.1.0'
+    //compat for android support library
+    implementation 'com.billy.android:smart-swipe-x:1.1.0'
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    kapt 'com.github.bumptech.glide:compiler:4.16.0'
+    //状态栏
+    //https://github.com/gyf-dev/ImmersionBar
+    implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
+    //Zip解压
+    implementation 'me.testica:codeeditor:1.0.2'
+    //线性背景
+    implementation 'com.googlecode.plist:dd-plist:1.16'
+    implementation 'com.tananaev:adblib:1.3'
+    implementation 'org.samba.jcifs:jcifs:1.3.3'
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3.1'
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    compileOnly group: 'javax.servlet', name: 'servlet-api', version: '2.5'
+    implementation 'com.hzy:un7zip:+'
+
+    //ZFlie
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.mallotec.reb:plugin-locale:1.0.12'
+
+    implementation "io.noties.markwon:core:${markwonVersion}"
+    implementation "io.noties.markwon:ext-strikethrough:${markwonVersion}"
+    implementation "io.noties.markwon:linkify:${markwonVersion}"
+    implementation "io.noties.markwon:recycler:${markwonVersion}"
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation('cn.hotapk:fastandrutils:0.8.0') {
+        exclude group: 'com.android.support'
+    }
+
+    implementation project(":terminal-view")
+    implementation project(":termux-shared")
+    //implementation project(":FHttpServer")
+    //implementation project(":z_file")
     implementation 'androidx.cardview:cardview:1.0.0'
-//    implementation project(path: ':xh_lib')
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    //implementation project(path: ':xh_lib')
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation 'com.google.zxing:core:3.3.3'
+
     implementation files('libs/commons-logging-1.2.jar')
     implementation files('libs/commons-net-3.8.0.jar')
     implementation files('libs/ftplet-api-1.1.1.jar')
@@ -225,12 +227,10 @@ dependencies {
     implementation files('libs/mina-core-2.0.16.jar')
     implementation files('libs/slf4j-api-1.7.21.jar')
     implementation files('libs/slf4j-log4j12-1.7.21.jar')
-    implementation files('libs\\commons-codec-1.10-rep.jar')
+    implementation files('libs/commons-codec-1.10-rep.jar')
 
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
-    implementation "androidx.core:core-ktx:1.8.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 task versionName {

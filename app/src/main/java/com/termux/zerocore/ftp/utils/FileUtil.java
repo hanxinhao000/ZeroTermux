@@ -290,6 +290,7 @@ public abstract class FileUtil {
      * @return True if creation was successful.
      * @deprecated use {@link #mkdirs(Context, File)}
      */
+    @Deprecated
     public static boolean mkdir(final File file, Context context) {
         if (file == null)
             return false;

@@ -106,42 +106,36 @@ public class BackNewActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
+        int id = v.getId();
 
-        switch (v.getId()) {
+        if (id == R.id.backup) {
+            mBackupText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#ffffff"));
 
-            case R.id.backup:
-                mBackupText.setTextColor(Color.parseColor("#ffffff"));
-                mRestoreText.setTextColor(Color.parseColor("#ffffff"));
-                mSettingText.setTextColor(Color.parseColor("#ffffff"));
+            mBackupText.setTextColor(Color.parseColor("#FF6EC7"));
+            FragmentManager supportFragmentManager = getSupportFragmentManager();
+            supportFragmentManager.beginTransaction().replace(R.id.fragment, mBackupFragment).commit();
 
-                mBackupText.setTextColor(Color.parseColor("#FF6EC7"));
-                FragmentManager supportFragmentManager = getSupportFragmentManager();
-                supportFragmentManager.beginTransaction().replace(R.id.fragment, mBackupFragment).commit();
-                break;
-            case R.id.restore:
-                mBackupText.setTextColor(Color.parseColor("#ffffff"));
-                mRestoreText.setTextColor(Color.parseColor("#ffffff"));
-                mSettingText.setTextColor(Color.parseColor("#ffffff"));
+        } else if (id == R.id.restore) {
+            mBackupText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#ffffff"));
 
-                mRestoreText.setTextColor(Color.parseColor("#FF6EC7"));
-                FragmentManager supportFragmentManager1 = getSupportFragmentManager();
-                supportFragmentManager1.beginTransaction().replace(R.id.fragment, mRestoreFragment).commit();
-                break;
+            mRestoreText.setTextColor(Color.parseColor("#FF6EC7"));
+            FragmentManager supportFragmentManager1 = getSupportFragmentManager();
+            supportFragmentManager1.beginTransaction().replace(R.id.fragment, mRestoreFragment).commit();
 
-            case R.id.setting:
-                mBackupText.setTextColor(Color.parseColor("#ffffff"));
-                mRestoreText.setTextColor(Color.parseColor("#ffffff"));
-                mSettingText.setTextColor(Color.parseColor("#ffffff"));
+        } else if (id == R.id.setting) {
+            mBackupText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#ffffff"));
 
-                mSettingText.setTextColor(Color.parseColor("#FF6EC7"));
+            mSettingText.setTextColor(Color.parseColor("#FF6EC7"));
 
-                FragmentManager supportFragmentManager2 = getSupportFragmentManager();
-                supportFragmentManager2.beginTransaction().replace(R.id.fragment, mSettingFragment).commit();
-
-                break;
-
+            FragmentManager supportFragmentManager2 = getSupportFragmentManager();
+            supportFragmentManager2.beginTransaction().replace(R.id.fragment, mSettingFragment).commit();
         }
-
     }
 
     @Override

@@ -11,7 +11,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.WindowManager
@@ -24,7 +23,7 @@ import com.hjq.permissions.XXPermissions
 import com.termux.R
 import com.termux.zerocore.adb.ADB
 import kotlinx.coroutines.*
-
+import java.util.ArrayList
 
 class AdbWindowsDialog  {
 
@@ -42,15 +41,17 @@ class AdbWindowsDialog  {
         if (!granted) {
             XXPermissions.with(mActivity)
                 .permission(Permission.SYSTEM_ALERT_WINDOW)
-                .request(object: OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        showWindowsView(mActivity)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>, all: Boolean) {
+                        if (all) {
+                            showWindowsView(mActivity)
+                        }
                     }
 
-                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                        super.onDenied(permissions, never)
+                    override fun onDenied(permissions: MutableList<String>, never: Boolean) {
+                        UUtils.showMsg("权限被拒绝")
                     }
-            })
+                })
         } else {
             showWindowsView(mActivity)
         }
@@ -59,7 +60,7 @@ class AdbWindowsDialog  {
     fun showWindowsView(mActivity: Activity) {
         val systemService = mActivity.getSystemService(Context.WINDOW_SERVICE)
 
-        var layoutParam = WindowManager.LayoutParams().apply {
+        val layoutParam = WindowManager.LayoutParams().apply {
             //设置大小 自适应
             width = MATCH_PARENT
             height = WRAP_CONTENT
@@ -70,35 +71,38 @@ class AdbWindowsDialog  {
             }
             gravity = Gravity.LEFT or Gravity.CENTER
             format = PixelFormat.RGBA_8888
-
-            flags =
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL /*or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE*/
+            flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
         }
-        var floatRootView = LayoutInflater.from(mActivity.applicationContext).inflate(R.layout.pupu_window_adb_start, null)
-        floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, mActivity.windowManager))
-        (systemService as WindowManager).addView(floatRootView, layoutParam)
 
-        val cancel = floatRootView.findViewById<TextView>(R.id.cancel)
-        val pairingCode = floatRootView.findViewById<EditText>(R.id.pairing_code)
-        val portNumber = floatRootView.findViewById<EditText>(R.id.port_number)
-        val commit = floatRootView.findViewById<TextView>(R.id.commit)
-        commit.setOnClickListener {
-            val pairingCodeStr = pairingCode.text
-            val portNumberStr = portNumber.text
-            if (pairingCodeStr.isNullOrEmpty() || portNumberStr.isNullOrEmpty()) {
-                UUtils.showMsg(UUtils.getString(R.string.input_content_cannot_be_empty))
-                return@setOnClickListener
+        var floatRootView: View? = LayoutInflater.from(mActivity.applicationContext).inflate(R.layout.pupu_window_adb_start, null)
+        floatRootView?.setOnTouchListener(ItemViewTouchListener(layoutParam, mActivity.windowManager))
+
+        if (floatRootView != null) {
+            (systemService as WindowManager).addView(floatRootView, layoutParam)
+
+            val cancel = floatRootView.findViewById<TextView>(R.id.cancel)
+            val pairingCode = floatRootView.findViewById<EditText>(R.id.pairing_code)
+            val portNumber = floatRootView.findViewById<EditText>(R.id.port_number)
+            val commit = floatRootView.findViewById<TextView>(R.id.commit)
+
+            commit.setOnClickListener {
+                val pairingCodeStr = pairingCode.text
+                val portNumberStr = portNumber.text
+                if (pairingCodeStr.isNullOrEmpty() || portNumberStr.isNullOrEmpty()) {
+                    UUtils.showMsg(UUtils.getString(R.string.input_content_cannot_be_empty))
+                    return@setOnClickListener
+                }
+
+                Thread {
+                    startConnectAdb(portNumberStr.toString(), pairingCodeStr.toString(), mActivity.applicationContext)
+                }.start()
             }
 
-            Thread(Runnable {
-                startConnectAdb(portNumberStr.toString(), pairingCodeStr.toString(), mActivity.applicationContext)
-            }).start()
-        }
-
-        cancel.setOnClickListener {
-            (systemService as WindowManager).removeView(floatRootView)
-            floatRootView?.setOnTouchListener(null)
-            floatRootView = null
+            cancel.setOnClickListener {
+                (systemService as WindowManager).removeView(floatRootView)
+                floatRootView?.setOnTouchListener(null)
+                floatRootView = null
+            }
         }
 
     }
@@ -136,11 +140,11 @@ class AdbWindowsDialog  {
                     x = nowX
                     y = nowY
                     wl.apply {
-                        x += movedX
-                        y += movedY
+                        this.x += movedX
+                        this.y += movedY
                     }
                     //更新悬浮球控件位置
-                    windowManager?.updateViewLayout(view, wl)
+                    windowManager.updateViewLayout(view, wl)
                 }
                 else -> {
 

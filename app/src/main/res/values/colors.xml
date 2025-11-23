@@ -46,5 +46,7 @@
     <color name="md_grey_900">#212121</color>
     <color name="md_black_1000">#000000</color>
     <color name="md_white_1000">#ffffff</color>
+    <color name="colorCC5A6B">#CC5A6B</color>
+    <color name="color_FD9F3E">#FD9F3E</color>
 
 </resources>

@@ -17,8 +17,8 @@ class MyFileImageListener : ZFileImageListener() {
         Glide.with(imageView.context)
             .load(file)
             .apply(RequestOptions().apply {
-                placeholder(R.drawable.ic_zfile_other)
-                error(R.drawable.ic_zfile_other)
+                placeholder(com.zp.z_file.R.drawable.ic_zfile_other)
+                error(com.zp.z_file.R.drawable.ic_zfile_other)
             })
             .into(imageView)
     }

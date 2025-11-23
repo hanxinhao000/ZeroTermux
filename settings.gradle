@@ -1,2 +1,28 @@
-include ':app', ':termux-shared', ':terminal-emulator', ':terminal-view'
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url "https://jitpack.io" }
+        google()
+        mavenCentral()
+    }
+}
+
+include ':app'
+include ':termux-shared'
+include ':terminal-emulator'
+include ':terminal-view'
 include ':plugin-locale'

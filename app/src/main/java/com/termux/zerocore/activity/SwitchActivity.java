@@ -573,11 +573,8 @@ public class SwitchActivity extends AppCompatActivity  implements View.OnClickLi
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()) {
-            case R.id.create_img:
-                createSystemDialog();
-
-                break;
+        if (v.getId() == R.id.create_img) {
+            createSystemDialog();
         }
     }
 

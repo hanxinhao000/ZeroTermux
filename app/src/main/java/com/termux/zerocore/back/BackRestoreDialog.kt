@@ -87,13 +87,13 @@ class BackRestoreDialog : BaseDialogDown, BackupStoreDialogCloseListener {
                     .permission(Permission.WRITE_EXTERNAL_STORAGE)
                     .permission(Permission.READ_EXTERNAL_STORAGE)
                     .request(object: OnPermissionCallback {
-                        override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                        override fun onGranted(permissions: MutableList<String>, all: Boolean) {
                             switchDialog.dismiss()
                             TermuxInstaller.setupStorageSymlinks(mContext)
                             UUtils.showMsg(UUtils.getString(R.string.file_sd_success))
                         }
 
-                        override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                        override fun onDenied(permissions: MutableList<String>, never: Boolean) {
                             switchDialog.dismiss()
                             UUtils.showMsg(UUtils.getString(R.string.你没有SD卡权限))
                         }
