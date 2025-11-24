@@ -936,6 +936,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder service) {
         Logger.logDebug(LOG_TAG, "onServiceConnected");
+        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+            return;
+        }
 
         mTermuxService = ((TermuxService.LocalBinder) service).service;
 
@@ -3493,7 +3496,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (fragmentTransaction.isEmpty()) {
             fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
-                .commit();
+                .commitAllowingStateLoss();
 
             ZTConfig.INSTANCE.setCloseListener(new CloseListener() {
                 @Override
