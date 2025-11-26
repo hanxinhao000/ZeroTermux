@@ -56,5 +56,22 @@
     public *** getSystemContext();
 }
 
-# 保留自定义工具类
--keep class com.your.package.ContextUtil { *; }
+# 忽略无害警告 (减少构建噪音)
+-dontwarn com.alipay.sdk.**
+-dontwarn com.alipay.api.**
+-dontwarn java.beans.**
+-dontwarn com.google.zxing.**
+-dontwarn com.lzy.okgo.**
+-dontwarn cn.bingoogolapple.photopicker.**
+-dontwarn com.draggable.library.extension.**
+
+# 保护签名/注解信息（对 Gson/反射/注解框架关键）
+-keepattributes Signature
+-keepattributes *Annotation*
+
+# 保护数据模型
+-keep class com.termux.zerocore.bean.** { *; }
+
+# 保护 TypeToken 的匿名子类，防止 R8 移除泛型信息导致运行时崩溃
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken

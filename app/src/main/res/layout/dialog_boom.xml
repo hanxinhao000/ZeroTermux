@@ -151,8 +151,60 @@
                                 android:textSize="12sp" />
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:background="@drawable/shape_line_2e84e6"
+                        android:gravity="center"
+                        android:id="@+id/popu_windows_ssh"
+                        android:layout_marginRight="10dp"
+                        android:layout_height="30dp">
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            app:cardElevation="1dp"
+                            android:layout_gravity="center"
+                            app:cardBackgroundColor="@color/color_553E3E3E"
+                            app:cardCornerRadius="3dp"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:paddingLeft="6dp"
+                                android:paddingRight="6dp"
+                                android:gravity="center"
+                                android:layout_height="match_parent"
+                                android:text="快捷SSH"
+                                android:textColor="@color/color_FFFFFF"
+                                android:textSize="10sp" />
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
                 </LinearLayout>
             </HorizontalScrollView>
+            <LinearLayout
+                android:id="@+id/layout_add_ssh"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/shape_line_2e84e6"
+                android:gravity="center"
+                android:layout_height="35dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/color_553E3E3E"
+                    app:cardCornerRadius="3dp"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="+ 添加新SSH设备"
+                        android:textColor="#4CAF50"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"

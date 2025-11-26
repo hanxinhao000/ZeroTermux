@@ -1401,6 +1401,43 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (requestCode == PermissionUtils.REQUEST_GRANT_STORAGE_PERMISSION) {
             requestStoragePermission(true);
         }
+        //导入SSH密钥
+        if (requestCode == com.termux.zerocore.view.BoomWindow.REQUEST_CODE_IMPORT_KEY && resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            if (uri != null) {
+                String alias = com.termux.zerocore.view.BoomWindow.PENDING_IMPORT_ALIAS;
+                if (TextUtils.isEmpty(alias)) {
+                    UUtils.showMsg("导入失败：别名丢失");
+                    return;
+                }
+                try {
+                    File targetKeyFile = com.termux.zerocore.utils.SSHKeyUtils.getKeyFile(alias);
+                    File sshDir = targetKeyFile.getParentFile();
+                    if (!sshDir.exists()) sshDir.mkdirs();
+
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    java.io.FileOutputStream fos = new java.io.FileOutputStream(targetKeyFile);
+
+                    byte[] buffer = new byte[4096];
+                    int length;
+                    while ((length = is.read(buffer)) > 0) {
+                        fos.write(buffer, 0, length);
+                    }
+                    fos.flush();
+                    fos.close();
+                    is.close();
+                    try {
+                        android.system.Os.chmod(targetKeyFile.getAbsolutePath(), 0600);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    UUtils.showMsg("密钥导入成功\n已保存为:" + targetKeyFile.getName());
+                } catch (Exception e) {
+                    UUtils.showMsg("导入失败:" + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
