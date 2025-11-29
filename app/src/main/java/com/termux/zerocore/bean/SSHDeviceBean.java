@@ -100,7 +100,8 @@ public class SSHDeviceBean implements Serializable {
             if (password != null && !password.isEmpty()) {
                 cmdBuilder.append("sshpass -p '").append(password).append("' ");
             }
-            cmdBuilder.append("ssh -p ").append(port).append(" ");
+            //sshpass -p '1314' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22 xinhao@192.168.31.121
+            cmdBuilder.append("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null").append(" -p ").append(port).append(" ");
         }
         cmdBuilder.append(username).append("@").append(host);
         return cmdBuilder.toString();

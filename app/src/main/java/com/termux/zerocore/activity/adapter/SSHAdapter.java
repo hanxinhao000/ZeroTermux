@@ -12,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.termux.R;
 import com.termux.zerocore.bean.SSHDeviceBean;
+import com.zp.z_file.util.LogUtils;
 
 import java.util.List;
 
 public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
-
+    private static final String TAG = SSHAdapter.class.getSimpleName();
     private List<SSHDeviceBean> mDataList;
     private OnSSHItemClickListener mListener;
 
@@ -42,6 +43,7 @@ public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
 
         holder.tvAlias.setText(bean.getAlias());
         String detail = bean.getUsername() + "@" + bean.getHost() + ":" + bean.getPort();
+        LogUtils.d(TAG, "content ssh:" + detail);
         holder.tvDetail.setText(detail);
 
         //连接

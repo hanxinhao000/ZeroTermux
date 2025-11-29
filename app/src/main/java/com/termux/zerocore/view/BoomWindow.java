@@ -31,7 +31,9 @@ import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
 import com.termux.zerocore.activity.adapter.SSHAdapter;
 import com.termux.zerocore.bean.MinLBean;
 import com.termux.zerocore.bean.SSHDeviceBean;
+import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.dialog.CommandDialog;
+import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.SaveData;
 import com.termux.zerocore.utils.WindowsUtils;
 import com.termux.zerocore.utils.SSHKeyUtils;
@@ -110,7 +112,7 @@ public class BoomWindow {
                     title.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 
-                    String binPath = "/data/data/com.termux/files/usr/bin/";
+                    String binPath = FileUrl.INSTANCE.getMainBinUrl();
                     File sshFile = new File(binPath, "ssh");
                     File sshPassFile = new File(binPath, "sshpass");
 
@@ -118,12 +120,11 @@ public class BoomWindow {
                         isInstallingEnv = false;
                     } else {
                         if (isInstallingEnv) {
-                            UUtils.showMsg("正在初始化中，请耐心等待...");
+                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_hint));
                         } else {
                             isInstallingEnv = true;
-                            UUtils.showMsg("初次使用，正在初始化SSH环境...");
-                            String installCmd = " { command -v ssh >/dev/null || pkg install openssh -y >/dev/null 2>&1; } && { command -v sshpass >/dev/null || pkg install sshpass -y >/dev/null 2>&1; }";
-                            TermuxActivity.mTerminalView.sendTextToTerminal(" " + installCmd + "\n");
+                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_ssh_hint));
+                            TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getContentSSH());
                         }
                     }
                     showSSHList(closeLiftListener);
@@ -134,12 +135,12 @@ public class BoomWindow {
             layout_add_ssh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String binPath = "/data/data/com.termux/files/usr/bin/";
+                    String binPath = FileUrl.INSTANCE.getMainBinUrl();
                     File sshFile = new File(binPath, "ssh");
                     File sshPassFile = new File(binPath, "sshpass");
 
                     if (!sshFile.exists() || !sshPassFile.exists()) {
-                        UUtils.showMsg("环境尚未就绪，请稍候...");
+                        UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_ssh_wait));
                         return;
                     }
                     isInstallingEnv = false;
@@ -290,8 +291,8 @@ public class BoomWindow {
 
         if (sshList.isEmpty()) {
             title.setVisibility(View.VISIBLE);
-            title.setText("暂无SSH设备，请点击上方添加");
-            recyclerView.setVisibility(View.GONE);
+            title.setText(UUtils.getString(R.string.content_ssh_list_summary));
+            recyclerView.setVisibility(View.INVISIBLE);
             if (layout_add_ssh != null) layout_add_ssh.setVisibility(View.VISIBLE);
             return;
         } else {
@@ -312,10 +313,10 @@ public class BoomWindow {
                 String finalCmd = bean.generateConnectCommand();
 
                 if (!android.text.TextUtils.isEmpty(bean.getPassword())) {
-                    UUtils.showMsg("正在连接: " + bean.getAlias());
+                    UUtils.showMsg(UUtils.getString(R.string.正在连接) + bean.getAlias());
                 }
                 String runCmd = " clear && " + finalCmd;
-
+                com.zp.z_file.util.LogUtils.d(TAG, "content click ssh:" + runCmd);
                 //屏蔽Connection refused用String runCmd = " clear && " + finalCmd + " 2>/dev/null || echo 'err'";
 
                 TermuxActivity.mTerminalView.sendTextToTerminal(runCmd + "\n");
@@ -328,19 +329,19 @@ public class BoomWindow {
             @Override
             public void onDelete(int position, SSHDeviceBean bean) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mTermuxActivity, android.R.style.Theme_DeviceDefault_Dialog);
-                builder.setTitle("删除设备");
-                builder.setMessage("确定要删除\"" + bean.getAlias() + "\"吗？\n(IP: " + bean.getHost() + ")");
+                builder.setTitle(UUtils.getString(R.string.content_ssh_remove_device));
+                builder.setMessage(String.format(UUtils.getString(R.string.content_ssh_remove_device_dialog), bean.getAlias(), bean.getHost()));
 
-                builder.setPositiveButton("删除", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(UUtils.getString(R.string.删除), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finalSshList.remove(position);
                         SaveData.saveData(KEY_SSH_LIST, new Gson().toJson(finalSshList));
                         showSSHList(closeLiftListener);
-                        UUtils.showMsg("已删除");
+                        UUtils.showMsg(UUtils.getString(R.string.content_ssh_remove_ok));
                     }
                 });
-                builder.setNegativeButton("取消", null);
+                builder.setNegativeButton(UUtils.getString(R.string.edit_cancel), null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(android.graphics.Color.parseColor("#FF5252"));
@@ -357,24 +358,24 @@ public class BoomWindow {
     //添加设备的对话框
     private void showAddSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mTermuxActivity, android.R.style.Theme_DeviceDefault_Dialog);
-        builder.setTitle("添加SSH设备");
+        builder.setTitle(UUtils.getString(R.string.content_ssh_add_device));
         LinearLayout layout = new LinearLayout(mTermuxActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 20, 50, 20);
         final EditText etAlias = new EditText(mTermuxActivity);
-        etAlias.setHint("别名");
+        etAlias.setHint(UUtils.getString(R.string.content_ssh_alias));
         etAlias.setSingleLine(true);
         etAlias.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         layout.addView(etAlias);
         final EditText etHost = new EditText(mTermuxActivity);
-        etHost.setHint("主机名(IP/域名)");
+        etHost.setHint(UUtils.getString(R.string.content_ssh_host_name));
         etHost.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_URI);
         etHost.setSingleLine(true);
         etHost.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         layout.addView(etHost);
 
         final EditText etPort = new EditText(mTermuxActivity);
-        etPort.setHint("端口(默认22)");
+        etPort.setHint(UUtils.getString(R.string.content_ssh_host_post_def));
         etPort.setText("22");
         etPort.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         etPort.setSingleLine(true);
@@ -382,14 +383,14 @@ public class BoomWindow {
         layout.addView(etPort);
 
         final EditText etUser = new EditText(mTermuxActivity);
-        etUser.setHint("用户名(默认root)");
+        etUser.setHint(UUtils.getString(R.string.content_ssh_host_username_def));
         etUser.setText("root");
         etUser.setSingleLine(true);
         etUser.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         layout.addView(etUser);
 
         final android.widget.CheckBox cbUseKey = new android.widget.CheckBox(mTermuxActivity);
-        cbUseKey.setText("使用密钥登录(~/.ssh/别名.key)");
+        cbUseKey.setText(UUtils.getString(R.string.content_ssh_host_key_def));
         cbUseKey.setTextColor(android.graphics.Color.WHITE);
         layout.addView(cbUseKey);
 
@@ -398,7 +399,7 @@ public class BoomWindow {
         passwordLayout.setGravity(Gravity.CENTER_VERTICAL);
 
         final EditText etPass = new EditText(mTermuxActivity);
-        etPass.setHint("密码");
+        etPass.setHint(UUtils.getString(R.string.content_ssh_password));
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
         etPass.setLayoutParams(etParams);
         etPass.setSingleLine(true);
@@ -437,19 +438,19 @@ public class BoomWindow {
         keyLayout.setVisibility(View.GONE);
 
         android.widget.Button btnGenKey = new android.widget.Button(mTermuxActivity);
-        btnGenKey.setText("生成");
+        btnGenKey.setText(UUtils.getString(R.string.content_ssh_generate));
         btnGenKey.setTextSize(12);
 
         LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
         btnGenKey.setLayoutParams(btnParams);
 
         android.widget.Button btnImportKey = new android.widget.Button(mTermuxActivity);
-        btnImportKey.setText("导入");
+        btnImportKey.setText(UUtils.getString(R.string.content_ssh_import));
         btnImportKey.setTextSize(12);
         btnImportKey.setLayoutParams(btnParams);
 
         android.widget.Button btnViewPub = new android.widget.Button(mTermuxActivity);
-        btnViewPub.setText("复制公钥");
+        btnViewPub.setText(UUtils.getString(R.string.content_ssh_copy_public_key));
         btnViewPub.setTextSize(12);
         btnViewPub.setLayoutParams(btnParams);
 
@@ -476,21 +477,22 @@ public class BoomWindow {
             public void onClick(View v) {
                 String currentAlias = etAlias.getText().toString().trim();
                 if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg("请先填写别名，密钥文件将以别名命名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_summary));
                     return;
                 }
+                //content_ssh_rsa
                 new AlertDialog.Builder(mTermuxActivity)
-                    .setTitle("生成密钥")
-                    .setMessage("将生成新的RSA密钥对：\n~/.ssh/" + currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_") + ".key\n\n如果该文件已存在，将被覆盖")
-                    .setPositiveButton("生成", new DialogInterface.OnClickListener() {
+                    .setTitle(UUtils.getString(R.string.content_ssh_generate_key))
+                    .setMessage(String.format(UUtils.getString(R.string.content_ssh_rsa), currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_")))
+                    .setPositiveButton(UUtils.getString(R.string.content_ssh_generate), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String cmd = SSHKeyUtils.getGenerateKeyCommand(currentAlias);
                             TermuxActivity.mTerminalView.sendTextToTerminal(cmd + "\n");
-                            UUtils.showMsg("正在后台生成密钥...");
+                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_generate_keying));
                         }
                     })
-                    .setNegativeButton("取消", null)
+                    .setNegativeButton(UUtils.getString(R.string.edit_cancel), null)
                     .show();
             }
         });
@@ -499,13 +501,13 @@ public class BoomWindow {
             public void onClick(View v) {
                 String currentAlias = etAlias.getText().toString().trim();
                 if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg("请先填写别名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_please_fill_alias_first));
                     return;
                 }
 
                 File pubKeyFile = new File(SSHKeyUtils.getSSHDir(), currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_") + ".key.pub");
                 if (!pubKeyFile.exists()) {
-                    UUtils.showMsg("公钥文件不存在，请先点击生成密钥");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_not_exets));
                     return;
                 }
 
@@ -520,9 +522,9 @@ public class BoomWindow {
                     android.content.ClipData mClipData = android.content.ClipData.newPlainText("SSH Public Key", pubKeyContent);
                     cm.setPrimaryClip(mClipData);
 
-                    UUtils.showMsg("公钥已复制到剪贴板");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_copy_clipboard));
                 } catch (Exception e) {
-                    UUtils.showMsg("读取失败:" + e.getMessage());
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_read_failed) + e.getMessage());
                 }
             }
         });
@@ -532,12 +534,12 @@ public class BoomWindow {
             public void onClick(View v) {
                 String currentAlias = etAlias.getText().toString().trim();
                 if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg("先填写别名，需要根据别名保存密钥文件");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_enter_alias));
                     return;
                 }
 
                 if (isAliasExist(currentAlias, -1)) {
-                    UUtils.showMsg("别名已存在，无法导入，请修改别名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_exist));
                     return;
                 }
 
@@ -552,8 +554,8 @@ public class BoomWindow {
 
         builder.setView(layout);
 
-        builder.setPositiveButton("保存", null);
-        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton(UUtils.getString(R.string.edit_save), null);
+        builder.setNegativeButton(UUtils.getString(R.string.edit_cancel), null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -569,15 +571,15 @@ public class BoomWindow {
                 String portStr = etPort.getText().toString().trim();
 
                 if (android.text.TextUtils.isEmpty(alias)) {
-                    UUtils.showMsg("请输入设备别名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_equipment_alias));
                     return;
                 }
                 if (android.text.TextUtils.isEmpty(host)) {
-                    UUtils.showMsg("请输入主机地址");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_address));
                     return;
                 }
                 if (isAliasExist(alias, -1)) {
-                    UUtils.showMsg("别名\"" + alias + "\"已存在，请更换");
+                    UUtils.showMsg(String.format(UUtils.getString(R.string.content_ssh_alias_exist_replace), alias));
                     return;
                 }
 
@@ -585,7 +587,7 @@ public class BoomWindow {
                 boolean isDomain = android.util.Patterns.DOMAIN_NAME.matcher(host).matches();
                 boolean isLocal = "localhost".equalsIgnoreCase(host);
                 if (!isIp && !isDomain && !isLocal) {
-                    UUtils.showMsg("主机地址格式错误");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
                     return;
                 }
 
@@ -593,11 +595,11 @@ public class BoomWindow {
                 try {
                     port = Integer.parseInt(portStr);
                     if (port < 1 || port > 65535) {
-                        UUtils.showMsg("端口无效(1-65535)");
+                        UUtils.showMsg(UUtils.getString(R.string.content_ssh_port_invalid));
                         return;
                     }
                 } catch (Exception e) {
-                    UUtils.showMsg("端口必须是数字");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_port_is_number));
                     return;
                 }
 
@@ -614,7 +616,7 @@ public class BoomWindow {
                 showSSHList(closeLiftListener);
 
                 dialog.dismiss();
-                UUtils.showMsg("添加成功");
+                UUtils.showMsg(UUtils.getString(R.string.添加成功));
             }
         });
     }
@@ -654,28 +656,28 @@ public class BoomWindow {
     //编辑SSH对话框
     private void showEditSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener, final int position, final SSHDeviceBean oldBean) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mTermuxActivity, android.R.style.Theme_DeviceDefault_Dialog);
-        builder.setTitle("编辑SSH设备");
+        builder.setTitle(UUtils.getString(R.string.content_ssh_edit_ssh_device));
 
         LinearLayout layout = new LinearLayout(mTermuxActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 20, 50, 20);
 
         final EditText etAlias = new EditText(mTermuxActivity);
-        etAlias.setHint("别名");
+        etAlias.setHint(UUtils.getString(R.string.content_ssh_alias));
         etAlias.setSingleLine(true);
         etAlias.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         etAlias.setText(oldBean.getAlias());
         layout.addView(etAlias);
 
         final EditText etHost = new EditText(mTermuxActivity);
-        etHost.setHint("主机名(IP/域名)");
+        etHost.setHint(UUtils.getString(R.string.content_ssh_host_name));
         etHost.setSingleLine(true);
         etHost.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         etHost.setText(oldBean.getHost());
         layout.addView(etHost);
 
         final EditText etPort = new EditText(mTermuxActivity);
-        etPort.setHint("端口");
+        etPort.setHint(UUtils.getString(R.string.端口));
         etPort.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         etPort.setSingleLine(true);
         etPort.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
@@ -683,14 +685,14 @@ public class BoomWindow {
         layout.addView(etPort);
 
         final EditText etUser = new EditText(mTermuxActivity);
-        etUser.setHint("用户名");
+        etUser.setHint(UUtils.getString(R.string.content_ssh_username));
         etUser.setSingleLine(true);
         etUser.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         etUser.setText(oldBean.getUsername());
         layout.addView(etUser);
 
         final android.widget.CheckBox cbUseKey = new android.widget.CheckBox(mTermuxActivity);
-        cbUseKey.setText("使用密钥登录(~/.ssh/别名.key)");
+        cbUseKey.setText(UUtils.getString(R.string.content_ssh_host_key_def));
         cbUseKey.setChecked(oldBean.isUseKey());
         cbUseKey.setTextColor(android.graphics.Color.WHITE);
         layout.addView(cbUseKey);
@@ -700,7 +702,7 @@ public class BoomWindow {
         passwordLayout.setGravity(Gravity.CENTER_VERTICAL);
 
         final EditText etPass = new EditText(mTermuxActivity);
-        etPass.setHint("密码");
+        etPass.setHint(UUtils.getString(R.string.content_ssh_password));
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
         etPass.setLayoutParams(etParams);
         etPass.setSingleLine(true);
@@ -740,18 +742,18 @@ public class BoomWindow {
         keyLayout.setVisibility(oldBean.isUseKey() ? View.VISIBLE : View.GONE);
 
         android.widget.Button btnGenKey = new android.widget.Button(mTermuxActivity);
-        btnGenKey.setText("生成");
+        btnGenKey.setText(UUtils.getString(R.string.content_ssh_generate));
         btnGenKey.setTextSize(12);
         LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
         btnGenKey.setLayoutParams(btnParams);
 
         android.widget.Button btnImportKey = new android.widget.Button(mTermuxActivity);
-        btnImportKey.setText("导入");
+        btnImportKey.setText(UUtils.getString(R.string.导入));
         btnImportKey.setTextSize(12);
         btnImportKey.setLayoutParams(btnParams);
 
         android.widget.Button btnViewPub = new android.widget.Button(mTermuxActivity);
-        btnViewPub.setText("复制公钥");
+        btnViewPub.setText(UUtils.getString(R.string.content_ssh_copy_public_key));
         btnViewPub.setTextSize(12);
         btnViewPub.setLayoutParams(btnParams);
 
@@ -785,22 +787,22 @@ public class BoomWindow {
             public void onClick(View v) {
                 String currentAlias = etAlias.getText().toString().trim();
                 if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg("请先填写别名，密钥文件将以别名命名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_summary));
                     return;
                 }
 
                 new AlertDialog.Builder(mTermuxActivity)
-                    .setTitle("生成密钥")
-                    .setMessage("这将生成新的RSA密钥对：\n~/.ssh/" + currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_") + ".key\n\n如果该文件已存在，将被覆盖")
-                    .setPositiveButton("生成", new DialogInterface.OnClickListener() {
+                    .setTitle(UUtils.getString(R.string.content_ssh_generate_key))
+                    .setMessage(String.format(UUtils.getString(R.string.content_ssh_rsa), currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_")))
+                    .setPositiveButton(UUtils.getString(R.string.content_ssh_generate), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String cmd = SSHKeyUtils.getGenerateKeyCommand(currentAlias);
                             TermuxActivity.mTerminalView.sendTextToTerminal(cmd + "\n");
-                            UUtils.showMsg("正在后台生成密钥...");
+                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_generate_keying));
                         }
                     })
-                    .setNegativeButton("取消", null)
+                    .setNegativeButton(UUtils.getString(R.string.edit_cancel), null)
                     .show();
             }
         });
@@ -810,12 +812,12 @@ public class BoomWindow {
             public void onClick(View v) {
                 String currentAlias = etAlias.getText().toString().trim();
                 if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg("请先填写别名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_please_fill_alias_first));
                     return;
                 }
 
                 if (isAliasExist(currentAlias, position)) {
-                    UUtils.showMsg("别名已存在，无法导入，请修改别名。");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_exist));
                     return;
                 }
 
@@ -833,12 +835,12 @@ public class BoomWindow {
             public void onClick(View v) {
                 String currentAlias = etAlias.getText().toString().trim();
                 if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg("请先填写别名");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_please_fill_alias_first));
                     return;
                 }
                 File pubKeyFile = new File(SSHKeyUtils.getSSHDir(), currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_") + ".key.pub");
                 if (!pubKeyFile.exists()) {
-                    UUtils.showMsg("公钥文件不存在，请先点击生成密钥");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_not_exets));
                     return;
                 }
                 try {
@@ -852,15 +854,15 @@ public class BoomWindow {
                     android.content.ClipData mClipData = android.content.ClipData.newPlainText("SSH Public Key", pubKeyContent);
                     cm.setPrimaryClip(mClipData);
 
-                    UUtils.showMsg("公钥已复制到剪贴板");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_copy_clipboard));
                 } catch (Exception e) {
-                    UUtils.showMsg("读取失败: " + e.getMessage());
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_read_failed) + e.getMessage());
                 }
             }
         });
         builder.setView(layout);
-        builder.setPositiveButton("保存", null);
-        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton(UUtils.getString(R.string.edit_save), null);
+        builder.setNegativeButton(UUtils.getString(R.string.edit_cancel), null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -876,12 +878,12 @@ public class BoomWindow {
                 String portStr = etPort.getText().toString().trim();
 
                 if (android.text.TextUtils.isEmpty(alias) || android.text.TextUtils.isEmpty(host)) {
-                    UUtils.showMsg("别名和IP不能为空");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_ip_not_empty));
                     return;
                 }
 
                 if (isAliasExist(alias, position)) {
-                    UUtils.showMsg("别名\"" + alias + "\"已存在，请更换");
+                    UUtils.showMsg(String.format(UUtils.getString(R.string.content_ssh_alias_exist_replace), alias));
                     return;
                 }
 
@@ -889,7 +891,7 @@ public class BoomWindow {
                 boolean isDomain = android.util.Patterns.DOMAIN_NAME.matcher(host).matches();
                 boolean isLocal = "localhost".equalsIgnoreCase(host);
                 if (!isIp && !isDomain && !isLocal) {
-                    UUtils.showMsg("主机地址格式错误");
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
                     return;
                 }
 
@@ -908,7 +910,7 @@ public class BoomWindow {
                 updateSSHDevice(position, newBean);
                 showSSHList(closeLiftListener);
                 dialog.dismiss();
-                UUtils.showMsg("修改成功");
+                UUtils.showMsg(UUtils.getString(R.string.修改成功));
             }
         });
     }

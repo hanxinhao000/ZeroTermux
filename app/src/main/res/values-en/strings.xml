@@ -1055,4 +1055,47 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
 
     <string name="x11_install_apk">install X11</string>
     <string name="x11_install_apk_not">X11 is not installed, please install X11 APK first</string>
+
+    <string name="x11_boom_keyboard_gone">Hide Keyboard</string>
+    <string name="x11_boom_keyboard_visible">Show Keyboard</string>
+    <string name="update_online_sh">Online Script Server</string>
+    <string name="update_online_sh_summary">Modify online script server</string>
+    <string name="content_ssh_list">Quick SSH</string>
+    <string name="content_ssh_list_summary">No SSH devices, tap above to add</string>
+    <string name="content_ssh_list_toast_hint">Initializing, please wait...</string>
+    <string name="content_ssh_list_toast_ssh_hint">First-time setup, initializing SSH environment...</string>
+    <string name="content_ssh_list_toast_ssh_wait">Environment not ready yet, please wait...</string>
+    <string name="content_ssh_remove_device">Delete Device</string>
+    <string name="content_ssh_remove_device_dialog">"Are you sure you want to delete '%s'?\n(IP: '%s')"</string>
+    <string name="content_ssh_remove_ok">Deleted</string>
+    <string name="content_ssh_add_device">Add SSH Device</string>
+    <string name="content_ssh_alias">Alias</string>
+    <string name="content_ssh_host_name">Hostname (IP/Domain)</string>
+    <string name="content_ssh_host_post_def">Port (Default 22)</string>
+    <string name="content_ssh_host_username_def">Username (Default root)</string>
+    <string name="content_ssh_host_key_def">Use Key Authentication (~/.ssh/alias.key)</string>
+    <string name="content_ssh_password">Password</string>
+    <string name="content_ssh_generate">Generate</string>
+    <string name="content_ssh_import">Import</string>
+    <string name="content_ssh_copy_public_key">Copy Public Key</string>
+    <string name="content_ssh_alias_summary">Please fill in an alias first. The key file will be named after the alias.</string>
+    <string name="content_ssh_generate_key">Generate Key Pair</string>
+    <string name="content_ssh_rsa">"A new RSA key pair will be generated:\n~/.ssh/%s.key\n\nIf the file already exists, it will be overwritten."</string>
+    <string name="content_ssh_generate_keying">Generating key in background...</string>
+    <string name="content_ssh_please_fill_alias_first">Please fill in an alias first</string>
+    <string name="content_ssh_key_not_exets">"Public key file does not exist. Please generate a key pair first."</string>
+    <string name="content_ssh_key_copy_clipboard">"Public key copied to clipboard"</string>
+    <string name="content_ssh_key_read_failed">"Read failed"</string>
+    <string name="content_ssh_enter_alias">Fill in an alias first. The key file will be saved based on the alias.</string>
+    <string name="content_ssh_alias_exist">Alias already exists. Cannot import. Please modify the alias.</string>
+    <string name="content_ssh_equipment_alias">Please enter device alias</string>
+    <string name="content_ssh_host_address">Please enter host address</string>
+    <string name="content_ssh_alias_exist_replace">"Alias %s already exists. Please choose a different one."</string>
+    <string name="content_ssh_host_format_error">Host address format error</string>
+    <string name="content_ssh_port_invalid">Invalid port (1-65535)</string>
+    <string name="content_ssh_port_is_number">Port must be a number</string>
+    <string name="content_ssh_edit_ssh_device">Edit SSH Device</string>
+    <string name="content_ssh_username">Username</string>
+    <string name="content_ssh_alias_ip_not_empty">Alias and IP cannot be empty</string>
+    <string name="content_ssh_add_new_ssh_device">+ Add new SSH device</string>
 </resources>

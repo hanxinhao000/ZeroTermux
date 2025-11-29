@@ -33,7 +33,7 @@ public object CodeString {
 
     public var runLineQemu = "cd ~ && pkg update -y && pkg install wget -y && wget https://od.ixcmstudio.cn/repository/main/qemu_sh/utqemu.sh && chmod 777 utqemu.sh && ./utqemu.sh"
     public var runDocker = "pkg update && pkg install tsu wget -y && cd ~ && chmod 777 check-config.sh && sed -i '1s_.*_#!/data/data/com.termux/files/usr/bin/bash_' check-config.sh && sudo ./check-config.sh\n"
-
+    public val contentSSH = " { command -v ssh >/dev/null || pkg install openssh -y >/dev/null 2>&1; } && { command -v sshpass >/dev/null || pkg install sshpass -y >/dev/null 2>&1; } \n"
 
 
 }
