@@ -25,16 +25,16 @@ android {
     }
     signingConfigs {
         release {
-            keyAlias 'phone1'
-            keyPassword '654321'
-            storeFile file('D:\\签名文件\\phone.jks')
-            storePassword '123456'
+            keyAlias System.getenv("KEY_ALIAS") ?: 'phone1'
+            keyPassword System.getenv("KEY_PASSWORD") ?: '654321'
+            storeFile rootProject.file("phone.jks")
+            storePassword System.getenv("STORE_PASSWORD") ?: '123456'
         }
         debug {
-            keyAlias 'phone1'
-            keyPassword '654321'
-            storeFile file('D:\\签名文件\\phone.jks')
-            storePassword '123456'
+            keyAlias System.getenv("KEY_ALIAS") ?: 'phone1'
+            keyPassword System.getenv("KEY_PASSWORD") ?: '654321'
+            storeFile rootProject.file("phone.jks")
+            storePassword System.getenv("STORE_PASSWORD") ?: '123456'
         }
     }
 
@@ -290,11 +290,11 @@ clean {
 
 task downloadBootstraps() {
     doLast {
-        def version = "2025.08.24-r1+apt.android-7"
-        downloadBootstrap("aarch64", "a2de41340f145686d946e56858df7a3f1a176b85a2e3cc922331a8f79d4c46e4", version)
-        downloadBootstrap("arm", "c3aa9abff607b7e55fe05a15e7f4544b321899dfeaf938912f86d82b46a3dfbe", version)
-        downloadBootstrap("i686", "bc7e4a0a8d78cf7d3a6fe28aff7e0ae0bdf3e8c8197e0a95850e02cf48652ac9", version)
-        downloadBootstrap("x86_64", "390d8383803c7b97781c5532a7d56749b4cc3e0b468d5f8d5c85720fa780cfcb", version)
+        def version = "2025.11.23-r1+apt.android-7"
+        downloadBootstrap("aarch64", "bec3e2b674b6efee7ff0e2a12824eb376e3fe182cc424d3357dad72c7cdd20d5", version)
+        downloadBootstrap("arm", "8c0487ed2e9a5a43af8347646b93641ed64939c532136cd2bc8df57eed5430b0", version)
+        downloadBootstrap("i686", "43df622bc3ce19583a18d1ec89f78ed990d0a0297d24e631141817e6a17a31c", version)
+        downloadBootstrap("x86_64", "8b36eafb6bf25ae32dd1646ddd5fe5b614510b68509df4eecf5a3e66409fc7f6", version)
     }
 }
 

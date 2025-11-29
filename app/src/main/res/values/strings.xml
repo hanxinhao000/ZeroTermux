@@ -1004,4 +1004,6 @@
     <string name="x11_install_apk_not">没有安装X11，请先安装X11 APK</string>
     <string name="x11_boom_keyboard_gone">隐藏键盘</string>
     <string name="x11_boom_keyboard_visible">显示键盘</string>
+    <string name="update_online_sh">在线脚本服务器</string>
+    <string name="update_online_sh_summary">修改在线脚本服务器</string>
 </resources>

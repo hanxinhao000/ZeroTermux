@@ -23,6 +23,16 @@ public class ZTUserBean {
     private boolean isShowCommand = false;
     //内部/外部通道
     private boolean isInternalPassage = false;
+    //在线服务器设定本地保存
+    private String mServerJsonString;
+
+    public String getServerJsonString() {
+        return mServerJsonString;
+    }
+
+    public void setServerJsonString(String serverJsonString) {
+        this.mServerJsonString = serverJsonString;
+    }
 
     public boolean isInternalPassage() {
         return isInternalPassage;

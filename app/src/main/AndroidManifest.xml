@@ -78,6 +78,10 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
+            android:name=".zerocore.settings.ZTOnlineServerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
             android:name=".zerocore.settings.ZTAboutActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

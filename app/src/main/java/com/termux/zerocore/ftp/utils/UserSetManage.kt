@@ -3,6 +3,7 @@ package com.termux.zerocore.ftp.utils
 import com.example.xh_lib.utils.SaveData
 import com.google.gson.Gson
 import com.termux.zerocore.bean.ZTUserBean
+import com.termux.zerocore.http.HTTPIP
 
 class UserSetManage private constructor() {
     companion object {
@@ -34,6 +35,30 @@ class UserSetManage private constructor() {
     public fun setZTUserBean(mZTUserBean: ZTUserBean) {
         val toJson = Gson().toJson(mZTUserBean)
         SaveData.saveStringOther(ZTConstant.ZT_USER_BEAN_KEY, toJson)
+    }
+
+    public fun defServerIPName(): DataServers {
+        val arrayList = ArrayList<DataServer>()
+        val dataServer = DataServer("def", HTTPIP.IP)
+        arrayList.add(dataServer)
+
+        val dataServers = DataServers(arrayList)
+
+        val ztUserBean = getZTUserBean()
+        ztUserBean.serverJsonString = Gson().toJson(dataServers)
+        setZTUserBean(ztUserBean)
+        return dataServers
+    }
+
+    data class DataServer(val serverName: String, val serverUrl: String) {
+        override fun toString(): String {
+            return "DataServer(serverName='$serverName', serverUrl='$serverUrl')"
+        }
+    }
+    data class DataServers(val dataServers: ArrayList<DataServer>) {
+        override fun toString(): String {
+            return "DataServers(dataServers=$dataServers)"
+        }
     }
 
 }
