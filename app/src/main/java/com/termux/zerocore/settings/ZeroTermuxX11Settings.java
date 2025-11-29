@@ -71,6 +71,7 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
             ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
             ztUserBean.setInternalPassage(true);
             setX11SettingsEnable(true);
+            UUtils.writerFile("");
             UserSetManage.Companion.get().setZTUserBean(ztUserBean);
         });
         external_channels.setOnClickListener(view -> {
@@ -104,6 +105,7 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
         File aislePathAPKFile = new File(FileUrl.INSTANCE.getAislePathAPK());
         File aislePathAPKFilePath = new File(FileUrl.INSTANCE.getAislePathAPKPath());
         File aislePathAPKSh = new File(FileUrl.INSTANCE.getAislePathSh());
+        File aislePreferencePathSh = new File(FileUrl.INSTANCE.getAislePreferencePathSh());
         File aislePathSo = new File(FileUrl.INSTANCE.getAislePathSo());
 
         if (!aislePathAPKFile.exists()) {
@@ -133,6 +135,15 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
                 }
                 // 安装执行文件
                 if (!ZFileUUtils.writerFile("x11/termux-x11", aislePathAPKSh)) {
+                    UUtils.runOnUIThread(() -> {
+                        showInstallLog(getString(R.string.x11_environment_error_x11));
+                    });
+                    runnable.run(false);
+                    UUtils.runOnUIThread(loadingDialog::dismiss);
+                    return;
+                }
+
+                if (!ZFileUUtils.writerFile("x11/termux-x11-preference-zt", aislePreferencePathSh)) {
                     UUtils.runOnUIThread(() -> {
                         showInstallLog(getString(R.string.x11_environment_error_x11));
                     });
@@ -170,6 +181,14 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
                 if (!ZFileUUtils.writerFile("x11/aisle_x11_loader.apk", aislePathAPKFile)) {
                     UUtils.runOnUIThread(() -> {
                         showInstallLog(getString(R.string.x11_environment_error));
+                    });
+                    runnable.run(false);
+                    UUtils.runOnUIThread(loadingDialog::dismiss);
+                    return;
+                }
+                if (!ZFileUUtils.writerFile("x11/termux-x11-preference", aislePreferencePathSh)) {
+                    UUtils.runOnUIThread(() -> {
+                        showInstallLog(getString(R.string.x11_environment_error_x11));
                     });
                     runnable.run(false);
                     UUtils.runOnUIThread(loadingDialog::dismiss);
