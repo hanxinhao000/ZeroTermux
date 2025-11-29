@@ -1060,7 +1060,8 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
     <string name="x11_boom_keyboard_visible">Show Keyboard</string>
     <string name="update_online_sh">Online Script Server</string>
     <string name="update_online_sh_summary">Modify online script server</string>
-    <string name="content_ssh_list">Quick SSH</string>
+    <string name="content_ssh_list">Switch SSH</string>
+    <string name="content_command_list">Switch Command</string>
     <string name="content_ssh_list_summary">No SSH devices, tap above to add</string>
     <string name="content_ssh_list_toast_hint">Initializing, please wait...</string>
     <string name="content_ssh_list_toast_ssh_hint">First-time setup, initializing SSH environment...</string>

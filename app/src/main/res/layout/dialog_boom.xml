@@ -60,6 +60,7 @@
                             app:cardCornerRadius="3dp"
                             android:layout_height="match_parent">
                             <TextView
+                                android:id="@+id/ssh_text"
                                 android:layout_width="match_parent"
                                 android:paddingLeft="6dp"
                                 android:paddingRight="6dp"

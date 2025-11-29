@@ -57,6 +57,8 @@ public class BoomWindow {
     private static boolean isInstallingEnv = false;
     public static boolean SWITCH = true;
 
+    private boolean mIsSSHSwitch = false;
+
     public TextView title;
     public RecyclerView recyclerView;
     public CardView qiehuan_mingl_zidong;
@@ -68,6 +70,7 @@ public class BoomWindow {
     public LinearLayout popu_windows_huihua;
     public LinearLayout popu_windows_ssh;
     public LinearLayout layout_add_ssh;
+    public TextView ssh_text;
 
     private View mView;
     private PopupWindow mPopupWindow;
@@ -93,6 +96,7 @@ public class BoomWindow {
         popu_windows_huihua = mView.findViewById(R.id.popu_windows_huihua);
         popu_windows_ssh = mView.findViewById(R.id.popu_windows_ssh);
         layout_add_ssh = mView.findViewById(R.id.layout_add_ssh);
+        ssh_text = mView.findViewById(R.id.ssh_text);
         qiehuan_command_zidong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,26 +112,15 @@ public class BoomWindow {
             popu_windows_ssh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (layout_add_ssh != null) layout_add_ssh.setVisibility(View.VISIBLE);
-                    title.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-
-                    String binPath = FileUrl.INSTANCE.getMainBinUrl();
-                    File sshFile = new File(binPath, "ssh");
-                    File sshPassFile = new File(binPath, "sshpass");
-
-                    if (sshFile.exists() && sshPassFile.exists()) {
-                        isInstallingEnv = false;
+                    if (!mIsSSHSwitch) {
+                        mIsSSHSwitch = true;
+                        showSSHView(closeLiftListener);
+                        ssh_text.setText(UUtils.getString(R.string.content_command_list));
                     } else {
-                        if (isInstallingEnv) {
-                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_hint));
-                        } else {
-                            isInstallingEnv = true;
-                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_ssh_hint));
-                            TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getContentSSH());
-                        }
+                        mIsSSHSwitch = false;
+                        showBoomView(closeLiftListener);
+                        ssh_text.setText(UUtils.getString(R.string.content_ssh_list));
                     }
-                    showSSHList(closeLiftListener);
                 }
             });
         }
@@ -196,6 +189,29 @@ public class BoomWindow {
         showBoomView(closeLiftListener);
 
         return mView;
+    }
+
+    private void showSSHView(BoomMinLAdapter.CloseLiftListener closeLiftListener) {
+        if (layout_add_ssh != null) layout_add_ssh.setVisibility(View.VISIBLE);
+        title.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+
+        String binPath = FileUrl.INSTANCE.getMainBinUrl();
+        File sshFile = new File(binPath, "ssh");
+        File sshPassFile = new File(binPath, "sshpass");
+
+        if (sshFile.exists() && sshPassFile.exists()) {
+            isInstallingEnv = false;
+        } else {
+            if (isInstallingEnv) {
+                UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_hint));
+            } else {
+                isInstallingEnv = true;
+                UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_ssh_hint));
+                TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getContentSSH());
+            }
+        }
+        showSSHList(closeLiftListener);
     }
 
     private void showBoomView (BoomMinLAdapter.CloseLiftListener closeLiftListener) {
@@ -354,6 +370,7 @@ public class BoomWindow {
             }
         });
         recyclerView.setAdapter(sshAdapter);
+        //content_command_list
     }
     //添加设备的对话框
     private void showAddSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener) {

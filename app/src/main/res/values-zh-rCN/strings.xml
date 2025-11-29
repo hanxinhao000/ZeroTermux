@@ -1058,7 +1058,8 @@
     <string name="x11_boom_keyboard_visible">显示键盘</string>
     <string name="update_online_sh">在线脚本服务器</string>
     <string name="update_online_sh_summary">修改在线脚本服务器</string>
-    <string name="content_ssh_list">快捷SSH</string>
+    <string name="content_ssh_list">切换SSH</string>
+    <string name="content_command_list">切换命令</string>
     <string name="content_ssh_list_summary">暂无SSH设备，请点击上方添加</string>
     <string name="content_ssh_list_toast_hint">正在初始化中，请耐心等待...</string>
     <string name="content_ssh_list_toast_ssh_hint">初次使用，正在初始化SSH环境...</string>
