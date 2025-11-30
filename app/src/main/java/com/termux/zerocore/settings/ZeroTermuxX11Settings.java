@@ -71,7 +71,6 @@ public class ZeroTermuxX11Settings extends AppCompatActivity {
             ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
             ztUserBean.setInternalPassage(true);
             setX11SettingsEnable(true);
-            UUtils.writerFile("");
             UserSetManage.Companion.get().setZTUserBean(ztUserBean);
         });
         external_channels.setOnClickListener(view -> {
