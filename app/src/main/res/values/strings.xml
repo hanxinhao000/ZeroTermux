@@ -909,7 +909,7 @@
     <string name="zeroCore_about_card_title">ZeroCoreManage</string>
     <string name="zeroCore_about_card_title_note">ZeroCoreManage 是基于ZeroTermux的扩展包,对于\nZeroTermux功能的扩展,目的是为了减小ZeroTermux\n的软件包大小,不安装此扩展包ZeroTermux依旧可以正常运行\n引擎额外内容:\n\n1. 内置键盘\n2. WEB访问内存卡\n3. X86 Alpine</string>
     <string name="zt_developer">开发/贡献</string>
-    <string name="zt_developer_note">Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \nXINHAO_HAN 等(排名不分先后)</string>
+    <string name="zt_developer_note">Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \n小潼(XiaoTong6666)、XINHAO_HAN 等(排名不分先后)</string>
     <string name="zt_install">还原/扩展官方版本</string>
     <string name="zt_install_float">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> Termux Float】安装插件</string>
     <string name="zt_install_file">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> (Zero)Utermux File Plug】安装插件</string>
