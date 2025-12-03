@@ -2,7 +2,7 @@
 
 <!DOCTYPE resources [<!ENTITY TERMUX_PACKAGE_NAME "com.termux"><!ENTITY TERMUX_APP_NAME "ZeroTermux"><!ENTITY TERMUX_API_APP_NAME "Termux:API"><!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot"><!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float"><!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling"><!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker"><!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget"><!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">]>
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="application_name">&TERMUX_APP_NAME;</string>
     <string name="shared_user_label">ZeroTermux 用户</string>
 
@@ -1045,4 +1045,54 @@
     <string name="content_ssh_username">用户名</string>
     <string name="content_ssh_alias_ip_not_empty">别名和IP不能为空</string>
     <string name="content_ssh_add_new_ssh_device">+ 添加新SSH设备</string>
+
+    <string name="zt_command_version">ZeroTermux-命令版本：0.1 (2025 ~ 2026)</string>
+    <string name="zt_command_error">不支持或ZT版本低不识别: \"</string>
+    <string name="zt_command_help" tools:ignore="TypographyDashes">
+        可用命令:\n
+        ZeroTermux 终端命令解释 \n
+        版本 0.1 \n
+        \n
+        \n
+        --------0.1版本更新--------\n
+        \n
+        基础类：\n
+        \n
+        help - 显示帮助 \n
+        openleft(ol) - 打开左侧面板 \n
+        openright(or) - 打开右侧面板 \n
+        reboot(rb) - 重启termux \n
+        toast - 底部弹出信息，显示自定义消息 \n
+        toast[ \n
+        示例：zt toast hello \n
+        ] \n
+        version(v) - 查看当前版本信息 \n
+        \n
+        \n
+        图形连接相关:\n
+        \n
+        vnc - 连接vnc(zt vnc 地址_端口_用户名_密码) \n
+        vnc[ \n
+        示例: zt vnc 127.0.0.1_5900_admin_admin \n
+        用户名或密码为空则输入none \n
+        示例(密码为空)：zt vnc 127.0.0.1_5900_admin_none \n
+        示例(用户名为空)：zt vnc 127.0.0.1_5900_none_admin \n
+        示例(或都为空)：zt vnc 127.0.0.1_5900_none_none \n
+        注意 地址和端口不能为空！\n
+        ] \n
+        x11commandshow(x11xs) - 显示终端(x11需打开) \n
+        x11commandhide(x11xh) - 隐藏终端(x11需打开) \n
+        x11keyboardshow(x11kbs) -显示x11键盘 \n
+        x11keyboardhide(x11kbh) -隐藏x11键盘 \n
+        \n
+        \n
+        创建软连接 \n
+        ln - 创建软连接 \n
+        ln[ \n
+        说明：当前目录 内部存储路径 \n
+        注意：两个路径都必须是全路径 \n
+        示例：ln /data/data/com.termux/files/home/自定义名称 /sdcard/ \n
+        示例(或指定一个目录)：ln /data/data/com.termux/files/home/自定义名称 /sdcard/自定义目录/ \n
+        ] \n
+    </string>
 </resources>

@@ -38,6 +38,10 @@ android {
         }
     }
 
+    buildFeatures {
+        dataBinding true
+    }
+
     splits.abi {
         enable true
         reset()
@@ -117,6 +121,9 @@ android {
 
         //ZFlie
         implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+        //Avnc
+        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
 
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'

@@ -12,7 +12,7 @@
     <!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">
     ]>
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="application_name">&TERMUX_APP_NAME;</string>
     <string name="shared_user_label">ZeroTermux user</string>
 
@@ -1099,4 +1099,54 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
     <string name="content_ssh_username">Username</string>
     <string name="content_ssh_alias_ip_not_empty">Alias and IP cannot be empty</string>
     <string name="content_ssh_add_new_ssh_device">+ Add new SSH device</string>
+
+    <string name="zt_command_version">ZeroTermux Command Version: 0.1 (2025 ~ 2026)</string>
+    <string name="zt_command_error">Unsupported or unrecognized due to low ZT version: \"</string>
+    <string name="zt_command_help" tools:ignore="TypographyDashes">
+Available Commands:\n
+ZeroTermux Terminal Command Interpretation \n
+Version 0.1 \n
+\n
+\n
+--------Version 0.1 Update--------\n
+\n
+Basic Commands:\n
+\n
+help - Display help \n
+openleft(ol) - Open left panel \n
+openright(or) - Open right panel \n
+reboot(rb) - Restart Termux \n
+toast - Display a custom message as a bottom pop-up notification \n
+toast[ \n
+Example: zt toast hello \n
+] \n
+version(v) - View current version information \n
+\n
+\n
+Graphics Connection Related:\n
+\n
+vnc - Connect to VNC (zt vnc address_port_username_password) \n
+vnc[ \n
+Example: zt vnc 127.0.0.1_5900_admin_admin \n
+If username or password is empty, input none \n
+Example (empty password): zt vnc 127.0.0.1_5900_admin_none \n
+Example (empty username): zt vnc 127.0.0.1_5900_none_admin \n
+Example (both empty): zt vnc 127.0.0.1_5900_none_none \n
+Note: Address and port cannot be empty! \n
+] \n
+x11commandshow(x11xs) - Show terminal (requires X11 to be open) \n
+x11commandhide(x11xh) - Hide terminal (requires X11 to be open) \n
+x11keyboardshow(x11kbs) - Show X11 keyboard \n
+x11keyboardhide(x11kbh) - Hide X11 keyboard \n
+\n
+\n
+Create Symbolic Link \n
+ln - Create symbolic link \n
+ln[ \n
+Description: current directory internal storage path \n
+Note: Both paths must be full paths \n
+Example: ln /data/data/com.termux/files/home/custom_name /sdcard/ \n
+Example (or specify a directory): ln /data/data/com.termux/files/home/custom_name /sdcard/custom_directory/ \n
+] \n
+</string>
 </resources>

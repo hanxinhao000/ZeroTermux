@@ -1,0 +1,23 @@
+#!/data/data/com.termux/files/usr/bin/sh
+
+JAVA_HOST="127.0.0.1"
+JAVA_PORT=19951
+SHELL_PORT=19952
+
+# 基本检查
+# 如果要自定义命令，请在：java/com/termux/zerocore/socket/ZTSocketService.java#157 按照提示添加
+# 基础原理为 socket 连接
+# 自动安装 nc
+command -v nc >/dev/null 2>&1 || {
+    echo "自动安装 nc..."
+    pkg install netcat-openbsd -y >/dev/null 2>&1 || {
+        echo "安装失败，请手动运行: pkg install netcat-openbsd"
+        exit 1
+    }
+}
+nc -z -w 1 "$JAVA_HOST" "$JAVA_PORT" 2>/dev/null || { echo "Java服务未运行"; exit 1; }
+
+# 直接启动监听，收到连接后自动退出
+nc -l -p $SHELL_PORT -q 0 &
+sleep 1
+echo "$*" | nc -w 10 "$JAVA_HOST" "$JAVA_PORT"

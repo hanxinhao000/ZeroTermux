@@ -1,5 +1,8 @@
 package com.termux.app;
 
+import static com.termux.zerocore.socket.ZTSocketService.ZT_COMMAND_ACTIVITY_ACTION;
+import static com.termux.zerocore.socket.ZTSocketService.ZT_COMMAND_SERVICES_ACTION;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -145,6 +148,8 @@ import com.termux.zerocore.settings.ZTInstallActivity;
 import com.termux.zerocore.settings.ZeroTermuxSettingsActivity;
 import com.termux.zerocore.settings.ZeroTermuxX11Settings;
 import com.termux.zerocore.settings.ZtSettingsActivity;
+import com.termux.zerocore.socket.ZTSocketService;
+import com.termux.zerocore.socket.config.ZTKeyConstants;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
 import com.termux.zerocore.utils.FileHttpUtils;
@@ -357,6 +362,46 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         }
     };
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            LogUtils.d(TAG, "message：" + message);
+            if (TextUtils.isEmpty(message)) {
+                LogUtils.d(TAG, "message is null，return：" + message);
+                return;
+            }
+            switch (message) {
+                // 调用本页面 VIEW 不可写到 Config 当中，否则可能造成内存泄漏
+                case ZTKeyConstants.ZT_COMMAND_LEFT:
+                case ZTKeyConstants.ZT_COMMAND_LEFT_1:
+                    getDrawer().close();
+                    getDrawer().smoothLeftOpen();
+                    break;
+                case ZTKeyConstants.ZT_COMMAND_RIGHT:
+                case ZTKeyConstants.ZT_COMMAND_RIGHT_1:
+                    getDrawer().close();
+                    getDrawer().smoothRightOpen();
+                    break;
+                case ZTKeyConstants.ZT_COMMAND_X11_COMMAND_SHOW:
+                case ZTKeyConstants.ZT_COMMAND_X11_COMMAND_SHOW_1:
+                    showTermuxView();
+                    break;
+                case ZTKeyConstants.ZT_COMMAND_X11_COMMAND_HIDE:
+                case ZTKeyConstants.ZT_COMMAND_X11_COMMAND_HIDE_1:
+                    hideTermuxView();
+                    break;
+                case ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_SHOW:
+                case ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_SHOW_1:
+                    x11KeyboardVisible();
+                    break;
+                case ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_HIDE:
+                case ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_HIDE_1:
+                    x11KeyboardGone();
+                    break;
+            }
+        }
+    };
 	// @}
 
     @Override
@@ -457,6 +502,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainActivity.init();
             regMainViewKeyDown();
         }
+        startService(new Intent(this, ZTSocketService.class));
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        // 注册接收器
+        IntentFilter filter = new IntentFilter(ZT_COMMAND_ACTIVITY_ACTION);
+        localBroadcastManager.registerReceiver(messageReceiver, filter);
         // @}
     }
 	
@@ -897,6 +947,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         unregisterReceiver(mUsbReceiver);
         if (localBroadcastManager!= null) {
             localBroadcastManager.unregisterReceiver(localReceiver);
+            localBroadcastManager.unregisterReceiver(messageReceiver);
         }
 		// @}
 
@@ -954,6 +1005,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (mIsVisible) {
                 TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
                     if (mTermuxService == null) return; // Activity might have been destroyed.
+                    // ZeroTermux add {@
+                    initCommand();
+                    // @}
                     try {
                         boolean launchFailsafe = false;
                         if (intent != null && intent.getExtras() != null) {
@@ -993,19 +1047,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         finishActivityIfNotFinishing();
     }
 
-
-
-
-
-
     private void reloadProperties() {
         mProperties.loadTermuxPropertiesFromDisk();
 
         if (mTermuxTerminalViewClient != null)
             mTermuxTerminalViewClient.onReloadProperties();
     }
-
-
 
     private void setActivityTheme() {
         // Update NightMode.APP_NIGHT_MODE
@@ -2421,72 +2468,81 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 break;
             case R.id.x11_display_terminal:
                 // 显示终端
-                ZTUserBean ztUserBeanShow = UserSetManage.Companion.get().getZTUserBean();
-                ztUserBeanShow.setShowCommand(true);
-                if (MainActivity.isConnected()) {
-                    mTerminalView.setVisibility(View.VISIBLE);
-                    double_tishi.setVisibility(View.VISIBLE);
-                    setExtraKeysViewVisible(true);
-                    if (mMainActivity != null) {
-                        mMainActivity.setTerminalToolbarViewVisible(false);
-                    }
-                    setSummaryVisible();
-                    initColorConfig();
-                    back_color.setVisibility(View.VISIBLE);
-                } else {
-                    if (mTerminalView.getVisibility() == View.INVISIBLE) {
-                        mTerminalView.setVisibility(View.VISIBLE);
-                        UUtils.showMsg(getString(R.string.x11_msg_error));
-                    } else {
-                        UUtils.showMsg(getString(R.string.x11_not_connect));
-                    }
-                }
-                UserSetManage.Companion.get().setZTUserBean(ztUserBeanShow);
+                showTermuxView();
                 break;
             case R.id.x11_hide_terminal:
                 // 隐藏终端
-                ZTUserBean ztUserBeanHide = UserSetManage.Companion.get().getZTUserBean();
-                ztUserBeanHide.setShowCommand(false);
-                if (MainActivity.isConnected()) {
-                    mTerminalView.setVisibility(View.INVISIBLE);
-                    setExtraKeysViewVisible(false);
-                    if (mMainActivity != null) {
-                        mMainActivity.setTerminalToolbarViewVisible(true);
-                    }
-                    double_tishi.setVisibility(View.GONE);
-                    back_color.setVisibility(View.GONE);
-                    back_img.setVisibility(View.GONE);
-                    back_video.setVisibility(View.GONE);
-                } else {
-                    if (mTerminalView.getVisibility() == View.INVISIBLE) {
-                        mTerminalView.setVisibility(View.VISIBLE);
-                        UUtils.showMsg(getString(R.string.x11_msg_error));
-                    } else {
-                        UUtils.showMsg(getString(R.string.x11_not_connect));
-                    }
-                }
-
-                UserSetManage.Companion.get().setZTUserBean(ztUserBeanHide);
+                hideTermuxView();
                 break;
-
             case R.id.x11_keyboard_visible:
-                if (MainActivity.isConnected()) {
-                    mMainActivity.setTerminalToolbarViewVisible(true);
-                } else {
-                    UUtils.showMsg(getString(R.string.x11_not_connect));
-                }
+                x11KeyboardVisible();
                 break;
             case R.id.x11_keyboard_gone:
-                if (MainActivity.isConnected()) {
-                    mMainActivity.setTerminalToolbarViewVisible(false);
-                } else {
-                    UUtils.showMsg(getString(R.string.x11_not_connect));
-                }
+                x11KeyboardGone();
                 break;
+        }
+    }
 
-
+    private void x11KeyboardGone() {
+        if (MainActivity.isConnected()) {
+            mMainActivity.setTerminalToolbarViewVisible(false);
+        } else {
+            UUtils.showMsg(getString(R.string.x11_not_connect));
+        }
+    }
+    private void x11KeyboardVisible() {
+        if (MainActivity.isConnected()) {
+            mMainActivity.setTerminalToolbarViewVisible(true);
+        } else {
+            UUtils.showMsg(getString(R.string.x11_not_connect));
+        }
+    }
+    private void showTermuxView() {
+        ZTUserBean ztUserBeanShow = UserSetManage.Companion.get().getZTUserBean();
+        ztUserBeanShow.setShowCommand(true);
+        if (MainActivity.isConnected()) {
+            mTerminalView.setVisibility(View.VISIBLE);
+            double_tishi.setVisibility(View.VISIBLE);
+            setExtraKeysViewVisible(true);
+            if (mMainActivity != null) {
+                mMainActivity.setTerminalToolbarViewVisible(false);
+            }
+            setSummaryVisible();
+            initColorConfig();
+            back_color.setVisibility(View.VISIBLE);
+        } else {
+            if (mTerminalView.getVisibility() == View.INVISIBLE) {
+                mTerminalView.setVisibility(View.VISIBLE);
+                UUtils.showMsg(getString(R.string.x11_msg_error));
+            } else {
+                UUtils.showMsg(getString(R.string.x11_not_connect));
+            }
+        }
+        UserSetManage.Companion.get().setZTUserBean(ztUserBeanShow);
+    }
+    private void hideTermuxView() {
+        ZTUserBean ztUserBeanHide = UserSetManage.Companion.get().getZTUserBean();
+        ztUserBeanHide.setShowCommand(false);
+        if (MainActivity.isConnected()) {
+            mTerminalView.setVisibility(View.INVISIBLE);
+            setExtraKeysViewVisible(false);
+            if (mMainActivity != null) {
+                mMainActivity.setTerminalToolbarViewVisible(true);
+            }
+            double_tishi.setVisibility(View.GONE);
+            back_color.setVisibility(View.GONE);
+            back_img.setVisibility(View.GONE);
+            back_video.setVisibility(View.GONE);
+        } else {
+            if (mTerminalView.getVisibility() == View.INVISIBLE) {
+                mTerminalView.setVisibility(View.VISIBLE);
+                UUtils.showMsg(getString(R.string.x11_msg_error));
+            } else {
+                UUtils.showMsg(getString(R.string.x11_not_connect));
+            }
         }
 
+        UserSetManage.Companion.get().setZTUserBean(ztUserBeanHide);
     }
 
 
@@ -3444,12 +3500,19 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     }
 
+    private void initCommand() {
+        File mainFile = new File(FileUrl.INSTANCE.getMainBinUrl());
+        File zt = new File(FileUrl.INSTANCE.getZt());
+        if (mainFile.exists()) {
+            if (!zt.exists()) {
+                UUtils.writerFile("runcommand/zt", zt);
+                UUtils.chmod(zt);
+            }
+        }
+    }
+
     private Locale getLocale(String which) {
-
-
         switch (which) {
-
-
             case "0":
                 return Locale.ROOT;
             case "1":
@@ -3458,25 +3521,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             default:
                 return Locale.SIMPLIFIED_CHINESE;
         }
-    }
-
-    private void initFiles() {
-        File mainFile = new File(FileUrl.INSTANCE.getMainBinUrl());
-        File openLeftFile = new File(FileUrl.INSTANCE.getOpenLeft());
-        File openRigthFile = new File(FileUrl.INSTANCE.getOpenRight());
-        if (mainFile.exists()) {
-
-            if (!openLeftFile.exists()) {
-                UUtils.writerFile("runcommand/openleftwindow", openLeftFile);
-                UUtils.chmod(openLeftFile);
-            }
-            if (!openRigthFile.exists()) {
-                UUtils.writerFile("runcommand/openrightwindow", openRigthFile);
-                UUtils.chmod(openRigthFile);
-            }
-
-        }
-
     }
 
     /**
@@ -3504,11 +3548,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return false;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    //测试方法
-    private void testFun() {
-
     }
 
     private void indexSwitch(int index) {
@@ -3549,6 +3588,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         IntentFilter intentFilter = new IntentFilter("localbroadcast");
         localReceiver = new LocalReceiver();
         localBroadcastManager.registerReceiver(localReceiver,intentFilter);
+    }
+    // 发送消息到 Service
+    private void sendMessageToService(String message) {
+        Intent intent = new Intent(ZT_COMMAND_SERVICES_ACTION);
+        intent.putExtra("message", message);
+        localBroadcastManager.sendBroadcast(intent);
     }
  // @}
 }
