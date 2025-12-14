@@ -1,0 +1,125 @@
+name: 编译ZeroTermux
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags:
+      - 'ZeroTermux-*'
+      - 'v*'
+      - '[0-9]*'
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: 配置 JDK 17 (用于 SDK 工具)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 配置隔离的 Android SDK 环境
+        run: |
+          export NEW_SDK_ROOT=${{ github.workspace }}/custom-android-sdk
+          mkdir -p $NEW_SDK_ROOT
+          
+          echo "Created isolated SDK root at: $NEW_SDK_ROOT"
+
+          yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --sdk_root=$NEW_SDK_ROOT \
+            "platform-tools" \
+            "platforms;android-33" \
+            "build-tools;30.0.2" \
+            "ndk;27.0.12077973"  \
+            "ndk;22.1.7171670"
+
+          cp -r ${ANDROID_HOME}/licenses $NEW_SDK_ROOT/
+          
+          echo "ANDROID_HOME=$NEW_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$NEW_SDK_ROOT" >> $GITHUB_ENV
+
+      - name: 配置 JDK 11 (用于编译)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: 给 gradlew 执行权限
+        run: chmod +x gradlew
+
+      - name: 编译 Debug 和 Release 的 APK
+        run: ./gradlew assembleDebug assembleRelease --stacktrace
+
+      - name: 确定应用名称前缀
+        id: set_name
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            TAG_NAME=${GITHUB_REF#refs/tags/}
+            echo "APP_NAME=$TAG_NAME" >> $GITHUB_ENV
+            echo "Detected Tag: $TAG_NAME"
+          else
+            echo "APP_NAME=ZeroTermux-Nightly" >> $GITHUB_ENV
+            echo "Detected Branch build, using default name."
+          fi
+
+      - name: 重命名 APK 文件
+        run: |
+          echo "正在将文件名中的 'app' 替换为 '${{ env.APP_NAME }}' ..."
+          
+          # 查找所有以 app- 开头的 apk 文件
+          find app/build/outputs/apk -type f -name "app-*.apk" | while read file; do
+          
+            dir=$(dirname "$file")
+            filename=$(basename "$file")
+            new_filename="${filename/app/${{ env.APP_NAME }}}"
+          
+            mv "$file" "$dir/$new_filename"
+            echo "已重命名: $filename -> $new_filename"
+          done
+
+      - name: 上传 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZeroTermux-All-APKs
+          path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk
+
+      - name: 更新 Nightly
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: nightly
+          name: Nightly Build
+          prerelease: true
+          overwrite: true
+          files: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 创建正式发布
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: false
+          prerelease: false
+          files: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -184,6 +184,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -232,7 +233,7 @@ dependencies {
     implementation files('libs/mina-core-2.0.16.jar')
     implementation files('libs/slf4j-api-1.7.21.jar')
     implementation files('libs/slf4j-log4j12-1.7.21.jar')
-    implementation files('libs\\commons-codec-1.10-rep.jar')
+    implementation files('libs/commons-codec-1.10-rep.jar')
 
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.4"
@@ -259,7 +260,7 @@ def downloadBootstrap(String arch, String expectedChecksum, String version) {
             if (readBytes < 0) break
             digest.update(buffer, 0, readBytes)
         }
-        def checksum = new BigInteger(1, digest.digest()).toString(16)
+        def checksum = new BigInteger(1, digest.digest()).toString(16).padLeft(64, '0')
         if (checksum == expectedChecksum) {
             return
         } else {
@@ -280,7 +281,7 @@ def downloadBootstrap(String arch, String expectedChecksum, String version) {
     out << digestStream
     out.close()
 
-    def checksum = new BigInteger(1, digest.digest()).toString(16)
+    def checksum = new BigInteger(1, digest.digest()).toString(16).padLeft(64, '0')
     if (checksum != expectedChecksum) {
         file.delete()
         throw new GradleException("Wrong checksum for " + remoteUrl + ": expected: " + expectedChecksum + ", actual: " + checksum)
@@ -297,18 +298,18 @@ clean {
 
 task downloadBootstraps() {
     doLast {
-        def version = "2025.11.23-r1+apt.android-7"
-        downloadBootstrap("aarch64", "bec3e2b674b6efee7ff0e2a12824eb376e3fe182cc424d3357dad72c7cdd20d5", version)
-        downloadBootstrap("arm", "8c0487ed2e9a5a43af8347646b93641ed64939c532136cd2bc8df57eed5430b0", version)
-        downloadBootstrap("i686", "43df622bc3ce19583a18d1ec89f78ed990d0a0297d24e631141817e6a17a31c", version)
-        downloadBootstrap("x86_64", "8b36eafb6bf25ae32dd1646ddd5fe5b614510b68509df4eecf5a3e66409fc7f6", version)
+        def version = "2025.12.14-r1+apt.android-7"
+        downloadBootstrap("aarch64", "0e7d6ff8f99fb8ffe46df3174ec9e86e29491d5241fffc7872ae4c644257cb78", version)
+        downloadBootstrap("arm", "d2d27986de1900c89aa197e24c9c23d991238634e9fe79fb84046a61d5f8c5f2", version)
+        downloadBootstrap("i686", "2987b72ac7a78cb688d22be2d541e22e9fa92fb8566a1007aa58bb62e2482edd", version)
+        downloadBootstrap("x86_64", "3e85b11c0029e5b1a31632d73637f613779aceaf475beeaa8b411fddd09136c8", version)
     }
 }
 
 
 afterEvaluate {
     android.applicationVariants.all { variant ->
-        variant.javaCompileProvider.get().dependsOn(downloadBootstraps)
+        variant.preBuildProvider.get().dependsOn(downloadBootstraps)
     }
 }
 repositories {
