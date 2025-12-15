@@ -25,6 +25,7 @@ import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.common.net.InetAddresses;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
@@ -235,8 +236,9 @@ public class BoomWindow {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(UUtils.getContext());
                         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                         recyclerView.setLayoutManager(linearLayoutManager);
-                        BoomMinLAdapter boomMinLAdapter = new BoomMinLAdapter(minLBean.data.list, null);
+                        BoomMinLAdapter boomMinLAdapter = new BoomMinLAdapter(minLBean.data.list, mTermuxActivity);
                         boomMinLAdapter.setCloseLiftListener(closeLiftListener);
+                        boomMinLAdapter.setSXListener(() -> showBoomView(closeLiftListener));
                         boomMinLAdapter.setPinTopListener(new BoomMinLAdapter.PinTopListener() {
                             @Override
                             public void itemPinTopRefresh() {
@@ -584,27 +586,21 @@ public class BoomWindow {
             @Override
             public void onClick(View v) {
                 String alias = etAlias.getText().toString().trim();
-                String host = etHost.getText().toString().trim();
+                String rawHost = etHost.getText().toString().trim();
                 String portStr = etPort.getText().toString().trim();
 
                 if (android.text.TextUtils.isEmpty(alias)) {
                     UUtils.showMsg(UUtils.getString(R.string.content_ssh_equipment_alias));
                     return;
                 }
-                if (android.text.TextUtils.isEmpty(host)) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_address));
+
+                String validHost = validateAndParseHost(rawHost);
+                if (validHost == null) {
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
                     return;
                 }
                 if (isAliasExist(alias, -1)) {
                     UUtils.showMsg(String.format(UUtils.getString(R.string.content_ssh_alias_exist_replace), alias));
-                    return;
-                }
-
-                boolean isIp = android.util.Patterns.IP_ADDRESS.matcher(host).matches();
-                boolean isDomain = android.util.Patterns.DOMAIN_NAME.matcher(host).matches();
-                boolean isLocal = "localhost".equalsIgnoreCase(host);
-                if (!isIp && !isDomain && !isLocal) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
                     return;
                 }
 
@@ -622,7 +618,7 @@ public class BoomWindow {
 
                 SSHDeviceBean bean = new SSHDeviceBean(
                     alias,
-                    host,
+                    validHost,
                     port,
                     etUser.getText().toString().trim(),
                     etPass.getText().toString().trim(),
@@ -891,11 +887,17 @@ public class BoomWindow {
             @Override
             public void onClick(View v) {
                 String alias = etAlias.getText().toString().trim();
-                String host = etHost.getText().toString().trim();
+                String rawHost = etHost.getText().toString().trim();
                 String portStr = etPort.getText().toString().trim();
 
-                if (android.text.TextUtils.isEmpty(alias) || android.text.TextUtils.isEmpty(host)) {
+                if (android.text.TextUtils.isEmpty(alias)) {
                     UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_ip_not_empty));
+                    return;
+                }
+
+                String validHost = validateAndParseHost(rawHost);
+                if (validHost == null) {
+                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
                     return;
                 }
 
@@ -904,20 +906,12 @@ public class BoomWindow {
                     return;
                 }
 
-                boolean isIp = android.util.Patterns.IP_ADDRESS.matcher(host).matches();
-                boolean isDomain = android.util.Patterns.DOMAIN_NAME.matcher(host).matches();
-                boolean isLocal = "localhost".equalsIgnoreCase(host);
-                if (!isIp && !isDomain && !isLocal) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
-                    return;
-                }
-
                 int port = 22;
                 try { port = Integer.parseInt(portStr); } catch (Exception e) {}
 
                 SSHDeviceBean newBean = new SSHDeviceBean(
                     alias,
-                    host,
+                    validHost,
                     port,
                     etUser.getText().toString().trim(),
                     etPass.getText().toString().trim(),
@@ -944,5 +938,26 @@ public class BoomWindow {
             list.set(position, newBean);
             SaveData.saveData(KEY_SSH_LIST, new Gson().toJson(list));
         }
+    }
+    /**
+     * 校验并处理主机地址 (基于 Google Guava)
+     * @param rawHost 用户输入的原始地址
+     * @return 如果校验通过，返回处理后（去括号）的地址；如果校验失败，返回 null
+     */
+    private String validateAndParseHost(String rawHost) {
+        if (android.text.TextUtils.isEmpty(rawHost)) {
+            return null;
+        }
+        String host = rawHost.trim();
+        if (host.startsWith("[") && host.endsWith("]")) {
+            host = host.substring(1, host.length() - 1);
+        }
+        if (InetAddresses.isInetAddress(host)) {
+            return host;
+        }
+        if ("localhost".equalsIgnoreCase(host) || android.util.Patterns.DOMAIN_NAME.matcher(host).matches()) {
+            return host;
+        }
+        return null;
     }
 }
