@@ -1061,7 +1061,7 @@
     <string name="content_ssh_list">切换SSH</string>
     <string name="content_command_list">切换命令</string>
     <string name="content_ssh_list_summary">暂无SSH设备，请点击上方添加</string>
-    <string name="content_ssh_list_toast_hint">正在初始化中，请耐心等待...</string>
+    <string name="content_ssh_list_toast_hint">正在初始化中，请耐心等待喵...</string>
     <string name="content_ssh_list_toast_ssh_hint">初次使用，正在初始化SSH环境...</string>
     <string name="content_ssh_list_toast_ssh_wait">环境尚未就绪，请稍候...</string>
     <string name="content_ssh_remove_device">删除设备</string>

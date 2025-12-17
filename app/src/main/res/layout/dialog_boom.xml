@@ -184,31 +184,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </HorizontalScrollView>
-            <LinearLayout
-                android:id="@+id/layout_add_ssh"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/shape_line_2e84e6"
-                android:gravity="center"
-                android:layout_height="35dp">
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    app:cardElevation="1dp"
-                    app:cardBackgroundColor="@color/color_553E3E3E"
-                    app:cardCornerRadius="3dp"
-                    android:layout_height="match_parent">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/content_ssh_add_new_ssh_device"
-                        android:textColor="#4CAF50"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
@@ -290,30 +265,63 @@
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
-    <RelativeLayout
+
+    <!--固定高度 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:background="@drawable/shape_line_2e84e6"
+        android:layout_height="400dp"
+        android:orientation="vertical"
         android:layout_marginLeft="10dp"
-        android:alpha="0.9"
-        android:layout_marginRight="10dp"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:id="@+id/title"
+        android:layout_marginRight="10dp">
+        <!-- 切换SSH -->
+        <LinearLayout
+            android:id="@+id/layout_add_ssh"
             android:visibility="gone"
-            android:text="@string/自动出错"
-            android:textColor="@color/color_FFFFFF"
-            android:textSize="12sp" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp" />
-    </RelativeLayout>
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/shape_line_2e84e6"
+            android:gravity="center"
+            android:layout_height="35dp">
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/color_553E3E3E"
+                app:cardCornerRadius="3dp"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/content_ssh_add_new_ssh_device"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:textSize="12sp" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_line_2e84e6"
+            android:alpha="0.9">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:id="@+id/title"
+                android:visibility="gone"
+                android:text="@string/自动出错"
+                android:textColor="@color/color_FFFFFF"
+                android:textSize="12sp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp" />
+        </RelativeLayout>
+    </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="5dp"/>
