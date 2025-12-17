@@ -4,7 +4,7 @@ import static com.termux.zerocore.socket.config.ZTKeyConstants.ZT_ID_X11_KEYBOAR
 
 import android.content.Context;
 
-public class X11KeyBoardHideConfig implements ZTConfig {
+public class X11KeyBoardHideConfig extends SimpleConfig {
     @Override
     public String getCommand(Context context, String command) {
         return "";
@@ -20,8 +20,4 @@ public class X11KeyBoardHideConfig implements ZTConfig {
         return true;
     }
 
-    @Override
-    public String getCommandForWard(Context context, String command) {
-        return "";
-    }
 }

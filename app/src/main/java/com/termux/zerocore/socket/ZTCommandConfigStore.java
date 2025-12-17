@@ -4,6 +4,7 @@ package com.termux.zerocore.socket;
 import android.util.SparseArray;
 
 import com.termux.zerocore.socket.config.AVncConfig;
+import com.termux.zerocore.socket.config.ConfirmedDialogConfig;
 import com.termux.zerocore.socket.config.ForWardOpenLeftConfig;
 import com.termux.zerocore.socket.config.ForWardOpenRightConfig;
 import com.termux.zerocore.socket.config.HelpConfig;
@@ -61,6 +62,8 @@ public class ZTCommandConfigStore {
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_HIDE, ZTKeyConstants.ZT_ID_X11_KEYBOARD_HIDE);
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_HIDE_1, ZTKeyConstants.ZT_ID_X11_KEYBOARD_HIDE);
 
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_CONFIRMED_DIALOG, ZTKeyConstants.ZT_ID_CONFIRMED_DIALOG);
+
         // 需要在此添加你的config，否则找不到config
         register(new ToastConfig());
         register(new HelpConfig());
@@ -76,6 +79,7 @@ public class ZTCommandConfigStore {
         register(new X11StatusConfig());
         register(new X11KeyBoardShowConfig());
         register(new X11KeyBoardHideConfig());
+        register(new ConfirmedDialogConfig());
     }
     private static void register(ZTConfig ztConfig) {
         sparse_array_config.append(ztConfig.getId(), ztConfig);

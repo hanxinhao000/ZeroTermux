@@ -1046,7 +1046,7 @@
     <string name="content_ssh_alias_ip_not_empty">别名和IP不能为空</string>
     <string name="content_ssh_add_new_ssh_device">+ 添加新SSH设备</string>
 
-    <string name="zt_command_version">ZeroTermux-命令版本：0.1 (2025 ~ 2026)</string>
+    <string name="zt_command_version">ZeroTermux-命令版本：0.2 (2025 ~ 2026)</string>
     <string name="zt_command_error">不支持或ZT版本低不识别: \"</string>
     <string name="zt_command_help" tools:ignore="TypographyDashes">
         可用命令:\n
@@ -1094,5 +1094,30 @@
         示例：ln /data/data/com.termux/files/home/自定义名称 /sdcard/ \n
         示例(或指定一个目录)：ln /data/data/com.termux/files/home/自定义名称 /sdcard/自定义目录/ \n
         ] \n
+             \n
+        \n
+        --------0.2版本更新--------\n
+        zt dialog \n
+        dialog[\n
+        使用帮助：\n
+        -c 确定取消弹框(确定或者取消)，示例 zt dialog -c -t 标题 -m 消息内容 \n
+        -s 显示弹框 (只有一个确定)，示例 zt dialog -s -m 消息内容 \n
+        -e 显示编辑弹框，示例 zt dialog -e -t 标题 \n
+        ]\n
+        \n
+        zt x11status 查询当前x11链接情况 (内部通道有用)\n
+        \n
+        \n
+
+    </string>
+
+    <string name="zt_command_timeout">连接超时</string>
+    <string name="zt_command_dialog_windows_finish">窗口异常销毁</string>
+    <string name="zt_command_dialog_finish">弹窗被销毁</string>
+    <string name="zt_command_dialog_help">
+        使用帮助：\n
+        -c 确定取消弹框(确定或者取消)，示例 zt dialog -c -t 标题 -m 消息内容 \n
+        -s 显示弹框 (只有一个确定)，示例 zt dialog -s -m 消息内容 \n
+        -e 显示编辑弹框，示例 zt dialog -e -t 标题 \n
     </string>
 </resources>

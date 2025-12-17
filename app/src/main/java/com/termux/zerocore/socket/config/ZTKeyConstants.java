@@ -59,4 +59,9 @@ public class ZTKeyConstants {
     public static final int ZT_ID_X11_KEYBOARD_HIDE = 13;
     public static final String ZT_COMMAND_X11_KEYBOARD_HIDE = "x11keyboardhide";
     public static final String ZT_COMMAND_X11_KEYBOARD_HIDE_1 = "x11kbh";
+
+    // 弹出dialog
+    public static final int ZT_ID_CONFIRMED_DIALOG = 14;
+    public static final String ZT_COMMAND_CONFIRMED_DIALOG = "dialog";
+
 }

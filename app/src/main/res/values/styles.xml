@@ -78,6 +78,20 @@
         <item name="android:windowIsFloating">true</item>
     </style>
 
+    <!--自定义BaseDialog样式-->
+    <style name="ThemeBaseDialog" parent="@style/Theme.AppCompat.DayNight.Dialog.Alert">
+        <!-- 无标题 -->
+        <!--自定义BaseDialog样式-->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景缓存颜色 -->
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
     <style name="Theme.Termux2" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:colorPrimary">@android:color/transparent</item>

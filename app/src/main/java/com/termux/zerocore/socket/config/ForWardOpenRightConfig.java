@@ -4,7 +4,7 @@ import static com.termux.zerocore.socket.config.ZTKeyConstants.ZT_ID_RIGHT;
 
 import android.content.Context;
 
-public class ForWardOpenRightConfig implements ZTConfig {
+public class ForWardOpenRightConfig extends SimpleConfig {
     @Override
     public String getCommand(Context context, String command) {
         return "";

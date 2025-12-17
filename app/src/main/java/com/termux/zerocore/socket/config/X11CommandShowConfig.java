@@ -4,7 +4,7 @@ import static com.termux.zerocore.socket.config.ZTKeyConstants.ZT_ID_X11_COMMAND
 
 import android.content.Context;
 
-public class X11CommandShowConfig implements ZTConfig {
+public class X11CommandShowConfig extends SimpleConfig {
     @Override
     public String getCommand(Context context, String command) {
         return "";
@@ -20,8 +20,4 @@ public class X11CommandShowConfig implements ZTConfig {
         return true;
     }
 
-    @Override
-    public String getCommandForWard(Context context, String command) {
-        return "";
-    }
 }

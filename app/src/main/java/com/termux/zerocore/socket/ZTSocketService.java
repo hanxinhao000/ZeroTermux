@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -16,8 +17,11 @@ import com.termux.R;
 import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.socket.config.HelpConfig;
 import com.termux.zerocore.socket.config.KnowConfig;
+import com.termux.zerocore.socket.config.ZTConfig;
 import com.termux.zerocore.socket.config.ZTKeyConstants;
 import com.zp.z_file.util.LogUtils;
+
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.*;
@@ -85,42 +89,78 @@ public class ZTSocketService extends Service {
         }).start();
     }
 
-    private class ClientHandler implements Runnable {
-        private Socket clientSocket;
-
+     public class ClientHandler implements Runnable {
+        private Socket mClientSocket;
+         private BufferedReader mIn;
+         private PrintWriter mOut;
+         private volatile boolean waitingForDialog = false;
         public ClientHandler(Socket socket) {
-            this.clientSocket = socket;
+            this.mClientSocket = socket;
         }
 
         @Override
         public void run() {
-            try (
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)
-            ) {
-                String command = in.readLine();
+            try {
+                mIn = new BufferedReader(new InputStreamReader(mClientSocket.getInputStream()));
+                mOut = new PrintWriter(mClientSocket.getOutputStream(), true);
+                String command = mIn.readLine();
                 LogUtils.d(TAG, "收到命令: " + command);
-
                 String result = processCommand(command);
-                out.println(result);
+                if (TextUtils.isEmpty(result)) {
+                    waitingForDialog = true;
+                } else {
+                    waitingForDialog = false;
+                    mOut.println(result);
+                }
                 LogUtils.d(TAG, "返回结果: " + result);
-
+               /* // 方式无限等待，设置超时
+                UUtils.runOnThread(() -> {
+                    try {
+                        Thread.sleep(600000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (!mClientSocket.isClosed()) {
+                        mOut.println(getJson(1, UUtils.getString(R.string.zt_command_timeout), ""));
+                        try {
+                            if (!waitingForDialog) { // 如果不是等待对话框状态，才关闭连接
+                                mClientSocket.close();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });*/
             } catch (IOException e) {
                 e.printStackTrace();
                 LogUtils.e(TAG, "处理客户端请求失败" + e);
             } finally {
                 try {
-                    clientSocket.close();
+                    if (!waitingForDialog) { // 如果不是等待对话框状态，才关闭连接
+                        mClientSocket.close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    LogUtils.e(TAG, "关闭客户端连接失败" + e);
                 }
             }
         }
 
+         public void sendSocketMessage(String result) {
+             if (mOut != null && !mClientSocket.isClosed()) {
+                 mOut.println(result);
+                 mOut.flush();
+                 Log.i(TAG, "发送对话框响应: " + result);
+                 // 发送完成后可以关闭连接
+                 waitingForDialog = false;
+                 try {
+                     mClientSocket.close();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+         }
         private String processCommand(String command) {
             try {
-                LogUtils.i(TAG, "processCommand command: " + command);
                 // 如果什么命令都没有则返回帮助
                 if (TextUtils.isEmpty(command)) {
                     return new HelpConfig().getCommand(getApplicationContext(), command);
@@ -129,14 +169,22 @@ public class ZTSocketService extends Service {
                 // 示例： xxx yyy 例如: toast hello
                 String[] commands = command.trim().split(" ");
                 if (commands.length >= 2) {
-                    return askConfig(command, commands[0]);
+                    String result = askConfig(command, commands[0]);
+                    if (TextUtils.isEmpty(result)) {
+                        getZTConfig(command, commands[0]).sendSocketMessage(this, getApplicationContext());
+                    }
+                    return result;
                 }
                 // 转发到termux页面
                 if (isForWard(command, null)) {
                     sendMessageToActivity(command);
                     return getOkJson();
                 }
-                return askConfig(command, null);
+                String result = askConfig(command, null);
+                if (TextUtils.isEmpty(result)) {
+                    getZTConfig(command, null).sendSocketMessage(this, getApplicationContext());
+                }
+                return result;
             } catch (Exception e) {
                 e.printStackTrace();
                 return getJson(1, e.toString(), "");
@@ -155,9 +203,13 @@ public class ZTSocketService extends Service {
      * @return 返回自定义CONFIG的执行结果
      */
     private String askConfig(String command, String commandID) {
-        return ZTCommandConfigStore.getConfig(TextUtils.isEmpty(commandID) ? command : commandID)
-            .getCommand(getApplicationContext(), command);
+        return getZTConfig(command, commandID).getCommand(getApplicationContext(), command);
     }
+
+    private ZTConfig getZTConfig(String command, String commandID) {
+        return ZTCommandConfigStore.getConfig(TextUtils.isEmpty(commandID) ? command : commandID);
+    }
+
     // 是否需要转发到 TermuxActivity 页面
     private boolean isForWard(String command, String commandID) {
         return ZTCommandConfigStore.getConfig(TextUtils.isEmpty(commandID) ? command : commandID).isForWard();

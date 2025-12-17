@@ -252,6 +252,9 @@
             android:name="com.lcw.library.imagepicker.activity.ImagePreActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
+            android:name=".zerocore.dialog.ShowDialogActivity"
+            android:theme="@style/ThemeBaseDialog" />
+        <activity
             android:name="com.lcw.library.imagepicker.activity.BaseActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
