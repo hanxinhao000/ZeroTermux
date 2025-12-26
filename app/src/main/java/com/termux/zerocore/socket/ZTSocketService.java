@@ -159,6 +159,13 @@ public class ZTSocketService extends Service {
                  }
              }
          }
+
+         public void sendMessageToActivity(String message) {
+             Intent intent = new Intent(ZT_COMMAND_ACTIVITY_ACTION);
+             intent.putExtra("message", message);
+             localBroadcastManager.sendBroadcast(intent);
+         }
+
         private String processCommand(String command) {
             try {
                 // 如果什么命令都没有则返回帮助

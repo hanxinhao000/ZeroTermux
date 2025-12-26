@@ -254,8 +254,15 @@
         <activity
             android:name=".zerocore.dialog.ShowDialogActivity"
             android:theme="@style/ThemeBaseDialog" />
+
+        <activity
+            android:name=".zerocore.socket.activity.SocketBaseActivity"
+            android:theme="@style/ThemeBaseDialog" />
         <activity
             android:name="com.lcw.library.imagepicker.activity.BaseActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="com.example.xh_lib.activity.ScanActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".shared.activities.ReportActivity"

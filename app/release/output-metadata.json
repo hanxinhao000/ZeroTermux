@@ -5,14 +5,62 @@
     "kind": "Directory"
   },
   "applicationId": "com.termux",
-  "variantName": "processReleaseResources",
+  "variantName": "release",
   "elements": [
     {
-      "type": "SINGLE",
+      "type": "UNIVERSAL",
       "filters": [],
       "versionCode": 117,
-      "versionName": "0.118.38.1",
-      "outputFile": "app-release.apk"
+      "versionName": "0.118.3.50",
+      "outputFile": "app-universal-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "versionCode": 117,
+      "versionName": "0.118.3.50",
+      "outputFile": "app-arm64-v8a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "versionCode": 117,
+      "versionName": "0.118.3.50",
+      "outputFile": "app-armeabi-v7a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "versionCode": 117,
+      "versionName": "0.118.3.50",
+      "outputFile": "app-x86-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "versionCode": 117,
+      "versionName": "0.118.3.50",
+      "outputFile": "app-x86_64-release.apk"
     }
   ]
 }

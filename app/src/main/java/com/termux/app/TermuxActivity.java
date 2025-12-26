@@ -399,6 +399,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 case ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_HIDE_1:
                     x11KeyboardGone();
                     break;
+                case ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE:
+                case ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE_1:
+                    setImageBackground(new File(FileUrl.INSTANCE.getMainConfigImg() + "/back.jpg"));
+                    break;
             }
         }
     };
@@ -2358,35 +2362,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     }
                 });
 
-                mBeautifySettingDialog.setOnChangeImageFile(new BeautifySettingDialog.OnChangeImageFile() {
-                    @Override
-                    public void onChangImage(@NotNull File mFile) {
-                        back_video.setVisibility(View.GONE);
-                        back_img.setVisibility(View.VISIBLE);
-                        Glide.with(TermuxActivity.this).load(mFile).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
-                    }
-                });
+                mBeautifySettingDialog.setOnChangeImageFile(mFile -> setImageBackground(mFile));
 
-                mBeautifySettingDialog.setOnChangeTextView(new BeautifySettingDialog.OnChangeTextView() {
-                    @Override
-                    public void onChange(boolean change) {
-                        Logger.logDebug(LOG_TAG, "change:" + change);
-                        if (change) {
-                            back_color.setAlpha(0.3f);
-                        } else {
-                            back_color.setAlpha(1f);
-                        }
+                mBeautifySettingDialog.setOnChangeTextView(change -> {
+                    Logger.logDebug(LOG_TAG, "change:" + change);
+                    if (change) {
+                        back_color.setAlpha(0.3f);
+                    } else {
+                        back_color.setAlpha(1f);
                     }
                 });
-                mBeautifySettingDialog.setOnTextCheckedChangeListener(new BeautifySettingDialog.OnTextCheckedChangeListener() {
-                    @Override
-                    public void onChange(boolean change) {
-                        Logger.logDebug(LOG_TAG, "setOnTextCheckedChangeListener:" + change);
-                        if (change) {
-                            double_tishi.setVisibility(View.VISIBLE);
-                        } else {
-                            double_tishi.setVisibility(View.GONE);
-                        }
+                mBeautifySettingDialog.setOnTextCheckedChangeListener(change -> {
+                    Logger.logDebug(LOG_TAG, "setOnTextCheckedChangeListener:" + change);
+                    if (change) {
+                        double_tishi.setVisibility(View.VISIBLE);
+                    } else {
+                        double_tishi.setVisibility(View.GONE);
                     }
                 });
                 mBeautifySettingDialog.setFontColorChange(new BeautifySettingDialog.FontColorChange() {
@@ -2481,6 +2472,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 x11KeyboardGone();
                 break;
         }
+    }
+
+    private void setImageBackground(File file) {
+        back_video.setVisibility(View.GONE);
+        back_img.setVisibility(View.VISIBLE);
+        Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
     }
 
     private void x11KeyboardGone() {

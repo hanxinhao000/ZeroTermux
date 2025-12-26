@@ -64,4 +64,13 @@ public class ZTKeyConstants {
     public static final int ZT_ID_CONFIRMED_DIALOG = 14;
     public static final String ZT_COMMAND_CONFIRMED_DIALOG = "dialog";
 
+    //二维码 未完成
+    public static final int ZT_ID_QR_CODE_ENCODER_CONFIG = 15;
+    public static final String ZT_COMMAND_QR_CODE_ENCODER_CONFIG = "qr";
+
+    //设置背景
+    public static final int ZT_ID_BACKGROUND_IMAGE = 16;
+    public static final String ZT_COMMAND_BACKGROUND_IMAGE = "backgroundimage";
+    public static final String ZT_COMMAND_BACKGROUND_IMAGE_1 = "bgi";
+
 }

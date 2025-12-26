@@ -124,6 +124,8 @@ android {
 
         //Avnc
         implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+        // 二维码
+        implementation 'com.google.zxing:core:3.5.3'
 
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'

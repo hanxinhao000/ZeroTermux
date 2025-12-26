@@ -10,6 +10,7 @@ import com.termux.zerocore.socket.config.ForWardOpenRightConfig;
 import com.termux.zerocore.socket.config.HelpConfig;
 import com.termux.zerocore.socket.config.KnowConfig;
 import com.termux.zerocore.socket.config.LnConfig;
+import com.termux.zerocore.socket.config.QRCodeEncoderConfig;
 import com.termux.zerocore.socket.config.RebootConfig;
 import com.termux.zerocore.socket.config.ToastConfig;
 import com.termux.zerocore.socket.config.VersionConfig;
@@ -18,6 +19,7 @@ import com.termux.zerocore.socket.config.X11CommandShowConfig;
 import com.termux.zerocore.socket.config.X11KeyBoardHideConfig;
 import com.termux.zerocore.socket.config.X11KeyBoardShowConfig;
 import com.termux.zerocore.socket.config.X11StatusConfig;
+import com.termux.zerocore.socket.config.ZTBackgroundImageConfig;
 import com.termux.zerocore.socket.config.ZTConfig;
 import com.termux.zerocore.socket.config.ZTKeyConstants;
 
@@ -63,6 +65,10 @@ public class ZTCommandConfigStore {
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_X11_KEYBOARD_HIDE_1, ZTKeyConstants.ZT_ID_X11_KEYBOARD_HIDE);
 
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_CONFIRMED_DIALOG, ZTKeyConstants.ZT_ID_CONFIRMED_DIALOG);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_QR_CODE_ENCODER_CONFIG, ZTKeyConstants.ZT_ID_QR_CODE_ENCODER_CONFIG);
+
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE, ZTKeyConstants.ZT_ID_BACKGROUND_IMAGE);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE_1, ZTKeyConstants.ZT_ID_BACKGROUND_IMAGE);
 
         // 需要在此添加你的config，否则找不到config
         register(new ToastConfig());
@@ -80,6 +86,8 @@ public class ZTCommandConfigStore {
         register(new X11KeyBoardShowConfig());
         register(new X11KeyBoardHideConfig());
         register(new ConfirmedDialogConfig());
+        register(new QRCodeEncoderConfig());
+        register(new ZTBackgroundImageConfig());
     }
     private static void register(ZTConfig ztConfig) {
         sparse_array_config.append(ztConfig.getId(), ztConfig);
