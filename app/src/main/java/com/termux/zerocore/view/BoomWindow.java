@@ -223,12 +223,14 @@ public class BoomWindow {
             if (commi22 == null || commi22.isEmpty() || commi22.equals("def")) {
                 title.setVisibility(View.VISIBLE);
                 title.setText(UUtils.getString(R.string.没有找到命令));
+                recyclerView.setVisibility(View.GONE);
             }else{
                 try {
                     MinLBean minLBean = new Gson().fromJson(commi22, MinLBean.class);
                     if(minLBean.data.list.size() == 0){
                         title.setVisibility(View.VISIBLE);
                         title.setText(UUtils.getString(R.string.没有找到命令));
+                        recyclerView.setVisibility(View.GONE);
                     }else {
                         topSorting(minLBean.data.list);
                         title.setVisibility(View.GONE);
@@ -257,6 +259,7 @@ public class BoomWindow {
                 }catch (Exception e){
                     title.setVisibility(View.VISIBLE);
                     title.setText(UUtils.getString(R.string.命令出错));
+                    recyclerView.setVisibility(View.GONE);
                     LogUtils.d(TAG, e.toString());
                 }
             }

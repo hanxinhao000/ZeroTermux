@@ -176,19 +176,22 @@ public class BoomMinLAdapter extends RecyclerView.Adapter<MinLViewHolder> {
 
                             String commi22 = SaveData.getData("commi22");
                             MinLBean minLBean = new Gson().fromJson(commi22, MinLBean.class);
-                            List<MinLBean.DataNum> list = minLBean.data.list;
+                            if (minLBean != null && minLBean.data != null && minLBean.data.list != null) {
+                                List<MinLBean.DataNum> list = minLBean.data.list;
 
+                                if (position >= 0 && position < list.size()) {
+                                    list.remove(position);
 
-                            list.remove(position);
+                                    String s = new Gson().toJson(minLBean);
+                                    SaveData.saveData("commi22", s);
 
-
-                            String s = new Gson().toJson(minLBean);
-                            SaveData.saveData("commi22", s);
-
-
-                            UUtils.showMsg(UUtils.getString(R.string.删除成功));
-                            if (mSXListener != null) {
-                                mSXListener.sx();
+                                    UUtils.showMsg(UUtils.getString(R.string.删除成功));
+                                    if (mSXListener != null) {
+                                        mSXListener.sx();
+                                    }
+                                } else {
+                                    UUtils.showMsg(UUtils.getString(R.string.请再试一次));
+                                }
                             }
                             minglingDialog.dismiss();
                         }
