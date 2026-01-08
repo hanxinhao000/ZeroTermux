@@ -20,7 +20,9 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 
+import java.util.Collections;
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 import com.google.gson.Gson;
@@ -139,7 +141,7 @@ public class BoomWindow {
                     }
                     isInstallingEnv = false;
 
-                    showAddSSHDialog(closeLiftListener);
+                    showSSHDialog(closeLiftListener, null, -1);
                 }
             });
         }
@@ -223,12 +225,14 @@ public class BoomWindow {
             if (commi22 == null || commi22.isEmpty() || commi22.equals("def")) {
                 title.setVisibility(View.VISIBLE);
                 title.setText(UUtils.getString(R.string.没有找到命令));
+                recyclerView.setVisibility(View.GONE);
             }else{
                 try {
                     MinLBean minLBean = new Gson().fromJson(commi22, MinLBean.class);
                     if(minLBean.data.list.size() == 0){
                         title.setVisibility(View.VISIBLE);
                         title.setText(UUtils.getString(R.string.没有找到命令));
+                        recyclerView.setVisibility(View.GONE);
                     }else {
                         topSorting(minLBean.data.list);
                         title.setVisibility(View.GONE);
@@ -257,6 +261,7 @@ public class BoomWindow {
                 }catch (Exception e){
                     title.setVisibility(View.VISIBLE);
                     title.setText(UUtils.getString(R.string.命令出错));
+                    recyclerView.setVisibility(View.GONE);
                     LogUtils.d(TAG, e.toString());
                 }
             }
@@ -324,6 +329,49 @@ public class BoomWindow {
         SSHAdapter sshAdapter = new SSHAdapter(sshList);
         List<SSHDeviceBean> finalSshList = sshList;
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+                return makeMovementFlags(dragFlags, 0);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                if (fromPosition < toPosition) {
+                    for (int i = fromPosition; i < toPosition; i++) {
+                        Collections.swap(finalSshList, i, i + 1);
+                    }
+                } else {
+                    for (int i = fromPosition; i > toPosition; i--) {
+                        Collections.swap(finalSshList, i, i - 1);
+                    }
+                }
+                sshAdapter.notifyItemMoved(fromPosition, toPosition);
+                SaveData.saveData(KEY_SSH_LIST, new Gson().toJson(finalSshList));
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return false;
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        sshAdapter.setOnStartDragListener(new SSHAdapter.OnStartDragListener() {
+            @Override
+            public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+                itemTouchHelper.startDrag(viewHolder);
+            }
+        });
+
         sshAdapter.setOnSSHItemClickListener(new SSHAdapter.OnSSHItemClickListener() {
             //连接
             @Override
@@ -368,34 +416,41 @@ public class BoomWindow {
             //编辑
             @Override
             public void onEdit(int position, SSHDeviceBean bean) {
-                showEditSSHDialog(closeLiftListener, position, bean);
+                showSSHDialog(closeLiftListener, bean, position);
             }
         });
         recyclerView.setAdapter(sshAdapter);
         //content_command_list
     }
     //添加设备的对话框
-    private void showAddSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener) {
+    //添加/编辑设备的对话框 (合并)
+    private void showSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener, final SSHDeviceBean editBean, final int editPosition) {
+        final boolean isEditMode = (editBean != null);
         AlertDialog.Builder builder = new AlertDialog.Builder(mTermuxActivity, android.R.style.Theme_DeviceDefault_Dialog);
-        builder.setTitle(UUtils.getString(R.string.content_ssh_add_device));
+        builder.setTitle(UUtils.getString(isEditMode ? R.string.content_ssh_edit_ssh_device : R.string.content_ssh_add_device));
+
         LinearLayout layout = new LinearLayout(mTermuxActivity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 20, 50, 20);
+
         final EditText etAlias = new EditText(mTermuxActivity);
         etAlias.setHint(UUtils.getString(R.string.content_ssh_alias));
         etAlias.setSingleLine(true);
         etAlias.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
+        if (isEditMode) etAlias.setText(editBean.getAlias());
         layout.addView(etAlias);
+
         final EditText etHost = new EditText(mTermuxActivity);
         etHost.setHint(UUtils.getString(R.string.content_ssh_host_name));
         etHost.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_URI);
         etHost.setSingleLine(true);
         etHost.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
+        if (isEditMode) etHost.setText(editBean.getHost());
         layout.addView(etHost);
 
         final EditText etPort = new EditText(mTermuxActivity);
         etPort.setHint(UUtils.getString(R.string.content_ssh_host_post_def));
-        etPort.setText("22");
+        etPort.setText(isEditMode ? String.valueOf(editBean.getPort()) : "22");
         etPort.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         etPort.setSingleLine(true);
         etPort.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
@@ -403,7 +458,7 @@ public class BoomWindow {
 
         final EditText etUser = new EditText(mTermuxActivity);
         etUser.setHint(UUtils.getString(R.string.content_ssh_host_username_def));
-        etUser.setText("root");
+        etUser.setText(isEditMode ? editBean.getUsername() : "root");
         etUser.setSingleLine(true);
         etUser.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         layout.addView(etUser);
@@ -411,6 +466,7 @@ public class BoomWindow {
         final android.widget.CheckBox cbUseKey = new android.widget.CheckBox(mTermuxActivity);
         cbUseKey.setText(UUtils.getString(R.string.content_ssh_host_key_def));
         cbUseKey.setTextColor(android.graphics.Color.WHITE);
+        if (isEditMode) cbUseKey.setChecked(editBean.isUseKey());
         layout.addView(cbUseKey);
 
         final LinearLayout passwordLayout = new LinearLayout(mTermuxActivity);
@@ -424,6 +480,7 @@ public class BoomWindow {
         etPass.setSingleLine(true);
         etPass.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_DONE);
         etPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        if (isEditMode && editBean.getPassword() != null) etPass.setText(editBean.getPassword());
 
         final ImageView eyeIcon = new ImageView(mTermuxActivity);
         eyeIcon.setImageResource(android.R.drawable.ic_menu_view);
@@ -477,6 +534,15 @@ public class BoomWindow {
         keyLayout.addView(btnImportKey);
         keyLayout.addView(btnViewPub);
         layout.addView(keyLayout);
+
+        // 初始视图状态
+        if (cbUseKey.isChecked()) {
+            passwordLayout.setVisibility(View.GONE);
+            keyLayout.setVisibility(View.VISIBLE);
+        } else {
+            passwordLayout.setVisibility(View.VISIBLE);
+            keyLayout.setVisibility(View.GONE);
+        }
 
         cbUseKey.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -557,7 +623,7 @@ public class BoomWindow {
                     return;
                 }
 
-                if (isAliasExist(currentAlias, -1)) {
+                if (isAliasExist(currentAlias, isEditMode ? editPosition : -1)) {
                     UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_exist));
                     return;
                 }
@@ -599,7 +665,7 @@ public class BoomWindow {
                     UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
                     return;
                 }
-                if (isAliasExist(alias, -1)) {
+                if (isAliasExist(alias, isEditMode ? editPosition : -1)) {
                     UUtils.showMsg(String.format(UUtils.getString(R.string.content_ssh_alias_exist_replace), alias));
                     return;
                 }
@@ -625,11 +691,16 @@ public class BoomWindow {
                     cbUseKey.isChecked()
                 );
 
-                saveNewSSHDevice(bean);
+                if (isEditMode) {
+                    updateSSHDevice(editPosition, bean);
+                    UUtils.showMsg(UUtils.getString(R.string.修改成功));
+                } else {
+                    saveNewSSHDevice(bean);
+                    UUtils.showMsg(UUtils.getString(R.string.添加成功));
+                }
                 showSSHList(closeLiftListener);
 
                 dialog.dismiss();
-                UUtils.showMsg(UUtils.getString(R.string.添加成功));
             }
         });
     }
@@ -666,265 +737,7 @@ public class BoomWindow {
         list.add(newDevice);
         SaveData.saveData(KEY_SSH_LIST, new Gson().toJson(list));
     }
-    //编辑SSH对话框
-    private void showEditSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener, final int position, final SSHDeviceBean oldBean) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mTermuxActivity, android.R.style.Theme_DeviceDefault_Dialog);
-        builder.setTitle(UUtils.getString(R.string.content_ssh_edit_ssh_device));
 
-        LinearLayout layout = new LinearLayout(mTermuxActivity);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 20, 50, 20);
-
-        final EditText etAlias = new EditText(mTermuxActivity);
-        etAlias.setHint(UUtils.getString(R.string.content_ssh_alias));
-        etAlias.setSingleLine(true);
-        etAlias.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
-        etAlias.setText(oldBean.getAlias());
-        layout.addView(etAlias);
-
-        final EditText etHost = new EditText(mTermuxActivity);
-        etHost.setHint(UUtils.getString(R.string.content_ssh_host_name));
-        etHost.setSingleLine(true);
-        etHost.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
-        etHost.setText(oldBean.getHost());
-        layout.addView(etHost);
-
-        final EditText etPort = new EditText(mTermuxActivity);
-        etPort.setHint(UUtils.getString(R.string.端口));
-        etPort.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        etPort.setSingleLine(true);
-        etPort.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
-        etPort.setText(String.valueOf(oldBean.getPort()));
-        layout.addView(etPort);
-
-        final EditText etUser = new EditText(mTermuxActivity);
-        etUser.setHint(UUtils.getString(R.string.content_ssh_username));
-        etUser.setSingleLine(true);
-        etUser.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
-        etUser.setText(oldBean.getUsername());
-        layout.addView(etUser);
-
-        final android.widget.CheckBox cbUseKey = new android.widget.CheckBox(mTermuxActivity);
-        cbUseKey.setText(UUtils.getString(R.string.content_ssh_host_key_def));
-        cbUseKey.setChecked(oldBean.isUseKey());
-        cbUseKey.setTextColor(android.graphics.Color.WHITE);
-        layout.addView(cbUseKey);
-
-        final LinearLayout passwordLayout = new LinearLayout(mTermuxActivity);
-        passwordLayout.setOrientation(LinearLayout.HORIZONTAL);
-        passwordLayout.setGravity(Gravity.CENTER_VERTICAL);
-
-        final EditText etPass = new EditText(mTermuxActivity);
-        etPass.setHint(UUtils.getString(R.string.content_ssh_password));
-        LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-        etPass.setLayoutParams(etParams);
-        etPass.setSingleLine(true);
-        etPass.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_DONE);
-        etPass.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
-        etPass.setText(oldBean.getPassword());
-
-        final ImageView eyeIcon = new ImageView(mTermuxActivity);
-        eyeIcon.setImageResource(android.R.drawable.ic_menu_view);
-        eyeIcon.setColorFilter(android.graphics.Color.LTGRAY);
-        eyeIcon.setPadding(20, 10, 10, 10);
-
-        eyeIcon.setOnClickListener(new View.OnClickListener() {
-            private boolean isShow = false;
-            @Override
-            public void onClick(View v) {
-                isShow = !isShow;
-                if (isShow) {
-                    etPass.setTransformationMethod(android.text.method.HideReturnsTransformationMethod.getInstance());
-                    eyeIcon.setColorFilter(android.graphics.Color.WHITE);
-                } else {
-                    etPass.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
-                    eyeIcon.setColorFilter(android.graphics.Color.LTGRAY);
-                }
-                etPass.setSelection(etPass.getText().length());
-            }
-        });
-
-        passwordLayout.addView(etPass);
-        passwordLayout.addView(eyeIcon);
-        layout.addView(passwordLayout);
-
-        final LinearLayout keyLayout = new LinearLayout(mTermuxActivity);
-        keyLayout.setOrientation(LinearLayout.HORIZONTAL);
-        keyLayout.setPadding(0, 20, 0, 0);
-
-        keyLayout.setVisibility(oldBean.isUseKey() ? View.VISIBLE : View.GONE);
-
-        android.widget.Button btnGenKey = new android.widget.Button(mTermuxActivity);
-        btnGenKey.setText(UUtils.getString(R.string.content_ssh_generate));
-        btnGenKey.setTextSize(12);
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-        btnGenKey.setLayoutParams(btnParams);
-
-        android.widget.Button btnImportKey = new android.widget.Button(mTermuxActivity);
-        btnImportKey.setText(UUtils.getString(R.string.导入));
-        btnImportKey.setTextSize(12);
-        btnImportKey.setLayoutParams(btnParams);
-
-        android.widget.Button btnViewPub = new android.widget.Button(mTermuxActivity);
-        btnViewPub.setText(UUtils.getString(R.string.content_ssh_copy_public_key));
-        btnViewPub.setTextSize(12);
-        btnViewPub.setLayoutParams(btnParams);
-
-        keyLayout.addView(btnGenKey);
-        keyLayout.addView(btnImportKey);
-        keyLayout.addView(btnViewPub);
-        layout.addView(keyLayout);
-
-        if (oldBean.isUseKey()) {
-            passwordLayout.setVisibility(View.GONE);
-        } else {
-            keyLayout.setVisibility(View.GONE);
-        }
-
-        cbUseKey.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(android.widget.CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    passwordLayout.setVisibility(View.GONE);
-                    keyLayout.setVisibility(View.VISIBLE);
-                    etPass.setText("");
-                } else {
-                    passwordLayout.setVisibility(View.VISIBLE);
-                    keyLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        btnGenKey.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String currentAlias = etAlias.getText().toString().trim();
-                if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_summary));
-                    return;
-                }
-
-                new AlertDialog.Builder(mTermuxActivity)
-                    .setTitle(UUtils.getString(R.string.content_ssh_generate_key))
-                    .setMessage(String.format(UUtils.getString(R.string.content_ssh_rsa), currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_")))
-                    .setPositiveButton(UUtils.getString(R.string.content_ssh_generate), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String cmd = SSHKeyUtils.getGenerateKeyCommand(currentAlias);
-                            TermuxActivity.mTerminalView.sendTextToTerminal(cmd + "\n");
-                            UUtils.showMsg(UUtils.getString(R.string.content_ssh_generate_keying));
-                        }
-                    })
-                    .setNegativeButton(UUtils.getString(R.string.edit_cancel), null)
-                    .show();
-            }
-        });
-
-        btnImportKey.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String currentAlias = etAlias.getText().toString().trim();
-                if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_please_fill_alias_first));
-                    return;
-                }
-
-                if (isAliasExist(currentAlias, position)) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_exist));
-                    return;
-                }
-
-                PENDING_IMPORT_ALIAS = currentAlias;
-
-                android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
-                intent.addCategory(android.content.Intent.CATEGORY_OPENABLE);
-                mTermuxActivity.startActivityForResult(intent, REQUEST_CODE_IMPORT_KEY);
-            }
-        });
-
-        btnViewPub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String currentAlias = etAlias.getText().toString().trim();
-                if (android.text.TextUtils.isEmpty(currentAlias)) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_please_fill_alias_first));
-                    return;
-                }
-                File pubKeyFile = new File(SSHKeyUtils.getSSHDir(), currentAlias.replaceAll("[^a-zA-Z0-9_\\-]", "_") + ".key.pub");
-                if (!pubKeyFile.exists()) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_not_exets));
-                    return;
-                }
-                try {
-                    java.io.FileInputStream fis = new java.io.FileInputStream(pubKeyFile);
-                    byte[] data = new byte[(int) pubKeyFile.length()];
-                    fis.read(data);
-                    fis.close();
-                    String pubKeyContent = new String(data, "UTF-8");
-
-                    android.content.ClipboardManager cm = (android.content.ClipboardManager) mTermuxActivity.getSystemService(Context.CLIPBOARD_SERVICE);
-                    android.content.ClipData mClipData = android.content.ClipData.newPlainText("SSH Public Key", pubKeyContent);
-                    cm.setPrimaryClip(mClipData);
-
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_copy_clipboard));
-                } catch (Exception e) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_key_read_failed) + e.getMessage());
-                }
-            }
-        });
-        builder.setView(layout);
-        builder.setPositiveButton(UUtils.getString(R.string.edit_save), null);
-        builder.setNegativeButton(UUtils.getString(R.string.edit_cancel), null);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(android.graphics.Color.WHITE);
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(android.graphics.Color.LTGRAY);
-
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String alias = etAlias.getText().toString().trim();
-                String rawHost = etHost.getText().toString().trim();
-                String portStr = etPort.getText().toString().trim();
-
-                if (android.text.TextUtils.isEmpty(alias)) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_alias_ip_not_empty));
-                    return;
-                }
-
-                String validHost = validateAndParseHost(rawHost);
-                if (validHost == null) {
-                    UUtils.showMsg(UUtils.getString(R.string.content_ssh_host_format_error));
-                    return;
-                }
-
-                if (isAliasExist(alias, position)) {
-                    UUtils.showMsg(String.format(UUtils.getString(R.string.content_ssh_alias_exist_replace), alias));
-                    return;
-                }
-
-                int port = 22;
-                try { port = Integer.parseInt(portStr); } catch (Exception e) {}
-
-                SSHDeviceBean newBean = new SSHDeviceBean(
-                    alias,
-                    validHost,
-                    port,
-                    etUser.getText().toString().trim(),
-                    etPass.getText().toString().trim(),
-                    cbUseKey.isChecked()
-                );
-
-                updateSSHDevice(position, newBean);
-                showSSHList(closeLiftListener);
-                dialog.dismiss();
-                UUtils.showMsg(UUtils.getString(R.string.修改成功));
-            }
-        });
-    }
     private void updateSSHDevice(int position, SSHDeviceBean newBean) {
         String json = SaveData.getData(KEY_SSH_LIST);
         List<SSHDeviceBean> list = new ArrayList<>();
@@ -935,6 +748,23 @@ public class BoomWindow {
             } catch (Exception e) {}
         }
         if (position >= 0 && position < list.size()) {
+            SSHDeviceBean oldBean = list.get(position);
+            // 别名已改，重命名
+            if (!oldBean.getAlias().equals(newBean.getAlias())) {
+                File oldKey = SSHKeyUtils.getKeyFile(oldBean.getAlias());
+                File oldPub = new File(oldKey.getAbsolutePath() + ".pub");
+                
+                if (oldKey.exists()) {
+                    File newKey = SSHKeyUtils.getKeyFile(newBean.getAlias());
+                    oldKey.renameTo(newKey);
+                }
+                
+                if (oldPub.exists()) {
+                    File newPub = new File(SSHKeyUtils.getKeyFile(newBean.getAlias()).getAbsolutePath() + ".pub");
+                    oldPub.renameTo(newPub);
+                }
+            }
+
             list.set(position, newBean);
             SaveData.saveData(KEY_SSH_LIST, new Gson().toJson(list));
         }

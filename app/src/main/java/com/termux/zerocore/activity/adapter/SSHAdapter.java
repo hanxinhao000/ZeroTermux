@@ -20,6 +20,7 @@ public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
     private static final String TAG = SSHAdapter.class.getSimpleName();
     private List<SSHDeviceBean> mDataList;
     private OnSSHItemClickListener mListener;
+    private OnStartDragListener mDragListener;
 
     public SSHAdapter(List<SSHDeviceBean> dataList) {
         this.mDataList = dataList;
@@ -27,6 +28,10 @@ public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
 
     public void setOnSSHItemClickListener(OnSSHItemClickListener listener) {
         this.mListener = listener;
+    }
+
+    public void setOnStartDragListener(OnStartDragListener listener) {
+        this.mDragListener = listener;
     }
 
     @NonNull
@@ -67,6 +72,28 @@ public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
             }
         });
 
+        //拖拽
+        if (holder.dragHandle != null) {
+            holder.dragHandle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onEdit(holder.getAdapterPosition(), bean);
+                    }
+                }
+            });
+
+            holder.dragHandle.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mDragListener != null) {
+                        mDragListener.onStartDrag(holder);
+                    }
+                    return true;
+                }
+            });
+        }
+
         //编辑
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,12 +115,14 @@ public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
         TextView tvDetail;
         LinearLayout itemRoot;
         ImageView btnEdit;
+        View dragHandle;
         public SSHViewHolder(@NonNull View itemView) {
             super(itemView);
             tvAlias = itemView.findViewById(R.id.tv_alias);
             tvDetail = itemView.findViewById(R.id.tv_detail);
             itemRoot = itemView.findViewById(R.id.item_root);
             btnEdit = itemView.findViewById(R.id.btn_edit);
+            dragHandle = itemView.findViewById(R.id.drag_handle);
         }
     }
 
@@ -101,5 +130,9 @@ public class SSHAdapter extends RecyclerView.Adapter<SSHAdapter.SSHViewHolder> {
         void onConnect(SSHDeviceBean bean);
         void onDelete(int position, SSHDeviceBean bean);
         void onEdit(int position, SSHDeviceBean bean);
+    }
+
+    public interface OnStartDragListener {
+        void onStartDrag(RecyclerView.ViewHolder viewHolder);
     }
 }
