@@ -589,10 +589,10 @@
     <string name="termux_terminal_view_view_header">视图</string>
 
     <!-- Terminal View Margin Adjustment -->
-    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端距离调整</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端外边距适应调整</string>
     <string name="termux_terminal_view_terminal_margin_adjustment_off">
-终端保证金调整将被禁用。</string>
-    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端距离调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
+终端外边距适应调整已被禁用。</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">已启用终端外边距适应调整。启用该功能以尝试修复软键盘覆盖部分(Extra Keys/Terminal View)的问题。如果它导致设备屏幕显示抖动(通常在浮窗情况下)，请禁用它。(默认)</string>
 
     <string name="VSCODE">VSCODE</string>
     <string name="X86_Alpine">X86_Alpine</string>
