@@ -1159,6 +1159,13 @@
         \n
         zt x11status 查询当前x11链接情况 (内部通道有用)\n
         \n
+        zt backgroundimage(bgi) 图片路径(设置当前终端背景)\n
+        backgroundimage(bgi)[\n
+        使用帮助(必须全路径):\n
+        zt backgroundimage /data/data/com.termux/files/home/.img/back.jpg \n
+        zt bgi /data/data/com.termux/files/home/.img/back.jpg \n
+        ]\n
+        \n
         \n
 
     </string>

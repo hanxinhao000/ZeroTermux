@@ -1102,7 +1102,67 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
 
     <string name="zt_command_version">ZeroTermux Command Version: 0.2 (2025 ~ 2026)</string>
     <string name="zt_command_error">Unsupported or unrecognized due to low ZT version: \"</string>
-    <string name="zt_command_help" tools:ignore="TypographyDashes"> Available Commands:\n ZeroTermux Terminal Command Explanation \n Version 0.1 \n \n \n --------Version 0.1 Update--------\n \n Basic Category:\n \n help - Show help \n openleft(ol) - Open left panel \n openright(or) - Open right panel \n reboot(rb) - Reboot termux \n toast - Show a bottom toast message with custom content \n toast[ \n Example: zt toast hello \n ] \n version(v) - View current version information \n \n \n Graphics Connection Related:\n \n vnc - Connect to vnc (zt vnc address_port_username_password) \n vnc[ \n Example: zt vnc 127.0.0.1_5900_admin_admin \n Enter \'none\' if username or password is empty \n Example (empty password): zt vnc 127.0.0.1_5900_admin_none \n Example (empty username): zt vnc 127.0.0.1_5900_none_admin \n Example (both empty): zt vnc 127.0.0.1_5900_none_none \n Note: Address and port cannot be empty!\n ] \n x11commandshow(x11xs) - Show terminal (x11 must be running) \n x11commandhide(x11xh) - Hide terminal (x11 must be running) \n x11keyboardshow(x11kbs) - Show x11 keyboard \n x11keyboardhide(x11kbh) - Hide x11 keyboard \n \n \n Create Symbolic Link \n ln - Create symbolic link \n ln[ \n Description: current directory internal storage path \n Note: Both paths must be absolute paths \n Example: ln /data/data/com.termux/files/home/custom_name /sdcard/ \n Example (or specify a directory): ln /data/data/com.termux/files/home/custom_name /sdcard/custom_directory/ \n ] \n --------Version 0.2 Update--------\n zt dialog \n dialog[\n Usage Help:\n -c Confirmation/cancel dialog (OK or Cancel), Example: zt dialog -c -t title -m message content \n -s Show dialog (only OK button), Example: zt dialog -s -m message content \n -e Show edit dialog, Example: zt dialog -e -t title \n ]\n \n \n zt x11status Query current x11 connection status (useful for internal channel)\n \n \n</string>
+    <string name="zt_command_help" tools:ignore="TypographyDashes"> Available Commands:\n
+        ZeroTermux Terminal Command Explanation \n
+        Version 0.1 \n
+        \n
+        \n --------Version 0.1 Update--------\n
+        \n Basic Category:
+        \n
+        \n
+        help - Show help \n
+        openleft(ol) - Open left panel \n
+        openright(or) - Open right panel \n
+        reboot(rb) - Reboot termux \n
+        toast - Show a bottom toast message with custom content \n
+        toast[ \n
+        Example: zt toast hello \n
+        ] \n
+        version(v) - View current version information \n
+        \n
+        \n
+        Graphics Connection Related:\n
+        \n
+        vnc - Connect to vnc (zt vnc address_port_username_password) \n
+        vnc[ \n
+        Example: zt vnc 127.0.0.1_5900_admin_admin \n
+        Enter \'none\' if username or password is empty \n
+        Example (empty password): zt vnc 127.0.0.1_5900_admin_none \n
+        Example (empty username): zt vnc 127.0.0.1_5900_none_admin \n
+        Example (both empty): zt vnc 127.0.0.1_5900_none_none \n
+        Note: Address and port cannot be empty!\n ] \n
+        x11commandshow(x11xs) - Show terminal (x11 must be running) \n
+        x11commandhide(x11xh) - Hide terminal (x11 must be running) \n
+        x11keyboardshow(x11kbs) - Show x11 keyboard \n
+        x11keyboardhide(x11kbh) - Hide x11 keyboard \n
+        \n
+        \n
+        Create Symbolic Link \n
+        ln - Create symbolic link \n
+        ln[ \n
+        Description: current directory internal storage path \n
+        Note: Both paths must be absolute paths \n
+        Example: ln /data/data/com.termux/files/home/custom_name /sdcard/ \n
+        Example (or specify a directory): ln /data/data/com.termux/files/home/custom_name /sdcard/custom_directory/ \n
+        ] \n
+        --------Version 0.2 Update--------\n
+        zt dialog \n
+        dialog[\n
+        Usage Help:\n
+        -c Confirmation/cancel dialog (OK or Cancel), Example: zt dialog -c -t title -m message content \n
+        -s Show dialog (only OK button), Example: zt dialog -s -m message content \n
+        -e Show edit dialog, Example: zt dialog -e -t title \n
+        ]\n
+        \n
+        \n
+        zt x11status Query current x11 connection status (useful for internal channel)\n
+        zt backgroundimage(bgi) Image path (set as current terminal background)\n
+        backgroundimage(bgi)[\n
+        Usage Help (full path required):\n
+        zt backgroundimage /data/data/com.termux/files/home/.img/back.jpg \n
+        zt bgi /data/data/com.termux/files/home/.img/back.jpg \n
+        ]\n
+        \n \n</string>
 
     <string name="zt_command_timeout">Connection Timeout</string>
     <string name="zt_command_dialog_windows_finish">Window Closed Unexpectedly</string>
