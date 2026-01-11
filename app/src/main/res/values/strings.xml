@@ -1128,4 +1128,5 @@
         -e 显示编辑弹框，示例 zt dialog -e -t 标题 \n
     </string>
     <string name="zt_command_image_backgroup">输入的背景图片路径无效</string>
+    <string name="no_permission">No permission</string>
 </resources>

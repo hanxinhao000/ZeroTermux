@@ -26,13 +26,11 @@ import com.termux.shared.termux.shell.am.TermuxAmSocketServer;
 import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment;
 import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
-import com.termux.zerocore.bean.SaveDataZeroEngine;
-import com.termux.zerocore.bosybox.BusyBoxManager;
+import com.termux.zerocore.config.mainmenu.MainMenuConfig;
 import com.termux.zerocore.filetype.MyFileImageListener;
 import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.libsu.LibSuManage;
 import com.termux.zerocore.utils.ClipBoardUtil;
-import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import com.zp.z_file.common.ZFileManageHelp;
 import com.zp.z_file.content.ZFileConfiguration;
 import com.zp.z_file.util.LogUtils;
@@ -148,9 +146,8 @@ public class TermuxApplication extends XHApplication {
         });
         //初始化定时器
         LibSuManage.getInstall().initTimer();
-
+        MainMenuConfig.init(this);
         new ClipBoardUtil().registerClipEvents();
-
 /*        new Thread(new Runnable() {
             @Override
             public void run() {

@@ -256,7 +256,7 @@
             android:theme="@style/ThemeBaseDialog" />
 
         <activity
-            android:name=".zerocore.socket.activity.SocketBaseActivity"
+            android:name=".zerocore.config.ztcommand.activity.SocketBaseActivity"
             android:theme="@style/ThemeBaseDialog" />
         <activity
             android:name="com.lcw.library.imagepicker.activity.BaseActivity"
@@ -330,7 +330,7 @@
         </service>
 
         <receiver android:name=".app.TermuxOpenReceiver" />
-        <service android:name=".zerocore.socket.ZTSocketService"/>
+        <service android:name=".zerocore.config.ztcommand.ZTSocketService"/>
 
         <service android:name=".zerocore.ftp.FsService" />
         <service
