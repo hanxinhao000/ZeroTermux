@@ -935,7 +935,7 @@ Reset successfully</string>
     <string name="zeroCore_about_card_title">ZeroCoreManage</string>
     <string name="zeroCore_about_card_title_note">ZeroCoreManage is an expansion pack based on ZeroTermux. The purpose of extending the ZeroTermux function is to reduce the size of the ZeroTermux software package. ZeroTermux can still run normally without installing this expansion pack. Extra engine content:\n\n1. Built-in Keyboard\n2. WEB access memory card\n3. X86 Alpine</string>
     <string name="zt_developer">Development/Contribution</string>
-    <string name="zt_developer_note">Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \n小潼(XiaoTong6666)、XINHAO_HAN etc (in no particular order)</string>
+    <string name="zt_developer_note">Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \n小潼(XiaoTong6666)、XINHAO_HAN、Xieansecn etc (in no particular order)</string>
     <string name="zt_install">Restore/expand official version</string>
     <string name="zt_install_float">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> Termux Float] to install the plug-in</string>
     <string name="zt_install_file">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> (Zero)Utermux File Plug] to install the plug-in</string>
@@ -1113,4 +1113,6 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
     -s Show dialog (only OK button), Example: zt dialog -s -m message content \n
     -e Show edit dialog, Example: zt dialog -e -t title \n
 </string>
+    <string name="zt_command_image_backgroup">The input background image path is invalid</string>
+    <string name="no_permission">No permission</string>
 </resources>
