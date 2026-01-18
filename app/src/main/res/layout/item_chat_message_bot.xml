@@ -1,0 +1,30 @@
+<!-- item_chat_message_bot.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <com.termux.zerocore.deepseek.view.CustomTextView
+        android:id="@+id/messageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_m_text"
+        android:padding="6dp"
+        android:textColorHighlight="#66519BEB"
+        android:textIsSelectable="true"
+        android:textColor="@color/main_tx"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/messageTextView"
+        android:layout_marginTop="2dp"
+        android:paddingRight="2dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignEnd="@id/messageTextView"
+        android:visibility="gone"
+        android:textColor="#aaa"
+        android:textSize="10sp" />
+</RelativeLayout>

@@ -1181,6 +1181,56 @@
     </string>
     <string name="zt_command_image_backgroup">输入的背景图片路径无效</string>
     <string name="no_permission">无权限</string>
+
+    <string name="deepseek_zs">你是一个ZeroTermux助手，帮助使用ZeroTermux、Termux的用户来回答一些基础的 linux知识,所有的命令最好都使用一行如果有多行尽量使用&amp;&amp;来拼接为1行</string>
+    <string name="deepseek_zs_command">当前会话文本:</string>
+    <string name="deepseek_input_key_error_info">可能的问题:\n\n返回401，没有设置 DeepSeek Key 或者输入了错误的key</string>
+
+    <string name="deepseek_input_key_error_info_1">可能的问题:\n\n请求头错误\，输入的 API KEY 可能有特殊字符(中文的标点符号),请重新检查API KEY</string>
+    <string name="deepseek_input_key_error_start_info">错误信息:\n</string>
+    <string name="deepseek_empty">当前无会话，请点击右上角新增会话</string>
+    <string name="deepseek_send_command">发送到终端</string>
+    <string name="deepseek_settings_seepseek">设置 DeepSeek</string>
+    <string name="deepseek_settings_seepseek_summary">设置相关deepseek选择 列如:key</string>
+
+    <string name="deepseek_settings_recognition">输入代码识别关键字 </string>
+    <string name="deepseek_settings_recognition_edit">将代码识别关键字输入到此处，将自动保存</string>
+    <string name="deepseek_settings_recognition_edit_summary">将代码识别关键字输入到此处，将自动保存</string>
+    <string name="deepseek_settings_recognition_edit_info">注意！！设置完成之后，请重新在右侧栏刷新会话(在右侧栏点击左上方的返回然后重新选择进入会话)\n
+        输入代码识别参数，以逗号隔开的方式。可在 DeepSeek 会话当中显示成蓝色字符，可直接进行点击到终端操作，而不是长按复制,点击此处恢复默认</string>
+    <string name="deepseek_settings_recognition_edit_keyword">点击此处恢复默认</string>
+    <string name="deepseek_settings_recognition_error_toast">格式化命令失败,请重新设置 “代码识别关键字”</string>
+
+    <string name="deepseek_settings_url">输入 DeepSeek 接口地址</string>
+    <string name="deepseek_settings_url_edit">将官网的秘钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_url_edit_summary">将官网的秘钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_url_edit_info">目前默认的是 DeepSeek API接口，此处不清楚的话不要随意修改，随意修改可能导致接口无法访问</string>
+
+    <string name="deepseek_settings_key">输入 DeepSeek 秘钥</string>
+    <string name="deepseek_settings_key_edit">将官网的秘钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_key_edit_summary">将官网的秘钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_key_edit_info">请输入 DeepSeek 官网申请的秘钥，填写到此处即可。不清楚秘钥怎么获取，可点击：秘钥获取方式</string>
+    <string name="deepseek_settings_key_edit_info_keyword">秘钥获取方式</string>
+
+    <string name="deepseek_settings_send_command">点击蓝色命令直接执行</string>
+    <string name="deepseek_settings_send_command_summary">点击显示蓝色的指令之后，直接在终端执行，而不是显示在终端</string>
+
+    <string name="deepseek_settings_send_close">发送到终端之后关闭侧边栏</string>
+    <string name="deepseek_settings_send_close_summary">在 长按 会话显示菜单当中，“发送到终端” 选项点击之后关闭右侧侧边栏</string>
+
+    <string name="deepseek_settings_ai_see">让AI看到你的终端</string>
+    <string name="deepseek_settings_ai_see_summary">不用在会话当中输入你的终端错误，直接说: 终端报错,AI会自动浏览你的终端内容(AI只能读取到你最近记录的上限600个字符内)</string>
+
+    <string name="deepseek_settings_ai_session_name">编辑会话名称</string>
+
+    <string name="deepseek_settings_ai_get_deepseek_key">获取 DeepSeek Key</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1">获取DeepSeek,先打开DeepSeek官方网站点击此处打开,然后如下图</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1_keyword">点击此处打开</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1_url">https://platform.deepseek.com/</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_2">登录账号之后，点击左侧栏的 API Keys</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_3">然后点击 “创建 API keys”</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_4">随意输入一个名称就行</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_5">复制此处的key到 ZT 里边的 DeepSeek 设置编辑框即可</string>
 </resources>
 
 

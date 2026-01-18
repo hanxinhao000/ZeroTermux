@@ -126,7 +126,11 @@ android {
         implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
         // 二维码
         implementation 'com.google.zxing:core:3.5.3'
-
+        // deepseek
+        implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+        implementation "io.noties.markwon:core:4.6.2"
+        implementation"io.noties.markwon:simple-ext:4.6.2"
+        implementation"io.noties.markwon:linkify:4.6.2"
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         implementation "io.noties.markwon:core:$markwonVersion"

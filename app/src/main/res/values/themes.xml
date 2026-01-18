@@ -42,4 +42,21 @@
         <item name="extraKeysButtonActiveBackgroundColor">@color/grey_500</item>
     </style>
 
+    <!--ZeroTermux add deepseek {@-->
+    <style name="Base.Theme.DeepSeek" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/main</item>
+        <item name="colorPrimaryVariant">@color/main</item>
+        <item name="colorOnPrimary">#f0f</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">#f00</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:navigationBarColor">@color/main</item>
+    </style>
+
+
+    <style name="Theme.DeepSeek" parent="Base.Theme.DeepSeek" />
+
+    <!--@}-->
+
 </resources>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_2b2b2b"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="6dp"
+        app:cardBackgroundColor="@color/color_55000000"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="9dp"
+            android:paddingTop="10dp"
+            android:paddingRight="9dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DeepSeek"
+                android:textColor="@color/main_tx"
+                android:layout_centerVertical="true"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/settings_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/settings" />
+                <ImageView
+                    android:id="@+id/add_img"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/add_char" />
+            </LinearLayout>
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/chat_empty"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="15sp"
+            android:textColor="@color/zfile_white"
+            android:text="@string/deepseek_empty"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnStartChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/bg_shua"
+        android:text="开始聊天"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+
+</LinearLayout>

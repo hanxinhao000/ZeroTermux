@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/color_2b2b2b"
+    tools:context=".zerocore.settings.ZtSettingsActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/color_ffffff"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/deepseek_settings_ai_get_deepseek_key"
+                android:layout_height="wrap_content"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/ai_visible_layout"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/title_1"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_ai_get_deepseek_key_1"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/deepseek1"
+                        android:layout_height="240dp"/>
+
+                    <TextView
+                        android:id="@+id/title_2"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_ai_get_deepseek_key_2"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/deepseek2"
+                        android:layout_height="270dp"/>
+
+                    <TextView
+                        android:id="@+id/title_3"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_ai_get_deepseek_key_3"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/deepseek3"
+                        android:layout_height="200dp"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_ai_get_deepseek_key_4"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/deepseek4"
+                        android:layout_height="220dp"/>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_ai_get_deepseek_key_5"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/deepseek5"
+                        android:layout_height="220dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp"/>
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</LinearLayout>

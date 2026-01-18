@@ -1175,4 +1175,45 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
 </string>
     <string name="zt_command_image_backgroup">The input background image path is invalid</string>
     <string name="no_permission">No permission</string>
+
+    <string name="deepseek_zs">You are a ZeroTermux assistant, helping users of ZeroTermux and Termux answer basic Linux knowledge. It is best to use one line for all commands; if there are multiple lines, try to concatenate them into one line using &amp;&amp;.</string>
+    <string name="deepseek_zs_command">Current session text:</string>
+    <string name="deepseek_input_key_error_info">Possible issues:\n\nReturned 401, DeepSeek Key is not set or an incorrect key was entered.</string>
+    <string name="deepseek_input_key_error_info_1">Possible issues:\n\nRequest header error, the entered API KEY may contain special characters (Chinese punctuation). Please recheck the API KEY.</string>
+    <string name="deepseek_input_key_error_start_info">Error message:\n</string>
+    <string name="deepseek_empty">No current session. Please tap the top-right corner to create a new session.</string>
+    <string name="deepseek_send_command">Send to Terminal</string>
+    <string name="deepseek_settings_seepseek">Configure DeepSeek</string>
+    <string name="deepseek_settings_seepseek_summary">Configure DeepSeek-related options, e.g., key.</string>
+    <string name="deepseek_settings_recognition">Input Code Recognition Keywords</string>
+    <string name="deepseek_settings_recognition_edit">Enter code recognition keywords here; they will be saved automatically.</string>
+    <string name="deepseek_settings_recognition_edit_summary">Enter code recognition keywords here; they will be saved automatically.</string>
+    <string name="deepseek_settings_recognition_edit_info">Note!! After setting, please refresh the session in the right sidebar (tap the back button in the top-left corner of the right sidebar and re-enter the session).\n
+Enter code recognition parameters separated by commas. These will appear as blue text in the DeepSeek session and can be tapped directly for terminal execution instead of long-pressing to copy. Tap here to restore defaults.</string>
+    <string name="deepseek_settings_recognition_edit_keyword">Tap here to restore defaults</string>
+    <string name="deepseek_settings_recognition_error_toast">Failed to format command. Please reconfigure the "Code Recognition Keywords".</string>
+    <string name="deepseek_settings_url">Enter DeepSeek API URL</string>
+    <string name="deepseek_settings_url_edit">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_url_edit_summary">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_url_edit_info">Currently defaults to the DeepSeek API interface. Do not modify this unless you are certain, as changes may make the interface inaccessible.</string>
+    <string name="deepseek_settings_key">Enter DeepSeek Key</string>
+    <string name="deepseek_settings_key_edit">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_key_edit_summary">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_key_edit_info">Please enter the DeepSeek key obtained from the official website here. If unsure how to obtain the key, tap: How to Obtain the Key.</string>
+    <string name="deepseek_settings_key_edit_info_keyword">How to Obtain the Key</string>
+    <string name="deepseek_settings_send_command">Directly execute blue commands on tap</string>
+    <string name="deepseek_settings_send_command_summary">After tapping a blue-highlighted command, execute it directly in the terminal instead of displaying it in the terminal.</string>
+    <string name="deepseek_settings_send_close">Close sidebar after sending to terminal</string>
+    <string name="deepseek_settings_send_close_summary">When long-pressing a session to show the menu, selecting "Send to Terminal" will close the right sidebar.</string>
+    <string name="deepseek_settings_ai_see">Let AI see your terminal</string>
+    <string name="deepseek_settings_ai_see_summary">No need to input terminal errors in the session; simply say: terminal error. AI will automatically read your terminal content (AI can only read up to the last 600 characters recorded).</string>
+    <string name="deepseek_settings_ai_session_name">Edit Session Name</string>
+    <string name="deepseek_settings_ai_get_deepseek_key">Obtain DeepSeek Key</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1">To obtain DeepSeek, first open the DeepSeek official website: Tap here to open, then follow the steps below.</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1_keyword">Tap here to open</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1_url">https://platform.deepseek.com/</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_2">After logging in, tap API Keys in the left sidebar.</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_3">Then tap "Create API keys".</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_4">Enter any name you like.</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_5">Copy the key here and paste it into the DeepSeek settings input field in ZT.</string>
 </resources>

@@ -25,6 +25,47 @@ public class ZTUserBean {
     private boolean isInternalPassage = false;
     //在线服务器设定本地保存
     private String mServerJsonString;
+    // deepseek 本地蓝色连接字点击
+    private String mCommandLink;
+
+    //DeepSeek api Key
+    private String mDeepSeekApiKey;
+    // DeepSeek url
+    private String mDeepSeekApiUrl;
+    // 是否让DeepSeek 看见你的终端?
+    private boolean mIsDeepSeekVisibleTerminal;
+
+    public boolean isIsDeepSeekVisibleTerminal() {
+        return mIsDeepSeekVisibleTerminal;
+    }
+
+    public void setIsDeepSeekVisibleTerminal(boolean mIsDeepSeekVisibleTerminal) {
+        this.mIsDeepSeekVisibleTerminal = mIsDeepSeekVisibleTerminal;
+    }
+
+    public String getDeepSeekApiUrl() {
+        return mDeepSeekApiUrl;
+    }
+
+    public void setDeepSeekApiUrl(String mDeepSeekApiUrl) {
+        this.mDeepSeekApiUrl = mDeepSeekApiUrl;
+    }
+
+    public String getDeepSeekApiKey() {
+        return mDeepSeekApiKey;
+    }
+
+    public void setDeepSeekApiKey(String mDeepSeekApiKey) {
+        this.mDeepSeekApiKey = mDeepSeekApiKey;
+    }
+
+    public String getCommandLink() {
+        return mCommandLink;
+    }
+
+    public void setCommandLink(String mCommandLink) {
+        this.mCommandLink = mCommandLink;
+    }
 
     public String getServerJsonString() {
         return mServerJsonString;

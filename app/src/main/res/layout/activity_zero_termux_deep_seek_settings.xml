@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/color_2b2b2b"
+    tools:context=".zerocore.settings.ZtSettingsActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/color_ffffff"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/deepseek_settings_seepseek"
+                android:layout_height="wrap_content"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/ai_visible_layout"
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginRight="70dp"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="@string/deepseek_settings_ai_see"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="@string/deepseek_settings_ai_see_summary"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/ai_visible_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginRight="70dp"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="@string/deepseek_settings_key"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="3dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginRight="10dp">
+
+                    <EditText
+                        android:id="@+id/deepseek_edit"
+                        android:layout_width="match_parent"
+                        android:textSize="15sp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textColor="@color/white"
+                        android:gravity="start"
+                        android:textColorHint="@color/md_grey_500"
+                        android:hint="@string/deepseek_settings_key_edit"
+                        android:background="@null"
+                        android:layout_height="80dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:src="@mipmap/waring"
+                        android:layout_marginTop="5dp"
+                        android:layout_height="20dp"/>
+                    <TextView
+                        android:id="@+id/deepseek_key_summary"
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_key_edit_info"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginRight="70dp"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="@string/deepseek_settings_send_command"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="@string/deepseek_settings_send_command_summary"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:visibility="gone"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginRight="70dp"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="@string/deepseek_settings_send_close"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textColor="@color/md_grey_500"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:text="@string/deepseek_settings_send_close_summary"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginRight="10dp">
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginRight="70dp"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="@string/deepseek_settings_recognition"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="3dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginRight="10dp">
+
+                    <EditText
+                        android:id="@+id/key_click"
+                        android:layout_width="match_parent"
+                        android:textSize="15sp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:textColor="@color/white"
+                        android:gravity="start"
+                        android:textColorHint="@color/md_grey_500"
+                        android:hint="@string/deepseek_settings_recognition_edit"
+                        android:background="@null"
+                        android:layout_height="200dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:src="@mipmap/waring"
+                        android:layout_marginTop="5dp"
+                        android:layout_height="20dp"/>
+                    <TextView
+                        android:id="@+id/key_click_summary"
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_recognition_edit_info"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginRight="70dp"
+                        android:padding="10dp"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/color_ffffff"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:text="@string/deepseek_settings_url"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="3dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginRight="10dp">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:textSize="15sp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:text="https://api.deepseek.com/chat/completions"
+                        android:textColor="@color/white"
+                        android:gravity="start"
+                        android:textColorHint="@color/md_grey_500"
+                        android:hint="@string/deepseek_settings_key_edit"
+                        android:background="@null"
+                        android:layout_height="80dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:src="@mipmap/waring"
+                        android:layout_marginTop="5dp"
+                        android:layout_height="20dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/md_grey_500"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:text="@string/deepseek_settings_url_edit_info"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp"/>
+
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</LinearLayout>

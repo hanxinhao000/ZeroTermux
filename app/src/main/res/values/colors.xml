@@ -3,6 +3,7 @@
 
     <color name="color_d3d7d4">#d3d7d4</color>
     <color name="color_6A8759">#6A8759</color>
+    <color name="color_226A8759">#226A8759</color>
     <color name="color_B87733">#B87733</color>
     <color name="color_A9B7C6">#A9B7C6</color>
     <color name="color_3d3d4f">#3d3d4f</color>
@@ -22,6 +23,7 @@
     <color name="color_55000000">#55000000</color>
     <color name="color_553E3E3E">#553E3E3E</color>
     <color name="color_1B3650">#1B3650</color>
+    <color name="color_331B3650">#331B3650</color>
     <color name="color_8CFF5A">#8CFF5A</color>
     <color name="color_48baf3">#48baf3</color>
     <color name="color_5548baf3">#5548baf3</color>
@@ -46,5 +48,11 @@
     <color name="md_grey_900">#212121</color>
     <color name="md_black_1000">#000000</color>
     <color name="md_white_1000">#ffffff</color>
+   <!--ZeroTermux add deepseek {@-->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="main">#FFF4f5f4</color>
+    <color name="main_tx">#FFFFFFFF</color>
+    <!--@ }-->
 
 </resources>

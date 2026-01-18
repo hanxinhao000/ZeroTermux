@@ -1,5 +1,7 @@
 package com.termux.app;
 
+import static com.billy.android.swipe.SwipeConsumer.DIRECTION_BOTTOM;
+import static com.billy.android.swipe.SwipeConsumer.DIRECTION_TOP;
 import static com.termux.zerocore.config.ztcommand.ZTSocketService.ZT_COMMAND_ACTIVITY_ACTION;
 import static com.termux.zerocore.config.ztcommand.ZTSocketService.ZT_COMMAND_SERVICES_ACTION;
 
@@ -34,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 import android.view.autofill.AutofillManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -52,6 +55,7 @@ import android.widget.VideoView;
 import com.billy.android.swipe.SmartSwipe;
 import com.billy.android.swipe.SmartSwipeWrapper;
 import com.billy.android.swipe.SwipeConsumer;
+import com.billy.android.swipe.consumer.DrawerConsumer;
 import com.billy.android.swipe.consumer.SlidingConsumer;
 import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
@@ -122,6 +126,8 @@ import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.config.mainmenu.MainMenuConfig;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
+import com.termux.zerocore.deepseek.DeepSeekMainFragment;
+import com.termux.zerocore.deepseek.DeepSeekTransitFragment;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
 import com.termux.zerocore.dialog.BoomCommandDialog;
 import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
@@ -169,6 +175,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -549,19 +556,19 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         int size = SmartSwipe.dp2px(300, this);
         mLayoutMenuAll.setLayoutParams(new ViewGroup.LayoutParams(size, ViewGroup.LayoutParams.MATCH_PARENT));
         mIncludeRightMenu.setLayoutParams(new ViewGroup.LayoutParams(size, ViewGroup.LayoutParams.MATCH_PARENT));
-        SmartSwipeWrapper leftHorizontalMenuWrapper = SmartSwipe.wrap(mLayoutMenuAll).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
-        SmartSwipeWrapper rightHorizontalMenuWrapper = SmartSwipe.wrap(mIncludeRightMenu).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
+        SmartSwipeWrapper leftHorizontalMenuWrapper = SmartSwipe.wrap(mLayoutMenuAll).addConsumer(new DrawerConsumer()).enableVertical().getWrapper();
+        SmartSwipeWrapper rightHorizontalMenuWrapper = SmartSwipe.wrap(mIncludeRightMenu).addConsumer(new DrawerConsumer()).enableVertical().getWrapper();
         SimpleSwipeListener listener = new SimpleSwipeListener() {
             @Override
             public void onSwipeOpened(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeOpened(wrapper, consumer, direction);
-
+                mTerminalView.clearFocus();
             }
 
             @Override
             public void onSwipeClosed(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeClosed(wrapper, consumer, direction);
-
+                mTerminalView.requestFocus();
             }
         };
 
@@ -583,7 +590,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mSlidingConsumer.setRelativeMoveFactor(100);
         SmartSwipe.wrap(this)
             //add new consumer to this activity wrapper
-            .addConsumer(mSlidingConsumer);
+            .addConsumer(mSlidingConsumer).enableVertical();
     }
 
     private void initListener() {
@@ -997,7 +1004,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         setTermuxSessionsListView();
         // ZeroTermux add {@
-        fileManager();
+        fragmentManager(0);
         locaBroadcast();
 		// @}
         final Intent intent = getIntent();
@@ -1213,6 +1220,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
           /*  mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
             getDrawer().closeDrawers();*/
             indexSwitch(0);
+            fragmentManager(0);
 			// @}
         });
 
@@ -1225,6 +1233,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 		  // ZeroTermux add {@
         findViewById(R.id.select_new_session_button).setOnClickListener(v -> {
             indexSwitch(1);
+        });
+        findViewById(R.id.deepseek).setOnClickListener(view -> {
+            indexSwitch(0);
+            fragmentManager(1);
         });
 		// @}
     }
@@ -2494,24 +2506,54 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    private void fileManager() {
-        if (frame_file.getChildCount() != 0) {
-            return;
-        }
-        FragmentTransaction fragmentTransaction = this.getSupportFragmentManager()
+    private void fragmentManager(int index) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
             .beginTransaction();
 
-        if (fragmentTransaction.isEmpty()) {
-            fragmentTransaction.add(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
-                .commitAllowingStateLoss();
+        LogUtils.e(TAG, "fragmentManager fragmentTransaction is: " + fragmentTransaction);
 
-            ZTConfig.INSTANCE.setCloseListener(new CloseListener() {
-                @Override
-                public void close() {
-                    getDrawer().smoothClose();
-                }
-            });
+        // 1. 先移除可能存在的所有 Fragment
+        Fragment deepSeekFragment = getSupportFragmentManager()
+            .findFragmentByTag("DeepSeekTransitFragment");
+        Fragment fileListFragment = getSupportFragmentManager()
+            .findFragmentByTag("ZFileListFragment");
+
+        if (deepSeekFragment != null) {
+            fragmentTransaction.remove(deepSeekFragment);
+            LogUtils.e(TAG, "Removed existing DeepSeekTransitFragment");
         }
+
+        if (fileListFragment != null) {
+            fragmentTransaction.remove(fileListFragment);
+            LogUtils.e(TAG, "Removed existing ZFileListFragment");
+        }
+
+        // 2. 立即提交移除操作，确保状态被清理
+        try {
+            fragmentTransaction.commitNowAllowingStateLoss();
+        } catch (Exception e) {
+            LogUtils.e(TAG, "Error in commitNowAllowingStateLoss: " + e.getMessage());
+            // 如果 commitNow 失败，使用普通 commit
+            fragmentTransaction.commitAllowingStateLoss();
+            getSupportFragmentManager().executePendingTransactions();
+        }
+
+        switch (index) {
+            case 0:
+                LogUtils.e(TAG, "fragmentManager switch ZFileListFragment. ");
+                fragmentTransaction.replace(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
+                    .commitAllowingStateLoss();
+                LogUtils.e(TAG, "fragmentManager switch ZFileListFragment deno. ");
+                break;
+            case 1:
+                LogUtils.e(TAG, "fragmentManager switch DeepSeekTransitFragment. ");
+                DeepSeekTransitFragment deepSeekTransitFragment = DeepSeekTransitFragment.newInstance();
+                fragmentTransaction.replace(R.id.frame_file, deepSeekTransitFragment, "DeepSeekMainFragment")
+                    .commitAllowingStateLoss();
+                LogUtils.e(TAG, "fragmentManager switch DeepSeekTransitFragment deno. ");
+                break;
+        }
+        ZTConfig.INSTANCE.setCloseListener(() -> getDrawer().smoothClose());
     }
 
     private void locaBroadcast() {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.cardview.widget.CardView
 import com.termux.R
 import com.termux.app.activities.SettingsActivity
+import com.termux.zerocore.deepseek.activity.ZeroTermuxDeepSeekSettingsActivity
 
 class ZtSettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,9 @@ class ZtSettingsActivity : AppCompatActivity() {
         }
         findViewById<CardView>(R.id.zt_termux_settings).setOnClickListener {
             startActivity(Intent(this, ZeroTermuxSettingsActivity::class.java))
+        }
+        findViewById<CardView>(R.id.deep_seek).setOnClickListener {
+            startActivity(Intent(this, ZeroTermuxDeepSeekSettingsActivity::class.java))
         }
         findViewById<CardView>(R.id.online_sh_server).setOnClickListener {
             startActivity(Intent(this, ZTOnlineServerActivity::class.java))

@@ -1,0 +1,113 @@
+<!-- activity_chat.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/color_2b2b2b">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="6dp"
+        app:cardBackgroundColor="@color/color_55000000"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingTop="10dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DeepSeek"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/main_tx"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/cancel"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/deepseek_cancel" />
+            </RelativeLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="3dp"
+                android:background="#22000000"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_below="@+id/cancel"
+                android:padding="3dp"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/messageInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:textColor="#fff"
+                    android:textColorHint="#888"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:textSize="12sp"
+                    android:background="@null"
+                    android:maxLines="3"
+                    android:inputType="text"
+                    android:hint="input message..." />
+
+                <TextView
+                    android:id="@+id/sendButton"
+                    android:layout_width="68dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:background="@drawable/bg_shua2"
+                    android:textColor="@color/white"
+                    android:text="send" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/testText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:visibility="gone"
+            android:textColor="#333"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_2b2b2b"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+</LinearLayout>
