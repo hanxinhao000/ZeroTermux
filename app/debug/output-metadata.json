@@ -5,26 +5,14 @@
     "kind": "Directory"
   },
   "applicationId": "com.termux",
-  "variantName": "release",
+  "variantName": "debug",
   "elements": [
     {
       "type": "UNIVERSAL",
       "filters": [],
       "versionCode": 117,
       "versionName": "0.118.3.51",
-      "outputFile": "app-universal-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "armeabi-v7a"
-        }
-      ],
-      "versionCode": 117,
-      "versionName": "0.118.3.51",
-      "outputFile": "app-armeabi-v7a-release.apk"
+      "outputFile": "app-universal-debug.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -36,19 +24,7 @@
       ],
       "versionCode": 117,
       "versionName": "0.118.3.51",
-      "outputFile": "app-arm64-v8a-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "x86"
-        }
-      ],
-      "versionCode": 117,
-      "versionName": "0.118.3.51",
-      "outputFile": "app-x86-release.apk"
+      "outputFile": "app-arm64-v8a-debug.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -60,7 +36,31 @@
       ],
       "versionCode": 117,
       "versionName": "0.118.3.51",
-      "outputFile": "app-x86_64-release.apk"
+      "outputFile": "app-x86_64-debug.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "versionCode": 117,
+      "versionName": "0.118.3.51",
+      "outputFile": "app-armeabi-v7a-debug.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "versionCode": 117,
+      "versionName": "0.118.3.51",
+      "outputFile": "app-x86-debug.apk"
     }
   ]
 }

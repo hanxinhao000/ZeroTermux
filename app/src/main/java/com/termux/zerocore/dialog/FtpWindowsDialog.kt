@@ -164,7 +164,7 @@ class FtpWindowsDialog : BaseDialogCentre {
                 try {
                     val parseInt = Integer.parseInt(p0!!.toString())
                     if (parseInt < SaveDataZeroEngine.FTP_MIN_PORT) {
-                        mPortEd?.setTextColor(UUtils.getColor(R.color.colorCC5A6B))
+                        mPortEd?.setTextColor(UUtils.getColor(R.color.color_CC5A6B))
                     } else if(parseInt > SaveDataZeroEngine.FTP_MAX_PORT) {
                         UUtils.showMsg(UUtils.getString(R.string.ftp_port_msg))
                         mPortEd?.setText("2121")

@@ -161,6 +161,9 @@
     <!-- Termux Tasker App Preferences -->
     <string name="termux_tasker_preferences_title">&TERMUX_TASKER_APP_NAME;</string>
     <string name="termux_tasker_preferences_summary">配置文件在 &TERMUX_TASKER_APP_NAME; app</string>
+    <string name="action_autofill_username">Autofill username</string>
+    <string name="error_termux_service_start_failed_general">Failed to start TermuxService. Check logcat for exception message.</string>
+    <string name="error_termux_service_start_failed_bg">Failed to start TermuxService while app is in background due to android bg restrictions.</string>
 
 
     <!-- About Preference -->
@@ -1181,5 +1184,9 @@
     <string name="deepseek_settings_ai_get_deepseek_key_3">然后点击 “创建 API keys”</string>
     <string name="deepseek_settings_ai_get_deepseek_key_4">随意输入一个名称就行</string>
     <string name="deepseek_settings_ai_get_deepseek_key_5">复制此处的key到 ZT 里边的 DeepSeek 设置编辑框即可</string>
+
+    <string name="zt_ssh_improt_fail">导入失败：别名丢失</string>
+    <string name="zt_ssh_improt_fail_error">导入失败</string>
+    <string name="zt_ssh_improt_success">"密钥导入成功\n已保存为:"</string>
 
 </resources>

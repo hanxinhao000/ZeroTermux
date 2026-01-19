@@ -607,7 +607,9 @@ public final class TerminalView extends View {
         }
         return false;
     }
+	// ZeroTermux add {@
     private long doubleClick = 0;
+	// @}
     @SuppressLint("ClickableViewAccessibility")
     @Override
     @TargetApi(23)
@@ -815,6 +817,8 @@ public final class TerminalView extends View {
         } else if (event.getAction() == KeyEvent.ACTION_MULTIPLE && keyCode == KeyEvent.KEYCODE_UNKNOWN) {
             mTermSession.write(event.getCharacters());
             return true;
+        } else if (keyCode == KeyEvent.KEYCODE_LANGUAGE_SWITCH) {
+            return super.onKeyDown(keyCode, event);
         }
 
         final int metaState = event.getMetaState();
@@ -1396,11 +1400,6 @@ public final class TerminalView extends View {
     private boolean hideTextSelectionCursors() {
         return getTextSelectionCursorController().hide();
     }
-    // ZeroTermux add {@
-    public TextSelectionCursorController getTextSelectionCursorControllerView() {
-        return getTextSelectionCursorController();
-    }
-	// @}
 
     private void renderTextSelection() {
         if (mTextSelectionCursorController != null)
@@ -1705,12 +1704,7 @@ public final class TerminalView extends View {
         }
     }
 
-    /**
-     *
-     *
-     * ZeroTermux
-     *
-     */
+    /***************************************** ZERO TERMUX START ******************************************/
 
     private  DoubleClickListener mDoubleClickListener;
     private  ActionPointer2ClickListener mActionPointer2ClickListener;
@@ -1753,7 +1747,9 @@ public final class TerminalView extends View {
         void onLong();
 
     }
-	// @}
 
-
+    public TextSelectionCursorController getTextSelectionCursorControllerView() {
+        return getTextSelectionCursorController();
+    }
+    /***************************************** ZERO TERMUX END ******************************************/
 }

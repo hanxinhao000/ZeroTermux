@@ -50,31 +50,16 @@ public class TermuxApplication extends XHApplication {
 // @}
     private static final String LOG_TAG = "TermuxApplication";
 
-
     public void onCreate() {
         super.onCreate();
-        // ZeroTermux add {@
-        FUtils.init(this);
-		// @}
-
 
         Context context = getApplicationContext();
 
         // Set crash handler for the app
         TermuxCrashUtils.setDefaultCrashHandler(this);
-		// ZeroTermux add {@
-        ZFileUUtils.initUUtils(mContext, mHandler);
 
-        LogUtils.isShow = UserSetManage.Companion.get().getZTUserBean().isOutputLOG();
-
-        ZFileManageHelp.getInstance().init(new MyFileImageListener());
-        ZFileConfiguration.Companion.setMApplicationContext(this);
-		// @}
         // Set log config for the app
         setLogConfig(context);
-        // ZeroTermux add {@
-        // Z7Extractor.init();
-		// @}
 
         Logger.logDebug("Starting Application");
 
@@ -118,44 +103,10 @@ public class TermuxApplication extends XHApplication {
         if (isTermuxFilesDirectoryAccessible) {
             TermuxShellEnvironment.writeEnvironmentToFile(this);
         }
-		// ZeroTermux add {@
-        Aria.init(this);
-        Aria.get(this).getDownloadConfig().setMaxSpeed(0);
-        Aria.get(this).getDownloadConfig().setConvertSpeed(true);
-        LocalePlugin.INSTANCE.init(this, LocaleConstant.RECREATE_CURRENT_ACTIVITY);
-        OkGo.getInstance().init(this);
-        OkHttpClient okHttpClient = OkGo.getInstance().getOkHttpClient();
 
-        okHttpClient.newBuilder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS)
-            .build();
-        OkGo.getInstance().setOkHttpClient(okHttpClient);
-
-        XXPermissions.setScopedStorage(true);
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable e) {
-
-
-                Intent intent = new Intent(TermuxApplication.this, UncaughtExceptionHandlerActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("error", collectExceptionInfo((Exception) e));
-                TermuxApplication.this.startActivity(intent);
-                System.exit(1);//关闭已奔溃的app进程
-
-            }
-        });
-        //初始化定时器
-        LibSuManage.getInstall().initTimer();
-        MainMenuConfig.init(this);
-        new ClipBoardUtil().registerClipEvents();
-/*        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BusyBoxManager.INSTANCE.init();
-            }
-        }).start();*/
-		// @}
-
+        // ZeroTermux add {@
+        onCreateInit();
+        // @}
     }
 
     public static void setLogConfig(Context context) {
@@ -167,10 +118,8 @@ public class TermuxApplication extends XHApplication {
         preferences.setLogLevel(null, preferences.getLogLevel());
     }
 
-   // ZeroTermux add {@
+    /***************************************** ZERO TERMUX START ******************************************/
     private String collectExceptionInfo(Exception extra) {
-
-
         ByteArrayOutputStream byteArrayOutput = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayOutput);
         extra.printStackTrace(printStream);
@@ -184,8 +133,49 @@ public class TermuxApplication extends XHApplication {
         }
         return "are.you.kidding.me.NoExceptionFoundException: This is a bug, please contact developers!";
     }
-	// @}
 
+    private void onCreateInit() {
+        FUtils.init(this);
+
+        ZFileUUtils.initUUtils(mContext, mHandler);
+
+        LogUtils.isShow = UserSetManage.Companion.get().getZTUserBean().isOutputLOG();
+
+        ZFileManageHelp.getInstance().init(new MyFileImageListener());
+        ZFileConfiguration.Companion.setMApplicationContext(this);
+        // Z7Extractor.init();
+        Aria.init(this);
+        Aria.get(this).getDownloadConfig().setMaxSpeed(0);
+        Aria.get(this).getDownloadConfig().setConvertSpeed(true);
+        LocalePlugin.INSTANCE.init(this, LocaleConstant.RECREATE_CURRENT_ACTIVITY);
+        OkGo.getInstance().init(this);
+        OkHttpClient okHttpClient = OkGo.getInstance().getOkHttpClient();
+
+        okHttpClient.newBuilder().connectTimeout(10, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS)
+            .build();
+        OkGo.getInstance().setOkHttpClient(okHttpClient);
+
+        XXPermissions.setScopedStorage(true);
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
+            Intent intent = new Intent(TermuxApplication.this, UncaughtExceptionHandlerActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("error", collectExceptionInfo((Exception) e));
+            TermuxApplication.this.startActivity(intent);
+            System.exit(1);//关闭已奔溃的app进程
+        });
+        //初始化定时器
+        LibSuManage.getInstall().initTimer();
+        MainMenuConfig.init(this);
+        new ClipBoardUtil().registerClipEvents();
+/*        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BusyBoxManager.INSTANCE.init();
+            }
+        }).start();*/
+		// @}
+    }
+    /***************************************** ZERO TERMUX END ******************************************/
 
 }
 

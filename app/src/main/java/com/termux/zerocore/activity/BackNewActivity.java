@@ -52,12 +52,9 @@ public class BackNewActivity extends AppCompatActivity implements View.OnClickLi
         mBackupText = findViewById(R.id.backup_text);
         mRestoreText = findViewById(R.id.restore_text);
         mSetting = findViewById(R.id.setting);
-
         mBackup.setOnClickListener(this);
         mRestore.setOnClickListener(this);
         mSetting.setOnClickListener(this);
-
-
         mSupportFragmentManager = getSupportFragmentManager();
 
         mFragmentTransaction = mSupportFragmentManager.beginTransaction();
@@ -70,11 +67,7 @@ public class BackNewActivity extends AppCompatActivity implements View.OnClickLi
         mFragmentTransaction.show(mBackupFragment).commit();
         mBackupText.setTextColor(Color.parseColor("#FF6EC7"));
 
-
-
     }
-
-
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -93,55 +86,36 @@ public class BackNewActivity extends AppCompatActivity implements View.OnClickLi
             finish();
             return false;
         }
-
-
     }
 
     @Override
     public void onClick(View v) {
-
-
         if (mIsRun) {
             Toast.makeText(this, UUtils.getString(R.string.有任务进行中), Toast.LENGTH_SHORT).show();
             return;
         }
-
-
-        switch (v.getId()) {
-
-            case R.id.backup:
-                mBackupText.setTextColor(Color.parseColor("#ffffff"));
-                mRestoreText.setTextColor(Color.parseColor("#ffffff"));
-                mSettingText.setTextColor(Color.parseColor("#ffffff"));
-
-                mBackupText.setTextColor(Color.parseColor("#FF6EC7"));
-                FragmentManager supportFragmentManager = getSupportFragmentManager();
-                supportFragmentManager.beginTransaction().replace(R.id.fragment, mBackupFragment).commit();
-                break;
-            case R.id.restore:
-                mBackupText.setTextColor(Color.parseColor("#ffffff"));
-                mRestoreText.setTextColor(Color.parseColor("#ffffff"));
-                mSettingText.setTextColor(Color.parseColor("#ffffff"));
-
-                mRestoreText.setTextColor(Color.parseColor("#FF6EC7"));
-                FragmentManager supportFragmentManager1 = getSupportFragmentManager();
-                supportFragmentManager1.beginTransaction().replace(R.id.fragment, mRestoreFragment).commit();
-                break;
-
-            case R.id.setting:
-                mBackupText.setTextColor(Color.parseColor("#ffffff"));
-                mRestoreText.setTextColor(Color.parseColor("#ffffff"));
-                mSettingText.setTextColor(Color.parseColor("#ffffff"));
-
-                mSettingText.setTextColor(Color.parseColor("#FF6EC7"));
-
-                FragmentManager supportFragmentManager2 = getSupportFragmentManager();
-                supportFragmentManager2.beginTransaction().replace(R.id.fragment, mSettingFragment).commit();
-
-                break;
-
+        if (v.getId() == R.id.backup) {
+            mBackupText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#ffffff"));
+            mBackupText.setTextColor(Color.parseColor("#FF6EC7"));
+            FragmentManager supportFragmentManager = getSupportFragmentManager();
+            supportFragmentManager.beginTransaction().replace(R.id.fragment, mBackupFragment).commit();
+        } else if (v.getId() == R.id.restore) {
+            mBackupText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#FF6EC7"));
+            FragmentManager supportFragmentManager1 = getSupportFragmentManager();
+            supportFragmentManager1.beginTransaction().replace(R.id.fragment, mRestoreFragment).commit();
+        } else if (v.getId() == R.id.setting) {
+            mBackupText.setTextColor(Color.parseColor("#ffffff"));
+            mRestoreText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#ffffff"));
+            mSettingText.setTextColor(Color.parseColor("#FF6EC7"));
+            FragmentManager supportFragmentManager2 = getSupportFragmentManager();
+            supportFragmentManager2.beginTransaction().replace(R.id.fragment, mSettingFragment).commit();
         }
-
     }
 
     @Override
@@ -149,7 +123,4 @@ public class BackNewActivity extends AppCompatActivity implements View.OnClickLi
         super.finish();
         mIsRun = false;
     }
-
-
-
 }

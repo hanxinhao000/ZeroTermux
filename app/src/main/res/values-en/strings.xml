@@ -172,6 +172,10 @@
     <string name="termux_tasker_preferences_title">&TERMUX_TASKER_APP_NAME;</string>
     <string name="termux_tasker_preferences_summary">Preferences for &TERMUX_TASKER_APP_NAME; app</string>
 
+    <string name="action_autofill_username">Autofill username</string>
+    <string name="error_termux_service_start_failed_general">Failed to start TermuxService. Check logcat for exception message.</string>
+    <string name="error_termux_service_start_failed_bg">Failed to start TermuxService while app is in background due to android bg restrictions.</string>
+
 
     <!-- About Preference -->
     <string name="about_preference_title">About</string>
@@ -1219,4 +1223,8 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="deepseek_settings_ai_get_deepseek_key_3">Then tap "Create API keys".</string>
     <string name="deepseek_settings_ai_get_deepseek_key_4">Enter any name you like.</string>
     <string name="deepseek_settings_ai_get_deepseek_key_5">Copy the key here and paste it into the DeepSeek settings input field in ZT.</string>
+
+    <string name="zt_ssh_improt_fail">Import failed: alias missing</string>
+    <string name="zt_ssh_improt_fail_error">Import failed</string>
+    <string name="zt_ssh_improt_success">Key import successful\nSaved as:</string>
 </resources>

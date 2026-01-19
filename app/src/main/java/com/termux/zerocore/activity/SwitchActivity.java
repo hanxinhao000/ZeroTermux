@@ -532,27 +532,20 @@ public class SwitchActivity extends AppCompatActivity  implements View.OnClickLi
 
     //读取
     private String readInfo(String path) {
-
-
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(new File(path), "/xinhao_system.infoJson"))));
-
             String temp = "";
             String tempSystem = "";
             while ((temp = bufferedReader.readLine()) != null) {
-
                 tempSystem += temp;
-
             }
             bufferedReader.close();
-
 
             Log.e("XINHAO_HAN", "readInfo: " + tempSystem);
             CreateSystemBean createSystemBean = new Gson().fromJson(tempSystem, CreateSystemBean.class);
 
 
             if(createSystemBean == null){
-
                 return"损坏的系统";
             }else{
                 return createSystemBean.systemName;
@@ -572,15 +565,10 @@ public class SwitchActivity extends AppCompatActivity  implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-
-        switch (v.getId()) {
-            case R.id.create_img:
-                createSystemDialog();
-
-                break;
+        if (v.getId() == R.id.create_img) {
+            createSystemDialog();
         }
     }
-
 
     //创建新的系统
     private void createSystemDialog() {

@@ -82,10 +82,10 @@ class ProtocolDialog : BaseDialogCentre, View.OnFocusChangeListener {
                 ViewBackUtils.setBackLine161823_fd(custom_scroll!!)
             }
             R.id.ok -> {
-                ok?.setTextColor(UUtils.getColor(R.color.color_FD9F3E))
+                ok?.setTextColor(UUtils.getColor(com.example.xh_lib.R.color.color_FD9F3E))
             }
             R.id.cancel -> {
-                cancel?.setTextColor(UUtils.getColor(R.color.color_FD9F3E))
+                cancel?.setTextColor(UUtils.getColor(com.example.xh_lib.R.color.color_FD9F3E))
             }
         }
     }
