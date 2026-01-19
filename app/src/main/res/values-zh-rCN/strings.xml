@@ -1166,6 +1166,8 @@
         zt bgi /data/data/com.termux/files/home/.img/back.jpg \n
         ]\n
         \n
+        zt qr 打开扫一扫 (扫描二维码或者条形码)\n
+        \n
         \n
 
     </string>

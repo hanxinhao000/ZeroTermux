@@ -5,17 +5,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.activity.ScanActivity
+import com.example.xh_lib.activity.ScanActivity.ScanActivityResultListener
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.termux.zerocore.config.ztcommand.config.QRCodeEncoderConfig
 
-class SocketBaseActivity : AppCompatActivity() {
+class SocketBaseActivity : AppCompatActivity(), ScanActivityResultListener {
     companion object {
         val TAG: String? = SocketBaseActivity::class.simpleName
         const val OPEN_TYPE: String = "open_type"
         const val OPEN_UNKNOWN: Int = -1
-        const val OPEN_CAMERA_QR_TYPE: Int = 10000
+        const val OPEN_CAMERA_QR_TYPE: Int = 1
     }
 
     private val mType: Int
@@ -60,10 +61,11 @@ class SocketBaseActivity : AppCompatActivity() {
                         sendMessageAndFinish(1, "not permission camera")
                         return
                     }
+                    ScanActivity.setScanActivityResultListener(this@SocketBaseActivity)
                     val intent =
                         Intent(this@SocketBaseActivity.applicationContext, ScanActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    this@SocketBaseActivity.startActivityForResult(intent, OPEN_CAMERA_QR_TYPE)
+                    this@SocketBaseActivity.startActivity(intent)
                 }
 
                 override fun onDenied(permissions: MutableList<String?>?, never: Boolean) {
@@ -74,6 +76,13 @@ class SocketBaseActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.i(TAG, "onActivityResult requestCode: $requestCode ,resultCode: $resultCode ,data: $data")
+    }
+
+    override fun success(p0: Intent?) {
+        sendMessageAndFinish(0, p0?.getStringExtra("result"))
+    }
+
+    override fun fail() {
+        sendMessageAndFinish(1, "no data")
     }
 }

@@ -1162,7 +1162,10 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
         zt backgroundimage /data/data/com.termux/files/home/.img/back.jpg \n
         zt bgi /data/data/com.termux/files/home/.img/back.jpg \n
         ]\n
-        \n \n</string>
+        \n
+        zt qr Open Scan (scan QR code or barcode)\n
+        \n
+        \n</string>
 
     <string name="zt_command_timeout">Connection Timeout</string>
     <string name="zt_command_dialog_windows_finish">Window Closed Unexpectedly</string>
