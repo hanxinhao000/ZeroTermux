@@ -34,85 +34,6 @@
                 android:textStyle="bold"
                 android:textSize="13sp" />
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="5dp"
-                android:alpha="0.9"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/select_1_ll"
-                        android:layout_width="80dp"
-                        android:layout_height="30dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@drawable/shape_line_8cff5a"
-                        android:gravity="center">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center"
-                            app:cardBackgroundColor="@color/color_553E3E3E"
-                            app:cardCornerRadius="3dp"
-                            app:cardElevation="1dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingLeft="6dp"
-                                android:paddingRight="6dp"
-                                android:text="@string/linux_clipboard"
-                                android:textColor="@color/color_FFFFFF"
-                                android:textSize="10sp" />
-
-                        </androidx.cardview.widget.CardView>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/select_2_ll"
-                        android:layout_width="80dp"
-                        android:layout_height="30dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@drawable/shape_line_2e84e6"
-                        android:gravity="center"
-                        android:visibility="visible">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center"
-                            app:cardBackgroundColor="@color/color_553E3E3E"
-                            app:cardCornerRadius="3dp"
-                            app:cardElevation="1dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingLeft="6dp"
-                                android:paddingRight="6dp"
-                                android:text="@string/tool_other"
-                                android:textColor="@color/color_FFFFFF"
-                                android:textSize="10sp" />
-
-                        </androidx.cardview.widget.CardView>
-                    </LinearLayout>
-                </LinearLayout>
-            </HorizontalScrollView>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="450dp"
@@ -137,15 +58,29 @@
                             android:textColor="@color/color_ffffff"
                             android:textSize="10sp" />
 
-                        <TextView
-                            android:id="@+id/clear_text"
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
                             android:layout_alignParentRight="true"
                             android:layout_marginRight="5dp"
-                            android:text="@string/清空"
-                            android:textColor="@color/color_48baf3"
-                            android:textSize="10sp" />
+                            android:gravity="center_vertical"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:id="@+id/settings_img"
+                                android:layout_width="20dp"
+                                android:padding="1dp"
+                                android:layout_marginRight="10dp"
+                                android:src="@mipmap/settings"
+                                android:layout_height="20dp"/>
+                            <TextView
+                                android:id="@+id/clear_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/清空"
+                                android:textColor="@color/color_48baf3"
+                                android:textSize="10sp" />
+
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -166,14 +101,6 @@
                             android:textColor="@color/color_ffffff"
                             android:textSize="15sp" />
                     </RelativeLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/other_container"
-                    android:orientation="vertical">
-                    <include layout="@layout/dialog_item_other"/>
                 </LinearLayout>
 
             </RelativeLayout>

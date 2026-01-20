@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.termux.R;
-import com.termux.zerocore.deepseek.MarkDownAPI;
+import com.termux.zerocore.deepseek.markdown.MarkDownAPI;
 import com.termux.zerocore.deepseek.utils.SpannableTextUtil;
 
 import java.text.SimpleDateFormat;
@@ -49,14 +49,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     public void onBindViewHolder(@NonNull ChatMessageViewHolder holder, int position) {
         ChatMessage message = messages.get(position);
         Markwon.Builder builder = Markwon.builder(context);
-        MarkDownAPI markDownAPI = MarkDownAPI.create();
+        MarkDownAPI markDownAPI = MarkDownAPI.create(context);
 
         Markwon markwon = builder.usePlugin(markDownAPI).build();
         Spanned markdown = markwon.toMarkdown(message.getMessageText());
         Spanned finalSpanned = SpannableTextUtil.createClickableSpannableString(markdown, context);
-        Log.d("SpannableTextUtil", "原始文本: " + message.getMessageText());
-        Log.d("SpannableTextUtil", "解析后文本: " + markdown.toString());
-        Log.d("SpannableTextUtil", "包含```: " + markdown.toString().contains("```"));
         markwon.setParsedMarkdown(holder.messageTextView, finalSpanned);
         holder.messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -72,6 +69,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     public void addMessage(ChatMessage message) {
         messages.add(message);
         notifyItemInserted(messages.size() - 1);
+    }
+
+    public void release() {
+        MarkDownAPI.create(context).release();
     }
 
     public static class ChatMessageViewHolder extends RecyclerView.ViewHolder {

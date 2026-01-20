@@ -1,7 +1,5 @@
 package com.termux.app;
 
-import static com.billy.android.swipe.SwipeConsumer.DIRECTION_BOTTOM;
-import static com.billy.android.swipe.SwipeConsumer.DIRECTION_TOP;
 import static com.termux.zerocore.config.ztcommand.ZTSocketService.ZT_COMMAND_ACTIVITY_ACTION;
 import static com.termux.zerocore.config.ztcommand.ZTSocketService.ZT_COMMAND_SERVICES_ACTION;
 
@@ -23,8 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.system.ErrnoException;
-import android.system.Os;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -36,8 +32,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.LinearInterpolator;
-import android.view.autofill.AutofillManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -57,7 +51,6 @@ import com.billy.android.swipe.SmartSwipeWrapper;
 import com.billy.android.swipe.SwipeConsumer;
 import com.billy.android.swipe.consumer.DrawerConsumer;
 import com.billy.android.swipe.consumer.SlidingConsumer;
-import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.blockchain.ub.utils.httputils.BaseHttpUtils;
 import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
@@ -72,7 +65,6 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.lzy.okgo.model.Response;
-import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.api.file.FileReceiverActivity;
 import com.termux.app.terminal.TermuxActivityRootView;
@@ -112,12 +104,7 @@ import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
 import com.termux.view.textselection.TextSelectionCursorController;
 import com.termux.x11.MainActivity;
-import com.termux.zerocore.activity.FontActivity;
-import com.termux.zerocore.activity.SwitchActivity;
-import com.termux.zerocore.activity.WebViewActivity;
 import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
-import com.termux.zerocore.back.BackRestoreDialog;
-import com.termux.zerocore.back.listener.CreateConversationListener;
 import com.termux.zerocore.background.FireworkView;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
@@ -126,48 +113,33 @@ import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.config.mainmenu.MainMenuConfig;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
-import com.termux.zerocore.deepseek.DeepSeekMainFragment;
 import com.termux.zerocore.deepseek.DeepSeekTransitFragment;
+import com.termux.zerocore.deepseek.markdown.MarkDownAPI;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
-import com.termux.zerocore.dialog.BoomCommandDialog;
-import com.termux.zerocore.dialog.BoomZeroTermuxDialog;
 import com.termux.zerocore.dialog.CommonCommandsDialog;
 import com.termux.zerocore.dialog.DownLoadDialogBoom;
-import com.termux.zerocore.dialog.EditDialog;
 import com.termux.zerocore.dialog.LoadingDialog;
-import com.termux.zerocore.dialog.OnLineShDialog;
 import com.termux.zerocore.dialog.ProtocolDialog;
-import com.termux.zerocore.dialog.SYFunBoomDialog;
 import com.termux.zerocore.dialog.SwitchDialog;
-import com.termux.zerocore.dialog.VNCConnectionDialog;
-import com.termux.zerocore.dialog.adapter.ItemMenuAdapter;
 import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
-import com.termux.zerocore.settings.TimerActivity;
-import com.termux.zerocore.settings.ZTInstallActivity;
-import com.termux.zerocore.settings.ZeroTermuxX11Settings;
 import com.termux.zerocore.settings.ZtSettingsActivity;
 import com.termux.zerocore.config.ztcommand.ZTSocketService;
 import com.termux.zerocore.config.ztcommand.config.ZTKeyConstants;
 import com.termux.zerocore.url.FileUrl;
-import com.termux.zerocore.utermux_windows.qemu.activity.RunWindowActivity;
 import com.termux.zerocore.utils.FileHttpUtils;
 import com.termux.zerocore.utils.FileIOUtils;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SmsUtils;
-import com.termux.zerocore.utils.StartRunCommandUtils;
 import com.termux.zerocore.utils.UUUtils;
 import com.termux.zerocore.utils.VideoUtils;
 import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
-import com.termux.zerocore.view.xuehua.SnowView;
 import com.termux.zerocore.zero.engine.ZeroCoreManage;
 import com.zp.z_file.ui.ZFileListFragment;
-import com.zp.z_file.util.ZFileUUtils;
-import com.zp.z_file.zerotermux.CloseListener;
 import com.zp.z_file.zerotermux.ZTConfig;
 
 import androidx.annotation.NonNull;
@@ -178,7 +150,6 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -191,7 +162,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+
+import io.noties.markwon.AbstractMarkwonPlugin;
+import io.noties.markwon.Markwon;
 
 /**
  * A terminal emulator activity.
@@ -1235,9 +1208,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     // ZeroTermux add {@
     private MainMenuAdapter mMainMenuAdapter;
-    private NestedScrollView scrollView_main;
+    private ScrollView scrollView_main;
     private LinearLayout file_layout;
     private CardView main_card;
+    private CardView data_card;
+    private ImageView open_image_data;
+    private CardView data_info_card;
+    private TextView data_info_content;
     private CardView ip_card;
     private ImageView open_image;
     private CardView info_card;
@@ -1254,7 +1231,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public FrameLayout xue_fragment;
     public FireworkView firework_view;
     private View back_color;
-    private View layout_menu;
     private ImageView back_img;
     private VideoView back_video;
     private MainActivity mMainActivity;
@@ -1288,7 +1264,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         session_rl = findViewById(R.id.session_rl);
         telegram_group_tv = findViewById(R.id.telegram_group_tv);
         qq_group_tv = findViewById(R.id.qq_group_tv);
-        layout_menu = findViewById(R.id.layout_menu);
         version = findViewById(R.id.version);
         eg_tv = findViewById(R.id.eg_tv);
         key_bord = findViewById(R.id.key_bord);
@@ -1299,6 +1274,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         firework_view = findViewById(R.id.firework_view);
         ip_status = findViewById(R.id.ip_status);
         double_tishi = findViewById(R.id.double_tishi);
+        data_card = findViewById(R.id.data_card);
+        open_image_data = findViewById(R.id.open_image_data);
+        data_info_card = findViewById(R.id.data_info_card);
+        data_info_content = findViewById(R.id.data_info_content);
         back_color = mTermuxActivityRootView.getBack_color();
         back_img = mTermuxActivityRootView.getBack_img();
         back_video = mTermuxActivityRootView.getBack_video();
@@ -1336,9 +1315,32 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 open_image.setRotation(0);
             }
         });
+        initDataMsgInfo();
         setEgInstallStatus();
     }
 
+    // 读取数据包信息
+    public void initDataMsgInfo() {
+        String dataMessageFileString = FileIOUtils.INSTANCE.getDataMessageFileString();
+        if (TextUtils.isEmpty(dataMessageFileString)) {
+            LogUtils.e(TAG, "initDataMsgInfo is null.");
+            data_card.setVisibility(View.GONE);
+            data_info_card.setVisibility(View.GONE);
+            return;
+        }
+        data_card.setVisibility(View.VISIBLE);
+        data_card.setOnClickListener(v -> {
+            if (data_info_card.getVisibility() == View.GONE) {
+                data_info_card.setVisibility(View.VISIBLE);
+                open_image_data.setRotation(180);
+            } else {
+                data_info_card.setVisibility(View.GONE);
+                open_image_data.setRotation(0);
+            }
+        });
+        Markwon.Builder builder = Markwon.builder(this);
+        builder.usePlugin(MarkDownAPI.create(this)).build().setMarkdown(data_info_content, dataMessageFileString);
+    }
 
     private void setEgInstallStatus() {
         version.setText(UUtils.getString(R.string.版本) + " : " + UUtils2.INSTANCE.getVersionName(UUtils.getContext()));
@@ -2138,12 +2140,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mBeautifySettingDialog.setCancelable(true);
     }
 
-    public void videoBack() {
-        getDrawer().smoothClose();
-        openToolDialog(false, 1,
-            CommonCommandsDialog.CommonCommandsDialogConstant.VIDEO_KEY);
-    }
-
     // ZeroTermux add {@
     private static final String TAG = "TermuxActivity";
     private OTGManager mOTGManager;
@@ -2331,12 +2327,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         });
 
-        mTerminalView.setActionPointer2ClickListener(new TerminalView.ActionPointer2ClickListener() {
-            @Override
-            public void pointer2Click() {
-                openToolDialog(true, 0, -1);
-            }
-        });
+        mTerminalView.setActionPointer2ClickListener(() -> openToolDialog(true, 0, -1));
     }
 
     private void openToolDialog(boolean isShowToolDialog, int index, int findKey) {
@@ -2345,141 +2336,108 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 return;
             }
         }
-        final LoadingDialog[] loadingDialog = {null};
         CommonCommandsDialog mCommonCommandsDialog = new CommonCommandsDialog(TermuxActivity.this);
         mCommonCommandsDialog.show();
         mCommonCommandsDialog.setCancelable(true);
         mCommonCommandsDialog.setFindKey(findKey);
-        mCommonCommandsDialog.setCommonDialogListener(new ItemMenuAdapter.CommonDialogListener() {
-            @Override
-            public void video(@NonNull File file) {
-                VideoUtils.getInstance().setVideoView(back_video);
-                VideoUtils.getInstance().start(file);
-                back_video.setVisibility(View.VISIBLE);
-                back_img.setVisibility(View.GONE);
-                LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
-            }
-        });
-        mCommonCommandsDialog.setClearStyleListener(new ItemMenuAdapter.ClearStyleListener() {
-            @Override
-            public void clear() {
-                VideoUtils.getInstance().onDestroy();
-                back_video.setVisibility(View.GONE);
-                back_img.setVisibility(View.GONE);
-                back_color.setVisibility(View.GONE);
-                TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
-                ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
-                mTerminalView.invalidate();
-                if (mExtraKeysView != null) {
-                    mExtraKeysView.setColorButton();
-                    mExtraKeysView.invalidate();
-                }
-                if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
-                    mCommonCommandsDialog.dismiss();
-                }
-            }
-        });
-        mCommonCommandsDialog.setKeyViewListener(new ItemMenuAdapter.KeyViewListener() {
-            @Override
-            public void view(@NonNull View mView) {
-                if (mView == null) {
-                    LogUtils.d(TAG, "key View is null, return.");
-                    return;
-                }
-                if (key_bord.getChildCount() > 0) {
-                    key_bord.removeAllViews();
-                    getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
-                    mTerminalView.stopTextSelectionMode();
-
-                    KeyboardUtils.clearDisableSoftKeyboardFlags(TermuxActivity.this);
-                    KeyboardUtils.toggleSoftKeyboard(TermuxActivity.this);
-                } else {
-                    try {
-                        key_bord.addView(mView);
-                        getTerminalToolbarViewPager().setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        key_bord.removeAllViews();
-                    }
-
-                    KeyboardUtils.disableSoftKeyboard(TermuxActivity.this, mTerminalView);
-                }
-                if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
-                    mCommonCommandsDialog.dismiss();
-                }
-
-            }
-        });
-        mCommonCommandsDialog.setVShellDialogListener(new ItemMenuAdapter.VShellDialogListener() {
-            @Override
-            public void showDialog(boolean b) {
-                if (b) {
-                    loadingDialog[0] = new LoadingDialog(TermuxActivity.this);
-                    loadingDialog[0].show();
-                } else {
-                    if (loadingDialog[0] != null && loadingDialog[0].isShowing()) {
-                        loadingDialog[0].dismiss();
-                    }
-                }
-            }
-
-            @Override
-            public void vShell(@NonNull ArrayList<String> environment, @NonNull ArrayList<String> processArgs) {
-                if (environment == null || processArgs == null) {
-                    return;
-                }
-                mTerminalView.sendTextToTerminal(UUtils.arrayListToStringShell(processArgs) + "\n");
-                if (mCommonCommandsDialog != null && mCommonCommandsDialog.isShowing()) {
-                    mCommonCommandsDialog.dismiss();
-                }
-
-            }
-        });
-        if (index > 0) {
-            mCommonCommandsDialog.selectIndex(index);
-        }
     }
     // ZeroTermux add {@
     private void regMainViewKeyDown() {
         if (mMainActivity != null) {
-            mMainActivity.setMainActivityOnKeyDown(new MainActivity.MainActivityOnKeyDown() {
-                @Override
-                public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-                    Log.i(TAG, "handleKey keyCode termux: " + keyCode);
-                    if (UserSetManage.Companion.get()
-                        .getZTUserBean().isResetVolume()) {
-                        return false;
-                    }
-                    Log.i(TAG, "handleKey keyCode getDrawer().isOpened(): " + getDrawer().isOpened());
-                    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                        if (getDrawer().isOpened()) {
-                            getDrawer().smoothClose();
-                        } else {
-                            getDrawer().smoothRightOpen();
-                        }
-                    } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                        if (getDrawer().isOpened()) {
-                            getDrawer().smoothClose();
-                        } else {
-                            getDrawer().smoothLeftOpen();
-                        }
-                    } else if (keyCode == KeyEvent.FLAG_KEEP_TOUCH_MODE) {
-                        finish();
-                    }
-                    return true;
+            mMainActivity.setMainActivityOnKeyDown((keyCode, keyEvent) -> {
+                Log.i(TAG, "handleKey keyCode termux: " + keyCode);
+                if (UserSetManage.Companion.get()
+                    .getZTUserBean().isResetVolume()) {
+                    return false;
                 }
+                Log.i(TAG, "handleKey keyCode getDrawer().isOpened(): " + getDrawer().isOpened());
+                if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                    if (getDrawer().isOpened()) {
+                        getDrawer().smoothClose();
+                    } else {
+                        getDrawer().smoothRightOpen();
+                    }
+                } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    if (getDrawer().isOpened()) {
+                        getDrawer().smoothClose();
+                    } else {
+                        getDrawer().smoothLeftOpen();
+                    }
+                } else if (keyCode == KeyEvent.FLAG_KEEP_TOUCH_MODE) {
+                    finish();
+                }
+                return true;
             });
             if (mInternalPassage) {
-                mMainActivity.setSettingsClick(new MainActivity.SettingsClick() {
-                    @Override
-                    public void onClick() {
-                        startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class));
-                    }
-                });
+                mMainActivity.setSettingsClick(() -> startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class)));
             }
         }
     }
     // @}
+    private LoadingDialog mLoadingDialog;
+    public void showDialog(boolean b) {
+        if (b) {
+            mLoadingDialog = new LoadingDialog(TermuxActivity.this);
+            mLoadingDialog.show();
+        } else {
+            if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+                mLoadingDialog.dismiss();
+            }
+        }
+    }
+
+    public void vShell(@NonNull ArrayList<String> environment, @NonNull ArrayList<String> processArgs) {
+        if (environment == null || processArgs == null) {
+            return;
+        }
+        mTerminalView.sendTextToTerminal(UUtils.arrayListToStringShell(processArgs) + "\n");
+    }
+
+    public void setKeyBordView(View mView) {
+        if (mView == null) {
+            LogUtils.d(TAG, "key View is null, return.");
+            return;
+        }
+        if (key_bord.getChildCount() > 0) {
+            key_bord.removeAllViews();
+            getTerminalToolbarViewPager().setVisibility(View.VISIBLE);
+            mTerminalView.stopTextSelectionMode();
+
+            KeyboardUtils.clearDisableSoftKeyboardFlags(TermuxActivity.this);
+            KeyboardUtils.toggleSoftKeyboard(TermuxActivity.this);
+        } else {
+            try {
+                key_bord.addView(mView);
+                getTerminalToolbarViewPager().setVisibility(View.GONE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                key_bord.removeAllViews();
+            }
+
+            KeyboardUtils.disableSoftKeyboard(TermuxActivity.this, mTerminalView);
+        }
+    }
+    public void setVideoBack(File file) {
+        VideoUtils.getInstance().setVideoView(back_video);
+        VideoUtils.getInstance().start(file);
+        back_video.setVisibility(View.VISIBLE);
+        back_img.setVisibility(View.GONE);
+        LogUtils.d(TAG, "BackVideo set file is :" + file.getAbsolutePath());
+    }
+
+    public void clear() {
+        VideoUtils.getInstance().onDestroy();
+        back_video.setVisibility(View.GONE);
+        back_img.setVisibility(View.GONE);
+        back_color.setVisibility(View.GONE);
+        TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
+        ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
+        mTerminalView.invalidate();
+        if (mExtraKeysView != null) {
+            mExtraKeysView.setColorButton();
+            mExtraKeysView.invalidate();
+        }
+    }
 
     public void initColorConfig() {
         Log.i(TAG, "initStatuexxxxxxxx initColorConfig....: ");
@@ -2603,6 +2561,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mInternalPassage && mMainActivity != null) {
             mMainActivity.onDestroy(this);
         }
+        MarkDownAPI.create(this).release();
     }
 
     @Override

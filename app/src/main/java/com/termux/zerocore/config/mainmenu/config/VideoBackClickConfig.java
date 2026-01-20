@@ -27,7 +27,7 @@ public class VideoBackClickConfig extends BaseMenuClickConfig {
 
     @Override
     public void onClick(View view, Context context) {
-        TermuxActivity termuxActivity = (TermuxActivity) context;
-        termuxActivity.videoBack();
+        /*TermuxActivity termuxActivity = (TermuxActivity) context;
+        termuxActivity.videoBack();*/
     }
 }

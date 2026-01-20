@@ -261,6 +261,7 @@ public class ChatFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mDeepSeekTransitFragment = null;
+        adapter.release();
     }
 
     // 获取终端助手提示语

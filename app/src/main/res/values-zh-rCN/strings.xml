@@ -714,7 +714,7 @@
     <string name="keyboard_select_name">内置键盘</string>
     <string name="image_size_error">文件过大</string>
 
-    <string name="zero_eg_not_install">没有安装零引擎，请在下载站下载引擎 </string>
+    <string name="zero_eg_not_install">未检测到引擎,即将跳转到 github 页面.. </string>
 
     <string name="install_environment">安装所需环境?</string>
 
@@ -797,7 +797,7 @@
     <string name="action_share_selected_text">分享选中文本</string>
     <string name="data_message">数据包简介:</string>
     <string name="create_data_message">创建数据包信息</string>
-    <string name="data_message_hint">创建你的数据包信息，对数据包使用进行说明，设置后数据包相关信息会显示在主菜单的最右侧</string>
+    <string name="data_message_hint">创建你的数据包信息，对数据包使用进行说明，设置后数据包相关信息会显示在左侧栏, 可使用 markdown 语法</string>
     <string name="data_message_empty">数据包简介不能为空</string>
     <string name="zero_uninstall">卸载</string>
     <string name="install_module">安装模块</string>
@@ -871,7 +871,7 @@
     <string name="attention_closing_ftp">正在关闭FTP服务&#8230;</string>
     <string name="word_stop">停止</string>
     <string name="ftp_title_no">ZeroTermux:FTP</string>
-    <string name="docker_check">Docker检查\n(ROOT)</string>
+    <string name="docker_check">Docker检查</string>
     <string name="termux_copy_ll">复制文件到~</string>
     <string name="termux_moudle_ll">安装模块包</string>
     <string name="termux_targz_ll">安装恢复包</string>
@@ -891,7 +891,7 @@
 
     <string name="label_server_title">远程连接(BATE)</string>
     <string name="ip_connect">0.0.0.0</string>
-    <string name="remote_connection">ADB远程连接(bate)</string>
+    <string name="remote_connection">ADB远程连接</string>
     <string name="press_again">再按一次退出</string>
     <string name="adb_title_msg">正在连接...请勿多次点击\'启动\'！</string>
     <string name="copy_uri_error">URI复制错误，请等待开发者修复...</string>

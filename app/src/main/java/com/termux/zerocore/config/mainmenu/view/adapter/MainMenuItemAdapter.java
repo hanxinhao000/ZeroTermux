@@ -19,10 +19,12 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
     private static final String TAG = MainMenuItemAdapter.class.getSimpleName();
     private Context mContext;
     private ArrayList<MainMenuClickConfig> mMainMenuClickConfigs;
+
     public MainMenuItemAdapter(Context context, ArrayList<MainMenuClickConfig> mainMenuClickConfigs) {
         mContext = context;
         mMainMenuClickConfigs = mainMenuClickConfigs;
     }
+
     @NonNull
     @Override
     public MainMenuItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,8 +37,8 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
         holder.mCodeImage.setImageDrawable(mainMenuClickConfig.getIcon(mContext));
         holder.mCodeTitle.setText(mainMenuClickConfig.getString(mContext));
         holder.mItemlayout.setOnClickListener(view -> {
-            LogUtils.e(TAG, "onBindViewHolder click ");
-            mainMenuClickConfig.onClick(view, mContext);
+                LogUtils.e(TAG, "onBindViewHolder click ");
+                mainMenuClickConfig.onClick(view, mContext);
             }
         );
         holder.itemView.setOnLongClickListener(view -> {

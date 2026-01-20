@@ -41,13 +41,13 @@ public class AVncConfig extends BaseOkJsonConfig {
         String username = split[2];
         String password = split[3];
         ServerProfile serverProfile = new ServerProfile();
-        serverProfile.setHost(ip);
-        serverProfile.setPort(Integer.parseInt(port));
+        serverProfile.host = ip;
+        serverProfile.port = Integer.parseInt(port);
         if (!"none".equals(username)) {
-            serverProfile.setUsername(username);
+            serverProfile.username = username;
         }
         if (!"none".equals(password)) {
-            serverProfile.setPassword(password);
+            serverProfile.password = password;
         }
         return serverProfile;
     }

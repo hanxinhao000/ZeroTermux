@@ -55,60 +55,7 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
 
     override fun onClick(v: View?) {
         when(v!!.id){
-
-
-            R.id.adb_root->{
-
-                val rootBeer = RootBeer(context)
-                if (rootBeer.isRooted) {
-                    //有ROOT
-                    runRootAdbHttp()
-                } else {
-
-                    val switchDialog = switchDialogShow(UUtils.getString(R.string.警告),UUtils.getString(R.string.没有找到本机的ROOT权限))
-                    switchDialog.show()
-                    switchDialog.setCancelable(false)
-                    switchDialog.cancel!!.setOnClickListener { switchDialog.dismiss() }
-                    switchDialog.ok!!.setOnClickListener {
-                        switchDialog.dismiss()
-                        runRootAdbHttp()
-
-                    }
-
-                    //没有ROOT
-                }
-
-
-            }
-
-            R.id.adb_root_close->{
-
-
-                val rootBeer = RootBeer(context)
-                if (rootBeer.isRooted) {
-                    //有ROOT
-                    runRootAdbHttpClose()
-                } else {
-
-                    val switchDialog = switchDialogShow(UUtils.getString(R.string.警告),UUtils.getString(R.string.没有找到本机的ROOT权限))
-                    switchDialog.show()
-                    switchDialog.setCancelable(false)
-                    switchDialog.cancel!!.setOnClickListener { switchDialog.dismiss() }
-                    switchDialog.ok!!.setOnClickListener {
-                        switchDialog.dismiss()
-                        runRootAdbHttpClose()
-
-                    }
-
-                    //没有ROOT
-                }
-
-
-            }
-
             R.id.alpine->{
-
-
                 try {
                     val intent = Intent()
                     intent.action = "com.alpine.action.ENTER"
@@ -122,12 +69,9 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
                     activity.startHttp1(HTTPIP.IP)
                 }
 
-
-
             }
 
             R.id.start_new_old->{
-
                 val stringOther = SaveData.getStringOther("new_old")
                 if (stringOther == null || stringOther.isEmpty() || stringOther == "def") {
                     //旧启动器
@@ -139,109 +83,9 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
                     text_new_old?.text = UUtils.getString(R.string.启动器新)
                 }
                 UUtils.showMsg(UUtils.getString(R.string.系统切换成功))
-
-
             }
-
-
-
         }
     }
 
-    //执行关闭ROOT ADB
-    private fun runRootAdbHttpClose(){
 
-
-        val run = ExeCommand().run("setprop service.adb.tcp.port -1", 6000,true)
-
-        var timeString = ""
-
-        UUtils.runOnThread {
-            while (run.isRunning){
-                timeString+="\n${run.result}"
-            }
-        }
-        val run1 = ExeCommand().run("stop adbd", 6000,true)
-
-        UUtils.runOnThread {
-            while (run1.isRunning){
-                timeString+="\n${run.result}"
-            }
-        }
-        val run2 = ExeCommand().run("start adbd", 6000,true)
-
-        UUtils.runOnThread {
-            while (run2.isRunning){
-                timeString+="\n${run.result}"
-            }
-        }
-
-
-        val switchDialog = switchDialogShow(UUtils.getString(R.string.警告),"${UUtils.getString(R.string.关闭成功)}\n")
-        switchDialog.show()
-        switchDialog.setCancelable(false)
-        switchDialog.ok!!.setOnClickListener {
-            switchDialog.dismiss()
-        }
-        switchDialog.cancel!!.setOnClickListener {
-
-
-            switchDialog.dismiss()
-
-        }
-
-
-    }
-
-    //执行ROOT ADB
-    private fun runRootAdbHttp(){
-
-
-        val run = ExeCommand().run("setprop service.adb.tcp.port 5555", 6000,true)
-
-        var timeString = ""
-
-        UUtils.runOnThread {
-            while (run.isRunning){
-                timeString+="\n${run.result}"
-            }
-        }
-        val run1 = ExeCommand().run("stop adbd", 6000,true)
-
-        UUtils.runOnThread {
-            while (run1.isRunning){
-                timeString+="\n${run.result}"
-            }
-        }
-        val run2 = ExeCommand().run("start adbd", 6000,true)
-
-        UUtils.runOnThread {
-            while (run2.isRunning){
-                timeString+="\n${run.result}"
-            }
-        }
-
-
-        val switchDialog = switchDialogShow(UUtils.getString(R.string.警告),"${UUtils.getString(R.string.运行完成)}\n${UUtils.getHostIP()}:5555")
-        switchDialog.show()
-        switchDialog.setCancelable(false)
-        switchDialog.ok!!.setOnClickListener {
-            switchDialog.dismiss()
-        }
-
-        switchDialog.cancel!!.setOnClickListener {
-            switchDialog.dismiss()
-        }
-    }
-
-    private fun switchDialogShow(title: String, msg: String): SwitchDialog {
-        val switchDialog = SwitchDialog(mContext)
-        switchDialog.title!!.text = title
-        switchDialog.msg!!.text = msg
-        switchDialog.other!!.visibility = View.GONE
-        switchDialog.ok!!.text = UUtils.getString(R.string.确定)
-        switchDialog.cancel!!.text = UUtils.getString(R.string.取消)
-        switchDialog.show()
-        return switchDialog
-    }
 }

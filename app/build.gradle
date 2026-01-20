@@ -113,9 +113,6 @@ android {
         implementation 'com.google.zxing:core:3.5.3'
         // deepseek
         implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-        implementation "io.noties.markwon:core:4.6.2"
-        implementation "io.noties.markwon:simple-ext:4.6.2"
-        implementation "io.noties.markwon:linkify:4.6.2"
 
         implementation 'com.mallotec.reb:plugin-locale:1.0.12'
         // @}
@@ -178,7 +175,8 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        viewBinding true
+        dataBinding true
+        buildConfig true
     }
     // 添加 packagingOptions 配置
     packagingOptions {
@@ -306,6 +304,10 @@ dependencies {
     implementation files('libs/slf4j-api-1.7.21.jar')
     implementation files('libs/slf4j-log4j12-1.7.21.jar')
     implementation files('libs/commons-codec-1.10-rep.jar')
+    def room_version = "2.6.1"  // 使用稳定的版本
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"  // Kotlin 扩展
+    implementation "androidx.biometric:biometric-ktx:1.2.0-alpha05"
     // @}
 }
 

@@ -1,6 +1,6 @@
 buildscript {
     // ZeroTermux add {@
-    ext.kotlin_version = '1.9.23'
+    ext.kotlin_version = '2.2.0'
     // @}
     repositories {
         mavenCentral()

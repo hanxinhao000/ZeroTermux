@@ -1,5 +1,7 @@
 package com.termux.zerocore.config.mainmenu.config;
 
+import static com.termux.zerocore.config.mainmenu.MainMenuConfig.CODE_COMMON_FUNCTIONS;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,6 +32,11 @@ public abstract class BaseMenuClickConfig implements MainMenuClickConfig {
     public void release() {
         LogUtils.e(TAG, "release.");
         mContext = null;
+    }
+
+    @Override
+    public int getType() {
+        return CODE_COMMON_FUNCTIONS;
     }
 
     @Override
