@@ -1227,4 +1227,16 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="zt_ssh_improt_fail">Import failed: alias missing</string>
     <string name="zt_ssh_improt_fail_error">Import failed</string>
     <string name="zt_ssh_improt_success">Key import successful\nSaved as:</string>
+
+    <string name="zt_root_fun">ROOT Function</string>
+    <string name="zt_engine">Requires Plugin/Engine (Please Restart APP After Installation)</string>
+    <string name="zt_data_info_title">Information</string>
+    <string name="zt_data_info_content">
+            # Information written here \n
+            ## Will be backed up to the integrated package \n
+            ### and will be directly \n
+            #### displayed in the left sidebar upon next restore \n
+            \nShown in the left sidebar\n\n
+             [linktext](https://www.baidu.com)
+</string>
 </resources>

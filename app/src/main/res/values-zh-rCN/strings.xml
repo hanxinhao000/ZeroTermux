@@ -1240,6 +1240,18 @@
     <string name="zt_ssh_improt_fail">导入失败：别名丢失</string>
     <string name="zt_ssh_improt_fail_error">导入失败</string>
     <string name="zt_ssh_improt_success">"密钥导入成功\n已保存为:"</string>
+
+    <string name="zt_root_fun">ROOT功能</string>
+    <string name="zt_engine">需要插件/引擎(安装完成请重启APP)</string>
+    <string name="zt_data_info_title">信息</string>
+    <string name="zt_data_info_content">
+        # 此处写入的信息 \n
+        ## 会备份到整合包 \n
+        ### 下次恢复的时候 \n
+        #### 会直接 \n
+        ```\n显示到左侧栏\n```\n
+        [链接文字](https://www.baidu.com)
+    </string>
 </resources>
 
 

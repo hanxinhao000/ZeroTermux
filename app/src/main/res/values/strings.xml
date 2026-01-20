@@ -1193,13 +1193,11 @@
     <string name="zt_engine">需要插件/引擎(安装完成请重启APP)</string>
     <string name="zt_data_info_title">信息</string>
     <string name="zt_data_info_content">
-        # 一级标题 \n
-        ## 二级标题 \n
-        ### 三级标题 \n
-        #### 四级标题 \n
-        ```\n这里是代码引用\n```\n
-        \n> 引用文本\n\n
-
+        # 此处写入的信息 \n
+        ## 会备份到整合包 \n
+        ### 下次恢复的时候 \n
+        #### 会直接 \n
+        ```\n显示到左侧栏\n```\n
         [链接文字](https://www.baidu.com)
     </string>
 
