@@ -113,6 +113,7 @@ import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.config.mainmenu.MainMenuConfig;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
+import com.termux.zerocore.config.other.ZTGitHubVersion;
 import com.termux.zerocore.deepseek.DeepSeekTransitFragment;
 import com.termux.zerocore.deepseek.markdown.MarkDownAPI;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
@@ -1228,6 +1229,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView qq_group_tv;
     private TextView telegram_group_tv;
     private TextView double_tishi;
+    private TextView zt_new;
     public FrameLayout xue_fragment;
     public FireworkView firework_view;
     private View back_color;
@@ -1275,6 +1277,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         ip_status = findViewById(R.id.ip_status);
         double_tishi = findViewById(R.id.double_tishi);
         data_card = findViewById(R.id.data_card);
+        zt_new = findViewById(R.id.zt_new);
         open_image_data = findViewById(R.id.open_image_data);
         data_info_card = findViewById(R.id.data_info_card);
         data_info_content = findViewById(R.id.data_info_content);
@@ -1283,8 +1286,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         back_video = mTermuxActivityRootView.getBack_video();
         mMainActivity = mTermuxActivityRootView.getMainActivity();
         qq_group_tv.setOnClickListener(this);
+        zt_new.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux/releases"));//Url 就是你要打开的网址
+            intent.setAction(Intent.ACTION_VIEW);
+            startActivity(intent); //启动浏览器
+        });
         telegram_group_tv.setOnClickListener(this);
-
+        ZTGitHubVersion.create().initZtVersionVisible(zt_new);
         try {
             double_tishi.setText(double_tishi.getText() + "\n" + TermuxInstaller.determineTermuxArchName().toUpperCase());
 
