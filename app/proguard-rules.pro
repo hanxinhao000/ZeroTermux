@@ -75,3 +75,67 @@
 # 保护 TypeToken 的匿名子类，防止 R8 移除泛型信息导致运行时崩溃
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class * extends com.google.gson.reflect.TypeToken
+
+# EmmyLua Language Server
+-keep class com.intellij.** { *; }
+-keep class com.tang.** { *; }
+-dontwarn java.beans.Introspector
+
+-dontobfuscate
+-keepattributes SourceFile,LineNumberTable
+
+# These are mainly needed in full R8 mode, but Connectbot uses these by default
+# so we keep these to avoid any breakage.
+-keepattributes InnerClasses
+-keep public class com.trilead.ssh2.compression.**
+-keep public class com.trilead.ssh2.crypto.**
+
+
+# Needed to keep R8 happy about Tink library (used by sshlib)
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn javax.annotation.Nullable
+
+# Keep Kotlin Serialization
+-keep class kotlinx.serialization.** { *; }
+-dontwarn kotlinx.serialization.**
+
+# Keep SSH classes
+-keep class com.trilead.ssh2.** { *; }
+-dontwarn com.trilead.ssh2.**
+
+# Keep Tink crypto
+-keep class com.google.crypto.tink.** { *; }
+-dontwarn com.google.crypto.tink.**
+
+-keep class com.gaurav.avnc.model.** { *; }
+-dontwarn com.gaurav.avnc.model.**
+
+-keep class com.gaurav.avnc.ui.vnc.** { *; }
+-dontwarn com.gaurav.avnc.ui.vnc.**
+
+# Keep BouncyCastle
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
+
+# Keep Conscrypt
+-keep class org.conscrypt.** { *; }
+-dontwarn org.conscrypt.**
+
+# Keep OpenJSSE
+-keep class org.openjsse.** { *; }
+-dontwarn org.openjsse.**
+
+# Keep OkHttp platform implementations
+-keep class okhttp3.internal.platform.** { *; }
+-dontwarn okhttp3.internal.platform.**
+
+# Keep serializers
+-keepclassmembers class * implements kotlinx.serialization.KSerializer {
+    public <methods>;
+}
+
+# Keep Parcelable classes
+-keep class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
