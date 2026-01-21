@@ -14,6 +14,9 @@ import com.blockchain.ub.utils.httputils.HttpResponseListenerBase;
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.Callback;
 import com.lzy.okgo.callback.StringCallback;
@@ -47,8 +50,10 @@ public class ZTGitHubVersion {
                         if (response.code() == 200) {
                             String body = response.body();
                             LogUtils.i(TAG, "onSuccess body: " + body);
-                            VersionBean versionBean = new Gson().fromJson(body, VersionBean.class);
-                            String gitName = versionBean.getName();
+                            JsonElement rootElement = JsonParser.parseString(body);
+                            JsonObject rootObject = rootElement.getAsJsonObject();
+                            // 获取顶层的name字段
+                            String gitName = rootObject.get("name").getAsString();
                             String locationName = "ZeroTermux-" + BuildConfig.VERSION_NAME;
                             LogUtils.i(TAG, "onSuccess gitName: " + gitName + " ,locationName: " + locationName);
                             if (!TextUtils.isEmpty(gitName) && gitName.trim().startsWith("ZeroTermux") &&  !TextUtils.equals(gitName, locationName)) {
