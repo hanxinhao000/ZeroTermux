@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:background="@color/color_161823"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".zerocore.activity.EditTextActivity">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_above="@+id/button_ll"
-        android:background="@drawable/shape_line_2e84e6"
         android:layout_height="match_parent">
         <EditText
             android:id="@+id/edit_text"
@@ -33,15 +32,23 @@
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="3dp"
+            android:visibility="gone"
             android:layout_marginBottom="3dp"
             android:padding="5dp"
             app:textSize="12sp" />
+
+        <io.github.rosemoe.sora.widget.CodeEditor
+            android:id="@+id/code_editor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:text="loading..."
+            app:textSize="13sp" />
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="2dp"
         android:id="@+id/button_ll"
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
@@ -57,7 +64,7 @@
             android:layout_height="35dp"
             android:background="@drawable/shape_r_3dp_553d_all"
             android:gravity="center"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:text="按钮"
             android:textColor="@color/color_ffffff"
             android:layout_marginRight="5dp"
@@ -69,9 +76,9 @@
             android:layout_height="35dp"
             android:background="@drawable/shape_r_3dp_553d_all"
             android:gravity="center"
-            android:id="@+id/ok"
+            android:id="@+id/cancel"
+            android:text="@string/edit_cancel"
             android:layout_marginRight="5dp"
-            android:text="@string/edit_save"
             android:textColor="@color/color_ffffff"
             android:textSize="14sp" />
 
@@ -81,11 +88,10 @@
             android:layout_height="35dp"
             android:background="@drawable/shape_r_3dp_553d_all"
             android:gravity="center"
-            android:id="@+id/cancel"
-            android:text="@string/edit_cancel"
+            android:id="@+id/ok"
+            android:text="@string/edit_save"
             android:textColor="@color/color_ffffff"
             android:textSize="14sp" />
-
 
     </LinearLayout>
 

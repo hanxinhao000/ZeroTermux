@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import io.github.rosemoe.sora.widget.CodeEditor
 import kotlinx.coroutines.*
 import me.testica.codeeditor.Editor
 import me.testica.codeeditor.SyntaxHighlightRule
@@ -26,6 +27,7 @@ class EditTextActivity : AppCompatActivity() {
     private var mSaveText: TextView? = null
     private var mCancelText: TextView? = null
     private var editor: Editor? = null
+    private var code_editor: CodeEditor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,17 +35,13 @@ class EditTextActivity : AppCompatActivity() {
         mEditText = findViewById(R.id.edit_text)
         mCancelText = findViewById(R.id.cancel)
         editor = findViewById(R.id.editor)
+        code_editor = findViewById(R.id.code_editor)
         mSaveText = findViewById(R.id.ok)
         val stringExtra = intent.getStringExtra("edit_path")
         if (stringExtra == null || stringExtra.isEmpty()) {
             finish()
         }
         val file = File(stringExtra)
-        if (file.length() > (20 * 1024)) {
-            UUtils.showMsg("文件太大!\n[file size too big]")
-            finish()
-            return
-        }
         if (!file.exists()) {
             finish()
         }
@@ -74,9 +72,10 @@ class EditTextActivity : AppCompatActivity() {
         MainScope().launch(Dispatchers.IO) {
             delay(300)
             withContext(Dispatchers.Main) {
-                val mtypeFace: Typeface = Typeface.createFromAsset(assets, "font/font_termux.ttf")
+                /*val mtypeFace: Typeface = Typeface.createFromAsset(assets, "font/font_termux.ttf")
                 editor!!.setTypeface(mtypeFace)
-                editor!!.setText(stringBuilder.toString())
+                editor!!.setText(stringBuilder.toString())*/
+                code_editor?.setText(stringBuilder.toString())
             }
         }
 
@@ -84,13 +83,13 @@ class EditTextActivity : AppCompatActivity() {
             finish()
         }
         mSaveText?.setOnClickListener {
-            val toString = editor!!.getEditText().text?.toString()
+            val toString = code_editor!!.text.toString()
             if (toString == null || toString.isEmpty()) {
                UUtils.showMsg( UUtils.getString(R.string.命令不能为空))
                 return@setOnClickListener
             }
             if (UUtils.setFileString(file, toString)) {
-                UUtils.showMsg( UUtils.getString(R.string.save_ok_))
+                UUtils.showMsg( UUtils.getString(R.string.保存成功))
                 finish()
             } else {
                 UUtils.showMsg( UUtils.getString(R.string.save_error_))

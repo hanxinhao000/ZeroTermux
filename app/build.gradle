@@ -288,6 +288,9 @@ dependencies {
     testImplementation "org.robolectric:robolectric:4.10"
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
     // ZeroTermux add {@
+    // 语法编辑器
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation 'io.github.rosemoe:editor:0.24.4'
 
     implementation 'androidx.cardview:cardview:1.0.0'
 //    implementation project(path: ':xh_lib')
