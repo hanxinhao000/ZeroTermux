@@ -1,321 +1,297 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="#2b2b2b"
-    android:orientation="vertical"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
 
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_marginTop="10dp"
         android:id="@+id/title_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
-        app:cardElevation="0dp"
+        android:layout_weight="1"
         app:cardBackgroundColor="@color/color_553E3E3E"
         app:cardCornerRadius="5dp"
-        android:layout_height="wrap_content">
+        app:cardElevation="0dp">
 
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical"
             android:gravity="center"
-            android:layout_height="wrap_content">
-
-
+            android:orientation="vertical">
 
 
             <EditText
-                android:layout_width="match_parent"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:background="@null"
-                android:textColor="@color/color_48baf3"
-
                 android:id="@+id/name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_above="@+id/boom_rl"
+                android:background="@null"
+
+                android:gravity="top|left"
                 android:hint="@string/请输入命令名称"
-                android:textColorHint="@color/color_BABABA"
+                android:inputType="text"
                 android:lineSpacingExtra="2dp"
                 android:lineSpacingMultiplier="1.2"
                 android:padding="10dp"
-                android:inputType="text"
-                android:layout_above="@+id/boom_rl"
-                android:gravity="top|left"
-                android:layout_height="40dp"/>
+                android:textColor="@color/color_48baf3"
+                android:textColorHint="@color/color_BABABA"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
 
-
     </androidx.cardview.widget.CardView>
-
 
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
-        app:cardElevation="0dp"
+        android:layout_weight="1"
         app:cardBackgroundColor="@color/color_553E3E3E"
         app:cardCornerRadius="5dp"
-        android:layout_height="wrap_content">
+        app:cardElevation="0dp">
 
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-
-
+            android:orientation="vertical">
 
 
             <EditText
-                android:layout_width="match_parent"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:background="@null"
-                android:textColor="@color/color_48baf3"
                 android:id="@+id/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="290dp"
+                android:layout_marginBottom="10dp"
+                android:background="@null"
+                android:gravity="left|top"
                 android:hint="@string/请输入您要添加的命令"
-                android:textColorHint="@color/color_BABABA"
+                android:inputType="textMultiLine"
                 android:lineSpacingExtra="2dp"
                 android:lineSpacingMultiplier="1.2"
-                android:padding="10dp"
-                android:inputType="textMultiLine"
-                android:minLines="1"
                 android:maxLines="1000"
-                android:gravity="left|top"
-                android:layout_marginBottom="10dp"
-                android:layout_height="290dp"/>
+                android:minLines="1"
+                android:padding="10dp"
+                android:textColor="@color/color_48baf3"
+                android:textColorHint="@color/color_BABABA"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
 
+    <LinearLayout
+        android:id="@+id/boom_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:visibility="visible">
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:id="@+id/boom_rl"
-      android:layout_marginBottom="10dp"
-      android:visibility="visible"
-      android:layout_height="wrap_content">
-
-      <LinearLayout
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:paddingTop="8dp"
-          android:paddingBottom="8dp"
-
-          android:orientation="vertical"
-          android:visibility="visible"
-          android:layout_height="wrap_content">
-
-
-          <RelativeLayout
-              android:layout_width="wrap_content"
-              android:visibility="invisible"
-              android:layout_height="wrap_content">
-
-              <androidx.cardview.widget.CardView
-                  android:layout_width="match_parent"
-                  android:layout_weight="1"
-                  android:layout_marginTop="10dp"
-                  android:layout_marginLeft="5dp"
-
-                  android:layout_marginRight="5dp"
-                  app:cardElevation="0dp"
-
-                  app:cardBackgroundColor="@color/color_553E3E3E"
-                  app:cardCornerRadius="5dp"
-                  android:layout_height="38dp">
+        <LinearLayout
+            android:id="@+id/def_commit_ll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="invisible">
 
 
-          <LinearLayout
-              android:layout_width="wrap_content"
-              android:orientation="horizontal"
-              android:gravity="center"
-              android:layout_marginLeft="10dp"
-              android:layout_marginBottom="8dp"
-              android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-              <TextView
-                  android:layout_width="match_parent"
-                  android:text="@string/自动回车"
-                  android:textColor="#fff"
-                  android:gravity="center"
-                  android:textSize="12sp"
-                  android:layout_height="wrap_content"/>
-              <Switch
-                  android:layout_width="wrap_content"
-                  android:paddingTop="8dp"
-                  android:checked="true"
-                  android:paddingBottom="8dp"
-                  android:layout_height="wrap_content"/>
-          </LinearLayout>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/color_553E3E3E"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="0dp">
 
-              </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/def_commit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text="@string/zt_command_def"
+                        android:textColor="#fff"
+                        android:textSize="16sp" />
 
-
-              <TextView
-                  android:layout_width="match_parent"
-                  android:text="@string/保存当前配置"
-                  android:textColor="#fff"
-                  android:visibility="gone"
-
-                  android:gravity="center"
-                  android:textSize="16sp"
-                  android:layout_height="wrap_content"/>
-
-          </RelativeLayout>
+                </androidx.cardview.widget.CardView>
 
 
-      </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/保存当前配置"
+                    android:textColor="#fff"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
 
+        </LinearLayout>
 
-      <LinearLayout
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:paddingTop="8dp"
-          android:paddingBottom="8dp"
-          android:id="@+id/commit_ll"
-          android:orientation="vertical"
-          android:visibility="visible"
-          android:layout_height="wrap_content">
-
-
-          <RelativeLayout
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
-
-              <androidx.cardview.widget.CardView
-                  android:layout_width="match_parent"
-                  android:layout_weight="1"
-                  android:layout_marginTop="10dp"
-                  android:layout_marginLeft="5dp"
-                  android:layout_marginRight="5dp"
-                  app:cardElevation="0dp"
-                  app:cardBackgroundColor="@color/color_553E3E3E"
-                  app:cardCornerRadius="5dp"
-                  android:layout_height="wrap_content">
-
-                  <TextView
-                      android:layout_width="match_parent"
-                      android:text="@string/取消"
-                      android:textColor="#fff"
-                      android:layout_marginTop="8dp"
-                      android:layout_marginBottom="8dp"
-                      android:id="@+id/commit"
-                      android:gravity="center"
-                      android:textSize="16sp"
-                      android:layout_height="wrap_content"/>
-
-              </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:id="@+id/commit_ll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="visible">
 
 
-              <TextView
-                  android:layout_width="match_parent"
-                  android:text="@string/保存当前配置"
-                  android:textColor="#fff"
-                  android:visibility="gone"
-                  android:id="@+id/commit_file"
-                  android:gravity="center"
-                  android:textSize="16sp"
-                  android:layout_height="wrap_content"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-          </RelativeLayout>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/color_553E3E3E"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="0dp">
 
+                    <TextView
+                        android:id="@+id/commit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text="@string/取消"
+                        android:textColor="#fff"
+                        android:textSize="16sp" />
 
-      </LinearLayout>
-
-      <LinearLayout
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:paddingTop="8dp"
-          android:paddingBottom="8dp"
-          android:orientation="vertical"
-          android:layout_height="wrap_content">
-
-          <androidx.cardview.widget.CardView
-              android:layout_width="match_parent"
-              android:layout_weight="1"
-              android:layout_marginTop="10dp"
-              android:layout_marginLeft="5dp"
-              android:layout_marginRight="5dp"
-              app:cardElevation="0dp"
-              app:cardBackgroundColor="@color/color_553E3E3E"
-              app:cardCornerRadius="5dp"
-              android:layout_height="wrap_content">
-              <TextView
-                  android:layout_width="match_parent"
-                  android:text="@string/好的"
-                  android:textColor="#fff"
-                  android:gravity="center"
-                  android:layout_marginTop="8dp"
-                  android:layout_marginBottom="8dp"
-                  android:id="@+id/start"
-                  android:textSize="16sp"
-                  android:layout_height="match_parent"/>
+                </androidx.cardview.widget.CardView>
 
 
-          </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/commit_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/保存当前配置"
+                    android:textColor="#fff"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
 
+        </LinearLayout>
 
-      </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
-  </LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/color_553E3E3E"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="@string/好的"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+
+
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.cardview.widget.CardView
+            android:id="@+id/switch_card"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="38dp"
+            android:layout_alignParentRight="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            app:cardElevation="0dp"
-            android:id="@+id/switch_card"
-            android:layout_alignParentRight="true"
             android:layout_marginBottom="10dp"
+            android:layout_weight="1"
             app:cardBackgroundColor="@color/color_553E3E3E"
             app:cardCornerRadius="5dp"
-            android:layout_height="38dp">
+            app:cardElevation="0dp">
 
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_height="wrap_content">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/自动回车"
                     android:textColor="#fff"
-                    android:gravity="center"
-                    android:textSize="12sp"
-                    android:layout_height="wrap_content"/>
+                    android:textSize="12sp" />
+
                 <Switch
-                    android:layout_width="wrap_content"
-                    android:paddingTop="8dp"
                     android:id="@+id/switch_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:checked="true"
-                    android:paddingBottom="8dp"
-                    android:layout_height="wrap_content"/>
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp" />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

@@ -18,7 +18,6 @@ import com.termux.zerocore.config.mainmenu.config.DataMessageClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DefBashClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DockerCheckClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DownLoadClickConfig;
-import com.termux.zerocore.config.mainmenu.config.ExperimentClickConfig;
 import com.termux.zerocore.config.mainmenu.config.FileBrowserClickConfig;
 import com.termux.zerocore.config.mainmenu.config.FixEnvironmentalErrorClickConfig;
 import com.termux.zerocore.config.mainmenu.config.FloatWindowsClickConfig;
@@ -51,12 +50,12 @@ import com.termux.zerocore.config.mainmenu.config.SnowflakeClickConfig;
 import com.termux.zerocore.config.mainmenu.config.SwitchSourceClickConfig;
 import com.termux.zerocore.config.mainmenu.config.UnInstallClickConfig;
 import com.termux.zerocore.config.mainmenu.config.VNCClickConfig;
-import com.termux.zerocore.config.mainmenu.config.VideoBackClickConfig;
 import com.termux.zerocore.config.mainmenu.config.WebDataClickConfig;
 import com.termux.zerocore.config.mainmenu.config.WebDataClickConfigImp;
 import com.termux.zerocore.config.mainmenu.config.X11EnvironmentClickConfig;
 import com.termux.zerocore.config.mainmenu.config.X11SettingsClickConfig;
 import com.termux.zerocore.config.mainmenu.config.X86AlpineDataClickConfig;
+import com.termux.zerocore.config.mainmenu.config.ZTCommandKeyClickConfig;
 import com.termux.zerocore.config.mainmenu.config.ZTSettingsClickConfig;
 import com.termux.zerocore.config.mainmenu.config.ZeroBBsClickConfig;
 import com.termux.zerocore.config.mainmenu.config.ZeroFunctionClickConfig;
@@ -137,6 +136,7 @@ public class MainMenuConfig implements BaseConfig {
 
         // ZT功能
         ArrayList<MainMenuClickConfig> ztFeaturesClicks = new ArrayList<>();
+        ztFeaturesClicks.add(new ZTCommandKeyClickConfig());
         ztFeaturesClicks.add(new InstallModuleClickConfig());
         ztFeaturesClicks.add(new DefBashClickConfig());
         ztFeaturesClicks.add(new ChangBashClickConfig());

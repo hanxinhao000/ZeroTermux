@@ -1252,6 +1252,13 @@
         ```\n显示到左侧栏\n```\n
         [链接文字](https://www.baidu.com)
     </string>
+    <string name="zt_new">新版本</string>
+    <string name="zt_command_key">底部键盘</string>
+    <string name="zt_command_edit_h">输入你的终端底部代码…</string>
+    <string name="zt_command_def">默认</string>
+    <string name="zt_command_key_error">格式错误!</string>
+    <string name="zt_command_path_error">文件操作失败!</string>
+    <string name="zt_command_path_ok">保存成功，重启APP生效</string>
 </resources>
 
 

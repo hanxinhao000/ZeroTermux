@@ -4,6 +4,7 @@ import static com.termux.zerocore.config.ztcommand.ZTSocketService.ZT_COMMAND_AC
 import static com.termux.zerocore.config.ztcommand.ZTSocketService.ZT_COMMAND_SERVICES_ACTION;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -1548,61 +1549,50 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     @Override
     public void doubleClicke(float x) {
-
-
         int width = getWindow().getWindowManager().getDefaultDisplay().getWidth();
-        UUtils.showLog("点击位置:" + x + " 屏幕总宽度:" + width);
-
         if (x <= 100) {
-
             getDrawer().smoothLeftOpen();
             return;
         }
-
         if (x >= width - 100) {
             getDrawer().smoothRightOpen();
             return;
         }
         BoomWindow.SWITCH = false;
-        showBoomDialog();
+        hideKeyboard();
+        UUtils.getHandler().postDelayed(() -> showBoomDialog(), 100);
     }
 
     private void showBoomDialog() {
         final PopupWindow[] popupWindow = {new PopupWindow()};
         final BoomWindow[] boomWindow = {new BoomWindow()};
-        popupWindow[0].setContentView(boomWindow[0].getView(new BoomMinLAdapter.CloseLiftListener() {
-            @Override
-            public void close() {
-                popupWindow[0].dismiss();
-            }
-        }, TermuxActivity.this, popupWindow[0]));
+        popupWindow[0].setContentView(boomWindow[0].getView(() -> popupWindow[0].dismiss(), TermuxActivity.this, popupWindow[0]));
         popupWindow[0].setOutsideTouchable(true);
         popupWindow[0].setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow[0].setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow[0].showAsDropDown(mTerminalView, 0, -boomWindow[0].getHigh());
-        popupWindow[0].setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                boomWindow[0] = null;
-            }
-        });
-        boomWindow[0].popu_windows_huihua.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mTermuxTerminalSessionActivityClient.addNewSession(false, null);
-                popupWindow[0].dismiss();
+        popupWindow[0].setOnDismissListener(() -> boomWindow[0] = null);
+        boomWindow[0].popu_windows_huihua.setOnClickListener(v -> {
+            mTermuxTerminalSessionActivityClient.addNewSession(false, null);
+            popupWindow[0].dismiss();
 
-            }
         });
-        boomWindow[0].popu_windows_jianpan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                getDrawer().smoothClose();
-                popupWindow[0].dismiss();
-            }
+        boomWindow[0].popu_windows_jianpan.setOnClickListener(v -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            getDrawer().smoothClose();
+            popupWindow[0].dismiss();
         });
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        // 获取当前焦点 View
+        View view = getCurrentFocus();
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     //判断短消息是否正在读取

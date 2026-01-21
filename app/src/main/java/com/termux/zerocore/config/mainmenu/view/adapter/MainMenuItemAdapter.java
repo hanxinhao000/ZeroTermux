@@ -38,6 +38,7 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
         holder.mCodeTitle.setText(mainMenuClickConfig.getString(mContext));
         holder.mItemlayout.setOnClickListener(view -> {
                 LogUtils.e(TAG, "onBindViewHolder click ");
+                mainMenuClickConfig.initContext(mContext);
                 mainMenuClickConfig.onClick(view, mContext);
             }
         );

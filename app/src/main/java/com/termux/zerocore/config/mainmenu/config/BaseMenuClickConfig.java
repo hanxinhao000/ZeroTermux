@@ -25,6 +25,11 @@ public abstract class BaseMenuClickConfig implements MainMenuClickConfig {
 
     @Override
     public void initViewStatus(Context context) {
+
+    }
+
+    @Override
+    public void initContext(Context context) {
         mContext = context;
     }
 

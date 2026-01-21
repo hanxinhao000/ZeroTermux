@@ -1239,4 +1239,12 @@ Enter code recognition parameters separated by commas. These will appear as blue
             \nShown in the left sidebar\n\n
              [linktext](https://www.baidu.com)
 </string>
+
+    <string name="zt_new">New Version</string>
+    <string name="zt_command_key">Bottom Keyboard</string>
+    <string name="zt_command_edit_h">Enter your terminal bottom code…</string>
+    <string name="zt_command_def">Default</string>
+    <string name="zt_command_key_error">Format Error!</string>
+    <string name="zt_command_path_error">File Operation Failed!</string>
+    <string name="zt_command_path_ok">Save successful, restart APP to take effect</string>
 </resources>

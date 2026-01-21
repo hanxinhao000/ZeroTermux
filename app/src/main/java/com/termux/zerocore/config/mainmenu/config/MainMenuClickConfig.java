@@ -19,6 +19,8 @@ public interface MainMenuClickConfig {
     boolean onLongClick(View view, Context context);
     // 可能要初始化当前状态
     void initViewStatus(Context context);
+    // 加载context
+    void initContext(Context context);
     //释放资源
     void release();
     //设置TextView
