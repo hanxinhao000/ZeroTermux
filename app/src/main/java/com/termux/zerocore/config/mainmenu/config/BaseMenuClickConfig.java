@@ -29,6 +29,11 @@ public abstract class BaseMenuClickConfig implements MainMenuClickConfig {
     }
 
     @Override
+    public boolean isShowDisableIco() {
+        return false;
+    }
+
+    @Override
     public void initContext(Context context) {
         mContext = context;
     }

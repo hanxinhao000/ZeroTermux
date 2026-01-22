@@ -36,6 +36,7 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
         MainMenuClickConfig mainMenuClickConfig = mMainMenuClickConfigs.get(position);
         holder.mCodeImage.setImageDrawable(mainMenuClickConfig.getIcon(mContext));
         holder.mCodeTitle.setText(mainMenuClickConfig.getString(mContext));
+        holder.mDisableIco.setVisibility(mainMenuClickConfig.isShowDisableIco() ? View.VISIBLE : View.INVISIBLE);
         holder.mItemlayout.setOnClickListener(view -> {
                 LogUtils.e(TAG, "onBindViewHolder click ");
                 mainMenuClickConfig.initContext(mContext);

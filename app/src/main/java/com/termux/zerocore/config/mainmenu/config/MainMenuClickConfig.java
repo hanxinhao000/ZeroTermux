@@ -27,4 +27,6 @@ public interface MainMenuClickConfig {
     void setTextView(TextView textView);
     //设置ImageView
     void setImageView(ImageView imageView);
+    //是否显示不可点击图标
+    boolean isShowDisableIco();
 }

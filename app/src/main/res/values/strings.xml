@@ -1208,4 +1208,18 @@
     <string name="zt_command_key_error">格式错误!</string>
     <string name="zt_command_path_error">文件操作失败!</string>
     <string name="zt_command_path_ok">保存成功，重启APP生效</string>
+    <string name="zt_adb_shell_run">SHELL 运行</string>
+    <string name="zt_adb_shell_run_summary">
+        在 adb shell 终端运行 termux 命令终端
+        文件已成功写入到:\n
+        home/termux-adb-shell.sh \n
+        请使用以下步骤 \n
+        \n
+        adb shell \n
+        run-as com.termux \n
+        cd files/home/ \n
+        sh termux-adb-shell.sh \n
+        cd ~ &amp;&amp; pkg update -y \n
+    </string>
+    <string name="zt_adb_shell_run_debug">此功能只能在debug版本上使用,是否下载 debug APP 以继续使用此功能?</string>
 </resources>

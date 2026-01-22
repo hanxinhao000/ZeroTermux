@@ -83,6 +83,9 @@ object FileIOUtils {
 
     }
 
+    public fun getAdbShellFilePath(context: Context): String {
+        return FileUrl.mainHomeUrl + "/termux-adb-shell.sh"
+    }
     public fun getClipBoardData() : List<ClipboardBean.Clipboard>? {
         val data = SaveData.getData(CLIP_BOARD_KEY)
         if (!isEmpty(data)) {

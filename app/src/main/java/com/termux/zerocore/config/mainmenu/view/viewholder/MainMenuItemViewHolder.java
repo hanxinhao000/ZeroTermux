@@ -12,12 +12,14 @@ import com.termux.R;
 
 public class MainMenuItemViewHolder extends RecyclerView.ViewHolder {
     public ImageView mCodeImage;
+    public ImageView mDisableIco;
     public TextView mCodeTitle;
 
     public LinearLayout mItemlayout;
     public MainMenuItemViewHolder(@NonNull View itemView) {
         super(itemView);
         mCodeImage = itemView.findViewById(R.id.code_image);
+        mDisableIco = itemView.findViewById(R.id.disable_ico);
         mCodeTitle = itemView.findViewById(R.id.code_title);
         mItemlayout = itemView.findViewById(R.id.item_layout);
     }

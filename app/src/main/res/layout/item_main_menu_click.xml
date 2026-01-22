@@ -22,11 +22,22 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/code_image"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:src="@mipmap/settings" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/code_image"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@mipmap/settings" />
+                    <ImageView
+                        android:id="@+id/disable_ico"
+                        android:layout_width="15dp"
+                        android:visibility="invisible"
+                        android:layout_alignEnd="@+id/code_image"
+                        android:src="@mipmap/zt_shell_disable"
+                        android:layout_height="15dp"/>
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/code_title"

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.termux.R;
 import com.termux.zerocore.config.BaseConfig;
+import com.termux.zerocore.config.mainmenu.config.AdbShellRunClickConfig;
 import com.termux.zerocore.config.mainmenu.config.BackupRestoreClickConfig;
 import com.termux.zerocore.config.mainmenu.config.BeautificationSettingsClickConfig;
 import com.termux.zerocore.config.mainmenu.config.BootCommandClickConfig;
@@ -85,7 +86,6 @@ public class MainMenuConfig implements BaseConfig {
         commonClicks.add(new MoeClickConfig());
         commonClicks.add(new ReleaseLinuxVersionClickConfig());
         commonClicks.add(new QEMUClickConfig());
-        commonClicks.add(new ScheduledTaskClickConfig());
         commonClicks.add(new ZTSettingsClickConfig());
         MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.common_functions), CODE_COMMON_FUNCTIONS, commonClicks));
 
@@ -136,6 +136,7 @@ public class MainMenuConfig implements BaseConfig {
 
         // ZT功能
         ArrayList<MainMenuClickConfig> ztFeaturesClicks = new ArrayList<>();
+        ztFeaturesClicks.add(new AdbShellRunClickConfig());
         ztFeaturesClicks.add(new ZTCommandKeyClickConfig());
         ztFeaturesClicks.add(new InstallModuleClickConfig());
         ztFeaturesClicks.add(new DefBashClickConfig());
@@ -147,13 +148,14 @@ public class MainMenuConfig implements BaseConfig {
         ztFeaturesClicks.add(new UnInstallClickConfig());
         ztFeaturesClicks.add(new RemoteConnectionClickConfig());
         ztFeaturesClicks.add(new WebDataClickConfig());
-        ztFeaturesClicks.add(new ZeroFunctionClickConfig());
+        // ztFeaturesClicks.add(new ZeroFunctionClickConfig());
         ztFeaturesClicks.add(new CommandDefinitionCLickConfig());
         ztFeaturesClicks.add(new PhoneSmsClickConfig());
+        ztFeaturesClicks.add(new ScheduledTaskClickConfig());
         ztFeaturesClicks.add(new OpenPathClickConfig());
         ztFeaturesClicks.add(new BootCommandClickConfig());
         ztFeaturesClicks.add(new DataMessageClickConfig());
-        //ztFeaturesClicks.add(new ExperimentClickConfig());
+        // ztFeaturesClicks.add(new ExperimentClickConfig());
         ztFeaturesClicks.add(new LanguageClickConfig());
         ztFeaturesClicks.add(new GitHubClickConfig());
         MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.zt_features), CODE_ZT_FEATURES, ztFeaturesClicks));
