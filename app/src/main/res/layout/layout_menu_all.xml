@@ -403,6 +403,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginTop="5dp"
+                        android:textIsSelectable="true"
                         android:text="data package info."
                         android:textColor="@color/color_ffffff"
                         android:textSize="13sp" />
