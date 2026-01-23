@@ -112,6 +112,7 @@ import com.termux.zerocore.bean.ZDYDataBean;
 import com.termux.zerocore.bean.ZTUserBean;
 import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
+import com.termux.zerocore.config.ZTConstantConfig;
 import com.termux.zerocore.config.mainmenu.MainMenuConfig;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
 import com.termux.zerocore.config.other.ZTGitHubVersion;
@@ -1002,7 +1003,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void setExtraKeysView(ExtraKeysView extraKeysView) {
         mExtraKeysView = extraKeysView;
     }
-	
+
     // ZeroTermux add {@
     public SlidingConsumer getDrawer() {
         return mSlidingConsumer;
@@ -1097,7 +1098,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private void unregisterTermuxActivityBroadcastReceiver() {
         unregisterReceiver(mTermuxActivityBroadcastReceiver);
     }
-	
+
 	// ZeroTermux modify {@
     //    private void fixTermuxActivityBroadcastReceiverIntent(Intent intent) {
     //    if (intent == null) return;
@@ -1118,31 +1119,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         return false;
 		// @}
-    }
-
-    @Override
-    public void sendTextToTerminal(String command) {
-        LogUtils.i(TAG, "sendTextToTerminal command: " + command);
-        getTerminalView().sendTextToTerminal(command);
-    }
-
-    @Override
-    public void sendTextToTerminalAlt(String command, boolean isAlt) {
-        LogUtils.i(TAG, "sendTextToTerminal command: " + command + " ,isAlt: " + isAlt);
-        getTerminalView().sendTextToTerminalAlt(command, isAlt);
-    }
-
-    @Override
-    public void sendTextToTerminalCtrl(String command, boolean isCtrl) {
-        LogUtils.i(TAG, "sendTextToTerminal command: " + command + " ,isAlt: " + isCtrl);
-        getTerminalView().sendTextToTerminalCtrl(command, isCtrl);
-    }
-
-    @Override
-    public void onTerminalExtraKeyButtonClick(String key) {
-        LogUtils.i(TAG, "onTerminalExtraKeyButtonClick key: " + key);
-        mTermuxTerminalExtraKeys.onTerminalExtraKeyButtonClick(null, key, false ,false ,false , false);
-
     }
 
     @Override
@@ -1181,7 +1157,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         }
     }
-
 
     private void reloadActivityStyling(boolean recreateActivity) {
         if (mProperties != null) {
@@ -1263,23 +1238,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private ImageView back_img;
     private VideoView back_video;
     private MainActivity mMainActivity;
-
     private FrameLayout frame_file;
     private RelativeLayout session_rl;
-
     private RecyclerView mMainMenuList;
-
 	private SlidingConsumer mSlidingConsumer;
     private View mLayoutMenuAll;
     private View mIncludeRightMenu;
     LocalBroadcastManager localBroadcastManager;
     LocalReceiver localReceiver;
-
-
-
-    /**
-     * ZeroTermux
-     */
 
     private void initZeroView() {
         mMainMenuList = findViewById(R.id.main_menu_list);
@@ -1315,7 +1281,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         qq_group_tv.setOnClickListener(this);
         zt_new.setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux/releases"));//Url 就是你要打开的网址
+            intent.setData(Uri.parse(ZTConstantConfig.URL.ZT_GITHUB_URL));//Url 就是你要打开的网址
             intent.setAction(Intent.ACTION_VIEW);
             startActivity(intent); //启动浏览器
         });
@@ -1392,14 +1358,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
 
     private void initStatue() {
-
-        mTerminalView.setOneClickListener(new TerminalView.OneClickListener() {
-            @Override
-            public void onClick() {
-                if (UserSetManage.Companion.get().getZTUserBean().isInputMethodTriggerClose() && !(getDrawer().isClosed())) {
-                    getDrawer().smoothClose();
-                    com.zp.z_file.util.LogUtils.e(TAG, "setOneClickListener Drawer is close." );
-                }
+        mTerminalView.setOneClickListener(() -> {
+            if (UserSetManage.Companion.get().getZTUserBean().isInputMethodTriggerClose() && !(getDrawer().isClosed())) {
+                getDrawer().smoothClose();
+                com.zp.z_file.util.LogUtils.e(TAG, "setOneClickListener Drawer is close." );
             }
         });
         if (mInternalPassage) {
@@ -1428,10 +1390,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.qq_group_tv) {
-            UUtils.copyToClip("878847174");
+            UUtils.copyToClip(ZTConstantConfig.ContactInformation.ZT_QQ_GROUP);
         } else if (v.getId() == R.id.telegram_group_tv) {
             Intent intent1 = new Intent();
-            intent1.setData(Uri.parse("https://t.me/ztcommunity"));
+            intent1.setData(Uri.parse(ZTConstantConfig.ContactInformation.ZT_TELEGRAM_GROUP));
             intent1.setAction(Intent.ACTION_VIEW);
             this.startActivity(intent1);
         }
@@ -1600,12 +1562,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                 // UUtils.showMsg("获取录音和日历权限成功");
                                 String smsInPhone = SmsUtils.getSmsInPhone();
                                 UUtils.setFileString(new File(FileUrl.INSTANCE.getSmsUrlFile()), smsInPhone);
-                                UUtils.sleepSetRunMm(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("cd ~ && cd ~ && vim sms.txt \n");
-                                    }
-                                }, 100);
+                                UUtils.sleepSetRunMm(() -> SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("cd ~ && cd ~ && vim sms.txt \n"), 100);
 
                             } else {
                                 // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
@@ -2301,17 +2258,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
     private void initListener() {
-        mTerminalView.getTextSelectionCursorControllerView().setAddCommend(new TextSelectionCursorController.AddCommend() {
-            @Override
-            public void editCommend(String edit) {
-                if (!TextUtils.isEmpty(edit)) {
-                    UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_ok));
-                    FileIOUtils.INSTANCE.commendSave(edit, edit, false);
-                } else {
-                    UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_fail));
-                }
-
+        mTerminalView.getTextSelectionCursorControllerView().setAddCommend(edit -> {
+            if (!TextUtils.isEmpty(edit)) {
+                UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_ok));
+                FileIOUtils.INSTANCE.commendSave(edit, edit, false);
+            } else {
+                UUtils.showMsg(UUtils.getString(R.string.add_commend_msg_fail));
             }
+
         });
 
         mTerminalView.setActionPointer2ClickListener(() -> openToolDialog(true, 0, -1));
@@ -2512,21 +2466,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         filter.addAction(OTGManager.OTGManagerConstant.INSTANCE.getACTION_USB_PERMISSION());
         registerReceiver(mUsbReceiver, filter);
     }
-	
+
 	 // ZeroTermux add {@
     private void initUserData() {
         ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
         if (ztUserBean.isOpenDownloadFileServices()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                   if (!FileHttpUtils.Companion.get().isServicesRun()) {
-                       FileHttpUtils.Companion.get().bootHttp();
-                   }
-                }
+            new Thread(() -> {
+               if (!FileHttpUtils.Companion.get().isServicesRun()) {
+                   FileHttpUtils.Companion.get().bootHttp();
+               }
             }).start();
         }
-
     }
     //@}
 
@@ -2562,8 +2512,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainActivity.onWindowFocusChanged(hasFocus);
         }
     }
-	
-	
+
+
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -2625,6 +2575,32 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             finish();
             overridePendingTransition(0, 0);
         }
+
+    }
+
+
+    @Override
+    public void sendTextToTerminal(String command) {
+        LogUtils.i(TAG, "sendTextToTerminal command: " + command);
+        getTerminalView().sendTextToTerminal(command);
+    }
+
+    @Override
+    public void sendTextToTerminalAlt(String command, boolean isAlt) {
+        LogUtils.i(TAG, "sendTextToTerminal command: " + command + " ,isAlt: " + isAlt);
+        getTerminalView().sendTextToTerminalAlt(command, isAlt);
+    }
+
+    @Override
+    public void sendTextToTerminalCtrl(String command, boolean isCtrl) {
+        LogUtils.i(TAG, "sendTextToTerminal command: " + command + " ,isAlt: " + isCtrl);
+        getTerminalView().sendTextToTerminalCtrl(command, isCtrl);
+    }
+
+    @Override
+    public void onTerminalExtraKeyButtonClick(String key) {
+        LogUtils.i(TAG, "onTerminalExtraKeyButtonClick key: " + key);
+        mTermuxTerminalExtraKeys.onTerminalExtraKeyButtonClick(null, key, false ,false ,false , false);
 
     }
 

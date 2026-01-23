@@ -10,6 +10,7 @@ import com.example.xh_lib.utils.UUtils
 import com.termux.BuildConfig
 import com.termux.R
 import com.termux.app.TermuxActivity
+import com.termux.zerocore.config.ZTConstantConfig
 import com.termux.zerocore.dialog.MingLShowDialog
 import com.termux.zerocore.dialog.SwitchDialog
 import com.termux.zerocore.utils.FileIOUtils
@@ -33,7 +34,7 @@ class AdbShellRunClickConfig: BaseMenuClickConfig() {
             switchDialog.ok?.setOnClickListener {
                 switchDialog.dismiss()
                 val intent = Intent()
-                intent.setData(Uri.parse("https://github.com/hanxinhao000/ZeroTermux/releases"))
+                intent.setData(Uri.parse(ZTConstantConfig.URL.ZT_GITHUB_URL))
                 intent.setAction(Intent.ACTION_VIEW)
                 context.startActivity(intent) //启动浏览器
             }
