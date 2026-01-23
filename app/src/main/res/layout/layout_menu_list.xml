@@ -21,17 +21,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_margin="8dp"
                 android:layout_marginTop="5dp"
-                android:text="title"
-                android:textColor="@color/color_ffffff"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="title"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/open_settings"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:rotation="180"
+                    android:src="@mipmap/up_down" />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"

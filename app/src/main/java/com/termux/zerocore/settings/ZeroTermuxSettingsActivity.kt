@@ -39,6 +39,9 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
     private val volumeFunctionSwitch by lazy {findViewById<SwitchCompat>(R.id.volume_function_switch)}
     private val volumeFunctionLl by lazy {findViewById<LinearLayout>(R.id.volume_function_ll)}
 
+    private val foldMenuCloseSwitch by lazy {findViewById<SwitchCompat>(R.id.fold_menu_close_switch)}
+    private val foldMenuCloseLl by lazy {findViewById<LinearLayout>(R.id.fold_menu_close_ll)}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_zero_termux_settings)
@@ -55,6 +58,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         setSwitchStatus(logOutputSwitch, logOutputLl)
         setSwitchStatus(shellTermuxSwitch, shellTermuxLl)
         setSwitchStatus(volumeFunctionSwitch, volumeFunctionLl)
+        setSwitchStatus(foldMenuCloseSwitch, foldMenuCloseLl)
     }
 
     private fun initStatus() {
@@ -67,6 +71,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         logOutputSwitch.isChecked = ztUserBean.isOutputLOG
         shellTermuxSwitch.isChecked = isShellTermux()
         volumeFunctionSwitch.isChecked = ztUserBean.isResetVolume
+        foldMenuCloseSwitch.isChecked = ztUserBean.isCloseFoldMenu
     }
 
     private fun setSwitchStatus(switchCompat: SwitchCompat, linearLayout: LinearLayout) {
@@ -114,6 +119,9 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
                 }
                 volumeFunctionSwitch -> {
                     ztUserBean.isResetVolume = switchCompat.isChecked
+                }
+                foldMenuCloseSwitch -> {
+                    ztUserBean.isCloseFoldMenu = switchCompat.isChecked
                 }
             }
             UserSetManage.get().setZTUserBean(ztUserBean)

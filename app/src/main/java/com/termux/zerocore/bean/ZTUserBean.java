@@ -34,6 +34,16 @@ public class ZTUserBean {
     private String mDeepSeekApiUrl;
     // 是否让DeepSeek 看见你的终端?
     private boolean mIsDeepSeekVisibleTerminal;
+    // 是否折叠菜单
+    private boolean isCloseFoldMenu;
+
+    public boolean isCloseFoldMenu() {
+        return isCloseFoldMenu;
+    }
+
+    public void setCloseFoldMenu(boolean foldMenu) {
+        isCloseFoldMenu = foldMenu;
+    }
 
     public boolean isIsDeepSeekVisibleTerminal() {
         return mIsDeepSeekVisibleTerminal;
