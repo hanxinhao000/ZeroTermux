@@ -56,7 +56,7 @@ class FileBrowserClickConfig : BaseMenuClickConfig(){
                         UUtils.setFileString(smsBashrcFile,fileString)
                     }
                     if (msg?.obj != null) {
-                        TermuxActivity.mTerminalView.sendTextToTerminal(msg!!.obj as String?)
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(msg!!.obj as String?)
                     }
                 }
             }

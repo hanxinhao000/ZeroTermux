@@ -45,25 +45,26 @@ class KeyDataClickConfig: BaseMenuClickConfig() {
                     KeyBordManage.KEY_DEF -> {
                         LogUtils.d(TAG, "handleMessage DEF:${msg.obj}")
                         if (msg.obj != null) {
-                            TermuxActivity.mTerminalView.sendTextToTerminal(msg.obj as String?)
+                            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(msg.obj as String?)
                         }
                     }
                     KeyBordManage.KEY_ALT -> {
                         LogUtils.d(TAG, "handleMessage ALT:${msg.obj}")
                         if (msg.obj != null) {
-                            TermuxActivity.mTerminalView.sendTextToTerminalAlt(msg.obj as String?, true)
+                            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminalAlt(msg.obj as String?, true)
                         }
                     }
                     KeyBordManage.KEY_CTRL -> {
                         LogUtils.d(TAG, "handleMessage CTRL:${msg.obj}")
                         if (msg.obj != null) {
-                            TermuxActivity.mTerminalView.sendTextToTerminalCtrl(msg.obj as String?, true)
+                            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminalCtrl(msg.obj as String?, true)
                         }
                     }
                     KeyBordManage.KEY_OTHER -> {
                         LogUtils.d(TAG, "handleMessage OTHER:${msg.obj}")
                         if (msg.obj != null) {
-                            TermuxActivity.mTermuxTerminalExtraKeys.onTerminalExtraKeyButtonClick(null, msg.obj as String?, false ,false ,false , false)
+                            com.termux.zerocore.utils.SingletonCommunicationUtils
+                                .getInstance().getmSingletonCommunicationListener().onTerminalExtraKeyButtonClick(msg.obj as String?)
                         }
                     }
                 }

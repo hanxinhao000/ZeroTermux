@@ -82,9 +82,9 @@ public class BoomMinLAdapter extends RecyclerView.Adapter<MinLViewHolder> {
                     mCloseLiftListener.close();
                 }
                 if(dataNum.get(position).isChecked){
-                    TermuxActivity.mTerminalView.sendTextToTerminal(dataNum.get(position).value + " \n");
+                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(dataNum.get(position).value + " \n");
                 }else{
-                    TermuxActivity.mTerminalView.sendTextToTerminal(dataNum.get(position).value );
+                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(dataNum.get(position).value );
                 }
 
             }

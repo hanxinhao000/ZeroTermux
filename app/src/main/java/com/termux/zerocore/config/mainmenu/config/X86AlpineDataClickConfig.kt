@@ -52,7 +52,7 @@ class X86AlpineDataClickConfig: BaseMenuClickConfig() {
             switchDialog.cancel?.text = UUtils.getString(R.string.取消)
             switchDialog.ok?.setOnClickListener {
                 switchDialog.dismiss()
-                TermuxActivity.mTerminalView.sendTextToTerminal("pkg update -y && pkg in wget proot -y && pkg install x11-repo unstable-repo -y && pkg install qemu-utils qemu-system-x86_64-headless  qemu-system-i386-headless -y &&  termux-setup-storage\n")
+                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("pkg update -y && pkg in wget proot -y && pkg install x11-repo unstable-repo -y && pkg install qemu-utils qemu-system-x86_64-headless  qemu-system-i386-headless -y &&  termux-setup-storage\n")
                 Toast.makeText(
                     UUtils.getContext(),
                     UUtils.getString(R.string.请等待安装完成在进入),

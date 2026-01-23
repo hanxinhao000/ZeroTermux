@@ -44,7 +44,7 @@ public class ReleaseLinuxVersionClickConfig extends BaseMenuClickConfig {
                     @Override
                     public void run() {
                         loadingDialog.dismiss();
-                        TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getRunLinuxSh());
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(CodeString.INSTANCE.getRunLinuxSh());
                     }
                 });
             }

@@ -21,6 +21,6 @@ class DockerCheckClickConfig: BaseMenuClickConfig() {
 
     override fun onClick(view: View?, context: Context?) {
         UUtils.writerFile("runcommand/check-config.sh", File(FileUrl.mainHomeUrl, "/check-config.sh"))
-        TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.runDocker)
+        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(CodeString.runDocker)
     }
 }

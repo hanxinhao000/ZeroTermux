@@ -110,8 +110,8 @@ public class BackupFragment extends BaseFragment implements View.OnClickListener
                 if (!(new File("/data/data/com.termux/files/home/storage").exists())){
                     Toast.makeText(UUtils.getContext(), UUtils.getString(R.string.没有找到目录), Toast.LENGTH_SHORT).show();
                     UUtils.getHandler().post(() -> {
-                        TermuxActivity.mTerminalView.sendTextToTerminal(UUtils.getString(R.string.这块直接输入回车即可));
-                        TermuxActivity.mTerminalView.sendTextToTerminal("termux-setup-storage ");
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(UUtils.getString(R.string.这块直接输入回车即可));
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("termux-setup-storage ");
                         getActivity().finish();
                     });
                     return;

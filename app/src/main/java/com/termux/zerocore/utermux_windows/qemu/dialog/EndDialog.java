@@ -31,7 +31,7 @@ public class EndDialog extends BaseDialogCentre {
         start = mView.findViewById(R.id.start);
         edit_text = mView.findViewById(R.id.edit_text);
 
-        CharSequence text1 = TermuxActivity.mTerminalView.getText555();
+        CharSequence text1 = com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().getTextToTerminal();
 
         String s = text1.toString();
         String[] split = s.split("\n");

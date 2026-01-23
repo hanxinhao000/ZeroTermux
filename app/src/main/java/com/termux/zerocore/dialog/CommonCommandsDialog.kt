@@ -85,7 +85,7 @@ class CommonCommandsDialog : BaseDialogDown {
                 mCommonCommandsAdapter.setClickDataListener(object :
                     CommonCommandsAdapter.ClickDataListener {
                     override fun data(data: String) {
-                        TermuxActivity.mTerminalView.sendTextToTerminal(data)
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(data)
                         dismiss()
                     }
                 })

@@ -32,7 +32,7 @@ object IsInstallCommand {
                 if (file.exists()) {
                     UUtils.showMsg(UUtils.getString(R.string.您已安装工具1) + "(${command})")
                 } else {
-                    TermuxActivity.mTerminalView.sendTextToTerminal(commandInstall)
+                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(commandInstall)
                 }
             }
 

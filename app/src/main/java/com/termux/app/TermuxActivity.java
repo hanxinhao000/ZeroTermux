@@ -135,6 +135,7 @@ import com.termux.zerocore.utils.FileHttpUtils;
 import com.termux.zerocore.utils.FileIOUtils;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.PhoneUtils;
+import com.termux.zerocore.utils.SingletonCommunicationUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.UUUtils;
 import com.termux.zerocore.utils.VideoUtils;
@@ -180,7 +181,7 @@ import io.noties.markwon.Markwon;
  */
  // ZeroTermux add {@
  //public final class TermuxActivity extends AppCompatActivity implements ServiceConnection {
-public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, MenuLeftPopuListWindow.ItemClickPopuListener, TerminalView.DoubleClickListener {
+public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, TerminalView.DoubleClickListener, SingletonCommunicationUtils.SingletonCommunicationListener {
  //@}
     /**
      * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
@@ -192,10 +193,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     /**
      * The {@link TerminalView} shown in  {@link TermuxActivity} that displays the terminal.
      */
-	// ZeroTermux modify {@
-    public static TerminalView mTerminalView;
-	// TerminalView mTerminalView;
-	// @}
+    TerminalView mTerminalView;
 
     /**
      *  The {@link TerminalViewClient} interface implementation to allow for communication between
@@ -239,10 +237,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     /**
 	 * The client for the {@link #mExtraKeysView}.
      */
-	// ZeroTermux modify {@
-	// TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
-    public static TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
-	// @}
+    TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
 
     /**
      * The termux sessions list controller.
@@ -1125,6 +1120,36 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 		// @}
     }
 
+    @Override
+    public void sendTextToTerminal(String command) {
+        LogUtils.i(TAG, "sendTextToTerminal command: " + command);
+        getTerminalView().sendTextToTerminal(command);
+    }
+
+    @Override
+    public void sendTextToTerminalAlt(String command, boolean isAlt) {
+        LogUtils.i(TAG, "sendTextToTerminal command: " + command + " ,isAlt: " + isAlt);
+        getTerminalView().sendTextToTerminalAlt(command, isAlt);
+    }
+
+    @Override
+    public void sendTextToTerminalCtrl(String command, boolean isCtrl) {
+        LogUtils.i(TAG, "sendTextToTerminal command: " + command + " ,isAlt: " + isCtrl);
+        getTerminalView().sendTextToTerminalCtrl(command, isCtrl);
+    }
+
+    @Override
+    public void onTerminalExtraKeyButtonClick(String key) {
+        LogUtils.i(TAG, "onTerminalExtraKeyButtonClick key: " + key);
+        mTermuxTerminalExtraKeys.onTerminalExtraKeyButtonClick(null, key, false ,false ,false , false);
+
+    }
+
+    @Override
+    public String getTextToTerminal() {
+        return this.getTerminalView().getText555();
+    }
+
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1190,6 +1215,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             // ZeroTermux TODO 目前重新创建当前activity会导致页面被finish掉，暂时注掉此处，后续版本分析详细原因
             // {@
             // TermuxActivity.this.recreate();
+            restartActivity();
             // @}
         }
     }
@@ -1310,7 +1336,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             protocolDialog.setCancelable(false);
         }
         getServiceVs();
-        refStartCommandStat();
         main_card.setOnClickListener(
             v -> startActivity(new Intent(TermuxActivity.this, ZtSettingsActivity.class)));
         /*findViewById(R.id.settings).setOnClickListener(
@@ -1482,26 +1507,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
 
-    private void showMenuDialog(ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> arrayList, View showView) {
-        MenuLeftPopuListWindow menuLeftPopuListWindow = new MenuLeftPopuListWindow(this);
-        menuLeftPopuListWindow.setItemClickPopuListener(this);
-        menuLeftPopuListWindow.setListData(arrayList);
-        menuLeftPopuListWindow.showAsDropDown(showView, 250, -200);
-    }
-
-    /**
-     * 刷新状态
-     */
-
-    private void refStartCommandStat() {
-        /*if (StartRunCommandUtils.INSTANCE.isRun()) {
-            text_start.setText(UUtils.getString(R.string.开机启动开));
-        } else {
-            text_start.setText(UUtils.getString(R.string.开机启动));
-        }*/
-    }
-
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -1511,29 +1516,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainActivity.onPause();
         }
     }
-
-    /**
-     * 菜单点击事件
-     *
-     * @param id
-     * @param index
-     */
-
-    @Override
-    public void itemClick(int id, int index, MenuLeftPopuListWindow mMenuLeftPopuListWindow) {
-        mMenuLeftPopuListWindow.dismiss();
-        switch (id) {
-            //qemu
-
-
-
-            //API
-            //中文
-
-        }
-
-    }
-
 
     private SwitchDialog switchDialogShow(String title, String msg) {
         SwitchDialog switchDialog = new SwitchDialog(this);
@@ -1621,24 +1603,24 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                 UUtils.sleepSetRunMm(new Runnable() {
                                     @Override
                                     public void run() {
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim sms.txt \n");
+                                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("cd ~ && cd ~ && vim sms.txt \n");
                                     }
                                 }, 100);
 
                             } else {
                                 // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
+                                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                             }
                         }
 
                         @Override
                         public void onDenied(List<String> permissions, boolean never) {
                             if (never) {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
+                                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                 // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                 XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
                             } else {
-                                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
+                                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                             }
                         }
                     });
@@ -1668,7 +1650,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                                 public void run() {
                                                     isPhoneRun = false;
                                                     loadingDialog.dismiss();
-                                                    TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && vim phone.txt \n");
+                                                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("cd ~ && cd ~ && vim phone.txt \n");
                                                 }
                                             }), 100);
                                         }).start();
@@ -1676,7 +1658,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                     } else {
                                         isPhoneRun = false;
                                         // UUtils.showMsg(("获取部分权限成功，但部分权限未正常授予"));
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
+                                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                     }
                                 }
 
@@ -1684,11 +1666,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                                 public void onDenied(List<String> permissions, boolean never) {
                                     isPhoneRun = false;
                                     if (never) {
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
+                                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                         // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                         XXPermissions.startPermissionActivity(TermuxActivity.this, permissions);
                                     } else {
-                                        TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
+                                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.无权限读取) + "! \n");
                                     }
                                 }
                             });
@@ -1697,7 +1679,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     }
                 }
             } else {
-                TermuxActivity.mTerminalView.sendTextToTerminal("echo " + UUtils.getString(R.string.请等待) + "! \n");
+                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("echo " + UUtils.getString(R.string.请等待) + "! \n");
             }
         }
         if (msg.equals("left")) {
@@ -2231,11 +2213,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainActivity.init();
             regMainViewKeyDown();
         }
-        startService(new Intent(this, ZTSocketService.class));
+        try {
+            startService(new Intent(this, ZTSocketService.class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         // 注册接收器
         IntentFilter filter = new IntentFilter(ZT_COMMAND_ACTIVITY_ACTION);
         localBroadcastManager.registerReceiver(messageReceiver, filter);
+        SingletonCommunicationUtils.getInstance().setSingletonCommunicationListener(this);
     }
 	// ZeroTermux add {@
     private void initStatusBarHeight() {
@@ -2550,6 +2538,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 	// @}
 
     private void onDestroyInit() {
+        if (SingletonCommunicationUtils.isSingletonCommunicationListenerNull) {
+            SingletonCommunicationUtils.getInstance().setSingletonCommunicationListener(null);
+        }
+        SingletonCommunicationUtils.isSingletonCommunicationListenerNull = true;
         unregisterReceiver(mUsbReceiver);
         if (localBroadcastManager!= null) {
             localBroadcastManager.unregisterReceiver(localReceiver);
@@ -2618,6 +2610,22 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 }
             }
         }
+    }
+
+    public void restartActivity() {
+        // TODO 临时解决方案，此方案不是最优，后续版本需要考虑优化
+        SingletonCommunicationUtils.isSingletonCommunicationListenerNull = false;
+        if (!isFinishing()) {
+            UUtils.showMsg(UUtils.getString(R.string.zt_recreate));
+            UUtils.getHandler().postDelayed((Runnable) () -> {
+                Intent intent = new Intent(this, TermuxActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }, 1000);
+            finish();
+            overridePendingTransition(0, 0);
+        }
+
     }
 
     /***************************************** ZERO TERMUX END ******************************************/

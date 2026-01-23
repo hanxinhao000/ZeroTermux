@@ -136,9 +136,9 @@ public class RestoreFragment extends BaseFragment {
                                 public void run() {
 
 
-                                    TermuxActivity.mTerminalView.sendTextToTerminal(UUtils.getString(R.string.这块直接输入回车即可));
+                                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(UUtils.getString(R.string.这块直接输入回车即可));
 
-                                    TermuxActivity.mTerminalView.sendTextToTerminal("termux-setup-storage ");
+                                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("termux-setup-storage ");
                                     getActivity().finish();
                                 }
                             });

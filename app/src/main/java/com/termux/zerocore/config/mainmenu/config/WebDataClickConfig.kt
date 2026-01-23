@@ -25,10 +25,10 @@ class WebDataClickConfig: BaseMenuClickConfig() {
         if (FileIOUtils.isBinFileExists("ttyd")) {
             replace = UUtils.getString(R.string.ttyd_install_complete)
                 .replace("0.0.0.0", UUtils.getHostIP())
-            TermuxActivity.mTerminalView.sendTextToTerminal(CommendShellData.SHELL_DATA_RUN_WEB)
+            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(CommendShellData.SHELL_DATA_RUN_WEB)
         } else {
             replace = UUtils.getString(R.string.ttyd_install_msg)
-            TermuxActivity.mTerminalView.sendTextToTerminal(CommendShellData.SHELL_DATA_WEB_LINUX)
+            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(CommendShellData.SHELL_DATA_WEB_LINUX)
         }
         val switchDialog = SwitchDialog(mContext as Activity)
         switchDialog.createSwitchDialog(replace)

@@ -267,7 +267,7 @@ public class ChatFragment extends Fragment {
     // 获取终端助手提示语
     private String getPrompt() {
         boolean isDeepSeekVisibleTerminal = UserSetManage.Companion.get().getZTUserBean().isIsDeepSeekVisibleTerminal();
-        String terminalCommands = TermuxActivity.mTerminalView.getText555()
+        String terminalCommands = com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().getTextToTerminal()
             .replace("$", "")
             .replace("~", "")
             .replace("\n", "")

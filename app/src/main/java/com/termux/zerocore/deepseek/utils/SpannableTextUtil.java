@@ -134,7 +134,7 @@ public class SpannableTextUtil {
                     .replace("\r", ""); // 去除回车;
                 LogUtils.e(TAG, "addClickableSpanToRange replace:" + replace);
                 if (context instanceof TermuxActivity) {
-                    TermuxActivity.mTerminalView.sendTextToTerminal(replace);
+                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(replace);
                     ((TermuxActivity) context).getDrawer().smoothClose();
                 }
             }

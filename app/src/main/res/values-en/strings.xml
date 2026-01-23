@@ -1247,4 +1247,5 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="zt_command_key_error">Format Error!</string>
     <string name="zt_command_path_error">File Operation Failed!</string>
     <string name="zt_command_path_ok">Save successful, restart APP to take effect</string>
+    <string name="zt_recreate">Please wait, restarting application...</string>
 </resources>

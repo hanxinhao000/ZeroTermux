@@ -34,7 +34,7 @@ public class LocalReceiver extends BroadcastReceiver {
         }
         String broadcastString = intent.getStringExtra("broadcastString");
         if (broadcastString != null && !(broadcastString.isEmpty())) {
-            TermuxActivity.mTerminalView.sendTextToTerminal(broadcastString + "\n");
+            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(broadcastString + "\n");
             if (ZTConfig.INSTANCE.getCloseListener() != null) {
                 ZTConfig.INSTANCE.getCloseListener().close();
             }
@@ -64,7 +64,7 @@ public class LocalReceiver extends BroadcastReceiver {
                 if (ZTConfig.INSTANCE.getCloseListener() != null) {
                     ZTConfig.INSTANCE.getCloseListener().close();
                 }
-                TermuxActivity.mTerminalView.sendTextToTerminal( command + "\n");
+                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal( command + "\n");
             } catch (Exception e) {
                 e.printStackTrace();
             }

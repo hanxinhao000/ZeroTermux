@@ -154,7 +154,7 @@ public class BoomWindow {
                     UUtils.showMsg(UUtils.getString(R.string.文件名不能为空));
                     return;
                 }
-                TermuxActivity.mTerminalView.sendTextToTerminal("find / -name " + string);
+                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("find / -name " + string);
                 popupWindow.dismiss();
 
             }
@@ -211,7 +211,7 @@ public class BoomWindow {
             } else {
                 isInstallingEnv = true;
                 UUtils.showMsg(UUtils.getString(R.string.content_ssh_list_toast_ssh_hint));
-                TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.INSTANCE.getContentSSH());
+                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(CodeString.INSTANCE.getContentSSH());
             }
         }
         showSSHList(closeLiftListener);
@@ -385,7 +385,7 @@ public class BoomWindow {
                 com.zp.z_file.util.LogUtils.d(TAG, "content click ssh:" + runCmd);
                 //屏蔽Connection refused用String runCmd = " clear && " + finalCmd + " 2>/dev/null || echo 'err'";
 
-                TermuxActivity.mTerminalView.sendTextToTerminal(runCmd + "\n");
+                com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(runCmd + "\n");
 
                 if (mPopupWindow != null) {
                     mPopupWindow.dismiss();
@@ -573,7 +573,7 @@ public class BoomWindow {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String cmd = SSHKeyUtils.getGenerateKeyCommand(currentAlias);
-                            TermuxActivity.mTerminalView.sendTextToTerminal(cmd + "\n");
+                            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(cmd + "\n");
                             UUtils.showMsg(UUtils.getString(R.string.content_ssh_generate_keying));
                         }
                     })

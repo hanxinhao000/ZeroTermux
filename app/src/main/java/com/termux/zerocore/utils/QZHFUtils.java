@@ -78,7 +78,7 @@ public class QZHFUtils {
             /* TermuxApplication.mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        TermuxActivity.mTerminalView.sendTextToTerminal("termux-setup-storage \n");
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("termux-setup-storage \n");
                     }
                 });*/
 
@@ -97,7 +97,7 @@ public class QZHFUtils {
                             Toast.makeText(UUtils.getContext(), UUtils.getString(R.string.没有找到storage目录), Toast.LENGTH_SHORT).show();
 
                             myDialog.dismiss();
-                            TermuxActivity.mTerminalView.sendTextToTerminal("termux-setup-storage");
+                            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("termux-setup-storage");
                             restoreFragment.getActivity().finish();
                         }
                     });
@@ -144,7 +144,7 @@ public class QZHFUtils {
                     public void run() {
                         myDialog.dismiss();
 
-                        TermuxActivity.mTerminalView.sendTextToTerminal("cd ~ && cd ~ && tar -zcvf ./storage/shared/xinhao/data/" + systemName + " /data/data/com.termux/files && echo \"备份完成，备份文件在->内部存储/xinhao/data/|目录下\" \n");
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("cd ~ && cd ~ && tar -zcvf ./storage/shared/xinhao/data/" + systemName + " /data/data/com.termux/files && echo \"备份完成，备份文件在->内部存储/xinhao/data/|目录下\" \n");
 
 
                         restoreFragment.getActivity().finish();

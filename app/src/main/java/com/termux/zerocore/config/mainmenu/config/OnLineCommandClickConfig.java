@@ -32,7 +32,7 @@ public class OnLineCommandClickConfig extends BaseMenuClickConfig {
     public void onClick(View view, Context context) {
         OnLineShDialog mOnLineShDialog = new OnLineShDialog(context);
         mOnLineShDialog.setOnItemClickListener(msg -> {
-            TermuxActivity.mTerminalView.sendTextToTerminal(msg + "\n");
+            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(msg + "\n");
             mOnLineShDialog.dismiss();
         });
         mOnLineShDialog.show();

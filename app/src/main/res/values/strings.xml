@@ -1222,4 +1222,5 @@
         cd ~ &amp;&amp; pkg update -y \n
     </string>
     <string name="zt_adb_shell_run_debug">此功能只能在debug版本上使用,是否下载 debug APP 以继续使用此功能?</string>
+    <string name="zt_recreate">请等待，正在重启当前Activity.</string>
 </resources>

@@ -30,7 +30,7 @@ public class X11EnvironmentClickConfig extends BaseMenuClickConfig {
         TermuxActivity termuxActivity = (TermuxActivity) context;
         // 复制环境
         // am start -a android.intent.action.zt.termux.x11
-        TermuxActivity.mTerminalView.sendTextToTerminal("pkg install x11-repo " +
+        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("pkg install x11-repo " +
             "&& pkg install termux-x11-nightly " +
             "&& termux-x11 \n");
         termuxActivity.getDrawer().smoothClose();

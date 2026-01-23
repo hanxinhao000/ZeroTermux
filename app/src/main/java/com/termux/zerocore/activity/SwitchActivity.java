@@ -228,11 +228,7 @@ public class SwitchActivity extends AppCompatActivity  implements View.OnClickLi
 
                                                     if(new File(mList.get(position).dir).exists()){
                                                         Toast.makeText(SwitchActivity.this, "正在清除系统残留文件", Toast.LENGTH_SHORT).show();
-                                                        if (TermuxActivity.mTerminalView != null) {
-                                                            TermuxActivity.mTerminalView.sendTextToTerminal("chmod 777 -R "+mList.get(position).dir+"&& rm -rf " + mList.get(position).dir + " \n");
-                                                        } else {
-                                                            Toast.makeText(SwitchActivity.this, "部分文件删除失败，请重试或手动删除!", Toast.LENGTH_SHORT).show();
-                                                        }
+                                                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("chmod 777 -R "+mList.get(position).dir+"&& rm -rf " + mList.get(position).dir + " \n");
                                                         finish();
                                                     }else{
                                                         Toast.makeText(SwitchActivity.this, "删除成功!", Toast.LENGTH_SHORT).show();

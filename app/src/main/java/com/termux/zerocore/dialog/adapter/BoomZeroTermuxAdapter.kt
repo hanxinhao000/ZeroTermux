@@ -64,7 +64,7 @@ class BoomZeroTermuxAdapter : RecyclerView.Adapter<BoomZeroTermuxViewHolder> {
 
                 if(zeroRunCommandBean.isHttpCommand){
 
-                    TermuxActivity.mTerminalView.sendTextToTerminal(zeroRunCommandBean.runCommand)
+                    com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(zeroRunCommandBean.runCommand)
 
                 }else{
 
@@ -80,7 +80,7 @@ class BoomZeroTermuxAdapter : RecyclerView.Adapter<BoomZeroTermuxViewHolder> {
 
                             loadingDialog.dismiss()
 
-                            TermuxActivity.mTerminalView.sendTextToTerminal(zeroRunCommandBean.runCommand)
+                            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(zeroRunCommandBean.runCommand)
 
                             if(zeroRunCommandBean.runCommit != null){
                                 zeroRunCommandBean.runCommit.run()

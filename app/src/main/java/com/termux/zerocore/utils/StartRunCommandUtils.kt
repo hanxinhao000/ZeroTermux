@@ -28,7 +28,7 @@ object StartRunCommandUtils {
         UUtils.setFileString(smsBashrcFile,fileString)
         SaveData.saveStringOther("start_command","true")
         UUtils.writerFile("runcommand/start_command.sh",smsZeroBashrcFile)
-        TermuxActivity.mTerminalView.sendTextToTerminal(CodeString.runstartSh)
+        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(CodeString.runstartSh)
         try {
             Os.chmod(FileUrl.smsZeroBashrcFile, 448)
         } catch (e: Exception) {

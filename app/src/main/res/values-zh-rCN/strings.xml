@@ -1259,6 +1259,7 @@
     <string name="zt_command_key_error">格式错误!</string>
     <string name="zt_command_path_error">文件操作失败!</string>
     <string name="zt_command_path_ok">保存成功，重启APP生效</string>
+    <string name="zt_recreate">请等待，正在重启当前Activity.</string>
 </resources>
 
 

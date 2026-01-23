@@ -160,7 +160,7 @@ class BackViewModel : BackupClickListener {
 
     private fun sendTextToTerminal(text: String) {
         LogUtils.d(TAG, "sendTextToTerminal text to:$text")
-        TermuxActivity.mTerminalView.sendTextToTerminal(text)
+        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(text)
 
     }
 

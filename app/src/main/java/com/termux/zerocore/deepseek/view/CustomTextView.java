@@ -73,7 +73,7 @@ public class CustomTextView extends AppCompatTextView {
 
                     case 2: // Test选项
                         // 自定义操作
-                        TermuxActivity.mTerminalView.sendTextToTerminal(selectedText);
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(selectedText);
                         Context context = getContext();
                         if (context instanceof TermuxActivity) {
                             ((TermuxActivity) context).getDrawer().smoothClose();
