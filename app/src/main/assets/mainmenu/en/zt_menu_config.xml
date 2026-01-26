@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zt-menu>
+    <!--####################### Instructions ########################
+    File Path:
+    /data/data/com.termux/files/home/ZtInfo/main_menu_path.xml
+    This file is the configuration file for the ZT left-hand menu bar. It can be modified freely (pay attention to the format; errors may prevent the left bar from displaying correctly).
+    To restore defaults, please use the command:
+    zt menu reset
+    To apply changes immediately after modification, use the command:
+    zt menu update or restart the APP.
+    ########################### Instructions ########################-->
+
+
+    <!--Example:
+    Group Name:
+    <group id="0" name="Common Functions">
+        ####################### name ########################
+        1.name: The name of the click event.
+        Example: name="Switch Source"
+        ####################### click ########################
+        1.click: Calls a JAVA class internal to ZT.
+        Example: click="java:com.termux.zerocore.config.mainmenu.config.SwitchSourceClickConfig"
+        2.Or jump to a web page:
+        click="jumpUrl:www.baidu.com"
+        3.Or execute a shell command:
+        click="ztShell:cd ~ && pkg update"
+        4.To execute directly, modify this configuration item:
+        autoRunShell="true"
+        ####################### icon ########################
+        Note: This attribute only takes effect if click does NOT start with 'java:'.
+        1.icon: The icon. 'application' prefix calls ZT's internal resources, or an absolute path can be provided.
+        Example:(
+        Absolute path: icon="imgPath:/data/data/com.termux/files/home/ZTinfo/1.png")
+        ####################### shell ########################
+    </group>-->
+
+    <!--This is just an example. Edit according to your needs. For normal use, you can comment out this menu and then use 'zt menu update' to refresh immediately.-->
+    <!--####################### Can be deleted #########################-->
+    <group name="Custom Left Sidebar">
+        <item tag="Custom Left Sidebar"
+            name="Edit Menu"
+            icon="imgPath:/data/data/com.termux/files/home/ZtInfo/edit_menu.png"
+            click="ztEditText:/data/data/com.termux/files/home/ZtInfo/main_menu_path.xml" />
+        <item tag="Execute Terminal Command"
+            name="Execute Terminal"
+            icon=""
+            autoRunShell="false"
+            click="ztShell:cd ~ &amp;&amp; pkg update" />
+        <item tag="Jump to URL"
+            name="Jump to URL"
+            icon=""
+            click="jumpUrl:https://www.baidu.com" />
+        <item tag="Placeholder, does nothing"
+            name="Placeholder Menu"
+            icon=""
+            click="" />
+        <item tag="Jump to Internal Activity"
+            name="Jump to Settings"
+            icon=""
+            packageName="com.termux"
+            click="startActivity:com.termux.zerocore.settings.ZtSettingsActivity" />
+        <item tag="Jump to Action"
+            name="Jump to Action"
+            icon=""
+            packageName="com.android.settings"
+            click="actionActivity:android.settings.WIRELESS_SETTINGS" />
+    </group>
+    <!--####################### Can be deleted #########################-->
+
+    <!--Do not attempt to modify the TAG attribute! This tag is for notes! For click attributes starting with 'java:', the icon cannot be modified. Groups can be freely rearranged and sorted.-->
+    <!--Do not attempt to modify the TAG attribute! This tag is for notes! For click attributes starting with 'java:', the icon cannot be modified. Groups can be freely rearranged and sorted.-->
+    <!--Do not attempt to modify the TAG attribute! This tag is for notes! For click attributes starting with 'java:', the icon cannot be modified. Groups can be freely rearranged and sorted.-->
+    <group name="Common Functions">
+        <!--Modify your new name in the name tag-->
+        <item tag="Switch Source"
+            name="Switch Source"
+            click="java:com.termux.zerocore.config.mainmenu.config.SwitchSourceClickConfig" />
+        <item tag="Container Switch"
+            click="java:com.termux.zerocore.config.mainmenu.config.ContainerSwitchClickConfig" />
+        <item tag="Backup/Restore"
+            click="java:com.termux.zerocore.config.mainmenu.config.BackupRestoreClickConfig" />
+        <item tag="MOE All-in-One"
+            click="java:com.termux.zerocore.config.mainmenu.config.MoeClickConfig" />
+        <item tag="Haircut Version"
+            click="java:com.termux.zerocore.config.mainmenu.config.ReleaseLinuxVersionClickConfig" />
+        <item tag="QEMU"
+            click="java:com.termux.zerocore.config.mainmenu.config.QEMUClickConfig" />
+        <item tag="ZT Settings"
+            click="java:com.termux.zerocore.config.mainmenu.config.ZTSettingsClickConfig" />
+    </group>
+
+    <group name="X11 Functions">
+        <item tag="X11 Settings"
+            click="java:com.termux.zerocore.config.mainmenu.config.X11SettingsClickConfig" />
+        <item tag="Show Terminal"
+            click="java:com.termux.zerocore.config.mainmenu.config.ShowCommandClickConfig" />
+        <item tag="Hide Terminal"
+            click="java:com.termux.zerocore.config.mainmenu.config.HideCommandClickConfig" />
+        <item tag="X11 Environment"
+            click="java:com.termux.zerocore.config.mainmenu.config.X11EnvironmentClickConfig" />
+        <item tag="Fix Environment Error"
+            click="java:com.termux.zerocore.config.mainmenu.config.FixEnvironmentalErrorClickConfig" />
+        <item tag="Install X11"
+            click="java:com.termux.zerocore.config.mainmenu.config.InstallX11ClickConfig" />
+        <item tag="Show Keyboard"
+            click="java:com.termux.zerocore.config.mainmenu.config.ShowX11KeyboardClickConfig" />
+        <item tag="Hide Keyboard"
+            click="java:com.termux.zerocore.config.mainmenu.config.HideX11KeyboardClickConfig" />
+        <item tag="VNC"
+            click="java:com.termux.zerocore.config.mainmenu.config.VNCClickConfig" />
+    </group>
+
+    <group name="Beautification/UI Functions">
+        <item tag="Floating Window"
+            click="java:com.termux.zerocore.config.mainmenu.config.FloatWindowsClickConfig" />
+        <item tag="Beautification Settings"
+            click="java:com.termux.zerocore.config.mainmenu.config.BeautificationSettingsClickConfig" />
+        <item tag="Font Settings"
+            click="java:com.termux.zerocore.config.mainmenu.config.FontSettingsClickConfig" />
+        <item tag="Full Screen Mode"
+            click="java:com.termux.zerocore.config.mainmenu.config.FullScreenClickConfig" />
+        <item tag="Snowflake (Modifying this name will disable display status)"
+            click="java:com.termux.zerocore.config.mainmenu.config.SnowflakeClickConfig" />
+        <item tag="Video Background"
+            click="java:com.termux.zerocore.config.mainmenu.config.WebDataClickConfigImp" />
+        <item tag="Particle Animation"
+            click="java:com.termux.zerocore.config.mainmenu.config.ParticleClickConfig" />
+        <item tag="Clear Beautification"
+            click="java:com.termux.zerocore.config.mainmenu.config.ClearStyleClickConfig" />
+    </group>
+
+    <group name="Requires Plugin/Engine (Restart APP after installation)">
+        <item tag="Built-in Keyboard"
+            click="java:com.termux.zerocore.config.mainmenu.config.KeyDataClickConfig" />
+        <item tag="Network Linux Directory"
+            click="java:com.termux.zerocore.config.mainmenu.config.FileBrowserClickConfig" />
+        <item tag="x86 Alpine"
+            click="java:com.termux.zerocore.config.mainmenu.config.X86AlpineDataClickConfig" />
+    </group>
+
+    <group name="ROOT Functions">
+        <item tag="Network ADB"
+            click="java:com.termux.zerocore.config.mainmenu.config.OpenTurnNetworkAdbClickConfig" />
+        <item tag="Close ADB"
+            click="java:com.termux.zerocore.config.mainmenu.config.CloseTurnNetworkAdbClickConfig" />
+        <item tag="Docker Check"
+            click="java:com.termux.zerocore.config.mainmenu.config.DockerCheckClickConfig" />
+    </group>
+
+    <group name="Online Functions">
+        <item tag="Online Scripts"
+            click="java:com.termux.zerocore.config.mainmenu.config.OnLineCommandClickConfig" />
+        <item tag="Zero Forum"
+            click="java:com.termux.zerocore.config.mainmenu.config.ZeroBBsClickConfig" />
+        <item tag="Download Station"
+            click="java:com.termux.zerocore.config.mainmenu.config.DownLoadClickConfig" />
+        <item tag="Public Repository"
+            click="java:com.termux.zerocore.config.mainmenu.config.PublicWarehouseClickConfig" />
+    </group>
+
+    <group name="Configure Terminal">
+        <item tag="SHELL Run"
+            click="java:com.termux.zerocore.config.mainmenu.config.AdbShellRunClickConfig" />
+        <item tag="Bottom Keyboard"
+            click="java:com.termux.zerocore.config.mainmenu.config.ZTCommandKeyClickConfig" />
+        <item tag="Default Startup File"
+            click="java:com.termux.zerocore.config.mainmenu.config.DefBashClickConfig" />
+        <item tag="Edit Startup File"
+            click="java:com.termux.zerocore.config.mainmenu.config.ChangBashClickConfig" />
+        <item tag="Modify Welcome Message"
+            click="java:com.termux.zerocore.config.mainmenu.config.ChangStartMsgClickConfig" />
+        <item tag="Command Definition"
+            click="java:com.termux.zerocore.config.mainmenu.config.CommandDefinitionCLickConfig" />
+        <item tag="Boot Startup (Modifying this name will disable display status)"
+            click="java:com.termux.zerocore.config.mainmenu.config.BootCommandClickConfig" />
+    </group>
+
+    <group name="ZT Functions">
+        <item tag="Install Module"
+            click="java:com.termux.zerocore.config.mainmenu.config.InstallModuleClickConfig" />
+        <item tag="FTP Service"
+            click="java:com.termux.zerocore.config.mainmenu.config.FtpDataClickConfig" />
+        <item tag="Common Shortcuts"
+            click="java:com.termux.zerocore.config.mainmenu.config.CommonlyUsedSoftLinksDataClickConfig" />
+        <item tag="Custom Shortcuts"
+            click="java:com.termux.zerocore.config.mainmenu.config.MyUsedSoftLinksDataClickConfig" />
+        <item tag="Uninstall"
+            click="java:com.termux.zerocore.config.mainmenu.config.UnInstallClickConfig" />
+        <item tag="ADB Remote Connection"
+            click="java:com.termux.zerocore.config.mainmenu.config.RemoteConnectionClickConfig" />
+        <item tag="Browser Terminal"
+            click="java:com.termux.zerocore.config.mainmenu.config.WebDataClickConfig" />
+        <item tag="SMS/Call"
+            click="java:com.termux.zerocore.config.mainmenu.config.PhoneSmsClickConfig" />
+        <item tag="Scheduled Tasks"
+            click="java:com.termux.zerocore.config.mainmenu.config.ScheduledTaskClickConfig" />
+        <item tag="Open Directory"
+            click="java:com.termux.zerocore.config.mainmenu.config.OpenPathClickConfig" />
+        <item tag="Create Data Package Info"
+            click="java:com.termux.zerocore.config.mainmenu.config.DataMessageClickConfig" />
+        <item tag="Language Switch"
+            click="java:com.termux.zerocore.config.mainmenu.config.LanguageClickConfig" />
+        <item tag="Open Source Address"
+            click="java:com.termux.zerocore.config.mainmenu.config.GitHubClickConfig" />
+    </group>
+
+</zt-menu>

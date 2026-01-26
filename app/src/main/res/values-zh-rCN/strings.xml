@@ -1280,6 +1280,11 @@
         sh termux-adb-shell.sh \n
         cd ~ &amp;&amp; pkg update -y \n
     </string>
+
+    <string name="zt_xml_menu">没有在xml配置click事件，配置事件之后使用 zt menu update 重试或重启APP。</string>
+    <string name="zt_xml_menu_error">XML格式不正确,请修改后重新使用命令\nzt menu update\n再试,或者使用命令:\nzt menu reset\n来重置,\n\n-点击此错误信息,将直接打开编辑器-\n\n错误信息:\n\n</string>
+    <string name="zt_xml_settings_title">禁用使用配置文件来设置左菜单</string>
+    <string name="zt_xml_settings_summary">(需重启APP)打开此选项将不在载入xml配置文件作为左侧菜单数据源</string>
 </resources>
 
 

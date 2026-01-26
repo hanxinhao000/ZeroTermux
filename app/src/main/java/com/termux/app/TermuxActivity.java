@@ -166,6 +166,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import io.noties.markwon.Markwon;
 
@@ -1933,7 +1934,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private void writerMainMenuConfig(boolean cover) {
         File mainMenuXmlPathFile = FileIOUtils.INSTANCE.getMainMenuXmlPathFile();
         if (!mainMenuXmlPathFile.exists() || cover) {
-            UUtils.writerFile("mainmenu/cn/zt_menu_config.xml", mainMenuXmlPathFile);
+            Locale systemLocale = Locale.getDefault();
+            String language = systemLocale.getLanguage();
+            Log.i(TAG, "writerMainMenuConfig language: " + language);
+            Log.i(TAG, "writerMainMenuConfig language.equals(\"en\"): " + language.equals("en"));
+            if (!TextUtils.isEmpty(language) && language.equals("en")) {
+                UUtils.writerFile("mainmenu/en/zt_menu_config.xml", mainMenuXmlPathFile);
+            } else {
+                UUtils.writerFile("mainmenu/cn/zt_menu_config.xml", mainMenuXmlPathFile);
+            }
         }
     }
 

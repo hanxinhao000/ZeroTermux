@@ -1268,4 +1268,9 @@ cd files/home/ \n
 sh termux-adb-shell.sh \n
 cd ~ &amp;&amp; pkg update -y \n
 </string>
+
+    <string name="zt_xml_menu">No click event configured in XML. After configuring the event, use `zt menu update` to retry or restart the APP.</string>
+    <string name="zt_xml_menu_error">XML format is incorrect. Please modify and retry using the command:\nzt menu update\nOr use the command:\nzt menu update\nto reset.\n\n-Click this error message to directly open the editor-\n\nError details:\n\n</string>
+    <string name="zt_xml_settings_title">Disable Using Configuration File for Left Menu Settings</string>
+    <string name="zt_xml_settings_summary">(Requires APP restart) Enabling this option will prevent loading the XML configuration file as the data source for the left menu.</string>
 </resources>
