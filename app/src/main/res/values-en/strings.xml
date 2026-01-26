@@ -1253,4 +1253,19 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="zt_fold_menu_close">Disable folding feature</string>
     <string name="zt_fold_menu_close_summary">(Requires restarting the APP) Enabling this option will keep the menu section on the left always expanded.</string>
     <string name="zt_app_crash">An error occurred in the application. Please forward the following information to the developer [screenshot]\nDeveloper Group 1 (QQ):</string>
+
+    <string name="zt_menu_title_config">Configure Terminal</string>
+    <string name="zt_adb_shell_run">SHELL Run</string>
+    <string name="zt_adb_shell_run_summary">
+Run the termux command terminal in the adb shell.
+The file has been successfully written to:\n
+home/termux-adb-shell.sh \n
+Please follow these steps:\n
+\n
+adb shell \n
+run-as com.termux \n
+cd files/home/ \n
+sh termux-adb-shell.sh \n
+cd ~ &amp;&amp; pkg update -y \n
+</string>
 </resources>

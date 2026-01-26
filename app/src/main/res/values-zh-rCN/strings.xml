@@ -1265,6 +1265,21 @@
     <string name="zt_fold_menu_close">关闭折叠功能</string>
     <string name="zt_fold_menu_close_summary">(需要重启APP)打开此选项左侧的菜单栏目会始终保持展开状态</string>
     <string name="zt_app_crash">程序出错,请将以下信息传递给开发者[截图]\n开发者群一(QQ):</string>
+
+    <string name="zt_menu_title_config">配置终端</string>
+    <string name="zt_adb_shell_run">SHELL 运行</string>
+    <string name="zt_adb_shell_run_summary">
+        在 adb shell 终端运行 termux 命令终端
+        文件已成功写入到:\n
+        home/termux-adb-shell.sh \n
+        请使用以下步骤 \n
+        \n
+        adb shell \n
+        run-as com.termux \n
+        cd files/home/ \n
+        sh termux-adb-shell.sh \n
+        cd ~ &amp;&amp; pkg update -y \n
+    </string>
 </resources>
 
 

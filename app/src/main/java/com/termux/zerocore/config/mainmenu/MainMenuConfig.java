@@ -72,6 +72,7 @@ public class MainMenuConfig implements BaseConfig {
     public static final int CODE_ZT_FEATURES = 4;
     public static final int CODE_ZT_ROOT = 5;
     public static final int CODE_ZT_ENGINE = 6;
+    public static final int CODE_ZT_CONFIG = 7;
 
     // 主页分类
     private static ArrayList<MainMenuCategoryData> MAIN_MENU_CATEGORY_DATAS = new ArrayList<>();
@@ -134,14 +135,20 @@ public class MainMenuConfig implements BaseConfig {
         onlineClicks.add(new PublicWarehouseClickConfig());
         MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.online_features), CODE_ONLINE_FEATURES, onlineClicks));
 
+        // 配置文件
+        ArrayList<MainMenuClickConfig> configClicks = new ArrayList<>();
+        configClicks.add(new AdbShellRunClickConfig());
+        configClicks.add(new ZTCommandKeyClickConfig());
+        configClicks.add(new DefBashClickConfig());
+        configClicks.add(new ChangBashClickConfig());
+        configClicks.add(new ChangStartMsgClickConfig());
+        configClicks.add(new CommandDefinitionCLickConfig());
+        configClicks.add(new BootCommandClickConfig());
+        MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.zt_menu_title_config), CODE_ONLINE_FEATURES, configClicks));
+
         // ZT功能
         ArrayList<MainMenuClickConfig> ztFeaturesClicks = new ArrayList<>();
-        ztFeaturesClicks.add(new AdbShellRunClickConfig());
-        ztFeaturesClicks.add(new ZTCommandKeyClickConfig());
         ztFeaturesClicks.add(new InstallModuleClickConfig());
-        ztFeaturesClicks.add(new DefBashClickConfig());
-        ztFeaturesClicks.add(new ChangBashClickConfig());
-        ztFeaturesClicks.add(new ChangStartMsgClickConfig());
         ztFeaturesClicks.add(new FtpDataClickConfig());
         ztFeaturesClicks.add(new CommonlyUsedSoftLinksDataClickConfig());
         ztFeaturesClicks.add(new MyUsedSoftLinksDataClickConfig());
@@ -149,11 +156,9 @@ public class MainMenuConfig implements BaseConfig {
         ztFeaturesClicks.add(new RemoteConnectionClickConfig());
         ztFeaturesClicks.add(new WebDataClickConfig());
         // ztFeaturesClicks.add(new ZeroFunctionClickConfig());
-        ztFeaturesClicks.add(new CommandDefinitionCLickConfig());
         ztFeaturesClicks.add(new PhoneSmsClickConfig());
         ztFeaturesClicks.add(new ScheduledTaskClickConfig());
         ztFeaturesClicks.add(new OpenPathClickConfig());
-        ztFeaturesClicks.add(new BootCommandClickConfig());
         ztFeaturesClicks.add(new DataMessageClickConfig());
         // ztFeaturesClicks.add(new ExperimentClickConfig());
         ztFeaturesClicks.add(new LanguageClickConfig());
