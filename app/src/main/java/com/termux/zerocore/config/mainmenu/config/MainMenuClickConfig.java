@@ -11,6 +11,8 @@ public interface MainMenuClickConfig {
     int getType();
     // 返回图标
     Drawable getIcon(Context context);
+    // 获取XML设置名称
+    String getXmlString(Context context);
     // 返回名称
     String getString(Context context);
     // 单击

@@ -1,6 +1,7 @@
 package com.termux.zerocore.config.mainmenu.view.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,13 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
     public void onBindViewHolder(@NonNull MainMenuItemViewHolder holder, int position) {
         MainMenuClickConfig mainMenuClickConfig = mMainMenuClickConfigs.get(position);
         holder.mCodeImage.setImageDrawable(mainMenuClickConfig.getIcon(mContext));
-        holder.mCodeTitle.setText(mainMenuClickConfig.getString(mContext));
+        String xmlString = mainMenuClickConfig.getXmlString(mContext);
+        if (!TextUtils.isEmpty(xmlString)) {
+            holder.mCodeTitle.setText(xmlString);
+        } else {
+            holder.mCodeTitle.setText(mainMenuClickConfig.getString(mContext));
+        }
+
         holder.mDisableIco.setVisibility(mainMenuClickConfig.isShowDisableIco() ? View.VISIBLE : View.INVISIBLE);
         holder.mItemlayout.setOnClickListener(view -> {
                 LogUtils.e(TAG, "onBindViewHolder click ");

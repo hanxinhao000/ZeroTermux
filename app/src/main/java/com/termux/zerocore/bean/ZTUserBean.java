@@ -36,6 +36,17 @@ public class ZTUserBean {
     private boolean mIsDeepSeekVisibleTerminal;
     // 是否折叠菜单
     private boolean isCloseFoldMenu;
+    // 是否禁用主菜单配置文件
+
+    private boolean isDisableMainConfigMenu;
+
+    public boolean isDisableMainConfigMenu() {
+        return isDisableMainConfigMenu;
+    }
+
+    public void setDisableMainConfigMenu(boolean disableMainConfigMenu) {
+        isDisableMainConfigMenu = disableMainConfigMenu;
+    }
 
     public boolean isCloseFoldMenu() {
         return isCloseFoldMenu;

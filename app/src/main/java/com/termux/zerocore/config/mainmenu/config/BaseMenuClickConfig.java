@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public abstract class BaseMenuClickConfig implements MainMenuClickConfig {
     private static final String TAG = BaseMenuClickConfig.class.getSimpleName();
     protected Context mContext;
+    private String mXmlName;
     @Override
     public boolean onLongClick(View view, Context context) {
         return false;
@@ -26,6 +27,15 @@ public abstract class BaseMenuClickConfig implements MainMenuClickConfig {
     @Override
     public void initViewStatus(Context context) {
 
+    }
+
+    @Override
+    public String getXmlString(Context context) {
+        return mXmlName;
+    }
+
+    public void setXmlName(String xmlName) {
+        this.mXmlName = xmlName;
     }
 
     @Override

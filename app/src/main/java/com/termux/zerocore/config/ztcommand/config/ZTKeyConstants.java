@@ -72,5 +72,8 @@ public class ZTKeyConstants {
     public static final int ZT_ID_BACKGROUND_IMAGE = 16;
     public static final String ZT_COMMAND_BACKGROUND_IMAGE = "backgroundimage";
     public static final String ZT_COMMAND_BACKGROUND_IMAGE_1 = "bgi";
+    // 设置XML主菜单
+    public static final int ZT_ID_MENU = 17;
+    public static final String ZT_COMMAND_MENU = "menu";
 
 }

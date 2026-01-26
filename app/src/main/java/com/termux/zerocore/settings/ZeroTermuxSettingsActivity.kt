@@ -2,6 +2,7 @@ package com.termux.zerocore.settings
 
 import android.os.Bundle
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.example.xh_lib.utils.UUtils
@@ -42,6 +43,9 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
     private val foldMenuCloseSwitch by lazy {findViewById<SwitchCompat>(R.id.fold_menu_close_switch)}
     private val foldMenuCloseLl by lazy {findViewById<LinearLayout>(R.id.fold_menu_close_ll)}
 
+    private val mainMenuConfigCloseSwitch by lazy {findViewById<SwitchCompat>(R.id.main_menu_config_close_switch)}
+    private val mainMenuConfigCloseLl by lazy {findViewById<LinearLayout>(R.id.main_menu_config_close_ll)}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_zero_termux_settings)
@@ -59,6 +63,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         setSwitchStatus(shellTermuxSwitch, shellTermuxLl)
         setSwitchStatus(volumeFunctionSwitch, volumeFunctionLl)
         setSwitchStatus(foldMenuCloseSwitch, foldMenuCloseLl)
+        setSwitchStatus(mainMenuConfigCloseSwitch, mainMenuConfigCloseLl)
     }
 
     private fun initStatus() {
@@ -72,6 +77,7 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
         shellTermuxSwitch.isChecked = isShellTermux()
         volumeFunctionSwitch.isChecked = ztUserBean.isResetVolume
         foldMenuCloseSwitch.isChecked = ztUserBean.isCloseFoldMenu
+        mainMenuConfigCloseSwitch.isChecked = ztUserBean.isDisableMainConfigMenu
     }
 
     private fun setSwitchStatus(switchCompat: SwitchCompat, linearLayout: LinearLayout) {
@@ -122,6 +128,11 @@ class ZeroTermuxSettingsActivity : AppCompatActivity() {
                 }
                 foldMenuCloseSwitch -> {
                     ztUserBean.isCloseFoldMenu = switchCompat.isChecked
+                    //Toast.makeText(this, UUtils.getString(R.string.zt_command_path_ok), Toast.LENGTH_SHORT).show()
+                }
+                mainMenuConfigCloseSwitch -> {
+                    ztUserBean.isDisableMainConfigMenu = switchCompat.isChecked
+                    //Toast.makeText(this, UUtils.getString(R.string.zt_command_path_ok), Toast.LENGTH_SHORT).show()
                 }
             }
             UserSetManage.get().setZTUserBean(ztUserBean)

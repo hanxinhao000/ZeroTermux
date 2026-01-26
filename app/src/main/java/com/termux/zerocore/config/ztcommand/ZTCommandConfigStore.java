@@ -19,6 +19,7 @@ import com.termux.zerocore.config.ztcommand.config.X11CommandShowConfig;
 import com.termux.zerocore.config.ztcommand.config.X11KeyBoardHideConfig;
 import com.termux.zerocore.config.ztcommand.config.X11KeyBoardShowConfig;
 import com.termux.zerocore.config.ztcommand.config.X11StatusConfig;
+import com.termux.zerocore.config.ztcommand.config.XmlMenuConfig;
 import com.termux.zerocore.config.ztcommand.config.ZTBackgroundImageConfig;
 import com.termux.zerocore.config.ztcommand.config.ZTConfig;
 import com.termux.zerocore.config.ztcommand.config.ZTKeyConstants;
@@ -70,6 +71,8 @@ public class ZTCommandConfigStore {
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE, ZTKeyConstants.ZT_ID_BACKGROUND_IMAGE);
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE_1, ZTKeyConstants.ZT_ID_BACKGROUND_IMAGE);
 
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_MENU, ZTKeyConstants.ZT_ID_MENU);
+
         // 需要在此添加你的config，否则找不到config
         register(new ToastConfig());
         register(new HelpConfig());
@@ -77,6 +80,7 @@ public class ZTCommandConfigStore {
         register(new VersionConfig());
         register(new ForWardOpenRightConfig());
         register(new ForWardOpenLeftConfig());
+        register(new XmlMenuConfig());
         register(new RebootConfig());
         register(new LnConfig());
         register(new AVncConfig());

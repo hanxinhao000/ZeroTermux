@@ -411,12 +411,26 @@
 
             </androidx.cardview.widget.CardView>
 
-            <com.termux.zerocore.config.mainmenu.view.NonScrollRecyclerView
-                android:id="@+id/main_menu_list"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:nestedScrollingEnabled="false" />
+                android:layout_height="match_parent">
+                <com.termux.zerocore.config.mainmenu.view.NonScrollRecyclerView
+                    android:id="@+id/main_menu_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:nestedScrollingEnabled="false" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/error_msg"
+                    android:text=""
+                    android:visibility="gone"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"

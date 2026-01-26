@@ -36,6 +36,8 @@ object FileIOUtils {
 
     public  val TERMUX_XINHAO_CONFIG = Environment.getExternalStorageDirectory().absolutePath + "/xinhao/config/"
     //ROM信息文件地址
+    public const val MAIN_MENU_XML_PATH = "/ZtInfo/main_menu_path.xml"
+    public const val MAIN_MENU_EDIT_MENU_ICON_PATH = "/ZtInfo/edit_menu.png"
     public const val DATA_MESSAGE_PATH = "/ZtInfo/data.config"
     public const val DATA_MESSAGE_PATH_FOLDER = "/ZtInfo"
     //网站默认地址
@@ -453,6 +455,26 @@ object FileIOUtils {
         }
         createWebConfig()
         return File(homePath, DATA_MESSAGE_PATH)
+    }
+
+    public fun getMainMenuXmlPathFile(): File {
+        val homePath = getHomePath(UUtils.getContext())
+        val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)
+        if (!file.exists()) {
+            LogUtils.d(TAG, "folder is create")
+            file.mkdirs()
+        }
+        return File(homePath, MAIN_MENU_XML_PATH)
+    }
+
+    public fun getMainEditMenuIconPathFile(): File {
+        val homePath = getHomePath(UUtils.getContext())
+        val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)
+        if (!file.exists()) {
+            LogUtils.d(TAG, "folder is create")
+            file.mkdirs()
+        }
+        return File(homePath, MAIN_MENU_EDIT_MENU_ICON_PATH)
     }
 
     public fun createWebConfig() {

@@ -103,9 +103,8 @@ import com.termux.terminal.TerminalSessionClient;
 import com.termux.view.TerminalRenderer;
 import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
-import com.termux.view.textselection.TextSelectionCursorController;
 import com.termux.x11.MainActivity;
-import com.termux.zerocore.activity.adapter.BoomMinLAdapter;
+import com.termux.zerocore.activity.EditTextActivity;
 import com.termux.zerocore.background.FireworkView;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
@@ -114,8 +113,11 @@ import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.config.ZTConstantConfig;
 import com.termux.zerocore.config.mainmenu.MainMenuConfig;
+import com.termux.zerocore.config.mainmenu.XMLMainMenuConfig;
+import com.termux.zerocore.config.mainmenu.data.MainMenuCategoryData;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
 import com.termux.zerocore.config.other.ZTGitHubVersion;
+import com.termux.zerocore.config.ztcommand.config.XmlMenuConfig;
 import com.termux.zerocore.deepseek.DeepSeekTransitFragment;
 import com.termux.zerocore.deepseek.markdown.MarkDownAPI;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
@@ -127,7 +129,6 @@ import com.termux.zerocore.dialog.SwitchDialog;
 import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.otg.OTGManager;
-import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 import com.termux.zerocore.settings.ZtSettingsActivity;
 import com.termux.zerocore.config.ztcommand.ZTSocketService;
 import com.termux.zerocore.config.ztcommand.config.ZTKeyConstants;
@@ -150,7 +151,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -167,7 +167,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import io.noties.markwon.AbstractMarkwonPlugin;
 import io.noties.markwon.Markwon;
 
 /**
@@ -1222,6 +1221,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private ImageView open_image;
     private CardView info_card;
     private TextView version;
+    private TextView error_msg;
     private TextView eg_tv;
     private LinearLayout key_bord;
     private TextView service_status;
@@ -1272,6 +1272,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         data_card = findViewById(R.id.data_card);
         zt_new = findViewById(R.id.zt_new);
         open_image_data = findViewById(R.id.open_image_data);
+        error_msg = findViewById(R.id.error_msg);
         data_info_card = findViewById(R.id.data_info_card);
         data_info_content = findViewById(R.id.data_info_content);
         back_color = mTermuxActivityRootView.getBack_color();
@@ -1903,6 +1904,37 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 UUtils.chmod(zt);
             }
         }
+        //写入主菜单信息
+        writerMainMenuConfig(false);
+
+        //写入icon
+        File mainEditMenuIconPathFile = FileIOUtils.INSTANCE.getMainEditMenuIconPathFile();
+        if (!mainEditMenuIconPathFile.exists()) {
+            UUtils.writerFile("mainmenu/icon/edit_menu.png", mainEditMenuIconPathFile);
+        }
+        XMLMainMenuConfig.setXMLErrorMessageListener(msg -> {
+            error_msg.setVisibility(View.VISIBLE);
+            mMainMenuList.setVisibility(View.GONE);
+            error_msg.setText(msg);
+        });
+        error_msg.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EditTextActivity.class);
+            intent.putExtra("edit_path", FileIOUtils.INSTANCE.getMainMenuXmlPathFile().getAbsolutePath());
+            startActivity(intent);
+        });
+        ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
+        if (ztUserBean.isDisableMainConfigMenu()) {
+            initListMenu(MainMenuConfig.getMainMenuCategoryDatas());
+        } else {
+            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
+        }
+    }
+
+    private void writerMainMenuConfig(boolean cover) {
+        File mainMenuXmlPathFile = FileIOUtils.INSTANCE.getMainMenuXmlPathFile();
+        if (!mainMenuXmlPathFile.exists() || cover) {
+            UUtils.writerFile("mainmenu/cn/zt_menu_config.xml", mainMenuXmlPathFile);
+        }
     }
 
     /**
@@ -2008,8 +2040,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         localBroadcastManager.sendBroadcast(intent);
     }
  // @}
-    private void initListMenu() {
-        mMainMenuAdapter = new MainMenuAdapter(this, MainMenuConfig.getMainMenuCategoryDatas());
+    private void initListMenu(ArrayList<MainMenuCategoryData> mainMenuCategoryDatas) {
+        mMainMenuAdapter = new MainMenuAdapter(this, mainMenuCategoryDatas);
         mMainMenuList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mMainMenuList.setAdapter(mMainMenuAdapter);
     }
@@ -2145,9 +2177,24 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 case ZTKeyConstants.ZT_COMMAND_BACKGROUND_IMAGE_1:
                     setImageBackground(new File(FileUrl.INSTANCE.getMainConfigImg() + "/back.jpg"));
                     break;
+                case XmlMenuConfig.MENU_UPDATE:
+                    refreshMainMenu();
+                    break;
+                case XmlMenuConfig.MENU_RESET:
+                    writerMainMenuConfig(true);
+                    refreshMainMenu();
+                    break;
             }
         }
     };
+
+    private void refreshMainMenu() {
+        error_msg.setVisibility(View.GONE);
+        mMainMenuList.setVisibility(View.VISIBLE);
+        mMainMenuAdapter.release();
+        mMainMenuAdapter = null;
+        initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(TermuxActivity.this));
+    }
 
     private void initZeroTermux() {
         mInternalPassage = UserSetManage.Companion.get().getZTUserBean().isInternalPassage();
@@ -2165,7 +2212,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initStatue();
         initListener();
         initStatusBarHeight();
-        initListMenu();
         if(mInternalPassage && mMainActivity != null) {
             mMainActivity.init();
             regMainViewKeyDown();
