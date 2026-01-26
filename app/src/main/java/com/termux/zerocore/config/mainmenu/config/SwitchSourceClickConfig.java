@@ -3,6 +3,7 @@ package com.termux.zerocore.config.mainmenu.config;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
@@ -70,6 +71,11 @@ public class SwitchSourceClickConfig extends BaseMenuClickConfig implements Menu
         menuLeftPopuListWindow.setItemClickPopuListener(this);
         menuLeftPopuListWindow.setListData(arrayList);
         menuLeftPopuListWindow.showAsDropDown(showView, 250, -200);
+    }
+
+    @Override
+    public boolean onLongClick(View view, Context context) {
+        return true;
     }
 
     @Override

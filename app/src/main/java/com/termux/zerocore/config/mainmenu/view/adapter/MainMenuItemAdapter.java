@@ -43,9 +43,8 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
                 mainMenuClickConfig.onClick(view, mContext);
             }
         );
-        holder.itemView.setOnLongClickListener(view -> {
-            mainMenuClickConfig.onLongClick(view, mContext);
-            return false;
+        holder.mItemlayout.setOnLongClickListener(view -> {
+            return mainMenuClickConfig.onLongClick(view, mContext);
         });
         mainMenuClickConfig.setImageView(holder.mCodeImage);
         mainMenuClickConfig.setTextView(holder.mCodeTitle);
