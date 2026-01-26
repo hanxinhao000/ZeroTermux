@@ -13,20 +13,19 @@
         android:layout_height="match_parent">
 
 
-        <EditText
+        <TextView
             android:layout_width="match_parent"
             android:textColor="#fff"
             android:padding="10dp"
             android:layout_marginTop="10dp"
             android:background="@null"
             android:textStyle="bold"
+            android:textIsSelectable="true"
             android:textSize="18sp"
             android:id="@+id/error_text"
-            android:text="程序出错,请将以下信息传递给开发者[截图]\n开发者群(QQ):885832352"
+            android:text="@string/zt_app_crash"
             android:layout_height="match_parent" />
 
-
     </ScrollView>
-
 
 </LinearLayout>

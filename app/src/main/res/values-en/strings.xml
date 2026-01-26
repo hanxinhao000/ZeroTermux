@@ -1247,5 +1247,10 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="zt_command_key_error">Format Error!</string>
     <string name="zt_command_path_error">File Operation Failed!</string>
     <string name="zt_command_path_ok">Save successful, restart APP to take effect</string>
-    <string name="zt_recreate">Please wait, restarting application...</string>
+    <string name="zt_recreate">Please wait, restarting application…</string>
+
+    <string name="zt_adb_shell_run_debug">This feature is only available on debug builds. Would you like to download the debug APP to continue using this feature?</string>
+    <string name="zt_fold_menu_close">Disable folding feature</string>
+    <string name="zt_fold_menu_close_summary">(Requires restarting the APP) Enabling this option will keep the menu section on the left always expanded.</string>
+    <string name="zt_app_crash">An error occurred in the application. Please forward the following information to the developer [screenshot]\nDeveloper Group 1 (QQ):</string>
 </resources>

@@ -1260,6 +1260,11 @@
     <string name="zt_command_path_error">文件操作失败!</string>
     <string name="zt_command_path_ok">保存成功，重启APP生效</string>
     <string name="zt_recreate">请等待，正在重启当前Activity.</string>
+
+    <string name="zt_adb_shell_run_debug">此功能只能在debug版本上使用,是否下载 debug APP 以继续使用此功能?</string>
+    <string name="zt_fold_menu_close">关闭折叠功能</string>
+    <string name="zt_fold_menu_close_summary">(需要重启APP)打开此选项左侧的菜单栏目会始终保持展开状态</string>
+    <string name="zt_app_crash">程序出错,请将以下信息传递给开发者[截图]\n开发者群一(QQ):</string>
 </resources>
 
 
