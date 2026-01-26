@@ -422,6 +422,13 @@ public class BoomWindow {
         recyclerView.setAdapter(sshAdapter);
         //content_command_list
     }
+    private void styleEditText(EditText et) {
+        et.setTextColor(android.graphics.Color.WHITE);
+        et.setHintTextColor(android.graphics.Color.LTGRAY);
+        if (et.getBackground() != null) {
+            et.getBackground().setColorFilter(android.graphics.Color.LTGRAY, android.graphics.PorterDuff.Mode.SRC_ATOP);
+        }
+    }
     //添加设备的对话框
     //添加/编辑设备的对话框 (合并)
     private void showSSHDialog(BoomMinLAdapter.CloseLiftListener closeLiftListener, final SSHDeviceBean editBean, final int editPosition) {
@@ -435,6 +442,7 @@ public class BoomWindow {
 
         final EditText etAlias = new EditText(mTermuxActivity);
         etAlias.setHint(UUtils.getString(R.string.content_ssh_alias));
+        styleEditText(etAlias);
         etAlias.setSingleLine(true);
         etAlias.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         if (isEditMode) etAlias.setText(editBean.getAlias());
@@ -442,6 +450,7 @@ public class BoomWindow {
 
         final EditText etHost = new EditText(mTermuxActivity);
         etHost.setHint(UUtils.getString(R.string.content_ssh_host_name));
+        styleEditText(etHost);
         etHost.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_URI);
         etHost.setSingleLine(true);
         etHost.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
@@ -451,6 +460,7 @@ public class BoomWindow {
         final EditText etPort = new EditText(mTermuxActivity);
         etPort.setHint(UUtils.getString(R.string.content_ssh_host_post_def));
         etPort.setText(isEditMode ? String.valueOf(editBean.getPort()) : "22");
+        styleEditText(etPort);
         etPort.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         etPort.setSingleLine(true);
         etPort.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
@@ -459,6 +469,7 @@ public class BoomWindow {
         final EditText etUser = new EditText(mTermuxActivity);
         etUser.setHint(UUtils.getString(R.string.content_ssh_host_username_def));
         etUser.setText(isEditMode ? editBean.getUsername() : "root");
+        styleEditText(etUser);
         etUser.setSingleLine(true);
         etUser.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         layout.addView(etUser);
@@ -466,6 +477,7 @@ public class BoomWindow {
         final android.widget.CheckBox cbUseKey = new android.widget.CheckBox(mTermuxActivity);
         cbUseKey.setText(UUtils.getString(R.string.content_ssh_host_key_def));
         cbUseKey.setTextColor(android.graphics.Color.WHITE);
+        cbUseKey.setButtonTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.LTGRAY));
         if (isEditMode) cbUseKey.setChecked(editBean.isUseKey());
         layout.addView(cbUseKey);
 
@@ -475,6 +487,7 @@ public class BoomWindow {
 
         final EditText etPass = new EditText(mTermuxActivity);
         etPass.setHint(UUtils.getString(R.string.content_ssh_password));
+        styleEditText(etPass);
         LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
         etPass.setLayoutParams(etParams);
         etPass.setSingleLine(true);
