@@ -144,7 +144,7 @@ public class MainMenuConfig implements BaseConfig {
         configClicks.add(new ChangStartMsgClickConfig());
         configClicks.add(new CommandDefinitionCLickConfig());
         configClicks.add(new BootCommandClickConfig());
-        MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.zt_menu_title_config), CODE_ONLINE_FEATURES, configClicks));
+        MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.zt_menu_title_config), CODE_ZT_CONFIG, configClicks));
 
         // ZT功能
         ArrayList<MainMenuClickConfig> ztFeaturesClicks = new ArrayList<>();
