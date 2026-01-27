@@ -93,8 +93,6 @@ android {
         //状态栏
         //https://github.com/gyf-dev/ImmersionBar
         implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
-        //Zip解压
-        implementation 'me.testica:codeeditor:1.0.2'
         // 线性背景
         implementation 'com.googlecode.plist:dd-plist:1.16'
         implementation 'com.tananaev:adblib:1.3'
@@ -129,7 +127,6 @@ android {
         versionCode 117
         versionName "0.118.3.52"
         // @}
-
         if (appVersionName) versionName = appVersionName
         validateVersionName(versionName)
 
@@ -163,12 +160,6 @@ android {
     }
     // ZeroTermux add {@
     // 添加以下配置
-    compileOptions {
-        // Flag to enable support for the new language APIs
-        coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 
     splits.abi {
         enable true
@@ -178,28 +169,11 @@ android {
     }
     // 添加 Kotlin 编译选项
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         dataBinding true
         buildConfig true
-    }
-    // 添加 packagingOptions 配置
-    packagingOptions {
-        // 排除重复的 META-INF 文件
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/INDEX.LIST'
-        exclude 'META-INF/io.netty.versions.properties'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-
-        // 或者使用合并策略
-        // pickFirst 'META-INF/DEPENDENCIES'
-        // pickFirst 'META-INF/LICENSE'
-        // pickFirst 'META-INF/NOTICE'
     }
     // @}
 
@@ -245,9 +219,12 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // ZeroTermux modify {@
+        // sourceCompatibility JavaVersion.VERSION_1_8
+        // targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        // @}
     }
 
     externalNativeBuild {
@@ -270,6 +247,17 @@ android {
         jniLibs {
             useLegacyPackaging true
         }
+        //ZeroTermux add {@
+        // 排除重复的 META-INF 文件
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        // @}
     }
 
     applicationVariants.all { variant ->
@@ -292,11 +280,14 @@ android {
 dependencies {
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.robolectric:robolectric:4.10"
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
+    // ZeroTermux delete {@
+    // coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
+    //
     // ZeroTermux add {@
     // 语法编辑器
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
     implementation 'io.github.rosemoe:editor:0.24.4'
+    implementation 'io.github.rosemoe:language-textmate:0.24.4'
 
     implementation 'androidx.cardview:cardview:1.0.0'
 //    implementation project(path: ':xh_lib')

@@ -1,33 +1,42 @@
 package com.termux.zerocore.activity
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-import android.view.View
+import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
+import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
+import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
+import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
+import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
+import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
+import io.github.rosemoe.sora.text.LineSeparator
+import io.github.rosemoe.sora.text.TextUtils
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
 import kotlinx.coroutines.*
-import me.testica.codeeditor.Editor
-import me.testica.codeeditor.SyntaxHighlightRule
+import org.eclipse.tm4e.core.registry.IThemeSource
 import java.io.File
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 
 class EditTextActivity : AppCompatActivity() {
+    companion object {
+        val TAG = EditTextActivity::class.java.simpleName
+        val CODE_JAVA = "source.java"
+        val CODE_KOTLIN = "source.kotlin"
+        val CODE_PYTHON = CODE_JAVA
+        val CODE_HTML = "text.html.basic"
+        val CODE_JavaScript = "source.js"
+        val CODE_MARK_DOWN = "text.html.markdown"
+        val CODE_LUA = "source.lua"
+    }
     private var mEditText: EditText? = null
     private var mSaveText: TextView? = null
     private var mCancelText: TextView? = null
-    private var editor: Editor? = null
     private var code_editor: CodeEditor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +44,11 @@ class EditTextActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_text)
         mEditText = findViewById(R.id.edit_text)
         mCancelText = findViewById(R.id.cancel)
-        editor = findViewById(R.id.editor)
         code_editor = findViewById(R.id.code_editor)
         mSaveText = findViewById(R.id.ok)
+
         val stringExtra = intent.getStringExtra("edit_path")
+
         if (stringExtra == null || stringExtra.isEmpty()) {
             finish()
         }
@@ -46,38 +56,31 @@ class EditTextActivity : AppCompatActivity() {
         if (!file.exists()) {
             finish()
         }
+        val extension2 = if (file.name.contains('.')) {
+            file.name.substringAfterLast('.')
+        } else {
+            ""
+        }
+        Log.i(TAG, "onCreatexxxxxx extension2: $extension2")
         val readLines = file.readLines()
         val stringBuilder = StringBuilder()
         readLines.forEach {
             stringBuilder.append(it + "\n")
         }
-      /*  val arrayList = ArrayList<String>()
-        arrayList.add("echo")
-        arrayList.add("cd")
-        arrayList.add("fi")
-        arrayList.add("if")
-        arrayList.add("#")
-        mEditText?.setText(matcherSearchTitle(UUtils.getColor(R.color.color_B87733), stringBuilder.toString(),arrayList))
-        val mtypeFace: Typeface = Typeface.createFromAsset(assets, "font/font_termux.ttf")
-        mEditText?.setTypeface(mtypeFace)*/
 
-        editor!!.getNumLinesView().visibility = View.GONE
-        editor!!.getEditText().setTextColor(UUtils.getColor(R.color.color_A9B7C6))
-        editor!!.setSyntaxHighlightRules(
-            SyntaxHighlightRule("[0-9]*", "#4A85BA"),
-            SyntaxHighlightRule("'.*'", "#6A8759"),
-            SyntaxHighlightRule("#.*", "#629755"),
-            SyntaxHighlightRule("\\b(echo|if|fi|cd|ls|cp|mv|rm|rename|touch|ps|grep|export|then|tar|sleep|unzip|gzip|zip|chroot|chmod)\\b", "#B87733"),
-            SyntaxHighlightRule("\".*\"", "#6A8759"),
+        setupTextmate()
+        ensureTextmateTheme()
+
+        val language = TextMateLanguage.create(
+            getCodeType(extension2), true
         )
-        code_editor?.colorScheme = SchemeVS2019()
+        code_editor?.setEditorLanguage(language)
+
         MainScope().launch(Dispatchers.IO) {
-            delay(300)
+            delay(100)
             withContext(Dispatchers.Main) {
-                /*val mtypeFace: Typeface = Typeface.createFromAsset(assets, "font/font_termux.ttf")
-                editor!!.setTypeface(mtypeFace)
-                editor!!.setText(stringBuilder.toString())*/
                 code_editor?.setText(stringBuilder.toString())
+                updatePositionText()
             }
         }
 
@@ -99,20 +102,122 @@ class EditTextActivity : AppCompatActivity() {
         }
     }
 
-    fun matcherSearchTitle(color: Int, text: String, keyword: ArrayList<String>): SpannableString {
-        val s = SpannableString(text)
-        for (i in keyword.indices) {
-            val p: Pattern = Pattern.compile(keyword[i])
-            val matcher: Matcher = p.matcher(s)
-            while (matcher.find()) {
-                val start: Int = matcher.start()
-                val end: Int = matcher.end()
-                s.setSpan(
-                    ForegroundColorSpan(color), start, end,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+    private fun getCodeType(extension: String) : String {
+        if (extension.isEmpty()) {
+            return CODE_JavaScript
+        }
+        when (extension) {
+            "xml", "html" -> {
+                return CODE_HTML
+            }
+            "java", "py", "python" -> {
+                return CODE_JAVA
+            }
+            "kt", "kotlin" -> {
+                return CODE_KOTLIN
+            }
+            "md" -> {
+                return CODE_MARK_DOWN
             }
         }
-        return s
+        return CODE_JavaScript
+    }
+    private fun setupTextmate() {
+        // Add assets file provider so that files in assets can be loaded
+        FileProviderRegistry.getInstance().addFileProvider(
+            AssetsFileResolver(
+                applicationContext.assets // use application context
+            )
+        )
+        loadDefaultThemes()
+        loadDefaultLanguages()
+    }
+
+    private /*suspend*/ fun loadDefaultLanguages() /*= withContext(Dispatchers.Main)*/ {
+        GrammarRegistry.getInstance().loadGrammars("textmate/languages.json")
+    }
+
+    private fun ensureTextmateTheme() {
+        resetColorScheme()
+        var editorColorScheme = code_editor?.colorScheme
+        if (editorColorScheme !is TextMateColorScheme) {
+            editorColorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
+            code_editor?.colorScheme = editorColorScheme
+        }
+    }
+
+    private fun resetColorScheme() {
+        code_editor!!.apply {
+            val colorScheme = this.colorScheme
+            // reset
+            this.colorScheme = colorScheme
+        }
+    }
+
+    private /*suspend*/ fun loadDefaultThemes() /*= withContext(Dispatchers.IO)*/ {
+        val themes = arrayOf("darcula", "abyss", "quietlight", "solarized_drak")
+        val themeRegistry = ThemeRegistry.getInstance()
+        themes.forEach { name ->
+            val path = "textmate/$name.json"
+            themeRegistry.loadTheme(
+                ThemeModel(
+                    IThemeSource.fromInputStream(
+                        FileProviderRegistry.getInstance().tryGetInputStream(path), path, null
+                    ), name
+                ).apply {
+                    if (name != "quietlight") {
+                        isDark = true
+                    }
+                }
+            )
+        }
+
+        themeRegistry.setTheme("quietlight")
+    }
+
+    private fun updatePositionText() {
+        val cursor = code_editor!!.cursor
+        var text =
+            (1 + cursor.leftLine).toString() + ":" + cursor.leftColumn + ";" + cursor.left + " "
+
+        text += if (cursor.isSelected) {
+            "(" + (cursor.right - cursor.left) + " chars)"
+        } else {
+            val content = code_editor!!.text
+            if (content.getColumnCount(cursor.leftLine) == cursor.leftColumn) {
+                "(<" + content.getLine(cursor.leftLine).lineSeparator.let {
+                    if (it == LineSeparator.NONE) {
+                        "EOF"
+                    } else {
+                        it.name
+                    }
+                } + ">)"
+            } else {
+               /* "(" + content.getLine(cursor.leftLine)
+                    .codePointStringAt(cursor.leftColumn)
+                    .escapeCodePointIfNecessary() + ")"*/
+            }
+        }
+
+        // Indicator for text matching
+        val searcher = code_editor!!.searcher
+        if (searcher.hasQuery()) {
+            val idx = searcher.currentMatchedPositionIndex
+            val count = searcher.matchedPositionCount
+            val matchText = if (count == 0) {
+                "no match"
+            } else if (count == 1) {
+                "1 match"
+            } else {
+                "$count matches"
+            }
+            text += if (idx == -1) {
+                "($matchText)"
+            } else {
+                "(${idx + 1} of $matchText)"
+            }
+        }
+
+       /* binding.positionDisplay.text = text*/
     }
 }
