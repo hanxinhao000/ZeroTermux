@@ -51,12 +51,6 @@
         "meta.embedded.block.xml": "xml",
         "meta.embedded.block.python": "python"
       }
-    },
-      {
-          "name": "lua",
-          "scopeName": "source.lua",
-          "grammar": "textmate/lua/syntaxes/lua.tmLanguage.json",
-          "languageConfiguration": "textmate/lua/language-configuration.json",
-      }
+    }
   ]
 }
