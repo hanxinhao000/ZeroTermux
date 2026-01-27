@@ -66,7 +66,7 @@ class SYFunBoomDialog : BaseDialogDown, View.OnClickListener {
                     UUtils.showMsg(UUtils.getString(R.string.请在下载站下载Alpine插件))
                     dismiss()
                     val activity = mContext as TermuxActivity
-                    activity.startHttp1(HTTPIP.IP)
+                    activity.startHttp1(HTTPIP.IP + "/repository/main.json")
                 }
 
             }

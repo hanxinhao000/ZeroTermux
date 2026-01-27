@@ -1,6 +1,7 @@
 package com.termux.zerocore.config.mainmenu;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
@@ -19,8 +22,11 @@ import com.termux.app.TermuxActivity;
 import com.termux.zerocore.activity.EditTextActivity;
 import com.termux.zerocore.config.mainmenu.config.BaseMenuClickConfig;
 import com.termux.zerocore.config.mainmenu.config.MainMenuClickConfig;
+import com.termux.zerocore.config.mainmenu.config.OnLineCommandClickConfig;
 import com.termux.zerocore.config.mainmenu.config.XMLClickConfig;
 import com.termux.zerocore.config.mainmenu.data.MainMenuCategoryData;
+import com.termux.zerocore.dialog.SwitchDialog;
+import com.termux.zerocore.http.HTTPIP;
 import com.termux.zerocore.utils.FileIOUtils;
 
 import java.util.ArrayList;
@@ -41,6 +47,9 @@ public class XMLMainMenuConfig {
     private static final String START_WITH_ZT_EDIT_TEXT = "ztEditText:";
     private static final String START_WITH_START_ACTIVITY = "startActivity:";
     private static final String START_WITH_ACTION_ACTIVITY = "actionActivity:";
+    private static final String START_WITH_COMMANDS = "commands:";
+    private static final String START_WITH_SHELL_URL = "shellUrl:";
+    private static final String START_WITH_DOWNLOAD_URL = "downloadUrl:";
     private static ArrayList<MainMenuCategoryData> MAIN_MENU_CATEGORY_DATAS = new ArrayList<>();
     private static XMLErrorMessageListener xMLErrorMessageListener;
 
@@ -64,7 +73,14 @@ public class XMLMainMenuConfig {
                 String name = menuItem.name;
                 String icon = menuItem.icon;
                 String packageName = menuItem.packageName;
+                String intentData = menuItem.intentData;
                 boolean autoRunShell = menuItem.autoRunShell;
+
+                boolean isDialogConfirm = menuItem.isDialogConfirm();
+                String dialogTitle = menuItem.getDialogTitle();
+                String dialogMessage = menuItem.getDialogMessage();
+
+                String listTitle = menuItem.getListTitle();
                 // 跳转
                 if (menuItem.clickAction.startsWith(START_WITH_JAVA)) {
                     String clazz = menuItem.clickAction.replace(START_WITH_JAVA, "").trim();
@@ -91,10 +107,25 @@ public class XMLMainMenuConfig {
                     if (context instanceof TermuxActivity) {
                         TermuxActivity termuxActivity = (TermuxActivity) context;
                         configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
-                            if (autoRunShell) {
-                                termuxActivity.sendTextToTerminal(shell + "\n");
+                            if (isDialogConfirm) {
+                                SwitchDialog switchDialog = new SwitchDialog(context);
+                                switchDialog.createSwitchDialog(dialogMessage);
+                                switchDialog.getTitle().setText(dialogTitle);
+                                switchDialog.getOk().setOnClickListener(v -> {
+                                    switchDialog.dismiss();
+                                    if (autoRunShell) {
+                                        termuxActivity.sendTextToTerminal(shell + "\n");
+                                    } else {
+                                        termuxActivity.sendTextToTerminal(shell);
+                                    }
+                                });
+                                switchDialog.show();
                             } else {
-                                termuxActivity.sendTextToTerminal(shell);
+                                if (autoRunShell) {
+                                    termuxActivity.sendTextToTerminal(shell + "\n");
+                                } else {
+                                    termuxActivity.sendTextToTerminal(shell);
+                                }
                             }
                         }));
                     }
@@ -111,6 +142,9 @@ public class XMLMainMenuConfig {
                         try {
                             Class<?> clazz = Class.forName(className);
                             Intent intent = new Intent(context, clazz);
+                            if (!TextUtils.isEmpty(intentData)) {
+                                intent.putExtra(intentData.split("@@")[0], intentData.split("@@")[1]);
+                            }
                             Log.i(TAG, "initMainMenuCategoryDatas packageName: " + packageName);
                             if (!TextUtils.isEmpty(packageName)) {
                                 intent.setPackage(packageName);
@@ -129,7 +163,42 @@ public class XMLMainMenuConfig {
                             if (!TextUtils.isEmpty(packageName)) {
                                 intent.setPackage(packageName);
                             }
+                            if (!TextUtils.isEmpty(intentData)) {
+                                intent.putExtra(intentData.split("@@")[0], intentData.split("@@")[1]);
+                            }
                             context1.startActivity(intent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+                } else if (menuItem.clickAction.startsWith(START_WITH_COMMANDS)) {
+                    String commands = menuItem.clickAction.replace(START_WITH_COMMANDS, "").trim();
+                    configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
+                        try {
+                            String[] split = commands.split(",");
+                            showListDialog(listTitle, context, split, autoRunShell);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+                } else if (menuItem.clickAction.startsWith(START_WITH_SHELL_URL)) {
+                    String url = menuItem.clickAction.replace(START_WITH_SHELL_URL, "").trim();
+                    configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
+                        try {
+                          new OnLineCommandClickConfig().showOnLineShDialog(url, context);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+                } else if (menuItem.clickAction.startsWith(START_WITH_DOWNLOAD_URL)) {
+                    String url = menuItem.clickAction.replace(START_WITH_DOWNLOAD_URL, "").trim();
+                    configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
+                        try {
+                           TermuxActivity termuxActivity = (TermuxActivity) context;
+                           termuxActivity.startHttp1(url);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
@@ -143,6 +212,33 @@ public class XMLMainMenuConfig {
             }
             MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(groupItem.groupName, groupItem.id, configs));
         }
+    }
+
+    private static void showListDialog(String listTitle, Context context, String[] commands, boolean autoRunShell) throws Exception {
+        String[] commandTitle = new String[commands.length];
+        String[] commandContent = new String[commands.length];
+        for (int i = 0; i < commands.length; i++) {
+            commandTitle[i] = commands[i].split("@@")[0];
+            commandContent[i] = commands[i].split("@@")[1];
+        }
+        if (TextUtils.isEmpty(listTitle)) {
+            listTitle = "";
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(listTitle)
+            .setItems(commandTitle, (dialog, which) -> {
+               TermuxActivity termuxActivity = (TermuxActivity) context;
+               if (autoRunShell) {
+                   termuxActivity.getTerminalView().sendTextToTerminal(commandContent[which] + "\n");
+               } else {
+                   termuxActivity.getTerminalView().sendTextToTerminal(commandContent[which]);
+               }
+            })
+            .setNegativeButton(UUtils.getString(com.example.xh_lib.R.string.cancel),
+                (dialog, which) -> dialog.dismiss())
+            .setCancelable(true); // 点击外部可取消
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private static XMLClickConfig getXmlClickConfig(Context context, String name, String icon, XMLClickConfig.ConfigClickListener configClickListener) {
@@ -235,14 +331,48 @@ public class XMLMainMenuConfig {
         private String clickAction;
         private String icon;
         private String packageName;
+        private String intentData;
         private boolean autoRunShell;
 
-        public MenuItem(String name, String clickAction, String icon, boolean autoRunShell, String packageName) {
+        private boolean dialogConfirm;
+        private String dialogTitle;
+        private String dialogMessage;
+        private String listTitle;
+
+        public MenuItem(String name, String clickAction, String icon,
+                        boolean autoRunShell, String packageName,
+                        boolean dialogConfirm, String dialogTitle,
+                        String dialogMessage, String intentData, String listTitle) {
             this.name = name;
             this.clickAction = clickAction;
             this.icon = icon;
             this.packageName = packageName;
             this.autoRunShell = autoRunShell;
+            this.intentData = intentData;
+            this.dialogConfirm = dialogConfirm;
+            this.dialogTitle = dialogTitle;
+            this.dialogMessage = dialogMessage;
+            this.listTitle = listTitle;
+        }
+
+        public String getListTitle() {
+            return listTitle;
+        }
+
+        public boolean isDialogConfirm() {
+            return dialogConfirm;
+        }
+
+        public String getDialogTitle() {
+            return dialogTitle;
+        }
+
+        public String getDialogMessage() {
+            return dialogMessage;
+        }
+
+        public String getIntentData() {
+            return intentData;
         }
 
         public String getPackageName() {
@@ -318,13 +448,30 @@ public class XMLMainMenuConfig {
                     String icon = itemElement.getAttribute("icon");
                     String autoRunShell = itemElement.getAttribute("autoRunShell");
                     String packageName = itemElement.getAttribute("packageName");
+                    String intentData = itemElement.getAttribute("intentData");
+
+                    String dialogConfirm = itemElement.getAttribute("dialogConfirm");
+                    String dialogTitle = itemElement.getAttribute("dialogTitle");
+                    String dialogMessage = itemElement.getAttribute("dialogMessage");
+                    String listTitle = itemElement.getAttribute("listTitle");
+
                     boolean isAutoRunShell = false;
+                    boolean isDialogConfirm = false;
                     if (!TextUtils.isEmpty(autoRunShell)) {
                         isAutoRunShell = autoRunShell.trim().equals("true");
                     }
-                    LogUtils.i(TAG, "parseXMLFile icon:" + icon + " ,packageName: " + packageName);
+                    if (!TextUtils.isEmpty(dialogConfirm)) {
+                        isDialogConfirm = dialogConfirm.trim().equals("true");
+                    }
+                    LogUtils.i(TAG, "parseXMLFile icon:" + icon
+                        + " ,packageName: " + packageName
+                        + ", isDialogConfirm: " + isDialogConfirm
+                    );
                     // 创建MenuItem并添加到group中
-                    MenuItem menuItem = new MenuItem(itemName, clickAction, icon, isAutoRunShell, packageName);
+                    MenuItem menuItem = new MenuItem(itemName, clickAction, icon,
+                        isAutoRunShell, packageName,
+                        isDialogConfirm, dialogTitle, dialogMessage,
+                        intentData, listTitle);
                     groupItem.addItem(menuItem);
                 }
 

@@ -1812,7 +1812,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      * 连接到服务器
      */
 
-    public void startHttp1(String ip) {
+    public void startHttp1(String url) {
         XXPermissions.with(TermuxActivity.this)
             .permission(Permission.WRITE_EXTERNAL_STORAGE)
             .permission(Permission.READ_EXTERNAL_STORAGE)
@@ -1823,14 +1823,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                         LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
                         loadingDialog.getMsg().setText(UUtils.getString(R.string.正在连接到下载站服务器));
                         loadingDialog.show();
-                        new BaseHttpUtils().getUrl(ip + "/repository/main.json", new HttpResponseListenerBase() {
+                        new BaseHttpUtils().getUrl(url, new HttpResponseListenerBase() {
                             @Override
                             public void onSuccessful(@NotNull Message msg, int mWhat) {
                                 loadingDialog.dismiss();
                                 try {
                                     ZDYDataBean zdyDataBean = new Gson().fromJson((String) msg.obj, ZDYDataBean.class);
                                     DownLoadDialogBoom downLoadDialogBoom = new DownLoadDialogBoom(TermuxActivity.this);
-                                    downLoadDialogBoom.setIP(ip + "/repository/main.json");
+                                    downLoadDialogBoom.setIP(url);
                                     downLoadDialogBoom.show();
                                     downLoadDialogBoom.setCancelable(true);
                                 } catch (Exception e) {

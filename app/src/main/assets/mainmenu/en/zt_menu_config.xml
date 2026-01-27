@@ -36,34 +36,64 @@
 
     <!--This is just an example. Edit according to your needs. For normal use, you can comment out this menu and then use 'zt menu update' to refresh immediately.-->
     <!--####################### Can be deleted #########################-->
-    <group name="Custom Left Sidebar">
-        <item tag="Custom Left Sidebar"
-            name="Edit Menu"
+    <group name="Example click event (this grouping can be deleted in the profile)">
+        <item tag="customizeTheLeftSidebar"
+            name="EditMenu"
             icon="imgPath:/data/data/com.termux/files/home/ZtInfo/edit_menu.png"
             click="ztEditText:/data/data/com.termux/files/home/ZtInfo/main_menu_path.xml" />
-        <item tag="Execute Terminal Command"
-            name="Execute Terminal"
+        <!--dialog The property can only be effective for click for ztShell
+       dialogConfirm for false It Is Not Prompted
+        -->
+        <item tag="ExecuteTerminalCommands"
+            name="ExecutionTerminal"
             icon=""
+            dialogConfirm="true"
+            dialogTitle="Tips"
+            dialogMessage="Do You Want To Execute This Shell Statement"
             autoRunShell="false"
             click="ztShell:cd ~ &amp;&amp; pkg update" />
-        <item tag="Jump to URL"
-            name="Jump to URL"
+        <item tag="RedirectURL"
+            name="RedirectURL"
             icon=""
             click="jumpUrl:https://www.baidu.com" />
-        <item tag="Placeholder, does nothing"
-            name="Placeholder Menu"
+        <item tag="OccupyAPlaceDoNothing"
+            name="PlaceholderMenu"
             icon=""
             click="" />
-        <item tag="Jump to Internal Activity"
-            name="Jump to Settings"
+        <item tag="JumpToInternalActivities"
+            name="JumpSettings"
             icon=""
             packageName="com.termux"
+            intentData=""
             click="startActivity:com.termux.zerocore.settings.ZtSettingsActivity" />
-        <item tag="Jump to Action"
-            name="Jump to Action"
+        <!--intentData property values, currently only support String strings
+            key@@value-->
+        <item tag="JumpAction"
+            name="JumpToAction"
             icon=""
+            intentData="data@@com.termux"
             packageName="com.android.settings"
             click="actionActivity:android.settings.WIRELESS_SETTINGS" />
+        <!--List
+        name@@command,name@@command,name@@command
+        && in XML To &amp;&amp;
+        -->
+        <item tag="list"
+            name="list"
+            autoRunShell="true"
+            listTitle="PleaseSelectACommand"
+            click="commands:singleLineCommand@@pkg update,MultiLineCommands@@pkg update &amp;&amp; pkg install vim,InstallGit@@pkg install git" />
+
+        <item tag="OnlineScripting"
+            name="OnlineScripting"
+            icon=""
+            click="shellUrl:https://od.ixcmstudio.cn/on_line_sh/main.json" />
+
+        <item tag="DownloadStation"
+            name="DownloadStation"
+            icon=""
+            click="downloadUrl:https://od.ixcmstudio.cn/repository/main.json" />
+
     </group>
     <!--####################### Can be deleted #########################-->
 

@@ -38,14 +38,20 @@
     然后使用
     zt menu update 立即刷新-->
     <!--#######################可删除#########################-->
-    <group name="自定义左侧栏">
+    <group name="示例点击事件(可在配置文件删除此分组)">
         <item tag="自定义左侧栏"
             name="编辑菜单"
             icon="imgPath:/data/data/com.termux/files/home/ZtInfo/edit_menu.png"
             click="ztEditText:/data/data/com.termux/files/home/ZtInfo/main_menu_path.xml" />
+        <!--dialog 属性只能对于 click 为 ztShell 生效
+        dialogConfirm 为 false 则不提示
+        -->
         <item tag="执行终端命令"
             name="执行终端"
             icon=""
+            dialogConfirm="true"
+            dialogTitle="温馨提示"
+            dialogMessage="要执行此段shell语句吗"
             autoRunShell="false"
             click="ztShell:cd ~ &amp;&amp; pkg update" />
         <item tag="跳转网址"
@@ -60,12 +66,36 @@
             name="跳转设置"
             icon=""
             packageName="com.termux"
+            intentData=""
             click="startActivity:com.termux.zerocore.settings.ZtSettingsActivity" />
+        <!--intentData 属性值，目前只支持 String 字符串
+            key@@value-->
         <item tag="跳转action"
             name="跳转Action"
             icon=""
+            intentData="data@@com.termux"
             packageName="com.android.settings"
             click="actionActivity:android.settings.WIRELESS_SETTINGS" />
+        <!--List列表
+        名称@@命令,名称@@命令,名称@@命令
+        && 在XML转换为 &amp;&amp;
+        -->
+        <item tag="List列表"
+            name="List列表"
+            autoRunShell="true"
+            listTitle="请选择一个命令"
+            click="commands:单行命令@@pkg update,多行命令@@pkg update &amp;&amp; pkg install vim,安装git@@pkg install git" />
+
+        <item tag="在线脚本"
+            name="在线脚本"
+            icon=""
+            click="shellUrl:https://od.ixcmstudio.cn/on_line_sh/main.json" />
+
+        <item tag="下载站"
+            name="下载站"
+            icon=""
+            click="downloadUrl:https://od.ixcmstudio.cn/repository/main.json" />
+
     </group>
     <!--#######################可删除#########################-->
 

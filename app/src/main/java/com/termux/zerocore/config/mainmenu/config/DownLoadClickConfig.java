@@ -29,6 +29,6 @@ public class DownLoadClickConfig extends BaseMenuClickConfig {
     @Override
     public void onClick(View view, Context context) {
         TermuxActivity termuxActivity = (TermuxActivity) context;
-        termuxActivity.startHttp1(HTTPIP.IP);
+        termuxActivity.startHttp1(HTTPIP.IP + "/repository/main.json");
     }
 }

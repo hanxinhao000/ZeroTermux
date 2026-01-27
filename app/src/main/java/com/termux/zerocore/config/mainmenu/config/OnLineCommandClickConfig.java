@@ -35,6 +35,20 @@ public class OnLineCommandClickConfig extends BaseMenuClickConfig {
             com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(msg + "\n");
             mOnLineShDialog.dismiss();
         });
+        mOnLineShDialog.connection();
+        mOnLineShDialog.show();
+        mOnLineShDialog.setCancelable(true);
+    }
+
+    public void showOnLineShDialog(String url, Context context) {
+        OnLineShDialog mOnLineShDialog = new OnLineShDialog(context);
+        mOnLineShDialog.setUrl(url);
+        mOnLineShDialog.connection();
+        mOnLineShDialog.setOnItemClickListener(msg -> {
+            com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance()
+                .getmSingletonCommunicationListener().sendTextToTerminal(msg + "\n");
+            mOnLineShDialog.dismiss();
+        });
         mOnLineShDialog.show();
         mOnLineShDialog.setCancelable(true);
     }

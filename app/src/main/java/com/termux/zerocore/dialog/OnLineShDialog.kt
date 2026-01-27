@@ -31,6 +31,7 @@ class OnLineShDialog : BaseDialogDown {
     private var show_data: RelativeLayout? = null
     private var service_name: TextView? = null
     private var mOnItemClickListener:OnItemClickListener? = null
+    private var mUrl: String = "${HTTPIP.IP}/on_line_sh/main.json"
     private val LOG_TAG = "Termux--Apk:OnLineShDialog"
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
@@ -41,14 +42,20 @@ class OnLineShDialog : BaseDialogDown {
         loading_data = mView.findViewById(R.id.loading_data)
         show_data = mView.findViewById(R.id.show_data)
         service_name = mView.findViewById(R.id.service_name)
+    }
 
+    public fun setUrl(url: String) {
+        mUrl = url
+    }
+
+    public fun connection() {
         downloadHttpData()
     }
 
     //下载数据
     private fun downloadHttpData(){
         Logger.logDebug(LOG_TAG, "downloadHttpData start on url: ${HTTPIP.IP}/on_line_sh/main.json")
-        BaseHttpUtils().getUrl("${HTTPIP.IP}/on_line_sh/main.json",object :HttpResponseListenerBase{
+        BaseHttpUtils().getUrl(mUrl,object :HttpResponseListenerBase{
             override fun onSuccessful(msg: Message, mWhat: Int) {
 
                 try {
