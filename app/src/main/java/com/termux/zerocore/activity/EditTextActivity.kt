@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import io.github.rosemoe.sora.widget.CodeEditor
+import io.github.rosemoe.sora.widget.schemes.SchemeVS2019
 import kotlinx.coroutines.*
 import me.testica.codeeditor.Editor
 import me.testica.codeeditor.SyntaxHighlightRule
@@ -69,6 +70,7 @@ class EditTextActivity : AppCompatActivity() {
             SyntaxHighlightRule("\\b(echo|if|fi|cd|ls|cp|mv|rm|rename|touch|ps|grep|export|then|tar|sleep|unzip|gzip|zip|chroot|chmod)\\b", "#B87733"),
             SyntaxHighlightRule("\".*\"", "#6A8759"),
         )
+        code_editor?.colorScheme = SchemeVS2019()
         MainScope().launch(Dispatchers.IO) {
             delay(300)
             withContext(Dispatchers.Main) {
