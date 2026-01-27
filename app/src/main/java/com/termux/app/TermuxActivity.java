@@ -2200,8 +2200,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private void refreshMainMenu() {
         error_msg.setVisibility(View.GONE);
         mMainMenuList.setVisibility(View.VISIBLE);
-        mMainMenuAdapter.release();
-        mMainMenuAdapter = null;
+        if (mMainMenuAdapter != null) {
+            mMainMenuAdapter.release();
+            mMainMenuAdapter = null;
+        }
         initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(TermuxActivity.this));
     }
 
@@ -2552,7 +2554,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             localBroadcastManager.unregisterReceiver(localReceiver);
             localBroadcastManager.unregisterReceiver(messageReceiver);
         }
-        mMainMenuAdapter.release();
+        if (mMainMenuAdapter != null) {
+            mMainMenuAdapter.release();
+        }
         VideoUtils.getInstance().onDestroy();
         if (mInternalPassage && mMainActivity != null) {
             mMainActivity.onDestroy(this);
