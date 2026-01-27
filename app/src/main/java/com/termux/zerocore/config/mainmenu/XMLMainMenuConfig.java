@@ -20,6 +20,7 @@ import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
 import com.termux.zerocore.activity.EditTextActivity;
+import com.termux.zerocore.activity.WebViewActivity;
 import com.termux.zerocore.config.mainmenu.config.BaseMenuClickConfig;
 import com.termux.zerocore.config.mainmenu.config.MainMenuClickConfig;
 import com.termux.zerocore.config.mainmenu.config.OnLineCommandClickConfig;
@@ -50,6 +51,7 @@ public class XMLMainMenuConfig {
     private static final String START_WITH_COMMANDS = "commands:";
     private static final String START_WITH_SHELL_URL = "shellUrl:";
     private static final String START_WITH_DOWNLOAD_URL = "downloadUrl:";
+    private static final String START_WITH_APP_WEB_URL = "appWebUrl:";
     private static ArrayList<MainMenuCategoryData> MAIN_MENU_CATEGORY_DATAS = new ArrayList<>();
     private static XMLErrorMessageListener xMLErrorMessageListener;
 
@@ -81,6 +83,7 @@ public class XMLMainMenuConfig {
                 String dialogMessage = menuItem.getDialogMessage();
 
                 String listTitle = menuItem.getListTitle();
+                String activityTitle = menuItem.getActivityTitle();
                 // 跳转
                 if (menuItem.clickAction.startsWith(START_WITH_JAVA)) {
                     String clazz = menuItem.clickAction.replace(START_WITH_JAVA, "").trim();
@@ -199,6 +202,23 @@ public class XMLMainMenuConfig {
                         try {
                            TermuxActivity termuxActivity = (TermuxActivity) context;
                            termuxActivity.startHttp1(url);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+                } else if (menuItem.clickAction.startsWith(START_WITH_APP_WEB_URL)) {
+                    String url = menuItem.clickAction.replace(START_WITH_APP_WEB_URL, "").trim();
+                    configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
+                        try {
+                            Intent intent2 = new Intent(context, WebViewActivity.class);
+                            if (!TextUtils.isEmpty(activityTitle)) {
+                                intent2.putExtra("title", activityTitle);
+                            } else {
+                                intent2.putExtra("title", "title");
+                            }
+                            intent2.putExtra("content", url);
+                            context.startActivity(intent2);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
@@ -338,11 +358,13 @@ public class XMLMainMenuConfig {
         private String dialogTitle;
         private String dialogMessage;
         private String listTitle;
+        private String activityTitle;
 
         public MenuItem(String name, String clickAction, String icon,
                         boolean autoRunShell, String packageName,
                         boolean dialogConfirm, String dialogTitle,
-                        String dialogMessage, String intentData, String listTitle) {
+                        String dialogMessage, String intentData,
+                        String listTitle, String activityTitle) {
             this.name = name;
             this.clickAction = clickAction;
             this.icon = icon;
@@ -353,6 +375,11 @@ public class XMLMainMenuConfig {
             this.dialogTitle = dialogTitle;
             this.dialogMessage = dialogMessage;
             this.listTitle = listTitle;
+            this.activityTitle = activityTitle;
+        }
+
+        public String getActivityTitle() {
+            return activityTitle;
         }
 
         public String getListTitle() {
@@ -454,6 +481,7 @@ public class XMLMainMenuConfig {
                     String dialogTitle = itemElement.getAttribute("dialogTitle");
                     String dialogMessage = itemElement.getAttribute("dialogMessage");
                     String listTitle = itemElement.getAttribute("listTitle");
+                    String activityTitle = itemElement.getAttribute("activityTitle");
 
                     boolean isAutoRunShell = false;
                     boolean isDialogConfirm = false;
@@ -471,7 +499,7 @@ public class XMLMainMenuConfig {
                     MenuItem menuItem = new MenuItem(itemName, clickAction, icon,
                         isAutoRunShell, packageName,
                         isDialogConfirm, dialogTitle, dialogMessage,
-                        intentData, listTitle);
+                        intentData, listTitle, activityTitle);
                     groupItem.addItem(menuItem);
                 }
 
@@ -510,25 +538,6 @@ public class XMLMainMenuConfig {
      */
     public static List<GroupItem> parseXMLFile(String filePath) {
         return parseXMLFile(new File(filePath));
-    }
-
-    // 使用示例
-    public static void main(String[] args) {
-        // 方法1：使用File对象
-        File xmlFile = new File("menu_config.xml");
-        List<GroupItem> groups = parseXMLFile(xmlFile);
-
-        // 方法2：使用文件路径字符串
-        // List<GroupItem> groups = parseXMLFile("menu_config.xml");
-
-        // 打印解析结果
-        for (GroupItem group : groups) {
-            System.out.println("=== 组: " + group.getGroupName() + " ===");
-            for (MenuItem item : group.getItems()) {
-                System.out.println(item);
-            }
-            System.out.println();
-        }
     }
 
     public static interface XMLErrorMessageListener{

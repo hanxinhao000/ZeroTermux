@@ -96,6 +96,12 @@
             icon=""
             click="downloadUrl:https://od.ixcmstudio.cn/repository/main.json" />
 
+        <item tag="应用内打开URL"
+            name="应用内URL"
+            icon=""
+            activityTitle="百度一下"
+            click="appWebUrl:https://www.baidu.com" />
+
     </group>
     <!--#######################可删除#########################-->
 

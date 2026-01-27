@@ -55,7 +55,7 @@
         <item tag="RedirectURL"
             name="RedirectURL"
             icon=""
-            click="jumpUrl:https://www.baidu.com" />
+            click="jumpUrl:https://www.google.com" />
         <item tag="OccupyAPlaceDoNothing"
             name="PlaceholderMenu"
             icon=""
@@ -93,7 +93,11 @@
             name="DownloadStation"
             icon=""
             click="downloadUrl:https://od.ixcmstudio.cn/repository/main.json" />
-
+        <item tag="OpenTheURLWithinTheApp"
+            name="InAppURL"
+            icon=""
+            activityTitle="Google"
+            click="appWebUrl:https://www.google.com" />
     </group>
     <!--####################### Can be deleted #########################-->
 
