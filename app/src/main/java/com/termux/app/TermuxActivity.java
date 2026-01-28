@@ -368,8 +368,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         // ZeroTermux add {@
         initZeroTermux();
-        // @}
         initMenu();
+        // @}
         setSettingsButtonView();
 
         setNewSessionButtonView();
