@@ -283,6 +283,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 	//  private float mTerminalToolbarDefaultHeight;
     private int mTerminalToolbarDefaultHeight;
     public boolean mInternalPassage;
+    private void initMenu() {
+        writerMainMenuConfig(true);
+        ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
+        if (ztUserBean.isDisableMainConfigMenu()) {
+            MainMenuConfig.init(this);
+            initListMenu(MainMenuConfig.getMainMenuCategoryDatas());
+        } else {
+            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
+        }
+    }
 	// @}
 
 
@@ -359,7 +369,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // ZeroTermux add {@
         initZeroTermux();
         // @}
-
+        initMenu();
         setSettingsButtonView();
 
         setNewSessionButtonView();
@@ -1905,9 +1915,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 UUtils.chmod(zt);
             }
         }
-        //写入主菜单信息
-        writerMainMenuConfig(false);
-
+        initMenu();
         //写入icon
         File mainEditMenuIconPathFile = FileIOUtils.INSTANCE.getMainEditMenuIconPathFile();
         if (!mainEditMenuIconPathFile.exists()) {
@@ -1923,12 +1931,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             intent.putExtra("edit_path", FileIOUtils.INSTANCE.getMainMenuXmlPathFile().getAbsolutePath());
             startActivity(intent);
         });
-        ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
-        if (ztUserBean.isDisableMainConfigMenu()) {
-            initListMenu(MainMenuConfig.getMainMenuCategoryDatas());
-        } else {
-            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
-        }
     }
 
     private void writerMainMenuConfig(boolean cover) {

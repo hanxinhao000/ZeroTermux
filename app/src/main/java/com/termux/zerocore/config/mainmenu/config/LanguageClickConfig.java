@@ -11,6 +11,7 @@ import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
+import com.termux.app.TermuxActivity;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 
 import org.jetbrains.annotations.Nullable;
@@ -55,19 +56,23 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
 
     @Override
     public void itemClick(int id, int index, @Nullable MenuLeftPopuListWindow mMenuLeftPopuListWindow) {
-        switch (id) {
-            // 中文
-            case 30:
-                //  Intent intent = new Intent(this, TermuxActivity.class);
-                LocaleHelper.Companion.getInstance()
-                    .language(getLocale("2")).apply(mContext);
-                // startActivity(intent);
-                break;
-            // 英文
-            case 31:
-                LocaleHelper.Companion.getInstance()
-                    .language(getLocale("1")).apply(mContext);
-                break;
+        String langType = (id == 30) ? "2" : "1";
+
+        try {
+            java.io.File menuFile = com.termux.zerocore.utils.FileIOUtils.INSTANCE.getMainMenuXmlPathFile();
+            if (menuFile != null && menuFile.exists()) {
+                menuFile.delete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        LocaleHelper.Companion.getInstance()
+            .language(getLocale(langType))
+            .apply(mContext);
+
+        if (mContext instanceof TermuxActivity) {
+            ((TermuxActivity) mContext).restartActivity();
         }
     }
 
