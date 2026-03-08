@@ -1155,15 +1155,15 @@
     <string name="deepseek_settings_recognition_error_toast">格式化命令失败,请重新设置 “代码识别关键字”</string>
 
     <string name="deepseek_settings_url">输入 DeepSeek 接口地址</string>
-    <string name="deepseek_settings_url_edit">将官网的秘钥输入到此处，将自动保存</string>
-    <string name="deepseek_settings_url_edit_summary">将官网的秘钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_url_edit">将官网的密钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_url_edit_summary">将官网的密钥输入到此处，将自动保存</string>
     <string name="deepseek_settings_url_edit_info">目前默认的是 DeepSeek API接口，此处不清楚的话不要随意修改，随意修改可能导致接口无法访问</string>
 
-    <string name="deepseek_settings_key">输入 DeepSeek 秘钥</string>
-    <string name="deepseek_settings_key_edit">将官网的秘钥输入到此处，将自动保存</string>
-    <string name="deepseek_settings_key_edit_summary">将官网的秘钥输入到此处，将自动保存</string>
-    <string name="deepseek_settings_key_edit_info">请输入 DeepSeek 官网申请的秘钥，填写到此处即可。不清楚秘钥怎么获取，可点击：秘钥获取方式</string>
-    <string name="deepseek_settings_key_edit_info_keyword">秘钥获取方式</string>
+    <string name="deepseek_settings_key">输入 DeepSeek 密钥</string>
+    <string name="deepseek_settings_key_edit">将官网的密钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_key_edit_summary">将官网的密钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_key_edit_info">请输入 DeepSeek 官网申请的密钥，填写到此处即可。不清楚密钥怎么获取，可点击：密钥获取方式</string>
+    <string name="deepseek_settings_key_edit_info_keyword">密钥获取方式</string>
 
     <string name="deepseek_settings_send_command">点击蓝色命令直接执行</string>
     <string name="deepseek_settings_send_command_summary">点击显示蓝色的指令之后，直接在终端执行，而不是显示在终端</string>
