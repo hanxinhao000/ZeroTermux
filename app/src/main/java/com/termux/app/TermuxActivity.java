@@ -744,10 +744,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 			// @}
         });
 
-        findViewById(R.id.toggle_keyboard_button).setOnLongClickListener(v -> {
-		  // ZeroTermux add {@
-            //toggleTerminalToolbar();
-			// @}
+        findViewById(R.id.key_bord_button).setOnLongClickListener(v -> {
+            toggleTerminalToolbar();
             return true;
         });
 		  // ZeroTermux add {@
