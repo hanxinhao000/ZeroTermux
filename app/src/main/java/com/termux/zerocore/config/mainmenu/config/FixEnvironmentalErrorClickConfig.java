@@ -60,7 +60,7 @@ public class FixEnvironmentalErrorClickConfig extends BaseMenuClickConfig {
             } catch (ErrnoException e) {
                 e.printStackTrace();
             }
-            ZFileUUtils.writerFile(FileUrl.INSTANCE.getAisleXlorieAssetPath(), aislePathSo);
+            ZFileUUtils.writerFile("x11/libXlorie.so", aislePathSo);
             UUtils.runOnUIThread(() -> {
                 UUtils.showMsg(context.getString(R.string.x11_so_install_ok));
             });

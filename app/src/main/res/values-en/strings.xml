@@ -906,6 +906,8 @@ Reset successfully</string>
     <string name="zt_settings">ZeroTermux settings</string>
     <string name="zt_settings1">ZT settings</string>
     <string name="zt_settings_note">ZeroTermux Related settings options</string>
+<string name="zt_editor_word_wrap">Editor word wrap</string>
+    <string name="zt_editor_word_wrap_summary">Enable automatic line wrapping in the built-in text editor</string>
     <string name="container_settings">Container settings</string>
     <string name="container_settings_note">Applications within the application container are only set for the current container.</string>
     <string name="about_zerotermux">About ZeroTermux</string>

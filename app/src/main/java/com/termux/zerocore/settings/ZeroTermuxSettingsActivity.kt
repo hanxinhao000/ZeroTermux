@@ -49,6 +49,10 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
     private val mainMenuConfigCloseSwitch by lazy {findViewById<SwitchCompat>(R.id.main_menu_config_close_switch)}
     private val mainMenuConfigCloseLl by lazy {findViewById<LinearLayout>(R.id.main_menu_config_close_ll)}
 
+private val editorWordWrapSwitch by lazy {findViewById<SwitchCompat>(R.id.editor_word_wrap_switch)}
+    private val editorWordWrapLl by lazy {findViewById<LinearLayout>(R.id.editor_word_wrap_ll)}
+
+
     private val mSettingsKeywordFunCardViewLayout by lazy {findViewById<CardView>(R.id.settings_keyword_fun_card)}
     private val mSettingsKeywordFunTextView by lazy {findViewById<TextView>(R.id.settings_keyword_fun_text_summary)}
 
@@ -71,6 +75,7 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
         setSwitchStatus(volumeFunctionSwitch, volumeFunctionLl)
         setSwitchStatus(foldMenuCloseSwitch, foldMenuCloseLl)
         setSwitchStatus(mainMenuConfigCloseSwitch, mainMenuConfigCloseLl)
+setSwitchStatus(editorWordWrapSwitch, editorWordWrapLl)
     }
 
     private fun initStatus() {
@@ -85,6 +90,7 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
         volumeFunctionSwitch.isChecked = ztUserBean.isResetVolume
         foldMenuCloseSwitch.isChecked = ztUserBean.isCloseFoldMenu
         mainMenuConfigCloseSwitch.isChecked = ztUserBean.isDisableMainConfigMenu
+editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
         mSettingsKeywordFunTextView.text =
             "${UUtils.getString(R.string.settings_keyword_summary1)}: " +
                 "${KeyWordFunDialog.getDoubleClickString(ztUserBean.doubleClickFun)}\n" +
@@ -155,6 +161,9 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
                 mainMenuConfigCloseSwitch -> {
                     ztUserBean.isDisableMainConfigMenu = switchCompat.isChecked
                     //Toast.makeText(this, UUtils.getString(R.string.zt_command_path_ok), Toast.LENGTH_SHORT).show()
+                }
+editorWordWrapSwitch -> {
+                    ztUserBean.isEditorWordWrap = switchCompat.isChecked
                 }
             }
             UserSetManage.get().setZTUserBean(ztUserBean)

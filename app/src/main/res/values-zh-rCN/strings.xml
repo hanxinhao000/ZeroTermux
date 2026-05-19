@@ -905,6 +905,8 @@
     <string name="zt_settings">ZeroTermux设置</string>
     <string name="zt_settings1">ZT设置</string>
     <string name="zt_settings_note">ZeroTermux 相关设置选项</string>
+<string name="zt_editor_word_wrap">文本编辑器自动换行</string>
+    <string name="zt_editor_word_wrap_summary">开启后内置文本编辑器将自动换行显示</string>
     <string name="container_settings">容器设置</string>
     <string name="container_settings_note">应用容器内应用程序，只针对当前容器设置</string>
     <string name="about_zerotermux">关于ZeroTermux</string>

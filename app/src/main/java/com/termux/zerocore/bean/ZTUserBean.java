@@ -56,8 +56,19 @@ public class ZTUserBean {
     private boolean isCreateFolderForSdcardAndroid;
     // 是否跳过引导页面
     private boolean isJumpGuide;
+    // 文本编辑器自动换行
+    private boolean isEditorWordWrap = false;
+
     // 双击终端功能
     private int mDoubleClickFun;
+
+    public boolean isEditorWordWrap() {
+        return isEditorWordWrap;
+    }
+
+    public void setEditorWordWrap(boolean editorWordWrap) {
+        isEditorWordWrap = editorWordWrap;
+    }
 
     public int getDoubleClickFun() {
         return mDoubleClickFun;

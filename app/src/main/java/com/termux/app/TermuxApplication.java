@@ -28,6 +28,7 @@ import com.termux.shared.termux.theme.TermuxThemeUtils;
 import com.termux.zerocore.activity.UncaughtExceptionHandlerActivity;
 import com.termux.zerocore.config.mainmenu.MainMenuConfig;
 import com.termux.zerocore.filetype.MyFileImageListener;
+import com.termux.zerocore.filetype.MyZFileOperateListener;
 import com.termux.zerocore.ftp.utils.UserSetManage;
 import com.termux.zerocore.libsu.LibSuManage;
 import com.termux.zerocore.utils.ClipBoardUtil;
@@ -142,6 +143,7 @@ public class TermuxApplication extends XHApplication {
         LogUtils.isShow = UserSetManage.Companion.get().getZTUserBean().isOutputLOG();
 
         ZFileManageHelp.getInstance().init(new MyFileImageListener());
+ZFileManageHelp.getInstance().setFileOperateListener(new MyZFileOperateListener());
         ZFileConfiguration.Companion.setMApplicationContext(this);
         // Z7Extractor.init();
         Aria.init(this);
