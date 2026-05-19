@@ -10,9 +10,6 @@ build/
 .cxx
 *.zip
 
-#exception for the native libraries
-!app/src/main/assets/x11/libXlorie-*.so
-
 # Crashlytics configuations
 com_crashlytics_export_strings.xml
 

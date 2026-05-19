@@ -77,7 +77,7 @@ afterEvaluate {
                 from components.default
                 groupId = 'com.termux'
                 artifactId = 'terminal-emulator'
-                version = '0.118.0'
+                version = '0.118.3.58'
                 artifact(sourceJar)
             }
         }
