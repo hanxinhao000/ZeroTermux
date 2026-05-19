@@ -1362,4 +1362,6 @@
     <string name="settings_keyword_item1">键盘</string>
     <string name="settings_keyword_item2">禁用</string>
     <string name="settings_keyword_item3">自定义命令</string>
+
+    <string name="command_gone">隐藏</string>
 </resources>

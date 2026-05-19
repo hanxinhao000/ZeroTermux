@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -46,10 +47,12 @@ class EditTextActivity : AppCompatActivity() {
     private var mEditText: EditText? = null
     private var mSaveText: TextView? = null
     private var mCancelText: TextView? = null
+    private var mLayoutGone: RelativeLayout? = null
+    private var mLayoutVisible: LinearLayout? = null
     private var code_editor: CodeEditor? = null
 
     // Find/Replace toolbar views
-    private var toolbarLayout: LinearLayout? = null
+    private var toolbarLayout: RelativeLayout? = null
     private var btnFind: TextView? = null
     private var btnReplace: TextView? = null
     private var searchInput: EditText? = null
@@ -80,6 +83,17 @@ class EditTextActivity : AppCompatActivity() {
         btnNext = findViewById(R.id.btn_next)
         btnReplaceOne = findViewById(R.id.btn_replace_one)
         btnReplaceAll = findViewById(R.id.btn_replace_all)
+        mLayoutGone = findViewById(R.id.layout_search_gone)
+        mLayoutVisible = findViewById(R.id.layout_search_visible)
+
+        mLayoutGone?.setOnClickListener {
+            mLayoutVisible?.visibility = View.VISIBLE
+            mLayoutGone?.visibility = View.GONE
+        }
+        mLayoutVisible?.setOnClickListener {
+            mLayoutVisible?.visibility = View.GONE
+            mLayoutGone?.visibility = View.VISIBLE
+        }
 
         val stringExtra = intent.getStringExtra("edit_path")
 
