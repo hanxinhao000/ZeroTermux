@@ -1,0 +1,53 @@
+{
+  "name": "TOML",
+  "scopeName": "source.toml",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#tables" },
+    { "include": "#keys" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#constants" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "match": "#.*$", "name": "comment.line.number-sign.toml" }
+      ]
+    },
+    "tables": {
+      "patterns": [
+        { "match": "^\\s*(\\[\\[?)([^\\]]+)(\\]\\]?)", "captures": { "1": { "name": "punctuation.definition.table.begin.toml" }, "2": { "name": "entity.name.section.toml" }, "3": { "name": "punctuation.definition.table.end.toml" } } }
+      ]
+    },
+    "keys": {
+      "patterns": [
+        { "match": "[A-Za-z0-9_.-]+(?=\\s*=)", "name": "support.type.property-name.toml" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        { "begin": "\"\"\"", "end": "\"\"\"", "name": "string.quoted.triple.toml" },
+        { "begin": "'''", "end": "'''", "name": "string.quoted.triple.literal.toml" },
+        { "begin": "\"", "end": "\"", "name": "string.quoted.double.toml", "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.toml" }] },
+        { "begin": "'", "end": "'", "name": "string.quoted.single.toml" }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "match": "(?<![\\w.-])[-+]?(?:0x[0-9A-Fa-f_]+|0o[0-7_]+|0b[01_]+|\\d[\\d_]*(?:\\.[\\d_]+)?(?:[eE][+-]?[\\d_]+)?)\\b", "name": "constant.numeric.toml" }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "match": "\\b(?:true|false|inf|nan)\\b", "name": "constant.language.toml" }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        { "match": "[=\\[\\]{},.]", "name": "punctuation.toml" }
+      ]
+    }
+  }
+}

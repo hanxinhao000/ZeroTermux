@@ -1,0 +1,71 @@
+{
+  "name": "Shell Script",
+  "scopeName": "source.shell",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#variables" },
+    { "include": "#functions" },
+    { "include": "#keywords" },
+    { "include": "#builtins" },
+    { "include": "#numbers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "match": "#.*$", "name": "comment.line.number-sign.shell" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.shell",
+          "begin": "'",
+          "end": "'"
+        },
+        {
+          "name": "string.quoted.double.shell",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "match": "\\\\[\\$`\"\\\\]", "name": "constant.character.escape.shell" },
+            { "include": "#variables" }
+          ]
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        { "match": "\\$\\{?[A-Za-z_][A-Za-z0-9_]*\\}?", "name": "variable.other.normal.shell" },
+        { "match": "\\$[0-9@#?*!$-]", "name": "variable.language.special.shell" }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "match": "^\\s*([A-Za-z_][A-Za-z0-9_-]*)\\s*(\\(\\))",
+          "captures": {
+            "1": { "name": "entity.name.function.shell" },
+            "2": { "name": "punctuation.definition.function.shell" }
+          }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        { "match": "\\b(?:if|then|else|elif|fi|for|while|until|do|done|case|esac|in|function|select|time)\\b", "name": "keyword.control.shell" },
+        { "match": "\\b(?:local|declare|typeset|readonly)\\b", "name": "storage.modifier.shell" }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        { "match": "\\b(?:alias|bg|bind|break|builtin|caller|cd|command|compgen|complete|continue|dirs|disown|echo|enable|eval|exec|exit|export|false|fc|fg|getopts|hash|help|history|jobs|kill|let|logout|popd|printf|pushd|pwd|read|return|set|shift|shopt|source|suspend|test|times|trap|true|type|ulimit|umask|unalias|unset|wait)\\b", "name": "support.function.builtin.shell" }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "match": "(?<![\\w-])[-+]?(?:\\d+\\.?\\d*|\\.\\d+)\\b", "name": "constant.numeric.shell" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Diff",
+  "scopeName": "source.diff",
+  "patterns": [
+    { "match": "^diff\\s+--git.*$", "name": "meta.diff.header.git.diff" },
+    { "match": "^index\\s+.*$", "name": "meta.diff.index.diff" },
+    { "match": "^@@.*@@", "name": "meta.diff.range.unified.diff" },
+    { "match": "^\\+\\+\\+.*$", "name": "meta.diff.header.to-file.diff" },
+    { "match": "^---.*$", "name": "meta.diff.header.from-file.diff" },
+    { "match": "^\\+.*$", "name": "markup.inserted.diff" },
+    { "match": "^-.*$", "name": "markup.deleted.diff" },
+    { "match": "^!.*$", "name": "markup.changed.diff" }
+  ]
+}

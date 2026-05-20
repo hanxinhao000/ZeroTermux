@@ -1,0 +1,169 @@
+{
+  "name": "JSON with Comments",
+  "scopeName": "source.json.comments",
+  "patterns": [
+    {
+      "include": "#value"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "match": "//.*$",
+          "name": "comment.line.double-slash.jsonc"
+        },
+        {
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.jsonc"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.jsonc"
+            }
+          },
+          "name": "comment.block.jsonc"
+        }
+      ]
+    },
+    "value": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#object"
+        },
+        {
+          "include": "#array"
+        },
+        {
+          "include": "#string"
+        },
+        {
+          "include": "#number"
+        },
+        {
+          "include": "#constant"
+        },
+        {
+          "include": "#invalid"
+        }
+      ]
+    },
+    "object": {
+      "name": "meta.structure.dictionary.json.comments",
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.dictionary.begin.json.comments"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.dictionary.end.json.comments"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#property"
+        },
+        {
+          "include": "#value"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.dictionary.pair.json.comments"
+        },
+        {
+          "match": ":",
+          "name": "punctuation.separator.dictionary.key-value.json.comments"
+        }
+      ]
+    },
+    "array": {
+      "name": "meta.structure.array.json.comments",
+      "begin": "\\[",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.array.begin.json.comments"
+        }
+      },
+      "end": "\\]",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.array.end.json.comments"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#value"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.array.json.comments"
+        }
+      ]
+    },
+    "property": {
+      "match": "\\\"(\\\\(?:[\\\"\\\\/bfnrt]|u[0-9A-Fa-f]{4})|[^\\\"\\\\])*\\\"(?=\\s*:)",
+      "name": "support.type.property-name.json.comments string.quoted.double.json.comments"
+    },
+    "string": {
+      "name": "string.quoted.double.json.comments",
+      "begin": "\\\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.json.comments"
+        }
+      },
+      "end": "\\\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.json.comments"
+        }
+      },
+      "patterns": [
+        {
+          "match": "\\\\(?:[\\\"\\\\/bfnrt]|u[0-9A-Fa-f]{4})",
+          "name": "constant.character.escape.json.comments"
+        },
+        {
+          "match": "\\\\.",
+          "name": "invalid.illegal.invalid-escape.json.comments"
+        }
+      ]
+    },
+    "number": {
+      "match": "-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?",
+      "name": "constant.numeric.json.comments"
+    },
+    "constant": {
+      "patterns": [
+        {
+          "match": "\\b(?:true|false)\\b",
+          "name": "constant.language.boolean.json.comments"
+        },
+        {
+          "match": "\\bnull\\b",
+          "name": "constant.language.null.json.comments"
+        }
+      ]
+    },
+    "invalid": {
+      "match": "\\b(?:NaN|Infinity|undefined)\\b",
+      "name": "invalid.illegal.constant.json.comments"
+    }
+  }
+}

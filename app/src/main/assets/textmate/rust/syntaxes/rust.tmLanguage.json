@@ -1,0 +1,127 @@
+{
+  "information_for_contributors": ["Rust TextMate grammar for ZeroTermux"],
+  "name": "Rust",
+  "scopeName": "source.rust",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#attributes" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#constants" },
+    { "include": "#functions" },
+    { "include": "#macros" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.documentation.rust", "match": "///.*$" },
+        { "name": "comment.line.double-slash.rust", "match": "//.*$" },
+        {
+          "name": "comment.block.rust",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": { "0": { "name": "comment.block.rust" } },
+          "endCaptures": { "0": { "name": "comment.block.rust" } }
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "name": "meta.attribute.rust",
+          "begin": "#!?\\[",
+          "end": "\\]",
+          "beginCaptures": { "0": { "name": "punctuation.definition.attribute.rust" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.attribute.rust" } },
+          "patterns": [
+            { "include": "#strings" }
+          ]
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.rust",
+          "begin": "b?\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.rust", "match": "\\\\([nrt\\\\\"'0xu]|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f]+\\})" }
+          ]
+        },
+        {
+          "name": "string.quoted.single.rust",
+          "begin": "b?'",
+          "end": "'",
+          "patterns": [
+            { "name": "constant.character.escape.rust", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.quoted.raw.rust",
+          "begin": "r#+\"",
+          "end": "\"#+",
+          "beginCaptures": { "0": { "name": "string.quoted.raw.rust" } },
+          "endCaptures": { "0": { "name": "string.quoted.raw.rust" } }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.rust",
+          "match": "\\b(as|async|await|break|const|continue|crate|dyn|else|enum|extern|fn|for|if|impl|in|let|loop|match|mod|move|mut|pub|ref|return|self|Self|static|struct|super|trait|type|union|unsafe|use|where|while)\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.rust",
+          "match": "\\b(bool|char|f32|f64|i8|i16|i32|i64|i128|isize|str|u8|u16|u32|u64|u128|usize|String|Vec|Option|Result|Box|Rc|Arc|Cell|RefCell|HashMap|HashSet|BTreeMap|BTreeSet|Cow|Path|PathBuf)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "name": "constant.language.rust", "match": "\\b(true|false|None|Some|Ok|Err)\\b" },
+        { "name": "constant.numeric.integer.rust", "match": "\\b(0x[0-9A-Fa-f_]+|0b[01_]+|0o[0-7_]+|[0-9][0-9_]*)([ui](8|16|32|64|128|size))?\\b" },
+        { "name": "constant.numeric.float.rust", "match": "\\b[0-9][0-9_]*\\.[0-9_]*([eE][+-]?[0-9_]+)?(f32|f64)?\\b" }
+      ]
+    },
+    "macros": {
+      "patterns": [
+        {
+          "name": "support.macro.rust",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*!"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.rust",
+          "match": "\\b(fn)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.rust" },
+            "2": { "name": "entity.name.function.rust" }
+          }
+        },
+        {
+          "name": "support.function.rust",
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.rust",
+          "match": "(=>|->|::|\\.\\.=?|==|!=|<=|>=|<<|>>|&&|\\|\\||\\+\\+|--|[+\\-*/%&|^!~<>=]=?)"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "information_for_contributors": ["C/C++ TextMate grammar for ZeroTermux"],
+  "name": "C/C++",
+  "scopeName": "source.c",
+  "patterns": [
+    { "include": "#preprocessor" },
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#constants" },
+    { "include": "#functions" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "preprocessor": {
+      "patterns": [
+        {
+          "name": "meta.preprocessor.c",
+          "match": "^\\s*(#\\s*(include|define|undef|if|ifdef|ifndef|elif|else|endif|error|pragma|warning|line))\\b.*$",
+          "captures": {
+            "1": { "name": "keyword.control.import.c" }
+          }
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.double-slash.c", "match": "//.*$" },
+        {
+          "name": "comment.block.c",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "beginCaptures": { "0": { "name": "comment.block.c" } },
+          "endCaptures": { "0": { "name": "comment.block.c" } }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.c",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.c", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.quoted.single.c",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "name": "constant.character.escape.c", "match": "\\\\." }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.c",
+          "match": "\\b(auto|break|case|class|const|constexpr|continue|default|delete|do|else|enum|explicit|extern|for|friend|goto|if|inline|namespace|new|noexcept|nullptr|operator|override|private|protected|public|register|return|sizeof|static|static_assert|static_cast|struct|switch|template|this|throw|try|typedef|typename|union|using|virtual|volatile|while)\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.c",
+          "match": "\\b(bool|char|char8_t|char16_t|char32_t|double|float|int|long|short|signed|size_t|ssize_t|uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|unsigned|void|wchar_t|string|vector|map|set|list|array|pair|tuple|auto)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "name": "constant.language.c", "match": "\\b(true|false|NULL|nullptr)\\b" },
+        { "name": "constant.numeric.integer.c", "match": "\\b(0x[0-9A-Fa-f]+|0b[01]+|[0-9]+)[uUlL]*\\b" },
+        { "name": "constant.numeric.float.c", "match": "\\b[0-9]+\\.[0-9]*([eE][+-]?[0-9]+)?[fFlL]?\\b" }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "support.function.c",
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.c",
+          "match": "(->|::|\\.\\.\\.|==|!=|<=|>=|<<|>>|&&|\\|\\||\\+\\+|--|[+\\-*/%&|^~!=<>]=?)"
+        }
+      ]
+    }
+  }
+}

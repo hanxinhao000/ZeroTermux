@@ -1,0 +1,12 @@
+{
+  "name": "Properties",
+  "scopeName": "source.properties",
+  "patterns": [
+    { "match": "^[ \\t]*[#!].*$", "name": "comment.line.number-sign.properties" },
+    { "match": "^\\s*([^:=\\s][^:=]*?)(\\s*[:=])", "captures": { "1": { "name": "support.type.property-name.properties" }, "2": { "name": "punctuation.separator.key-value.properties" } } },
+    { "begin": "\"", "end": "\"", "name": "string.quoted.double.properties", "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.properties" }] },
+    { "match": "\\\\(?:u[0-9A-Fa-f]{4}|.)", "name": "constant.character.escape.properties" },
+    { "match": "\\b(?:true|false|yes|no|on|off)\\b", "name": "constant.language.properties" },
+    { "match": "(?<![\\w.-])[-+]?(?:\\d+\\.?\\d*|\\.\\d+)\\b", "name": "constant.numeric.properties" }
+  ]
+}
