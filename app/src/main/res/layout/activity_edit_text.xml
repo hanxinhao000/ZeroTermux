@@ -11,22 +11,25 @@
     <LinearLayout
         android:id="@+id/editor_tab_bar"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
+        android:layout_height="48dp"
         android:layout_alignParentTop="true"
-        android:background="#252526"
+        android:background="@drawable/shape_editor_tab_bar_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="4dp">
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
 
         <TextView
             android:id="@+id/editor_menu"
-            android:layout_width="42dp"
-            android:layout_height="match_parent"
+            android:layout_width="38dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/shape_editor_icon_button"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="☰"
             android:textColor="#D4D4D4"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <HorizontalScrollView
             android:layout_width="0dp"
@@ -34,13 +37,15 @@
             android:layout_weight="1"
             android:fillViewport="false"
             android:overScrollMode="ifContentScrolls"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/editor_tabs_container"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="bottom"
+                android:gravity="center_vertical"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
     </LinearLayout>
@@ -48,7 +53,7 @@
     <LinearLayout
         android:id="@+id/editor_symbol_bar"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/shape_editor_symbol_bar_bg"
         android:gravity="center_vertical"
@@ -62,6 +67,8 @@
             android:layout_weight="1"
             android:fillViewport="false"
             android:overScrollMode="ifContentScrolls"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:scrollbars="none">
 
             <io.github.rosemoe.sora.widget.SymbolInputView
@@ -129,15 +136,15 @@
 
     <LinearLayout
         android:id="@+id/editor_sidebar"
-        android:layout_width="300dp"
+        android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/editor_tab_bar"
-        android:background="#252526"
-        android:elevation="8dp"
+        android:background="@drawable/shape_editor_sidebar_bg"
+        android:elevation="12dp"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:padding="12dp"
         android:visibility="gone">
 
         <LinearLayout
@@ -149,8 +156,8 @@
             <TextView
                 android:id="@+id/ok"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/shape_editor_action_primary"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -162,8 +169,8 @@
             <TextView
                 android:id="@+id/cancel"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_marginRight="6dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/shape_editor_action_danger"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -175,8 +182,8 @@
             <TextView
                 android:id="@+id/editor_settings"
                 android:layout_width="42dp"
-                android:layout_height="36dp"
-                android:background="@drawable/shape_editor_symbol_key"
+                android:layout_height="38dp"
+                android:background="@drawable/shape_editor_icon_button"
                 android:contentDescription="@string/editor_settings"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
@@ -188,8 +195,8 @@
         <TextView
             android:id="@+id/editor_svg_mode_toggle"
             android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/shape_editor_symbol_key"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
@@ -200,33 +207,38 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="42dp"
+            android:layout_height="40dp"
             android:layout_marginTop="10dp"
-            android:background="#2D2D30"
+            android:background="@drawable/shape_editor_segment_bg"
             android:orientation="horizontal"
             android:paddingLeft="4dp"
-            android:paddingRight="4dp">
+            android:paddingRight="4dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
 
             <TextView
                 android:id="@+id/sidebar_file_tab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/shape_editor_sidebar_tab_active"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/editor_sidebar_files"
                 android:textColor="#FFFFFF"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/sidebar_search_tab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/shape_editor_sidebar_tab_inactive"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/editor_sidebar_search"
-                android:textColor="#9D9D9D"
+                android:textColor="#9DA9BB"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -242,10 +254,16 @@
                 android:id="@+id/sidebar_file_path"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_editor_path_chip"
                 android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="8dp"
+                android:paddingRight="10dp"
                 android:paddingBottom="8dp"
                 android:singleLine="true"
-                android:textColor="#D4D4D4"
+                android:textColor="#D5DDE8"
                 android:textSize="12sp"
                 tools:text="/sdcard/project" />
 
@@ -256,8 +274,13 @@
                 android:layout_weight="1"
                 android:background="@drawable/shape_editor_sidebar_panel"
                 android:cacheColorHint="#00000000"
-                android:divider="#333333"
-                android:dividerHeight="1dp" />
+                android:divider="#243041"
+                android:dividerHeight="1dp"
+                android:listSelector="@drawable/shape_editor_list_selector"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:scrollbars="none"
+                android:clipToPadding="false" />
         </LinearLayout>
 
         <LinearLayout
@@ -272,27 +295,29 @@
             <EditText
                 android:id="@+id/sidebar_search_input"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/shape_r_3dp_553d_all"
+                android:layout_height="42dp"
+                android:background="@drawable/shape_editor_input_field"
                 android:hint="@string/editor_sidebar_search_hint"
                 android:imeOptions="actionSearch"
-                android:padding="8dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:singleLine="true"
                 android:textColor="@color/color_ffffff"
-                android:textColorHint="#9D9D9D"
+                android:textColorHint="#8D9AAE"
                 android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/sidebar_replace_input"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/shape_r_3dp_553d_all"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shape_editor_input_field"
                 android:hint="@string/edit_replace_hint"
-                android:padding="8dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:singleLine="true"
                 android:textColor="@color/color_ffffff"
-                android:textColorHint="#9D9D9D"
+                android:textColorHint="#8D9AAE"
                 android:textSize="14sp" />
 
             <LinearLayout
@@ -304,10 +329,10 @@
                 <TextView
                     android:id="@+id/sidebar_regex_toggle"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="34dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1"
-                    android:background="@drawable/shape_r_3dp_553d_all"
+                    android:background="@drawable/shape_editor_toolbar_chip"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="@string/editor_sidebar_regex"
@@ -317,9 +342,9 @@
                 <TextView
                     android:id="@+id/sidebar_case_toggle"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="34dp"
                     android:layout_weight="1"
-                    android:background="@drawable/shape_r_3dp_553d_all"
+                    android:background="@drawable/shape_editor_toolbar_chip"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="@string/editor_sidebar_match_case"
@@ -336,10 +361,10 @@
                 <TextView
                     android:id="@+id/sidebar_prev"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="34dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1"
-                    android:background="@drawable/shape_r_3dp_553d_all"
+                    android:background="@drawable/shape_editor_toolbar_chip"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="↑"
@@ -349,10 +374,10 @@
                 <TextView
                     android:id="@+id/sidebar_next"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="34dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="1"
-                    android:background="@drawable/shape_r_3dp_553d_all"
+                    android:background="@drawable/shape_editor_toolbar_chip"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="↓"
@@ -362,10 +387,10 @@
                 <TextView
                     android:id="@+id/sidebar_replace_one"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="34dp"
                     android:layout_marginRight="4dp"
                     android:layout_weight="2"
-                    android:background="@drawable/shape_r_3dp_553d_all"
+                    android:background="@drawable/shape_editor_toolbar_chip"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="@string/edit_replace"
@@ -375,9 +400,9 @@
                 <TextView
                     android:id="@+id/sidebar_replace_all"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="34dp"
                     android:layout_weight="2"
-                    android:background="@drawable/shape_r_3dp_553d_all"
+                    android:background="@drawable/shape_editor_toolbar_chip"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="@string/edit_replace_all"
@@ -402,8 +427,13 @@
                 android:layout_weight="1"
                 android:background="@drawable/shape_editor_sidebar_panel"
                 android:cacheColorHint="#00000000"
-                android:divider="#333333"
-                android:dividerHeight="1dp" />
+                android:divider="#243041"
+                android:dividerHeight="1dp"
+                android:listSelector="@drawable/shape_editor_list_selector"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:scrollbars="none"
+                android:clipToPadding="false" />
         </LinearLayout>
     </LinearLayout>
 

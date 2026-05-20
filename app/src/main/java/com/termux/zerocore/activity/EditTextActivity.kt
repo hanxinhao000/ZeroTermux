@@ -629,15 +629,16 @@ class EditTextActivity : AppCompatActivity() {
             button.minimumWidth = 0
             button.minHeight = 0
             button.minimumHeight = 0
-            button.textSize = 14f
-            button.setTextColor(0xfff2f2f2.toInt())
-            button.setPadding(dp(14), 0, dp(14), 0)
+            button.textSize = 13f
+            button.setTextColor(0xffedf3fb.toInt())
+            button.setPadding(dp(13), 0, dp(13), 0)
+            button.includeFontPadding = false
             button.setBackgroundResource(R.drawable.shape_editor_symbol_input_key)
             button.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
             ).apply {
-                setMargins(dp(2), dp(6), dp(2), dp(6))
+                setMargins(dp(2), dp(3), dp(2), dp(3))
             }
         }
     }
@@ -798,6 +799,7 @@ class EditTextActivity : AppCompatActivity() {
                 showEditorTab(tab, extension)
             }
             renderEditorTabs()
+            mSidebarFileTree?.invalidateViews()
             updatePositionText()
             updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
             updateDirtyState()
@@ -1095,13 +1097,16 @@ class EditTextActivity : AppCompatActivity() {
             val tabView = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = android.view.Gravity.CENTER_VERTICAL
-                setPadding(dp(10), 0, dp(8), 0)
-                background = if (active) ContextCompat.getDrawable(this@EditTextActivity, R.drawable.shape_editor_tab_active) else null
+                setPadding(dp(10), 0, dp(4), 0)
+                background = ContextCompat.getDrawable(
+                    this@EditTextActivity,
+                    if (active) R.drawable.shape_editor_tab_active else R.drawable.shape_editor_tab_inactive
+                )
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    dp(34)
+                    dp(36)
                 ).apply {
-                    setMargins(0, dp(4), dp(6), dp(4))
+                    setMargins(0, 0, dp(6), 0)
                 }
                 setOnClickListener {
                     if (tab.file.absolutePath != currentFile?.absolutePath) {
@@ -1111,24 +1116,34 @@ class EditTextActivity : AppCompatActivity() {
             }
             tabView.addView(TextView(this).apply {
                 text = if (tab.dirty) "●" else ""
-                setTextColor(0xff89d185.toInt())
-                textSize = 11f
+                setTextColor(0xff9ece6a.toInt())
+                textSize = 10f
                 gravity = android.view.Gravity.CENTER
-                layoutParams = LinearLayout.LayoutParams(dp(14), LinearLayout.LayoutParams.MATCH_PARENT)
+                includeFontPadding = false
+                layoutParams = LinearLayout.LayoutParams(dp(12), LinearLayout.LayoutParams.MATCH_PARENT)
             })
             tabView.addView(TextView(this).apply {
                 text = tab.file.name
-                setTextColor(if (tab.dirty) 0xff89d185.toInt() else 0xffd4d4d4.toInt())
+                setTextColor(
+                    when {
+                        tab.dirty -> 0xff9ece6a.toInt()
+                        active -> 0xffedf3fb.toInt()
+                        else -> 0xffaeb7c5.toInt()
+                    }
+                )
                 textSize = 13f
                 setSingleLine(true)
-                setMaxWidth(dp(150))
+                setMaxWidth(dp(170))
                 gravity = android.view.Gravity.CENTER_VERTICAL
+                includeFontPadding = false
+                setTypeface(Typeface.DEFAULT, if (active) Typeface.BOLD else Typeface.NORMAL)
             })
             tabView.addView(TextView(this).apply {
                 text = "×"
-                setTextColor(0xff9d9d9d.toInt())
+                setTextColor(if (active) 0xffc5cedc.toInt() else 0xff7f8a9b.toInt())
                 textSize = 16f
                 gravity = android.view.Gravity.CENTER
+                includeFontPadding = false
                 layoutParams = LinearLayout.LayoutParams(dp(28), LinearLayout.LayoutParams.MATCH_PARENT)
                 setOnClickListener {
                     closeEditorTab(tab)
@@ -1248,21 +1263,30 @@ class EditTextActivity : AppCompatActivity() {
         mSidebarSearchTab?.setOnClickListener { showSearchPanel() }
         initFileTreeAdapter()
         initSidebarSearch()
+        showFilePanel()
         updateSearchToggles()
     }
 
     private fun showFilePanel() {
         mSidebarFilePanel?.visibility = View.VISIBLE
         mSidebarSearchPanel?.visibility = View.GONE
+        mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_active)
+        mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_inactive)
         mSidebarFileTab?.setTextColor(ContextCompat.getColor(this, R.color.color_ffffff))
-        mSidebarSearchTab?.setTextColor(0xff9d9d9d.toInt())
+        mSidebarSearchTab?.setTextColor(0xff9da9bb.toInt())
+        mSidebarFileTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+        mSidebarSearchTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
     }
 
     private fun showSearchPanel() {
         mSidebarFilePanel?.visibility = View.GONE
         mSidebarSearchPanel?.visibility = View.VISIBLE
-        mSidebarFileTab?.setTextColor(0xff9d9d9d.toInt())
+        mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_inactive)
+        mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_active)
+        mSidebarFileTab?.setTextColor(0xff9da9bb.toInt())
         mSidebarSearchTab?.setTextColor(ContextCompat.getColor(this, R.color.color_ffffff))
+        mSidebarFileTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+        mSidebarSearchTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
         mSidebarSearchInput?.requestFocus()
         updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
     }
@@ -1280,10 +1304,25 @@ class EditTextActivity : AppCompatActivity() {
                 val view = super.getView(position, convertView, parent)
                 val textView = view.findViewById<TextView>(android.R.id.text1)
                 val node = fileTreeNodes.getOrNull(position)
-                textView.setTextColor(if (node?.file?.isDirectory == true) 0xffdcdcaa.toInt() else ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff))
+                val isDirectory = node?.file?.isDirectory == true
+                val isCurrentFile = node?.file?.absolutePath == currentFile?.absolutePath
+                val depthPadding = node?.let { dp(12 + it.depth * 18) } ?: dp(10)
+                view.setBackgroundResource(if (isCurrentFile) R.drawable.shape_editor_toolbar_chip_active else android.R.color.transparent)
+                textView.text = fileTreeItems.getOrNull(position).orEmpty()
+                textView.setBackgroundResource(android.R.color.transparent)
+                textView.setTextColor(
+                    when {
+                        isCurrentFile -> 0xffedf3fb.toInt()
+                        isDirectory -> 0xffd7e1f1.toInt()
+                        else -> ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff)
+                    }
+                )
                 textView.textSize = 13f
-                val depthPadding = node?.let { dp(14 + it.depth * 18) } ?: dp(10)
-                textView.setPadding(depthPadding, dp(10), dp(10), dp(10))
+                textView.setTypeface(Typeface.DEFAULT, if (isCurrentFile || isDirectory) Typeface.BOLD else Typeface.NORMAL)
+                textView.setPadding(depthPadding, dp(11), dp(10), dp(11))
+                textView.minHeight = dp(38)
+                textView.gravity = android.view.Gravity.CENTER_VERTICAL
+                textView.includeFontPadding = false
                 return view
             }
         }
@@ -1347,9 +1386,13 @@ class EditTextActivity : AppCompatActivity() {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent)
                 val textView = view.findViewById<TextView>(android.R.id.text1)
-                textView.setTextColor(ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff))
+                view.setBackgroundResource(if (position == currentSidebarMatchIndex) R.drawable.shape_editor_toolbar_chip_active else android.R.color.transparent)
+                textView.setTextColor(if (position == currentSidebarMatchIndex) 0xffedf3fb.toInt() else 0xffd7e1f1.toInt())
                 textView.textSize = 13f
-                textView.setPadding(10, 10, 10, 10)
+                textView.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL)
+                textView.setPadding(dp(12), dp(10), dp(12), dp(10))
+                textView.minHeight = dp(38)
+                textView.includeFontPadding = false
                 return view
             }
         }
@@ -1391,10 +1434,12 @@ class EditTextActivity : AppCompatActivity() {
     }
 
     private fun updateSearchToggles() {
-        val activeBg = R.drawable.shape_btn_find_highlight
-        val defaultBg = R.drawable.shape_r_3dp_553d_all
+        val activeBg = R.drawable.shape_editor_toolbar_chip_active
+        val defaultBg = R.drawable.shape_editor_toolbar_chip
         mSidebarRegexToggle?.setBackgroundResource(if (isRegexSearch) activeBg else defaultBg)
         mSidebarCaseToggle?.setBackgroundResource(if (isMatchCase) activeBg else defaultBg)
+        mSidebarRegexToggle?.setTextColor(if (isRegexSearch) ContextCompat.getColor(this, R.color.color_ffffff) else 0xffd7e1f1.toInt())
+        mSidebarCaseToggle?.setTextColor(if (isMatchCase) ContextCompat.getColor(this, R.color.color_ffffff) else 0xffd7e1f1.toInt())
     }
 
     private fun updateSidebarSearch(query: String) {
@@ -1504,6 +1549,7 @@ class EditTextActivity : AppCompatActivity() {
                 searcher.gotoNext()
             }
         }
+        sidebarSearchAdapter?.notifyDataSetChanged()
         updatePositionText()
     }
 
