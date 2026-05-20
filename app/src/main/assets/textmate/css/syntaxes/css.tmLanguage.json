@@ -1,0 +1,57 @@
+{
+  "name": "CSS",
+  "scopeName": "source.css",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#at-rules" },
+    { "include": "#selectors" },
+    { "include": "#properties" },
+    { "include": "#values" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "begin": "/\\*", "end": "\\*/", "name": "comment.block.css" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        { "begin": "\"", "end": "\"", "name": "string.quoted.double.css", "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.css" }] },
+        { "begin": "'", "end": "'", "name": "string.quoted.single.css", "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.css" }] }
+      ]
+    },
+    "at-rules": {
+      "patterns": [
+        { "match": "@[A-Za-z_-][A-Za-z0-9_-]*", "name": "keyword.control.at-rule.css" }
+      ]
+    },
+    "selectors": {
+      "patterns": [
+        { "match": "#[A-Za-z_][A-Za-z0-9_-]*", "name": "entity.other.attribute-name.id.css" },
+        { "match": "\\.[A-Za-z_][A-Za-z0-9_-]*", "name": "entity.other.attribute-name.class.css" },
+        { "match": "(?<![-_A-Za-z0-9])(?:[a-zA-Z][-_A-Za-z0-9]*)(?=\\s*(?:[,>{+~]|\\{|:|\\.))", "name": "entity.name.tag.css" },
+        { "match": ":{1,2}[A-Za-z_-][A-Za-z0-9_-]*", "name": "entity.other.attribute-name.pseudo-class.css" }
+      ]
+    },
+    "properties": {
+      "patterns": [
+        { "match": "[A-Za-z_-][A-Za-z0-9_-]*(?=\\s*:)", "name": "support.type.property-name.css" }
+      ]
+    },
+    "values": {
+      "patterns": [
+        { "match": "#[0-9A-Fa-f]{3,8}\\b", "name": "constant.other.color.rgb-value.css" },
+        { "match": "[-+]?(?:\\d+\\.?\\d*|\\.\\d+)(?:%|[a-zA-Z]+)?", "name": "constant.numeric.css" },
+        { "match": "\\b(?:important|inherit|initial|unset|auto|none|block|inline|flex|grid|relative|absolute|fixed|sticky|solid|dashed|center|left|right|top|bottom)\\b", "name": "support.constant.property-value.css" },
+        { "match": "[A-Za-z_-][A-Za-z0-9_-]*(?=\\()", "name": "support.function.css" }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        { "match": "[{}:;,>]", "name": "punctuation.css" }
+      ]
+    }
+  }
+}

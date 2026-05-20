@@ -135,7 +135,8 @@
         <activity
             android:name=".zerocore.activity.EditTextActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="com.termux.zerocore.activity.edittextactivity" />
 

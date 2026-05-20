@@ -1,0 +1,102 @@
+{
+  "information_for_contributors": ["Zig TextMate grammar for ZeroTermux"],
+  "name": "Zig",
+  "scopeName": "source.zig",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#builtins" },
+    { "include": "#types" },
+    { "include": "#constants" },
+    { "include": "#functions" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.documentation.zig", "match": "///.*$" },
+        { "name": "comment.line.double-slash.zig", "match": "//.*$" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.zig",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.zig", "match": "\\\\([nrt\\\\\"'0xu]|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f]+\\})" }
+          ]
+        },
+        {
+          "name": "string.quoted.single.zig",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "name": "constant.character.escape.zig", "match": "\\\\." }
+          ]
+        },
+        {
+          "name": "string.multiline.zig",
+          "match": "\\\\\\\\.*$"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.zig",
+          "match": "\\b(addrspace|align|allowzero|and|anyframe|anytype|asm|async|await|break|callconv|catch|comptime|const|continue|defer|else|enum|errdefer|error|export|extern|fn|for|if|inline|linksection|noalias|noinline|nosuspend|opaque|or|orelse|packed|pub|resume|return|struct|suspend|switch|test|threadlocal|try|union|unreachable|usingnamespace|var|volatile|while)\\b"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.zig",
+          "match": "@[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.builtin.zig",
+          "match": "\\b(bool|f16|f32|f64|f80|f128|i8|i16|i32|i64|i128|isize|u8|u16|u32|u64|u128|usize|c_char|c_short|c_ushort|c_int|c_uint|c_long|c_ulong|c_longlong|c_ulonglong|c_longdouble|comptime_int|comptime_float|anyopaque|void|noreturn|type|anyerror|null|undefined)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "name": "constant.language.zig", "match": "\\b(true|false|null|undefined)\\b" },
+        { "name": "constant.numeric.integer.zig", "match": "\\b(0x[0-9A-Fa-f_]+|0b[01_]+|0o[0-7_]+|[0-9][0-9_]*)\\b" },
+        { "name": "constant.numeric.float.zig", "match": "\\b[0-9][0-9_]*\\.[0-9_]*([eE][+-]?[0-9_]+)?\\b" }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.zig",
+          "match": "\\b(fn)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.zig" },
+            "2": { "name": "entity.name.function.zig" }
+          }
+        },
+        {
+          "name": "support.function.zig",
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.zig",
+          "match": "(\\.\\.\\.|\\|\\||&&|==|!=|<=|>=|<<|>>|[+\\-*/%&|^~!]=?|=>|->|[<>])"
+        }
+      ]
+    }
+  }
+}

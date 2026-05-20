@@ -3,187 +3,102 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
     android:layout_height="match_parent"
+    android:background="#1E1E1E"
+    android:orientation="vertical"
     tools:context=".zerocore.activity.EditTextActivity">
 
-    <RelativeLayout
-        android:id="@+id/find_replace_toolbar"
+    <LinearLayout
+        android:id="@+id/editor_tab_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true">
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/shape_editor_tab_bar_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
 
-        <LinearLayout
-            android:id="@+id/layout_search_visible"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:visibility="gone"
-            android:orientation="vertical">
+        <TextView
+            android:id="@+id/editor_menu"
+            android:layout_width="38dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/shape_editor_icon_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="☰"
+            android:textColor="#D4D4D4"
+            android:textSize="20sp" />
+
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fillViewport="false"
+            android:overScrollMode="ifContentScrolls"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:scrollbars="none">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:id="@+id/editor_tabs_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/btn_find"
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="@string/edit_find"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="14sp"
-                    android:layout_marginRight="5dp" />
+    <LinearLayout
+        android:id="@+id/editor_symbol_bar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shape_editor_symbol_bar_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
-                <TextView
-                    android:id="@+id/btn_replace"
-                    android:layout_width="0dp"
-                    android:layout_weight="2"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="@string/edit_replace"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="14sp" />
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fillViewport="false"
+            android:overScrollMode="ifContentScrolls"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:scrollbars="none">
 
-                <TextView
-                    android:id="@+id/layout_gone"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="4dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="@string/command_gone"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="14sp" />
-            </LinearLayout>
+            <io.github.rosemoe.sora.widget.SymbolInputView
+                android:id="@+id/editor_symbol_input"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
-            <EditText
-                android:id="@+id/search_input"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="5dp"
-                android:padding="8dp"
-                android:hint="@string/edit_search_hint"
-                android:textColorHint="#999999"
-                android:textColor="@color/color_ffffff"
-                android:textSize="14sp"
-                android:background="@drawable/shape_r_3dp_553d_all"
-                android:singleLine="true"
-                android:imeOptions="actionSearch" />
-
-            <EditText
-                android:id="@+id/replace_input"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="5dp"
-                android:padding="8dp"
-                android:hint="@string/edit_replace_hint"
-                android:textColorHint="#999999"
-                android:textColor="@color/color_ffffff"
-                android:textSize="14sp"
-                android:background="@drawable/shape_r_3dp_553d_all"
-                android:singleLine="true"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/btn_prev"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="30dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="↑"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="14sp"
-                    android:layout_marginRight="3dp" />
-
-                <TextView
-                    android:id="@+id/btn_next"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="30dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="↓"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="14sp"
-                    android:layout_marginRight="3dp" />
-
-                <TextView
-                    android:id="@+id/btn_replace_one"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="30dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="@string/edit_replace"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="12sp"
-                    android:layout_marginRight="3dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/btn_replace_all"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="30dp"
-                    android:background="@drawable/shape_r_3dp_553d_all"
-                    android:gravity="center"
-                    android:text="@string/edit_replace_all"
-                    android:textColor="@color/color_ffffff"
-                    android:textSize="12sp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-        </LinearLayout>
-        <RelativeLayout
-            android:id="@+id/layout_search_gone"
-            android:layout_width="match_parent"
-            android:background="@drawable/shape_r_3dp_553d_all"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/up_dialog"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:rotationX="180"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/editor_content_layout"
         android:layout_width="match_parent"
-        android:layout_below="@+id/find_replace_toolbar"
-        android:layout_above="@+id/button_ll"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/editor_symbol_bar"
+        android:layout_below="@+id/editor_tab_bar">
+
         <EditText
             android:id="@+id/edit_text"
-            android:padding="10dp"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_margin="3dp"
-            android:text=""
             android:gravity="left"
-            android:visibility="gone"
+            android:padding="10dp"
+            android:text=""
             android:textColor="@color/color_ffffff"
             android:textSize="15sp"
-            android:layout_height="match_parent"/>
+            android:visibility="gone" />
 
         <io.github.rosemoe.sora.widget.CodeEditor
             android:id="@+id/code_editor"
@@ -192,55 +107,334 @@
             app:text="loading..."
             app:textSize="13sp" />
 
+        <RelativeLayout
+            android:id="@+id/editor_preview_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#1E1E1E"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/editor_image_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:background="#1E1E1E"
+                android:contentDescription="@string/editor_image_preview"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+
+            <WebView
+                android:id="@+id/editor_svg_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#1E1E1E"
+                android:visibility="gone" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="2dp"
-        android:id="@+id/button_ll"
-        android:layout_marginBottom="10dp"
+        android:id="@+id/editor_sidebar"
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="12dp"
-        android:orientation="horizontal"
-        android:layout_marginRight="12dp"
-        android:layout_height="wrap_content">
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/editor_tab_bar"
+        android:background="@drawable/shape_editor_sidebar_bg"
+        android:elevation="12dp"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/editor_sidebar_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ok"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_editor_action_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="@string/edit_save"
+                android:textColor="@color/color_ffffff"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_editor_action_danger"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="@string/notification_action_exit"
+                android:textColor="#F48771"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/editor_settings"
+                android:layout_width="42dp"
+                android:layout_height="38dp"
+                android:background="@drawable/shape_editor_icon_button"
+                android:contentDescription="@string/editor_settings"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="⚙"
+                android:textColor="#D4D4D4"
+                android:textSize="15sp" />
+        </LinearLayout>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:id="@+id/other"
-            android:layout_height="35dp"
-            android:background="@drawable/shape_r_3dp_553d_all"
+            android:id="@+id/editor_svg_mode_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_editor_symbol_key"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:visibility="gone"
-            android:text="按钮"
-            android:textColor="@color/color_ffffff"
-            android:layout_marginRight="5dp"
-            android:textSize="14sp" />
+            android:text="@string/editor_svg_preview_mode"
+            android:textColor="#D4D4D4"
+            android:textSize="13sp"
+            android:visibility="gone" />
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_editor_segment_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
+
+            <TextView
+                android:id="@+id/sidebar_file_tab"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_editor_sidebar_tab_active"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="@string/editor_sidebar_files"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sidebar_search_tab"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_editor_sidebar_tab_inactive"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="@string/editor_sidebar_search"
+                android:textColor="#9DA9BB"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sidebar_file_panel"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_height="35dp"
-            android:background="@drawable/shape_r_3dp_553d_all"
-            android:gravity="center"
-            android:id="@+id/cancel"
-            android:text="@string/edit_cancel"
-            android:layout_marginRight="5dp"
-            android:textColor="@color/color_ffffff"
-            android:textSize="14sp" />
+            android:orientation="vertical"
+            android:paddingTop="10dp">
 
-        <TextView
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/sidebar_file_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_editor_path_chip"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="8dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textColor="#D5DDE8"
+                android:textSize="12sp"
+                tools:text="/sdcard/project" />
+
+            <ListView
+                android:id="@+id/sidebar_file_tree"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_editor_sidebar_panel"
+                android:cacheColorHint="#00000000"
+                android:divider="#243041"
+                android:dividerHeight="1dp"
+                android:listSelector="@drawable/shape_editor_list_selector"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:scrollbars="none"
+                android:clipToPadding="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sidebar_search_panel"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_height="35dp"
-            android:background="@drawable/shape_r_3dp_553d_all"
-            android:gravity="center"
-            android:id="@+id/ok"
-            android:text="@string/edit_save"
-            android:textColor="@color/color_ffffff"
-            android:textSize="14sp" />
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:visibility="gone">
 
+            <EditText
+                android:id="@+id/sidebar_search_input"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:background="@drawable/shape_editor_input_field"
+                android:hint="@string/editor_sidebar_search_hint"
+                android:imeOptions="actionSearch"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:singleLine="true"
+                android:textColor="@color/color_ffffff"
+                android:textColorHint="#8D9AAE"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/sidebar_replace_input"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/shape_editor_input_field"
+                android:hint="@string/edit_replace_hint"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:singleLine="true"
+                android:textColor="@color/color_ffffff"
+                android:textColorHint="#8D9AAE"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/sidebar_regex_toggle"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_editor_toolbar_chip"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/editor_sidebar_regex"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/sidebar_case_toggle"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_editor_toolbar_chip"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/editor_sidebar_match_case"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/sidebar_prev"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_editor_toolbar_chip"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="↑"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/sidebar_next"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_editor_toolbar_chip"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="↓"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/sidebar_replace_one"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="2"
+                    android:background="@drawable/shape_editor_toolbar_chip"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/edit_replace"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/sidebar_replace_all"
+                    android:layout_width="0dp"
+                    android:layout_height="34dp"
+                    android:layout_weight="2"
+                    android:background="@drawable/shape_editor_toolbar_chip"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="@string/edit_replace_all"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/sidebar_search_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="6dp"
+                android:text="@string/editor_sidebar_search_empty"
+                android:textColor="#858585"
+                android:textSize="12sp" />
+
+            <ListView
+                android:id="@+id/sidebar_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_editor_sidebar_panel"
+                android:cacheColorHint="#00000000"
+                android:divider="#243041"
+                android:dividerHeight="1dp"
+                android:listSelector="@drawable/shape_editor_list_selector"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:scrollbars="none"
+                android:clipToPadding="false" />
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -78,7 +78,7 @@ https://github.com/hanxinhao000/Termux-app-UpgradedVersion/tree/master/%E7%AD%BE
         8.使用ZeroTermux会有直接或间接的损害你的设备,如有造成无法挽回的损失由用户承担,本软件以及作者不承担任何法律等责任
         
  # statement
- 
+
   All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!
 
         1. This software (ZeroTermux) is open source software, you can freely distribute, copy, and change, but please follow the GPL agreement!
@@ -146,8 +146,7 @@ https://github.com/testica/codeeditor
 
 
 
- 
- 
+
 
 
 

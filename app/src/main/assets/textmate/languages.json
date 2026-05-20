@@ -30,6 +30,7 @@
       "scopeName": "text.html.basic",
       "languageConfiguration": "textmate/html/language-configuration.json",
       "embeddedLanguages": {
+        "source.css": "css",
         "source.js": "javascript"
       }
     },
@@ -40,17 +41,77 @@
       "languageConfiguration": "textmate/javascript/language-configuration.json"
     },
     {
+      "grammar": "textmate/json/syntaxes/json.tmLanguage.json",
+      "name": "json",
+      "scopeName": "source.json",
+      "languageConfiguration": "textmate/json/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/jsonc/syntaxes/jsonc.tmLanguage.json",
+      "name": "jsonc",
+      "scopeName": "source.json.comments",
+      "languageConfiguration": "textmate/jsonc/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/css/syntaxes/css.tmLanguage.json",
+      "name": "css",
+      "scopeName": "source.css",
+      "languageConfiguration": "textmate/css/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/yaml/syntaxes/yaml.tmLanguage.json",
+      "name": "yaml",
+      "scopeName": "source.yaml",
+      "languageConfiguration": "textmate/yaml/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/toml/syntaxes/toml.tmLanguage.json",
+      "name": "toml",
+      "scopeName": "source.toml",
+      "languageConfiguration": "textmate/toml/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/properties/syntaxes/properties.tmLanguage.json",
+      "name": "properties",
+      "scopeName": "source.properties",
+      "languageConfiguration": "textmate/properties/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/shellscript/syntaxes/shellscript.tmLanguage.json",
+      "name": "shellscript",
+      "scopeName": "source.shell",
+      "languageConfiguration": "textmate/shellscript/language-configuration.json"
+    },
+    {
+      "grammar": "textmate/diff/syntaxes/diff.tmLanguage.json",
+      "name": "diff",
+      "scopeName": "source.diff",
+      "languageConfiguration": "textmate/diff/language-configuration.json"
+    },
+    {
       "name": "markdown",
       "scopeName": "text.html.markdown",
       "grammar": "textmate/markdown/syntaxes/markdown.tmLanguage.json",
       "languageConfiguration": "textmate/markdown/language-configuration.json",
       "embeddedLanguages": {
         "meta.embedded.block.html": "html",
+        "source.css": "css",
         "source.js": "javascript",
+        "source.json": "json",
+        "source.json.comments": "jsonc",
+        "source.shell": "shellscript",
+        "source.yaml": "yaml",
+        "source.toml": "toml",
         "meta.embedded.block.java": "java",
         "meta.embedded.block.xml": "xml",
         "meta.embedded.block.python": "python"
       }
+    },
+    {
+      "grammar": "textmate/lua/syntaxes/lua.tmLanguage.json",
+      "name": "lua",
+      "scopeName": "source.lua",
+      "languageConfiguration": "textmate/lua/language-configuration.json"
     }
   ]
 }

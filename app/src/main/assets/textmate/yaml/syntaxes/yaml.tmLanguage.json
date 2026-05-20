@@ -1,0 +1,54 @@
+{
+  "name": "YAML",
+  "scopeName": "source.yaml",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#anchors" },
+    { "include": "#keys" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#constants" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "match": "#.*$", "name": "comment.line.number-sign.yaml" }
+      ]
+    },
+    "anchors": {
+      "patterns": [
+        { "match": "[&*][A-Za-z0-9_-]+", "name": "entity.name.type.anchor.yaml" },
+        { "match": "![A-Za-z0-9_!<>,./:-]+", "name": "storage.type.tag-handle.yaml" }
+      ]
+    },
+    "keys": {
+      "patterns": [
+        { "match": "^\\s*(-\\s*)?([A-Za-z0-9_.-]+)(?=\\s*:)", "captures": { "1": { "name": "punctuation.definition.block.sequence.item.yaml" }, "2": { "name": "entity.name.tag.yaml" } } },
+        { "match": "^\\s*(-\\s*)?(\\\"(?:\\\\.|[^\\\"\\\\])*\\\"|'[^']*')(?=\\s*:)", "captures": { "1": { "name": "punctuation.definition.block.sequence.item.yaml" }, "2": { "name": "entity.name.tag.yaml string.quoted.yaml" } } }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        { "begin": "\\\"", "end": "\\\"", "name": "string.quoted.double.yaml", "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.yaml" }] },
+        { "begin": "'", "end": "'", "name": "string.quoted.single.yaml" },
+        { "match": "[>|][-+]?", "name": "keyword.control.block-scalar.yaml" }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "match": "(?<![\\w.-])[-+]?(?:0x[0-9A-Fa-f]+|\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?\\b", "name": "constant.numeric.yaml" }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "match": "\\b(?:true|false|True|False|TRUE|FALSE|yes|no|on|off|null|Null|NULL|~)\\b", "name": "constant.language.yaml" }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        { "match": "[:\\[\\]{},-]", "name": "punctuation.yaml" }
+      ]
+    }
+  }
+}
