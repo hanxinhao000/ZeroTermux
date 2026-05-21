@@ -835,8 +835,7 @@
     <string name="edit_replace_hint">替换为</string>
     <string name="edit_replace_all">全部替换</string>
     <string name="editor_toolbar_menu">侧栏菜单</string>
-    <string name="editor_toolbar_files">文件面板</string>
-    <string name="editor_toolbar_edit">搜索面板</string>
+    <string name="editor_toolbar_files">保存</string>
     <string name="editor_toolbar_undo">撤销</string>
     <string name="editor_toolbar_redo">重做</string>
     <string name="editor_toolbar_more">更多操作</string>

@@ -2,14 +2,14 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="#181818" />
+            <solid android:color="#171717" />
         </shape>
     </item>
     <item
         android:height="1dp"
         android:gravity="bottom">
         <shape>
-            <solid android:color="#2E2E2E" />
+            <solid android:color="#2A2A2A" />
         </shape>
     </item>
 </layer-list>

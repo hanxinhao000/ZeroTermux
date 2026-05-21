@@ -94,6 +94,7 @@ class EditTextActivity : AppCompatActivity() {
         const val EDITOR_STATE_SIDEBAR_MATCH_CASE = "sidebar_match_case"
         const val DEFAULT_TAB_SIZE = 4
         const val DIRTY_CHECK_INTERVAL = 600L
+        const val SIDEBAR_WIDTH_DP = 280
         const val REQUEST_EDITOR_FONT_FILE = 1001
     }
 
@@ -125,11 +126,13 @@ class EditTextActivity : AppCompatActivity() {
 
     private var mEditorMenuButton: ImageView? = null
     private var mEditorFilesButton: ImageView? = null
-    private var mEditorEditButton: ImageView? = null
     private var mEditorUndoButton: ImageView? = null
     private var mEditorRedoButton: ImageView? = null
     private var mEditorMoreButton: ImageView? = null
+    private var mEditorTabBar: View? = null
     private var mEditorTabsContainer: LinearLayout? = null
+    private var mEditorContentLayout: RelativeLayout? = null
+    private var mEditorSymbolBar: LinearLayout? = null
     private var mEditorSidebar: LinearLayout? = null
     private var mSidebarFileTab: TextView? = null
     private var mSidebarSearchTab: TextView? = null
@@ -242,11 +245,13 @@ class EditTextActivity : AppCompatActivity() {
         mSaveText = findViewById(R.id.ok)
         mEditorMenuButton = findViewById(R.id.editor_menu)
         mEditorFilesButton = findViewById(R.id.editor_action_files)
-        mEditorEditButton = findViewById(R.id.editor_action_edit)
         mEditorUndoButton = findViewById(R.id.editor_action_undo)
         mEditorRedoButton = findViewById(R.id.editor_action_redo)
         mEditorMoreButton = findViewById(R.id.editor_action_more)
+        mEditorTabBar = findViewById(R.id.editor_tab_bar)
         mEditorTabsContainer = findViewById(R.id.editor_tabs_container)
+        mEditorContentLayout = findViewById(R.id.editor_content_layout)
+        mEditorSymbolBar = findViewById(R.id.editor_symbol_bar)
         mEditorSidebar = findViewById(R.id.editor_sidebar)
         mSidebarFileTab = findViewById(R.id.sidebar_file_tab)
         mSidebarSearchTab = findViewById(R.id.sidebar_search_tab)
@@ -300,13 +305,8 @@ class EditTextActivity : AppCompatActivity() {
         mEditorMenuButton?.setOnClickListener {
             toggleSidebar()
         }
-        mEditorFilesButton?.setOnClickListener {
-            showFilePanel(updateSearch = false)
-            setSidebarVisible(true)
-        }
-        mEditorEditButton?.setOnClickListener {
-            showSearchPanel()
-            setSidebarVisible(true)
+        mEditorFilesButton?.setOnClickListener { view ->
+            showEditorFileMenu(view)
         }
         mEditorUndoButton?.setOnClickListener {
             invokeEditorAction("undo")
@@ -334,18 +334,30 @@ class EditTextActivity : AppCompatActivity() {
         updateEditorActionButtons()
     }
 
-    private fun showEditorMoreMenu(anchor: View) {
+    private fun showEditorFileMenu(anchor: View) {
         PopupMenu(this, anchor).apply {
             menu.add(0, 1, 0, getString(R.string.edit_save))
-            menu.add(0, 2, 1, getString(R.string.notification_action_exit))
-            menu.add(0, 3, 2, getString(R.string.editor_settings))
-            menu.add(0, 4, 3, getString(R.string.editor_symbol_customize))
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     1 -> saveFile()
-                    2 -> confirmExitIfDirty()
-                    3 -> showEditorSettingsDialog()
-                    4 -> showSymbolCustomizeDialog()
+                }
+                updateEditorActionButtons()
+                true
+            }
+            show()
+        }
+    }
+
+    private fun showEditorMoreMenu(anchor: View) {
+        PopupMenu(this, anchor).apply {
+            menu.add(0, 1, 0, getString(R.string.notification_action_exit))
+            menu.add(0, 2, 1, getString(R.string.editor_settings))
+            menu.add(0, 3, 2, getString(R.string.editor_symbol_customize))
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    1 -> confirmExitIfDirty()
+                    2 -> showEditorSettingsDialog()
+                    3 -> showSymbolCustomizeDialog()
                 }
                 true
             }
@@ -355,37 +367,22 @@ class EditTextActivity : AppCompatActivity() {
 
     private fun invokeEditorAction(action: String) {
         val editor = code_editor ?: return
-        val methodNames = when (action) {
-            "undo" -> arrayOf("undo")
-            "redo" -> arrayOf("redo")
-            else -> emptyArray()
+        when (action) {
+            "undo" -> if (editor.canUndo()) editor.undo() else return
+            "redo" -> if (editor.canRedo()) editor.redo() else return
+            else -> return
         }
-        methodNames.forEach { name ->
-            try {
-                editor.javaClass.getMethod(name).invoke(editor)
-                updateDirtyState()
-                updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
-                return
-            } catch (_: Exception) {
-            }
-        }
+        updateDirtyState()
+        updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
     }
 
     private fun isEditorActionAvailable(action: String): Boolean {
         val editor = code_editor ?: return false
-        val methodNames = when (action) {
-            "undo" -> arrayOf("canUndo", "isCanUndo")
-            "redo" -> arrayOf("canRedo", "isCanRedo")
-            else -> emptyArray()
+        return when (action) {
+            "undo" -> editor.canUndo()
+            "redo" -> editor.canRedo()
+            else -> false
         }
-        methodNames.forEach { name ->
-            try {
-                val result = editor.javaClass.getMethod(name).invoke(editor)
-                if (result is Boolean) return result
-            } catch (_: Exception) {
-            }
-        }
-        return action == "undo"
     }
 
     private fun updateEditorActionButtons() {
@@ -1208,7 +1205,7 @@ class EditTextActivity : AppCompatActivity() {
             val tabView = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = android.view.Gravity.CENTER_VERTICAL
-                setPadding(dp(12), 0, dp(0), 0)
+                setPadding(dp(8), 0, 0, 0)
                 background = ContextCompat.getDrawable(
                     this@EditTextActivity,
                     if (active) R.drawable.shape_editor_tab_active else R.drawable.shape_editor_tab_inactive
@@ -1217,7 +1214,7 @@ class EditTextActivity : AppCompatActivity() {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT
                 ).apply {
-                    setMargins(0, 0, dp(2), 0)
+                    setMargins(0, 0, dp(1), 0)
                 }
                 setOnClickListener {
                     if (tab.file.absolutePath != currentFile?.absolutePath) {
@@ -1234,9 +1231,9 @@ class EditTextActivity : AppCompatActivity() {
                         else -> 0xffd0d0d0.toInt()
                     }
                 )
-                textSize = 13.5f
+                textSize = 12.5f
                 setSingleLine(true)
-                setMaxWidth(dp(190))
+                setMaxWidth(dp(180))
                 gravity = android.view.Gravity.CENTER_VERTICAL
                 includeFontPadding = false
                 setTypeface(Typeface.DEFAULT, if (active) Typeface.BOLD else Typeface.NORMAL)
@@ -1248,10 +1245,10 @@ class EditTextActivity : AppCompatActivity() {
             tabView.addView(TextView(this).apply {
                 text = "×"
                 setTextColor(if (active) 0xffd7d7d7.toInt() else 0xff8b8b8b.toInt())
-                textSize = 18f
+                textSize = 15f
                 gravity = android.view.Gravity.CENTER
                 includeFontPadding = false
-                layoutParams = LinearLayout.LayoutParams(dp(34), LinearLayout.LayoutParams.MATCH_PARENT)
+                layoutParams = LinearLayout.LayoutParams(dp(24), LinearLayout.LayoutParams.MATCH_PARENT)
                 setOnClickListener {
                     closeEditorTab(tab)
                 }
@@ -1371,7 +1368,48 @@ class EditTextActivity : AppCompatActivity() {
 
     private fun setSidebarVisible(visible: Boolean) {
         isSidebarVisible = visible
-        mEditorSidebar?.visibility = if (visible) View.VISIBLE else View.GONE
+        val sidebar = mEditorSidebar ?: return
+        val sidebarWidth = dp(SIDEBAR_WIDTH_DP).toFloat()
+        sidebar.animate().cancel()
+        if (visible) {
+            adjustEditorLayoutForSidebar(true)
+            if (sidebar.visibility == View.VISIBLE && sidebar.translationX == 0f) return
+            sidebar.visibility = View.VISIBLE
+            sidebar.translationX = -sidebarWidth
+            sidebar.animate().translationX(0f).setDuration(180).start()
+        } else {
+            if (sidebar.visibility != View.VISIBLE) {
+                sidebar.visibility = View.GONE
+                sidebar.translationX = 0f
+                adjustEditorLayoutForSidebar(false)
+                return
+            }
+            sidebar.animate()
+                .translationX(-sidebarWidth)
+                .setDuration(160)
+                .withEndAction {
+                    sidebar.visibility = View.GONE
+                    sidebar.translationX = 0f
+                    adjustEditorLayoutForSidebar(false)
+                }
+                .start()
+        }
+    }
+
+    private fun adjustEditorLayoutForSidebar(visible: Boolean) {
+        val sidebarWidth = if (visible) dp(SIDEBAR_WIDTH_DP) else 0
+        (mEditorTabBar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
+            leftMargin = sidebarWidth
+            mEditorTabBar?.layoutParams = this
+        }
+        (mEditorContentLayout?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
+            leftMargin = sidebarWidth
+            mEditorContentLayout?.layoutParams = this
+        }
+        (mEditorSymbolBar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
+            leftMargin = sidebarWidth
+            mEditorSymbolBar?.layoutParams = this
+        }
     }
 
     private fun restoreSidebarState(savedInstanceState: Bundle?) {

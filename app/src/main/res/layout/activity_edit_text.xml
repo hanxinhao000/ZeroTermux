@@ -11,23 +11,23 @@
     <LinearLayout
         android:id="@+id/editor_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:background="@drawable/shape_editor_toolbar_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="8dp"
-        android:paddingTop="6dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="6dp">
+        android:paddingLeft="4dp"
+        android:paddingTop="2dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="2dp">
 
         <ImageView
             android:id="@+id/editor_menu"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="@drawable/shape_editor_toolbar_button"
             android:contentDescription="@string/editor_toolbar_menu"
-            android:padding="10dp"
+            android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_editor_menu"
             android:tint="#F4F4F4" />
@@ -39,60 +39,48 @@
 
         <ImageView
             android:id="@+id/editor_action_files"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginLeft="6dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/shape_editor_toolbar_button"
             android:contentDescription="@string/editor_toolbar_files"
-            android:padding="10dp"
+            android:padding="6dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_editor_folder"
-            android:tint="#F4F4F4" />
-
-        <ImageView
-            android:id="@+id/editor_action_edit"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginLeft="6dp"
-            android:background="@drawable/shape_editor_toolbar_button"
-            android:contentDescription="@string/editor_toolbar_edit"
-            android:padding="10dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_editor_edit"
+            android:src="@drawable/ic_editor_save"
             android:tint="#F4F4F4" />
 
         <ImageView
             android:id="@+id/editor_action_undo"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginLeft="6dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/shape_editor_toolbar_button"
             android:contentDescription="@string/editor_toolbar_undo"
-            android:padding="10dp"
+            android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_editor_undo"
             android:tint="#F4F4F4" />
 
         <ImageView
             android:id="@+id/editor_action_redo"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginLeft="6dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/shape_editor_toolbar_button"
             android:contentDescription="@string/editor_toolbar_redo"
-            android:padding="10dp"
+            android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_editor_redo"
             android:tint="#F4F4F4" />
 
         <ImageView
             android:id="@+id/editor_action_more"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginLeft="6dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/shape_editor_toolbar_button"
             android:contentDescription="@string/editor_toolbar_more"
-            android:padding="10dp"
+            android:padding="6dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_editor_more"
             android:tint="#F4F4F4" />
@@ -101,7 +89,7 @@
     <HorizontalScrollView
         android:id="@+id/editor_tab_bar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="30dp"
         android:layout_below="@id/editor_toolbar"
         android:background="@drawable/shape_editor_tab_bar_bg"
         android:fillViewport="false"
@@ -114,8 +102,8 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp" />
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp" />
     </HorizontalScrollView>
 
     <LinearLayout
@@ -203,7 +191,7 @@
 
     <LinearLayout
         android:id="@+id/editor_sidebar"
-        android:layout_width="320dp"
+        android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_above="@id/editor_symbol_bar"
         android:layout_alignParentLeft="true"
@@ -211,7 +199,10 @@
         android:background="@drawable/shape_editor_sidebar_bg"
         android:elevation="12dp"
         android:orientation="vertical"
-        android:padding="12dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
         android:visibility="gone">
 
         <LinearLayout
