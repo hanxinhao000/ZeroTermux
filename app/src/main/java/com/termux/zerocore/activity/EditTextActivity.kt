@@ -85,6 +85,7 @@ class EditTextActivity : AppCompatActivity() {
         const val EDITOR_PREF_TAB_SIZE = "tab_size"
         const val EDITOR_PREF_THEME = "theme"
         const val EDITOR_PREF_FONT_PATH = "font_path"
+        const val EDITOR_PREF_SIDEBAR_VISIBLE = "sidebar_visible"
         const val DEFAULT_TAB_SIZE = 4
         const val DIRTY_CHECK_INTERVAL = 600L
         const val REQUEST_EDITOR_FONT_FILE = 1001
@@ -215,6 +216,7 @@ class EditTextActivity : AppCompatActivity() {
         initEditorTopBar()
         initSymbolInput()
         initSidebar()
+        restoreSidebarState()
         loadFile(file)
         initFileTree(file.parentFile ?: file)
         dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
@@ -799,7 +801,7 @@ class EditTextActivity : AppCompatActivity() {
                 showEditorTab(tab, extension)
             }
             renderEditorTabs()
-            mSidebarFileTree?.invalidateViews()
+            fileTreeAdapter?.notifyDataSetChanged()
             updatePositionText()
             updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
             updateDirtyState()
@@ -1256,6 +1258,18 @@ class EditTextActivity : AppCompatActivity() {
             sidebar.visibility = View.VISIBLE
             showFilePanel()
         }
+        saveSidebarState(sidebar.visibility == View.VISIBLE)
+    }
+
+    private fun saveSidebarState(visible: Boolean) {
+        getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE)
+            .edit().putBoolean(EDITOR_PREF_SIDEBAR_VISIBLE, visible).apply()
+    }
+
+    private fun restoreSidebarState() {
+        val visible = getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE)
+            .getBoolean(EDITOR_PREF_SIDEBAR_VISIBLE, false)
+        mEditorSidebar?.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     private fun initSidebar() {
@@ -1270,10 +1284,10 @@ class EditTextActivity : AppCompatActivity() {
     private fun showFilePanel() {
         mSidebarFilePanel?.visibility = View.VISIBLE
         mSidebarSearchPanel?.visibility = View.GONE
-        mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_active)
-        mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_inactive)
-        mSidebarFileTab?.setTextColor(ContextCompat.getColor(this, R.color.color_ffffff))
-        mSidebarSearchTab?.setTextColor(0xff9da9bb.toInt())
+        mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb)
+        mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb_inactive)
+        mSidebarFileTab?.setTextColor(0xffc8d8ee.toInt())
+        mSidebarSearchTab?.setTextColor(0xff5a7090.toInt())
         mSidebarFileTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
         mSidebarSearchTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
     }
@@ -1281,10 +1295,10 @@ class EditTextActivity : AppCompatActivity() {
     private fun showSearchPanel() {
         mSidebarFilePanel?.visibility = View.GONE
         mSidebarSearchPanel?.visibility = View.VISIBLE
-        mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_inactive)
-        mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_sidebar_tab_active)
-        mSidebarFileTab?.setTextColor(0xff9da9bb.toInt())
-        mSidebarSearchTab?.setTextColor(ContextCompat.getColor(this, R.color.color_ffffff))
+        mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb_inactive)
+        mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb)
+        mSidebarFileTab?.setTextColor(0xff5a7090.toInt())
+        mSidebarSearchTab?.setTextColor(0xffc8d8ee.toInt())
         mSidebarFileTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
         mSidebarSearchTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
         mSidebarSearchInput?.requestFocus()
@@ -1339,6 +1353,8 @@ class EditTextActivity : AppCompatActivity() {
                 refreshFileTree()
             } else if (canOpenFile(node.file)) {
                 loadFile(node.file)
+                mEditorSidebar?.visibility = View.GONE
+                saveSidebarState(false)
             }
         }
     }

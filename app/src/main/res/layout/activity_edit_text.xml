@@ -156,10 +156,10 @@
             <TextView
                 android:id="@+id/ok"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/shape_editor_action_primary"
+                android:background="@drawable/shape_editor_action_save"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/edit_save"
@@ -169,27 +169,27 @@
             <TextView
                 android:id="@+id/cancel"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/shape_editor_action_danger"
+                android:background="@drawable/shape_editor_action_exit"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/notification_action_exit"
-                android:textColor="#F48771"
+                android:textColor="@color/color_ffffff"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/editor_settings"
-                android:layout_width="42dp"
-                android:layout_height="38dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@drawable/shape_editor_icon_button"
                 android:contentDescription="@string/editor_settings"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="⚙"
-                android:textColor="#D4D4D4"
-                android:textSize="15sp" />
+                android:textColor="#9DB4CC"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <TextView
@@ -207,12 +207,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_editor_segment_bg"
+            android:layout_height="44dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/shape_editor_slider_track"
             android:orientation="horizontal"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp">
 
@@ -221,11 +221,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/shape_editor_sidebar_tab_active"
+                android:background="@drawable/shape_editor_slider_thumb"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/editor_sidebar_files"
-                android:textColor="#FFFFFF"
+                android:textColor="#C8D8EE"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
@@ -234,11 +234,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/shape_editor_sidebar_tab_inactive"
+                android:background="@drawable/shape_editor_slider_thumb_inactive"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/editor_sidebar_search"
-                android:textColor="#9DA9BB"
+                android:textColor="#5A7090"
                 android:textSize="13sp" />
         </LinearLayout>
 
