@@ -838,6 +838,12 @@ Reset successfully</string>
     <string name="edit_search_hint">Search</string>
     <string name="edit_replace_hint">Replace with</string>
     <string name="edit_replace_all">Replace all</string>
+    <string name="editor_toolbar_menu">Sidebar menu</string>
+    <string name="editor_toolbar_files">Files panel</string>
+    <string name="editor_toolbar_edit">Search panel</string>
+    <string name="editor_toolbar_undo">Undo</string>
+    <string name="editor_toolbar_redo">Redo</string>
+    <string name="editor_toolbar_more">More actions</string>
     <string name="editor_sidebar_files">Files</string>
     <string name="editor_sidebar_search">Search</string>
     <string name="editor_sidebar_search_hint">Search current file</string>
