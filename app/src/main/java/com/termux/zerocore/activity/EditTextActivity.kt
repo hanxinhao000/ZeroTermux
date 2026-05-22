@@ -284,7 +284,16 @@ class EditTextActivity : AppCompatActivity() {
         mEditorSvgModeToggle = findViewById(R.id.editor_svg_mode_toggle)
         code_editor?.setBackgroundColor(0xff1e1e1e.toInt())
         code_editor?.setPadding(dp(12), dp(10), dp(12), dp(10))
+        configureCodeEditorInput()
         configurePreviewWebView()
+    }
+
+    private fun configureCodeEditorInput() {
+        code_editor?.apply {
+            setSoftKeyboardEnabled(true)
+            setDisableSoftKbdIfHardKbdAvailable(false)
+            isFocusableInTouchMode = true
+        }
     }
 
     private fun configurePreviewWebView() {
