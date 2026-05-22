@@ -129,6 +129,7 @@ class EditTextActivity : AppCompatActivity() {
     private var mEditorUndoButton: ImageView? = null
     private var mEditorRedoButton: ImageView? = null
     private var mEditorMoreButton: ImageView? = null
+    private var mEditorToolbar: View? = null
     private var mEditorTabBar: View? = null
     private var mEditorTabsContainer: LinearLayout? = null
     private var mEditorContentLayout: RelativeLayout? = null
@@ -243,6 +244,7 @@ class EditTextActivity : AppCompatActivity() {
         mCancelText = findViewById(R.id.cancel)
         code_editor = findViewById(R.id.code_editor)
         mSaveText = findViewById(R.id.ok)
+        mEditorToolbar = findViewById(R.id.editor_toolbar)
         mEditorMenuButton = findViewById(R.id.editor_menu)
         mEditorFilesButton = findViewById(R.id.editor_action_files)
         mEditorUndoButton = findViewById(R.id.editor_action_undo)
@@ -737,14 +739,14 @@ class EditTextActivity : AppCompatActivity() {
             button.minimumHeight = 0
             button.textSize = 14f
             button.setTextColor(0xfff5f5f5.toInt())
-            button.setPadding(dp(18), 0, dp(18), 0)
+            button.setPadding(dp(12), 0, dp(12), 0)
             button.includeFontPadding = false
-            button.setBackgroundResource(R.drawable.shape_editor_symbol_input_key)
+            button.setBackgroundResource(android.R.color.transparent)
             button.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 dp(42)
             ).apply {
-                setMargins(dp(4), dp(0), dp(4), dp(0))
+                setMargins(dp(6), dp(0), dp(6), dp(0))
             }
         }
     }
@@ -1398,6 +1400,10 @@ class EditTextActivity : AppCompatActivity() {
 
     private fun adjustEditorLayoutForSidebar(visible: Boolean) {
         val sidebarWidth = if (visible) dp(SIDEBAR_WIDTH_DP) else 0
+        (mEditorToolbar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
+            leftMargin = sidebarWidth
+            mEditorToolbar?.layoutParams = this
+        }
         (mEditorTabBar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
             leftMargin = sidebarWidth
             mEditorTabBar?.layoutParams = this
