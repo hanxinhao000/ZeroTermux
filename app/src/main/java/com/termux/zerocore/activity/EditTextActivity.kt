@@ -683,8 +683,10 @@ class EditTextActivity : AppCompatActivity() {
 
     private fun initSymbolInput() {
         val editor = code_editor ?: return
+        mEditorSymbolBar?.background = null
         mEditorSymbolInput?.apply {
             orientation = LinearLayout.HORIZONTAL
+            background = null
             bindEditor(editor)
         }
         applyEditorTabSize()
@@ -736,6 +738,7 @@ class EditTextActivity : AppCompatActivity() {
             symbols.map { it.second }.toTypedArray()
         )
         symbolInput.setTextColor(0xfff2f2f2.toInt())
+        symbolInput.background = null
         symbolInput.forEachButton { button ->
             button.setAllCaps(false)
             button.minWidth = 0
@@ -746,7 +749,8 @@ class EditTextActivity : AppCompatActivity() {
             button.setTextColor(0xfff5f5f5.toInt())
             button.setPadding(dp(12), 0, dp(12), 0)
             button.includeFontPadding = false
-            button.setBackgroundResource(android.R.color.transparent)
+            button.background = null
+            button.backgroundTintList = null
             button.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 dp(42)

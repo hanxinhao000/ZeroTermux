@@ -322,6 +322,61 @@
 			}
 		},
 		{
+			"scope": [
+				"entity.name.function",
+				"support.function",
+				"variable.function"
+			],
+			"settings": {
+				"foreground": "#DCDCAA"
+			}
+		},
+		{
+			"scope": [
+				"entity.name.type",
+				"entity.name.class",
+				"entity.name.struct",
+				"entity.name.enum",
+				"entity.name.interface",
+				"entity.name.namespace",
+				"entity.name.package",
+				"support.type",
+				"support.class"
+			],
+			"settings": {
+				"foreground": "#4EC9B0"
+			}
+		},
+		{
+			"scope": [
+				"variable.parameter",
+				"entity.name.variable.parameter"
+			],
+			"settings": {
+				"foreground": "#9CDCFE"
+			}
+		},
+		{
+			"scope": [
+				"variable.other.object.property",
+				"variable.other.property",
+				"support.variable.property",
+				"variable.other.constant.property"
+			],
+			"settings": {
+				"foreground": "#9CDCFE"
+			}
+		},
+		{
+			"scope": [
+				"constant.character.escape",
+				"constant.other"
+			],
+			"settings": {
+				"foreground": "#D7BA7D"
+			}
+		},
+		{
 			"scope": "keyword",
 			"settings": {
 				"foreground": "#569cd6"
