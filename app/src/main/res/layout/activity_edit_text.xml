@@ -123,6 +123,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
             android:fillViewport="false"
             android:overScrollMode="ifContentScrolls"
             android:scrollbars="none">
@@ -131,6 +132,7 @@
                 android:id="@+id/editor_symbol_input"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
@@ -195,7 +197,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/editor_symbol_bar"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/editor_tab_bar"
+        android:layout_alignParentTop="true"
         android:background="@drawable/shape_editor_sidebar_bg"
         android:elevation="12dp"
         android:orientation="vertical"
