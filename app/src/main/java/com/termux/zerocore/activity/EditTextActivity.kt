@@ -78,6 +78,11 @@ class EditTextActivity : AppCompatActivity() {
         val CODE_DIFF = "source.diff"
         val CODE_MARK_DOWN = "text.html.markdown"
         val CODE_LUA = "source.lua"
+        val CODE_C = "source.c"
+        val CODE_GO = "source.go"
+        val CODE_RUST = "source.rust"
+        val CODE_ZIG = "source.zig"
+        val CODE_PHP = "source.php"
         const val MAX_SIDEBAR_SEARCH_RESULTS = 500
         const val MAX_FILE_TREE_ITEMS = 1000
         const val SYMBOL_PREF_NAME = "zero_editor_symbol_input"
@@ -1834,6 +1839,21 @@ class EditTextActivity : AppCompatActivity() {
             }
             "lua" -> {
                 return CODE_LUA
+            }
+            "c", "h", "cc", "cpp", "cxx", "hpp", "hh", "hxx" -> {
+                return CODE_C
+            }
+            "go" -> {
+                return CODE_GO
+            }
+            "rs" -> {
+                return CODE_RUST
+            }
+            "zig" -> {
+                return CODE_ZIG
+            }
+            "php", "phtml", "php3", "php4", "php5", "phpt", "aw", "ctp" -> {
+                return CODE_PHP
             }
             "json", "webmanifest", "sublime-settings", "sublime-keymap", "sublime-menu", "sublime-theme", "sublime-build" -> {
                 return CODE_JSON

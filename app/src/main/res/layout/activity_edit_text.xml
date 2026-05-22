@@ -195,7 +195,7 @@
         android:id="@+id/editor_sidebar"
         android:layout_width="280dp"
         android:layout_height="match_parent"
-        android:layout_above="@id/editor_symbol_bar"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/shape_editor_sidebar_bg"
