@@ -1476,8 +1476,8 @@ class EditTextActivity : AppCompatActivity() {
         mSidebarSearchPanel?.visibility = View.GONE
         mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb)
         mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb_inactive)
-        mSidebarFileTab?.setTextColor(0xffc8d8ee.toInt())
-        mSidebarSearchTab?.setTextColor(0xff5a7090.toInt())
+        mSidebarFileTab?.setTextColor(0xfff5f5f5.toInt())
+        mSidebarSearchTab?.setTextColor(0xff9d9d9d.toInt())
         mSidebarFileTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
         mSidebarSearchTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
         if (updateSearch) {
@@ -1491,8 +1491,8 @@ class EditTextActivity : AppCompatActivity() {
         mSidebarSearchPanel?.visibility = View.VISIBLE
         mSidebarFileTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb_inactive)
         mSidebarSearchTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb)
-        mSidebarFileTab?.setTextColor(0xff5a7090.toInt())
-        mSidebarSearchTab?.setTextColor(0xffc8d8ee.toInt())
+        mSidebarFileTab?.setTextColor(0xff9d9d9d.toInt())
+        mSidebarSearchTab?.setTextColor(0xfff5f5f5.toInt())
         mSidebarFileTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
         mSidebarSearchTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
         mSidebarSearchInput?.requestFocus()
@@ -1520,9 +1520,9 @@ class EditTextActivity : AppCompatActivity() {
                 textView.setBackgroundResource(android.R.color.transparent)
                 textView.setTextColor(
                     when {
-                        isCurrentFile -> 0xffedf3fb.toInt()
-                        isDirectory -> 0xffd7e1f1.toInt()
-                        else -> ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff)
+                        isCurrentFile -> 0xfff5f5f5.toInt()
+                        isDirectory -> 0xffcccccc.toInt()
+                        else -> 0xffd4d4d4.toInt()
                     }
                 )
                 textView.textSize = 13f
@@ -1596,7 +1596,7 @@ class EditTextActivity : AppCompatActivity() {
                 val view = super.getView(position, convertView, parent)
                 val textView = view.findViewById<TextView>(android.R.id.text1)
                 view.setBackgroundResource(if (position == currentSidebarMatchIndex) R.drawable.shape_editor_toolbar_chip_active else android.R.color.transparent)
-                textView.setTextColor(if (position == currentSidebarMatchIndex) 0xffedf3fb.toInt() else 0xffd7e1f1.toInt())
+                textView.setTextColor(if (position == currentSidebarMatchIndex) 0xfff5f5f5.toInt() else 0xffd4d4d4.toInt())
                 textView.textSize = 13f
                 textView.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL)
                 textView.setPadding(dp(12), dp(10), dp(12), dp(10))
@@ -1647,8 +1647,8 @@ class EditTextActivity : AppCompatActivity() {
         val defaultBg = R.drawable.shape_editor_toolbar_chip
         mSidebarRegexToggle?.setBackgroundResource(if (isRegexSearch) activeBg else defaultBg)
         mSidebarCaseToggle?.setBackgroundResource(if (isMatchCase) activeBg else defaultBg)
-        mSidebarRegexToggle?.setTextColor(if (isRegexSearch) ContextCompat.getColor(this, R.color.color_ffffff) else 0xffd7e1f1.toInt())
-        mSidebarCaseToggle?.setTextColor(if (isMatchCase) ContextCompat.getColor(this, R.color.color_ffffff) else 0xffd7e1f1.toInt())
+        mSidebarRegexToggle?.setTextColor(if (isRegexSearch) 0xfff5f5f5.toInt() else 0xffd4d4d4.toInt())
+        mSidebarCaseToggle?.setTextColor(if (isMatchCase) 0xfff5f5f5.toInt() else 0xffd4d4d4.toInt())
     }
 
     private fun updateSidebarSearch(query: String) {

@@ -245,7 +245,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="⚙"
-                android:textColor="#9DB4CC"
+                android:textColor="#C5C5C5"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -282,7 +282,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/editor_sidebar_files"
-                android:textColor="#C8D8EE"
+                android:textColor="#F5F5F5"
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
@@ -295,7 +295,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="@string/editor_sidebar_search"
-                android:textColor="#5A7090"
+                android:textColor="#9D9D9D"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -320,7 +320,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="8dp"
                 android:singleLine="true"
-                android:textColor="#D5DDE8"
+                android:textColor="#CCCCCC"
                 android:textSize="12sp"
                 tools:text="/sdcard/project" />
 
@@ -332,7 +332,7 @@
                 android:background="@drawable/shape_editor_sidebar_panel"
                 android:cacheColorHint="#00000000"
                 android:clipToPadding="false"
-                android:divider="#243041"
+                android:divider="#2D2D30"
                 android:dividerHeight="1dp"
                 android:listSelector="@drawable/shape_editor_list_selector"
                 android:paddingTop="4dp"
@@ -359,8 +359,8 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:singleLine="true"
-                android:textColor="@color/color_ffffff"
-                android:textColorHint="#8D9AAE"
+                android:textColor="#F5F5F5"
+                android:textColorHint="#858585"
                 android:textSize="14sp" />
 
             <EditText
@@ -373,8 +373,8 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:singleLine="true"
-                android:textColor="@color/color_ffffff"
-                android:textColorHint="#8D9AAE"
+                android:textColor="#F5F5F5"
+                android:textColorHint="#858585"
                 android:textSize="14sp" />
 
             <LinearLayout
@@ -485,7 +485,7 @@
                 android:background="@drawable/shape_editor_sidebar_panel"
                 android:cacheColorHint="#00000000"
                 android:clipToPadding="false"
-                android:divider="#243041"
+                android:divider="#2D2D30"
                 android:dividerHeight="1dp"
                 android:listSelector="@drawable/shape_editor_list_selector"
                 android:paddingTop="4dp"
