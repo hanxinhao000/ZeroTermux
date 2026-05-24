@@ -1534,18 +1534,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         int doubleClickFun = UserSetManage.Companion.get().getZTUserBean().getDoubleClickFun();
         if (doubleClickFun == KeyWordFunDialog.DOUBLE_CLICK_CUSTOM_COMMAND) {
             hideKeyboard();
-            UUtils.getHandler().postDelayed(() -> showBoomDialog(), 100);
+            UUtils.getHandler().postDelayed(() -> showBoomDialog(false), 100);
         } else if (doubleClickFun == KeyWordFunDialog.DOUBLE_CLICK_KEYWORD) {
             showKeyBord();
+        } else if (doubleClickFun == KeyWordFunDialog.DOUBLE_CLICK_SSH) {
+            hideKeyboard();
+            UUtils.getHandler().postDelayed(() -> showBoomDialog(true), 100);
         } else if (doubleClickFun == KeyWordFunDialog.DOUBLE_CLICK_NOTHING) {
             // 什么都不做
         }
     }
 
-    private void showBoomDialog() {
+    private void showBoomDialog(boolean isShowSSH) {
         final PopupWindow[] popupWindow = {new PopupWindow()};
         final BoomWindow[] boomWindow = {new BoomWindow()};
-        popupWindow[0].setContentView(boomWindow[0].getView(() -> popupWindow[0].dismiss(), TermuxActivity.this, popupWindow[0]));
+        popupWindow[0].setContentView(boomWindow[0].getView(() -> popupWindow[0].dismiss(), TermuxActivity.this, popupWindow[0], isShowSSH));
         popupWindow[0].setOutsideTouchable(true);
         popupWindow[0].setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow[0].setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -83,7 +83,8 @@ public class BoomWindow {
         return WindowsUtils.INSTANCE.dp2px(UUtils.getContext(),DiaLogData.BOOM_WINDOWS_OPEN_HEIGHT);
     }
 
-    public View getView(BoomMinLAdapter.CloseLiftListener closeLiftListener, TermuxActivity termuxActivity, PopupWindow popupWindow){
+    public View getView(BoomMinLAdapter.CloseLiftListener closeLiftListener, TermuxActivity termuxActivity,
+                        PopupWindow popupWindow, boolean isShowSSH){
         this.mPopupWindow = popupWindow;
         this.mTermuxActivity = termuxActivity;
         mView = UUtils.getViewLay(R.layout.dialog_boom);
@@ -189,7 +190,13 @@ public class BoomWindow {
         }else{
             qie_huan_string.setText(UUtils.getString(R.string.当前为自动));
         }
-        showBoomView(closeLiftListener);
+        if (isShowSSH) {
+            ssh_text.setText(UUtils.getString(R.string.content_command_list));
+            mIsSSHSwitch = true;
+            showSSHView(closeLiftListener);
+        } else {
+            showBoomView(closeLiftListener);
+        }
 
         return mView;
     }

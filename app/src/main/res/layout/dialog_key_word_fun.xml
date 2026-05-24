@@ -80,6 +80,27 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
+                    android:text="@string/content_ssh_name"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:textSize="16sp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/color_ffffff"
+                    android:layout_height="wrap_content"/>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/item_nother"
+                android:layout_width="match_parent"
+                app:cardElevation="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="6dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
                     android:text="@string/settings_keyword_item2"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"

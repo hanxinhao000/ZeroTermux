@@ -1111,6 +1111,7 @@
     <string name="content_ssh_username">用户名</string>
     <string name="content_ssh_alias_ip_not_empty">别名和IP不能为空</string>
     <string name="content_ssh_add_new_ssh_device">+ 添加新SSH设备</string>
+    <string name="content_ssh_name">SSH</string>
 
     <string name="zt_command_version">ZeroTermux-命令版本：0.2 (2025 ~ 2026)</string>
     <string name="zt_command_error">不支持或ZT版本低不识别: \"</string>

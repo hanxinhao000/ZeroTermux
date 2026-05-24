@@ -32,8 +32,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.zerocore.dialog.LoadingDialog
 import com.termux.zerocore.ftp.utils.UserSetManage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
@@ -47,6 +49,10 @@ import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.SymbolInputView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 import org.eclipse.tm4e.core.registry.IThemeSource
@@ -226,22 +232,27 @@ class EditTextActivity : AppCompatActivity() {
             finish()
             return
         }
+        loadingFun(savedInstanceState, file)
+    }
 
-        loadEditorSettings()
-        setupTextmate()
-        ensureTextmateTheme()
-
-        val ztUserBean = UserSetManage.get().getZTUserBean()
-        code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
-        applyEditorFont(false)
-
-        initEditorTopBar()
-        initSymbolInput()
-        initSidebar()
-        restoreSidebarState(savedInstanceState)
-        loadFile(file)
-        initFileTree(file.parentFile ?: file)
-        dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
+    private fun loadingFun(savedInstanceState: Bundle?, file: File) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            loadEditorSettings()
+            setupTextmate()
+            ensureTextmateTheme()
+            val ztUserBean = UserSetManage.get().getZTUserBean()
+            withContext(Dispatchers.Main) {
+                code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
+                applyEditorFont(false)
+                initEditorTopBar()
+                initSymbolInput()
+                initSidebar()
+                restoreSidebarState(savedInstanceState)
+                loadFile(file)
+                initFileTree(file.parentFile ?: file)
+                dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
+            }
+        }
     }
 
     private fun initViews() {

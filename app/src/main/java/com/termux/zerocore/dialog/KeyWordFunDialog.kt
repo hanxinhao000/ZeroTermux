@@ -13,6 +13,7 @@ class KeyWordFunDialog : BaseDialogCentre {
         public const val DOUBLE_CLICK_CUSTOM_COMMAND = 0
         public const val DOUBLE_CLICK_KEYWORD = 1
         public const val DOUBLE_CLICK_NOTHING = 2
+        public const val DOUBLE_CLICK_SSH = 3
 
 
         public fun getDoubleClickString(code: Int): String {
@@ -26,6 +27,9 @@ class KeyWordFunDialog : BaseDialogCentre {
                 DOUBLE_CLICK_CUSTOM_COMMAND -> {
                     UUtils.getString(R.string.settings_keyword_item3)
                 }
+                DOUBLE_CLICK_SSH -> {
+                    UUtils.getString(R.string.content_ssh_name)
+                }
                 else -> {
                     UUtils.getString(R.string.settings_keyword_item3)
                 }
@@ -33,12 +37,14 @@ class KeyWordFunDialog : BaseDialogCentre {
         }
     }
     public var mItemKeyword: CardView? = null
+    public var mNother: CardView? = null
     public var mSsh: CardView? = null
     public var mItemCustomCommand: CardView? = null
     constructor(context: Context) : super(context)
     constructor(context: Context, themeResId: Int) : super(context, themeResId)
     override fun initViewDialog(mView: View?) {
         mItemKeyword = mView?.findViewById(R.id.item_keyword)
+        mNother = mView?.findViewById(R.id.item_nother)
         mSsh = mView?.findViewById(R.id.item_ssh)
         mItemCustomCommand = mView?.findViewById(R.id.item_custom_command)
         setOnClick()
@@ -51,9 +57,15 @@ class KeyWordFunDialog : BaseDialogCentre {
             UserSetManage.get().setZTUserBean(ztUserBean)
             dismiss()
         }
-        mSsh?.setOnClickListener {
+        mNother?.setOnClickListener {
             val ztUserBean = UserSetManage.get().getZTUserBean()
             ztUserBean.doubleClickFun = DOUBLE_CLICK_NOTHING
+            UserSetManage.get().setZTUserBean(ztUserBean)
+            dismiss()
+        }
+        mSsh?.setOnClickListener {
+            val ztUserBean = UserSetManage.get().getZTUserBean()
+            ztUserBean.doubleClickFun = DOUBLE_CLICK_SSH
             UserSetManage.get().setZTUserBean(ztUserBean)
             dismiss()
         }

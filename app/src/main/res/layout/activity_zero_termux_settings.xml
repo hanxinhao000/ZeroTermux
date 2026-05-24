@@ -156,7 +156,7 @@
                             android:layout_width="30dp"
                             android:src="@mipmap/up_dialog"
                             android:padding="6dp"
-                            android:rotation="180"
+                            android:rotation="90"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="5dp"
                             android:layout_height="30dp"/>
