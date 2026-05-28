@@ -24,7 +24,7 @@ public final class TerminalRenderer {
     private final Paint mTextPaint = new Paint();
 	// ZeroTermux add {@
     public static int COLOR_TEXT = Color.parseColor("#ffffff");
-    public static int TEXT_SHADOW_ALPHA = 128;
+    public static int TEXT_SHADOW_PROGRESS = 50;
 	// @}
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
@@ -241,16 +241,23 @@ public final class TerminalRenderer {
             } else {
                 mTextPaint.setColor(foreColor);
             }
-            if (TEXT_SHADOW_ALPHA > 0 && !isExcludedShadowRange(text, startCharIndex)) {
-                mTextPaint.setShadowLayer(3f, 1f, 1f, (TEXT_SHADOW_ALPHA << 24) | 0x000000);
+            if (TEXT_SHADOW_PROGRESS > 0 && !isExcludedShadowRange(text, startCharIndex)) {
+                float t = TEXT_SHADOW_PROGRESS / 100f;
+                float strength;
+                if (t <= 0.33f) {
+                    strength = t / 0.33f; // 0→0, 0.33→1.0
+                } else {
+                    strength = 1f + (t - 0.33f) / 0.67f; // 0.33→1.0, 1.0→2.0
+                }
+                int alpha = (int) (Math.min(strength, 1f) * 255);
+                float radius = 3f * Math.min(strength, 2.5f);
+                mTextPaint.setShadowLayer(radius, 1f, 1f, (alpha << 24) | 0x000000);
             }
 			// @}
             // The text alignment is the default Paint.Align.LEFT.
             canvas.drawText(text, startCharIndex, runWidthChars, left, y - mFontLineSpacingAndAscent, mTextPaint);
             // ZeroTermux add {@
-            if (TEXT_SHADOW_ALPHA > 0 && !isExcludedShadowRange(text, startCharIndex)) {
-                mTextPaint.setShadowLayer(0, 0, 0, 0);
-            }
+            mTextPaint.setShadowLayer(0, 0, 0, 0);
 			// @}
         }
 
