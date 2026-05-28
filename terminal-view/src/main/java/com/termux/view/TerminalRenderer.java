@@ -24,6 +24,7 @@ public final class TerminalRenderer {
     private final Paint mTextPaint = new Paint();
 	// ZeroTermux add {@
     public static int COLOR_TEXT = Color.parseColor("#ffffff");
+    public static boolean TEXT_SHADOW_ENABLED = false;
 	// @}
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
@@ -240,9 +241,17 @@ public final class TerminalRenderer {
             } else {
                 mTextPaint.setColor(foreColor);
             }
+            if (TEXT_SHADOW_ENABLED) {
+                mTextPaint.setShadowLayer(3f, 1f, 1f, 0xCC000000);
+            }
 			// @}
             // The text alignment is the default Paint.Align.LEFT.
             canvas.drawText(text, startCharIndex, runWidthChars, left, y - mFontLineSpacingAndAscent, mTextPaint);
+            // ZeroTermux add {@
+            if (TEXT_SHADOW_ENABLED) {
+                mTextPaint.setShadowLayer(0, 0, 0, 0);
+            }
+			// @}
         }
 
         if (savedMatrix) canvas.restore();

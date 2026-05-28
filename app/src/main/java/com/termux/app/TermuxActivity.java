@@ -146,6 +146,7 @@ import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SingletonCommunicationUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.UUUtils;
+import com.termux.zerocore.utils.BackgroundBlurUtils;
 import com.termux.zerocore.utils.VideoUtils;
 import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
@@ -1428,6 +1429,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         back_video.setVisibility(View.GONE);
         back_img.setVisibility(View.VISIBLE);
         Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
+        String blurEnabled = SaveData.INSTANCE.getStringOther("blur_enabled");
+        if (blurEnabled != null && blurEnabled.equals("true")) {
+            String blurRadius = SaveData.INSTANCE.getStringOther("blur_radius");
+            int radius = 10;
+            if (!(blurRadius == null || blurRadius.isEmpty() || blurRadius.equals("def"))) {
+                try { radius = Integer.parseInt(blurRadius); } catch (Exception e) { }
+            }
+            BackgroundBlurUtils.applyBlur(back_img, radius);
+        }
     }
 
     public void x11KeyboardGone() {
@@ -2103,6 +2113,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 double_tishi.setVisibility(View.GONE);
             }
         });
+        mBeautifySettingDialog.setOnBlurChangeListener(radius -> {
+            BackgroundBlurUtils.applyBlur(back_img, radius);
+        });
+
+        mBeautifySettingDialog.setOnTextShadowChangeListener(enabled -> {
+            TerminalRenderer.TEXT_SHADOW_ENABLED = enabled;
+            mTerminalView.invalidate();
+        });
+
         mBeautifySettingDialog.setOnMenuBackListener(() -> {
             showMenuBack();
         });
@@ -2454,7 +2473,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         back_img.setVisibility(View.GONE);
         back_color.setVisibility(View.GONE);
         TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
+        TerminalRenderer.TEXT_SHADOW_ENABLED = false;
         ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
+        BackgroundBlurUtils.removeBlur(back_img);
         mTerminalView.invalidate();
         if (mExtraKeysView != null) {
             mExtraKeysView.setColorButton();
@@ -2496,6 +2517,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         } else {
             this.back_color.setAlpha(0.3f);
         }
+
+        String blurEnabled = SaveData.INSTANCE.getStringOther("blur_enabled");
+        String blurRadius = SaveData.INSTANCE.getStringOther("blur_radius");
+        if (blurEnabled != null && blurEnabled.equals("true")) {
+            int radius = 10;
+            if (!(blurRadius == null || blurRadius.isEmpty() || blurRadius.equals("def"))) {
+                try { radius = Integer.parseInt(blurRadius); } catch (Exception e) { }
+            }
+            BackgroundBlurUtils.applyBlur(back_img, radius);
+        } else {
+            BackgroundBlurUtils.removeBlur(back_img);
+        }
+
+        String textShadowEnabled = SaveData.INSTANCE.getStringOther("text_shadow_enabled");
+        TerminalRenderer.TEXT_SHADOW_ENABLED = textShadowEnabled != null && textShadowEnabled.equals("true");
 
         setSummaryVisible();
         if (FileIOUtils.INSTANCE.isPathVideo()) {
