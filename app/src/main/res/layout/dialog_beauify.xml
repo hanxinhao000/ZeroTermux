@@ -285,13 +285,15 @@
                         android:textStyle="bold"
                         android:layout_marginTop="10dp"
                         android:textColor="@color/color_ffffff"
-                        android:text="文字描边增强对比"
+                        android:text="文字对比度"
                         android:layout_height="wrap_content"/>
 
-                    <Switch
-                        android:layout_width="wrap_content"
+                    <SeekBar
+                        android:layout_width="match_parent"
                         android:layout_marginTop="10dp"
-                        android:id="@+id/text_shadow_switch"
+                        android:id="@+id/text_shadow_seekbar"
+                        android:max="100"
+                        android:progress="50"
                         android:layout_height="wrap_content"/>
 
                     <TextView

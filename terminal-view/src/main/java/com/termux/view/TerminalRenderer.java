@@ -24,7 +24,7 @@ public final class TerminalRenderer {
     private final Paint mTextPaint = new Paint();
 	// ZeroTermux add {@
     public static int COLOR_TEXT = Color.parseColor("#ffffff");
-    public static boolean TEXT_SHADOW_ENABLED = false;
+    public static int TEXT_SHADOW_ALPHA = 128;
 	// @}
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
@@ -241,14 +241,14 @@ public final class TerminalRenderer {
             } else {
                 mTextPaint.setColor(foreColor);
             }
-            if (TEXT_SHADOW_ENABLED) {
-                mTextPaint.setShadowLayer(3f, 1f, 1f, 0xCC000000);
+            if (TEXT_SHADOW_ALPHA > 0 && !isExcludedShadowRange(text, startCharIndex)) {
+                mTextPaint.setShadowLayer(3f, 1f, 1f, (TEXT_SHADOW_ALPHA << 24) | 0x000000);
             }
 			// @}
             // The text alignment is the default Paint.Align.LEFT.
             canvas.drawText(text, startCharIndex, runWidthChars, left, y - mFontLineSpacingAndAscent, mTextPaint);
             // ZeroTermux add {@
-            if (TEXT_SHADOW_ENABLED) {
+            if (TEXT_SHADOW_ALPHA > 0 && !isExcludedShadowRange(text, startCharIndex)) {
                 mTextPaint.setShadowLayer(0, 0, 0, 0);
             }
 			// @}
@@ -269,6 +269,15 @@ public final class TerminalRenderer {
 
 
 
+    }
+
+    private static boolean isExcludedShadowRange(char[] text, int startCharIndex) {
+        if (text == null || startCharIndex >= text.length) return false;
+        int codePoint = Character.codePointAt(text, startCharIndex);
+        return (codePoint >= 0x2500 && codePoint <= 0x257F) || // Box Drawing
+               (codePoint >= 0x2580 && codePoint <= 0x259F) || // Block Elements
+               (codePoint >= 0xE0A0 && codePoint <= 0xE0DF) || // Powerline
+               (codePoint >= 0x1FB00 && codePoint <= 0x1FBFF);  // Legacy Computing
     }
 	// @}
 }
