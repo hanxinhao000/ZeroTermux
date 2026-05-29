@@ -2088,22 +2088,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void onColorChange(int color) {
                 back_color.setBackgroundColor(color);
             }
-
-            @Override
-            public void onColorApChange(int ap) {
-
-            }
         });
 
         mBeautifySettingDialog.setOnChangeImageFile(mFile -> setImageBackground(mFile));
 
-        mBeautifySettingDialog.setOnChangeTextView(change -> {
-            Logger.logDebug(LOG_TAG, "change:" + change);
-            if (change) {
-                back_color.setAlpha(0.3f);
-            } else {
-                back_color.setAlpha(1f);
-            }
+        mBeautifySettingDialog.setOnChangeTextView(alpha -> {
+            Logger.logDebug(LOG_TAG, "back_ap_alpha:" + alpha);
+            back_color.setAlpha(alpha / 100f);
         });
         mBeautifySettingDialog.setOnTextCheckedChangeListener(change -> {
             Logger.logDebug(LOG_TAG, "setOnTextCheckedChangeListener:" + change);
@@ -2135,18 +2126,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     mExtraKeysView.setColorButton();
                     mExtraKeysView.invalidate();
                 }
-            }
-
-            @Override
-            public void onColorApChange(int color) {
-                TerminalRenderer.COLOR_TEXT = color;
-                ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
-                mTerminalView.invalidate();
-                if (mExtraKeysView != null) {
-                    mExtraKeysView.setColorButton();
-                    mExtraKeysView.invalidate();
-                }
-
             }
         });
         mBeautifySettingDialog.show();
@@ -2512,10 +2491,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 e.printStackTrace();
             }
         }
-        if ((change_text == null || change_text.isEmpty() || change_text.equals("def"))) {
-            this.back_color.setAlpha(1f);
-        } else {
-            this.back_color.setAlpha(0.3f);
+        if (!(change_text == null || change_text.isEmpty() || change_text.equals("def"))) {
+            try {
+                this.back_color.setAlpha(Integer.parseInt(change_text) / 100f);
+            } catch (Exception e) { }
         }
 
         String blurEnabled = SaveData.INSTANCE.getStringOther("blur_enabled");

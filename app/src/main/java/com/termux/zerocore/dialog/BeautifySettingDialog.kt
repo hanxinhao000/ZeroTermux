@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.xh_lib.utils.SaveData
 import com.example.xh_lib.utils.UUtils
-import com.rtugeek.android.colorseekbar.AlphaSeekBar
 import com.rtugeek.android.colorseekbar.ColorSeekBar
 import com.termux.R
 import com.termux.shared.logger.Logger
@@ -30,10 +29,8 @@ import java.io.FileInputStream
 
 class BeautifySettingDialog : BaseDialogDown {
     private var mColorFont: ColorSeekBar? = null
-    private var mFontColorAp: AlphaSeekBar? = null
     private var img_rl: RelativeLayout? = null
     private var back_color: ColorSeekBar? = null
-    private var back_color_ap: AlphaSeekBar? = null
     private var mFontColorChange: FontColorChange? = null
     private var mBackColorChange:BackColorChange? = null
     private var mOnChangeTextView:OnChangeTextView? = null
@@ -43,7 +40,7 @@ class BeautifySettingDialog : BaseDialogDown {
     private var mOnTextCheckedChangeListener:OnTextCheckedChangeListener? = null
     private var mOnMenuBackListener:OnMenuBackListener? = null
     private var mOnChangeImageFile:OnChangeImageFile? = null
-    private var back_ap: Switch? = null
+    private var mBackApSeekBar: SeekBar? = null
     private var back_text_show_switch: Switch? = null
     private var mBackMenuVisible: Switch? = null
     private var mBlurSwitch: Switch? = null
@@ -51,14 +48,8 @@ class BeautifySettingDialog : BaseDialogDown {
     private var mBlurLabel: TextView? = null
     private var mTextShadowSeekBar: SeekBar? = null
 
-    private val MAX_ALPHA:Int = 255
-    private val MIN_ALPHA:Int = 40
-
     private var fontColor:Int = Color.parseColor("#ffffff")
     private var fontColorProgress:Int = 0
-
-    private var fontApColor:Int = 0
-    private var fontApColorProgress:Int = 0
     private val LOG_TAG = "Termux--Apk:BeautifySettingDialog"
 
     private var mOnBlurChangeListener: OnBlurChangeListener? = null
@@ -70,14 +61,12 @@ class BeautifySettingDialog : BaseDialogDown {
     override fun initViewDialog(mView: View) {
         mColorFont = mView.findViewById(R.id.font_color)
         back_color = mView.findViewById(R.id.back_color)
-        mFontColorAp = mView.findViewById(R.id.font_color_ap)
-        back_color_ap = mView.findViewById(R.id.back_color_ap)
         mBackMenuVisible = mView.findViewById(R.id.back_menu_visible)
         show1 = mView.findViewById(R.id.show1)
         show2 = mView.findViewById(R.id.show2)
         img_rl = mView.findViewById(R.id.img_rl)
         def_tv = mView.findViewById(R.id.def_tv)
-        back_ap = mView.findViewById(R.id.back_ap)
+        mBackApSeekBar = mView.findViewById(R.id.back_ap_seekbar)
         back_text_show_switch = mView.findViewById(R.id.back_text_show_switch)
         mBlurSwitch = mView.findViewById(R.id.blur_switch)
         mBlurSeekBar = mView.findViewById(R.id.blur_seekbar)
@@ -113,7 +102,11 @@ class BeautifySettingDialog : BaseDialogDown {
                 e.printStackTrace()
             }
         }
-        back_ap?.isChecked = !(change_text == null || change_text.isEmpty() || change_text == "def")
+        if (!(change_text == null || change_text.isEmpty() || change_text == "def")) {
+            try {
+                mBackApSeekBar?.progress = change_text.toInt()
+            } catch (e: Exception) { }
+        }
         back_text_show_switch?.isChecked = (change_text_show == null || change_text_show.isEmpty() || change_text_show == "def")
         mBackMenuVisible?.isChecked = UserSetManage.get().getZTUserBean().isBackMenuVisible
 
@@ -160,14 +153,6 @@ class BeautifySettingDialog : BaseDialogDown {
 
         }
 
-        mFontColorAp?.setOnAlphaChangeListener { progress, alpha ->
-
-            fontApColor = alpha
-            fontApColorProgress = progress
-            mFontColorChange?.onColorApChange(UUtils.calculateAlphaValue(fontColor,alpha))
-
-        }
-
         back_color?.setOnColorChangeListener { progress, color ->
 
             mBackColorChange?.onColorChange(color)
@@ -176,18 +161,18 @@ class BeautifySettingDialog : BaseDialogDown {
             SaveData.saveStringOther("back_color_progress","$progress")
 
         }
-        back_color_ap?.setOnAlphaChangeListener { progress, alpha ->
-        }
 
-        back_ap?.setOnCheckedChangeListener { compoundButton, b ->
-            Logger.logDebug(LOG_TAG, "change:$b")
-            mOnChangeTextView?.onChange(b)
-            if(b){
-                SaveData.saveStringOther("change_text","$b")
-            }else{
-                SaveData.saveStringOther("change_text","def")
+        mBackApSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    Logger.logDebug(LOG_TAG, "back_ap_alpha:$progress")
+                    SaveData.saveStringOther("change_text", "$progress")
+                    mOnChangeTextView?.onChange(progress)
+                }
             }
-        }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
 
         back_text_show_switch?.setOnCheckedChangeListener { compoundButton, b ->
             mOnTextCheckedChangeListener?.onChange(b)
@@ -318,26 +303,15 @@ class BeautifySettingDialog : BaseDialogDown {
     }
 
     public interface FontColorChange{
-
         fun onColorChange(color:Int)
-
-        fun onColorApChange(ap:Int)
-
     }
 
     public interface BackColorChange{
-
         fun onColorChange(color:Int)
-
-        fun onColorApChange(ap:Int)
-
     }
 
     public interface OnChangeTextView{
-
-        fun onChange(change:Boolean)
-
-
+        fun onChange(alpha: Int)
     }
 
     public interface OnChangeImageFile{
