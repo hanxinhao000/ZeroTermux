@@ -146,6 +146,7 @@ import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SingletonCommunicationUtils;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.UUUtils;
+import com.termux.zerocore.utils.BackgroundBlurUtils;
 import com.termux.zerocore.utils.VideoUtils;
 import com.termux.zerocore.utils.WindowUtils;
 import com.termux.zerocore.view.BoomWindow;
@@ -1428,6 +1429,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         back_video.setVisibility(View.GONE);
         back_img.setVisibility(View.VISIBLE);
         Glide.with(TermuxActivity.this).load(file).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(back_img);
+        String blurEnabled = SaveData.INSTANCE.getStringOther("blur_enabled");
+        if (blurEnabled != null && blurEnabled.equals("true")) {
+            String blurRadius = SaveData.INSTANCE.getStringOther("blur_radius");
+            int radius = 10;
+            if (!(blurRadius == null || blurRadius.isEmpty() || blurRadius.equals("def"))) {
+                try { radius = Integer.parseInt(blurRadius); } catch (Exception e) { }
+            }
+            BackgroundBlurUtils.applyBlur(back_img, radius);
+        }
     }
 
     public void x11KeyboardGone() {
@@ -2078,22 +2088,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void onColorChange(int color) {
                 back_color.setBackgroundColor(color);
             }
-
-            @Override
-            public void onColorApChange(int ap) {
-
-            }
         });
 
         mBeautifySettingDialog.setOnChangeImageFile(mFile -> setImageBackground(mFile));
 
-        mBeautifySettingDialog.setOnChangeTextView(change -> {
-            Logger.logDebug(LOG_TAG, "change:" + change);
-            if (change) {
-                back_color.setAlpha(0.3f);
-            } else {
-                back_color.setAlpha(1f);
-            }
+        mBeautifySettingDialog.setOnChangeTextView(alpha -> {
+            Logger.logDebug(LOG_TAG, "back_ap_alpha:" + alpha);
+            back_color.setAlpha(alpha / 100f);
         });
         mBeautifySettingDialog.setOnTextCheckedChangeListener(change -> {
             Logger.logDebug(LOG_TAG, "setOnTextCheckedChangeListener:" + change);
@@ -2103,6 +2104,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 double_tishi.setVisibility(View.GONE);
             }
         });
+        mBeautifySettingDialog.setOnBlurChangeListener(radius -> {
+            BackgroundBlurUtils.applyBlur(back_img, radius);
+        });
+
+        mBeautifySettingDialog.setOnTextShadowChangeListener(strength -> {
+            TerminalRenderer.TEXT_SHADOW_PROGRESS = strength;
+            mTerminalView.invalidate();
+        });
+
         mBeautifySettingDialog.setOnMenuBackListener(() -> {
             showMenuBack();
         });
@@ -2116,18 +2126,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     mExtraKeysView.setColorButton();
                     mExtraKeysView.invalidate();
                 }
-            }
-
-            @Override
-            public void onColorApChange(int color) {
-                TerminalRenderer.COLOR_TEXT = color;
-                ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = color;
-                mTerminalView.invalidate();
-                if (mExtraKeysView != null) {
-                    mExtraKeysView.setColorButton();
-                    mExtraKeysView.invalidate();
-                }
-
             }
         });
         mBeautifySettingDialog.show();
@@ -2454,7 +2452,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         back_img.setVisibility(View.GONE);
         back_color.setVisibility(View.GONE);
         TerminalRenderer.COLOR_TEXT = Color.parseColor("#ffffff");
+        TerminalRenderer.TEXT_SHADOW_PROGRESS = 0;
         ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR = Color.parseColor("#ffffff");
+        BackgroundBlurUtils.removeBlur(back_img);
         mTerminalView.invalidate();
         if (mExtraKeysView != null) {
             mExtraKeysView.setColorButton();
@@ -2491,10 +2491,27 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 e.printStackTrace();
             }
         }
-        if ((change_text == null || change_text.isEmpty() || change_text.equals("def"))) {
-            this.back_color.setAlpha(1f);
+        if (!(change_text == null || change_text.isEmpty() || change_text.equals("def"))) {
+            try {
+                this.back_color.setAlpha(Integer.parseInt(change_text) / 100f);
+            } catch (Exception e) { }
+        }
+
+        String blurEnabled = SaveData.INSTANCE.getStringOther("blur_enabled");
+        String blurRadius = SaveData.INSTANCE.getStringOther("blur_radius");
+        if (blurEnabled != null && blurEnabled.equals("true")) {
+            int radius = 10;
+            if (!(blurRadius == null || blurRadius.isEmpty() || blurRadius.equals("def"))) {
+                try { radius = Integer.parseInt(blurRadius); } catch (Exception e) { }
+            }
+            BackgroundBlurUtils.applyBlur(back_img, radius);
         } else {
-            this.back_color.setAlpha(0.3f);
+            BackgroundBlurUtils.removeBlur(back_img);
+        }
+
+        String textShadowStrength = SaveData.INSTANCE.getStringOther("text_shadow_strength");
+        if (textShadowStrength != null && !textShadowStrength.isEmpty() && !textShadowStrength.equals("def")) {
+            try { TerminalRenderer.TEXT_SHADOW_PROGRESS = Integer.parseInt(textShadowStrength); } catch (Exception e) { }
         }
 
         setSummaryVisible();

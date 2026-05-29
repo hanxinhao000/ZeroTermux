@@ -15,6 +15,7 @@ com_crashlytics_export_strings.xml
 
 # Local configuration file (sdk path, etc)
 local.properties
+AGENTS.md
 QWEN.md
 
 # Gradle generated files

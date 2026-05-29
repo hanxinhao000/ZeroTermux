@@ -24,6 +24,7 @@ public final class TerminalRenderer {
     private final Paint mTextPaint = new Paint();
 	// ZeroTermux add {@
     public static int COLOR_TEXT = Color.parseColor("#ffffff");
+    public static int TEXT_SHADOW_PROGRESS = 50;
 	// @}
     /** The width of a single mono spaced character obtained by {@link Paint#measureText(String)} on a single 'X'. */
     final float mFontWidth;
@@ -240,9 +241,24 @@ public final class TerminalRenderer {
             } else {
                 mTextPaint.setColor(foreColor);
             }
+            if (TEXT_SHADOW_PROGRESS > 0 && !isExcludedShadowRange(text, startCharIndex)) {
+                float t = TEXT_SHADOW_PROGRESS / 100f;
+                float strength;
+                if (t <= 0.33f) {
+                    strength = t / 0.33f; // 0→0, 0.33→1.0
+                } else {
+                    strength = 1f + (t - 0.33f) / 0.67f; // 0.33→1.0, 1.0→2.0
+                }
+                int alpha = (int) (Math.min(strength, 1f) * 255);
+                float radius = 3f * Math.min(strength, 2.5f);
+                mTextPaint.setShadowLayer(radius, 1f, 1f, (alpha << 24) | 0x000000);
+            }
 			// @}
             // The text alignment is the default Paint.Align.LEFT.
             canvas.drawText(text, startCharIndex, runWidthChars, left, y - mFontLineSpacingAndAscent, mTextPaint);
+            // ZeroTermux add {@
+            mTextPaint.setShadowLayer(0, 0, 0, 0);
+			// @}
         }
 
         if (savedMatrix) canvas.restore();
@@ -260,6 +276,15 @@ public final class TerminalRenderer {
 
 
 
+    }
+
+    private static boolean isExcludedShadowRange(char[] text, int startCharIndex) {
+        if (text == null || startCharIndex >= text.length) return false;
+        int codePoint = Character.codePointAt(text, startCharIndex);
+        return (codePoint >= 0x2500 && codePoint <= 0x257F) || // Box Drawing
+               (codePoint >= 0x2580 && codePoint <= 0x259F) || // Block Elements
+               (codePoint >= 0xE0A0 && codePoint <= 0xE0DF) || // Powerline
+               (codePoint >= 0x1FB00 && codePoint <= 0x1FBFF);  // Legacy Computing
     }
 	// @}
 }
