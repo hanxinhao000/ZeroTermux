@@ -14,6 +14,9 @@ import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.zerocore.activity.adapter.ListBaseAdapter;
 import com.termux.zerocore.activity.view_holder.ViewHolder;
+import com.termux.zerocore.ftp.utils.UserSetManage;
+import com.termux.zerocore.url.FileUrl;
+import com.termux.zerocore.utils.FileIOUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,13 +65,6 @@ public class FileListConfigDialog extends BaseDialogCentre {
             ListFileAdapter listFileAdapter = new ListFileAdapter(files1Array);
             list_view.setAdapter(listFileAdapter);
         }
-
-
-
-
-
-
-
     }
 
     public void setBoomBtnVisible(boolean btnVisible){
@@ -81,7 +77,7 @@ public class FileListConfigDialog extends BaseDialogCentre {
 
     @Override
     void initViewDialog(View mView) {
-        file =  new File(Environment.getExternalStorageDirectory(),"/xinhao/command/");
+        file = getCommandPathFile();
         list_view = mView.findViewById(R.id.list_view);
         title = mView.findViewById(R.id.title);
         tv_empty = mView.findViewById(R.id.tv_empty);
@@ -129,6 +125,13 @@ public class FileListConfigDialog extends BaseDialogCentre {
         });
     }
 
+    private File getCommandPathFile() {
+        if (UserSetManage.Companion.get().getZTUserBean().isCreateFolderForSdcardAndroid()) {
+            return FileIOUtils.INSTANCE.getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.INSTANCE.getMAIN_XINHAO_COMMAND_PATH());
+        } else {
+            return new File(Environment.getExternalStorageDirectory(), FileUrl.INSTANCE.getMAIN_XINHAO_COMMAND_PATH());
+        }
+    }
     @Override
     int getContentView() {
         return R.layout.dialog_file_mingl_list;

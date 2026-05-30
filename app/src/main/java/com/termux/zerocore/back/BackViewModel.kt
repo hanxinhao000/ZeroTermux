@@ -22,6 +22,7 @@ import com.termux.zerocore.bean.ItemMenuBean
 import com.termux.zerocore.data.CommendShellData
 import com.termux.zerocore.dialog.LoadingDialog
 import com.termux.zerocore.dialog.SwitchDialog
+import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.utils.FileIOUtils
 import com.termux.zerocore.utils.WindowsUtils
 import kotlinx.coroutines.*
@@ -144,11 +145,20 @@ class BackViewModel : BackupClickListener {
                 }
                 withContext(Dispatchers.Main) {
                     mLoadingDialog?.dismiss()
-                    val replace = CommendShellData.SHELL_BACKUP.replace(
-                        "systemName",
-                        FileIOUtils.getTimeFileName(name)
-                    ).replace("TemporaryMark", command)
-                    sendTextToTerminal(replace)
+                    if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
+                        val replace = CommendShellData.SHELL_BACKUP_ANDROID.replace(
+                            "systemName",
+                            FileIOUtils.getTimeFileName(name)
+                        ).replace("TemporaryMark", command)
+                        sendTextToTerminal(replace)
+                    } else {
+                        val replace = CommendShellData.SHELL_BACKUP.replace(
+                            "systemName",
+                            FileIOUtils.getTimeFileName(name)
+                        ).replace("TemporaryMark", command)
+                        sendTextToTerminal(replace)
+                    }
+
                     UUtils.showMsg(UUtils.getString(R.string.开始备份))
                    // mBackupStoreDialogCloseListener?.backupStoreDismiss()
                 }

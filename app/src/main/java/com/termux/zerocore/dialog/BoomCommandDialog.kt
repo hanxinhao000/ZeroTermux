@@ -75,7 +75,6 @@ class BoomCommandDialog : BaseDialogDown {
                 override fun shuaxin() {
                     shuaxingML()
                 }
-
             })
         }
 

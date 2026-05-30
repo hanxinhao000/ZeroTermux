@@ -1393,6 +1393,15 @@
     <string name="guide_zerotermux_create_folder">创建文件夹</string>
     <string name="guide_zerotermux_create_folder_summary"> ZeroTermux 需要在你的内部存储创建以下文件夹\n\n
         如果看不懂可直接点击 “继续” \n\n
+        注意：\n
+        当前不支持的数据页面:\n
+        1.Windows模拟\n
+        1.1 如果想使用windows模拟相关的只能在SD卡创建 内部存储/xinhao/windows 文件夹\n
+        1.2 如果不想创建相关的文件夹到内部存储，你可以拒绝使用此模块功能(左侧主菜单 -> QEMU -> Zero/UTermux 模拟)\n
+        2.模块安装\n
+        2.1 如果想使用模块相关的只能在SD卡创建 内部存储/xinhao/module 文件夹\n
+        2.2 如果不想创建相关的文件夹到内部存储，你可以拒绝使用此模块功能(左侧主菜单 -> 模块安装)\n
+        \n\n
         建议：一般情况下请放到 内部存储，如果放到 Android/data 目录下卸载应用之后所有保存的数据包以及其他所有xinhao文件夹下的数据都会被清空请谨慎选择\n\n
         注意：设置 内部存储/Android/data 下可能会有未知问题，如有遇到请在GITHUB上反馈\n
         Android规范(/内部存储/Android/data/com.termux/files/xinhao/)\n
@@ -1403,7 +1412,7 @@
         如果后期需要更改目录，可在 ZeroTermux 设置当中重新修改, 需注意：两个目录下的数据是分开显示的
     </string>
     <string name="guide_zerotermux_create_sdcard">内部存储</string>
-    <string name="guide_zerotermux_create_android">(不可用)内部存储/Android/data</string>
+    <string name="guide_zerotermux_create_android">内部存储/Android/data</string>
     <string name="guide_zerotermux_create_toast_ok">已成功创建</string>
     <string name="guide_zerotermux_create_toast_no">未创建成功,请检查你的权限情况</string>
     <string name="guide_zerotermux_create_toast_created">当前功能在此版本不可用,等下个版本测试上线</string>
@@ -1418,4 +1427,39 @@
     <string name="settings_keyword_item3">自定义命令</string>
 
     <string name="command_gone">隐藏</string>
+    <string name="save_path">设置存储路径 (测试版本)</string>
+    <string name="save_path_summary">
+        设置当前存储路径目录\n
+        内部存储/xinhao\n
+        内部存储/Android/data/com.termux/files/xinhao\n
+        请注意 Android data 目录复制文件需要一点相关知识</string>
+    <string name="backup_success_android">备份完成，备份文件在->内部存储/Android/data/com.termux/files/xinhao/data/|目录下</string>
+    <string name="add_containers">新增容器</string>
+    <string name="item_containers_path">路径:</string>
+    <string name="item_containers_toast_create_system_error">系统创建失败!请重试</string>
+    <string name="item_containers_dialog_input_linux_name">"请输入新的linux名称"</string>
+    <string name="item_containers_toast_def_system">"默认系统"</string>
+    <string name="item_containers_error_system">"损坏的系统"</string>
+    <string name="item_containers_toast_not_config">"你当前的默认系统没有配置文件"</string>
+    <string name="item_containers_toast_config_error">"配置文件已损坏，请重新进入创建,多点几次,直到进入为止"</string>
+    <string name="item_containers_toast_settings_ok_reboot">"设置已生效!请重启APP"</string>
+    <string name="item_containers_dialog_no_need">"不需要"</string>
+    <string name="item_containers_dialog_need">"需要"</string>
+    <string name="item_containers_dialog_manual_exit">"请手动退出APP"</string>
+    <string name="item_containers_dialog_msg">"切换成功!\n重启APP生效\n需要重启吗\n其实点击需要没用\n自己手动重启\n进入任务管理器,一般点击 '□'这个建，然后滑退APP "</string>
+    <string name="item_containers_dialog_read_failed">"读取失败!"</string>
+    <string name="item_containers_toast_ignoring_operations">"操作忽略"</string>
+    <string name="item_containers_dialog_don_t_delete_it">"别删除"</string>
+    <string name="item_containers_dialog_i_don_t_delete_it">我不删除</string>
+    <string name="item_containers_dialog_deleted_successfully">"删除成功!"</string>
+    <string name="item_containers_toast_clearing_system_residues">"正在清除系统残留文件"</string>
+    <string name="item_containers_dialog_delete_system_loading_msg">"时间长短，由您的系统大小决定的"</string>
+    <string name="item_containers_dialog_delete_system_loading_title">正在删除,请耐心等待...</string>
+    <string name="item_containers_toast_not_delete_main_system">你不能删除主系统</string>
+    <string name="item_containers_dialog_i_m_sure">"我确定"</string>
+    <string name="item_containers_dialog_delete_system_msg">"请确保你的sd卡权限未被获取!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n你确定要删除掉你的系统吗?\n请慎重,删除后你的数据不可恢复!!!!!!"</string>
+    <string name="item_containers_dialog_delete_system_title">你确定要删除吗</string>
+    <string name="item_containers_main_name">主容器</string>
+    <string name="item_containers_time">创建时间:</string>
+    <string name="install_empty_android">Android/data/files/xinhao/module,没有模块包</string>
 </resources>

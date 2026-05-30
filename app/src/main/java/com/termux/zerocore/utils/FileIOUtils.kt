@@ -12,6 +12,7 @@ import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.CreateSystemBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
+import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.url.FileUrl
 import java.io.*
 import java.nio.file.Files
@@ -275,7 +276,11 @@ object FileIOUtils {
     }
 
     public fun getXinHaoDataPathFile(): File {
-        return File(getSdcardPath(), "/xinhao/data/")
+        return if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
+            FileIOUtils.getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_DATA_PATH)
+        } else {
+            File(getSdcardPath(), FileUrl.MAIN_XINHAO_DATA_PATH)
+        }
     }
 
     public fun getSdcardPath(): String {
@@ -472,6 +477,15 @@ object FileIOUtils {
         return File(homePath, MAIN_MENU_XML_PATH)
     }
 
+    public fun getAndroidDataHome(context: Context): File? {
+        return context.getExternalFilesDir(null)
+    }
+
+    public fun getAndroidDataHomeChildPath(context: Context, path: String): File {
+        return File(getAndroidDataHome(context), path)
+    }
+
+
     public fun getLeftMenuBackFile(): File {
         val homePath = getHomePath(UUtils.getContext())
         val file = File(homePath, LEFT_MENU_BACK_FOLDER)
@@ -513,11 +527,17 @@ object FileIOUtils {
     }
 
     public fun createWebConfig() {
+        val createFolderForSdcardAndroid =
+            UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid
+
         val fileZtLinkPATH = File(getHomePath(UUtils.getContext()), HTML_ZT_LINK_PATH)
         val fileHtmlPATH = File(getHomePath(UUtils.getContext()), HTML_PATH)
         val fileXinHaoPATH = File(getHomePath(UUtils.getContext()), XINHAO_PATH)
-
-        val file1 = File(FileUrl.zeroTermuxHome, "web_config")
+        val file1 = if (createFolderForSdcardAndroid) {
+            getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_WEB_CONFIG_PATH)
+        } else {
+            File(FileUrl.zeroTermuxHome, "web_config")
+        }
 
         if (!fileZtLinkPATH.exists()) {
             fileZtLinkPATH.mkdirs()
@@ -527,8 +547,14 @@ object FileIOUtils {
         }
         try {
             Os.symlink(file1.absolutePath, fileHtmlPATH.absolutePath)
-            Os.symlink(FileUrl.zeroTermuxHome.absolutePath, fileXinHaoPATH.absolutePath)
+            if (createFolderForSdcardAndroid) {
+                Os.symlink(getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_PATH).absolutePath,
+                    fileXinHaoPATH.absolutePath)
+            } else {
+                Os.symlink(FileUrl.zeroTermuxHome.absolutePath, fileXinHaoPATH.absolutePath)
+            }
         } catch (e: Exception) {
+            LogUtils.i(TAG, "createWebConfig is error: $e")
             e.printStackTrace()
         }
     }
@@ -552,6 +578,11 @@ object FileIOUtils {
     }
     //获取模块包路径
     public fun getModuleFiles(): ArrayList<File>? {
+        if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
+            val arrayList = ArrayList<File>()
+            arrayList.addAll(getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_MODULE_PATH).listFiles())
+            return arrayList
+        }
         if (!FileUrl.zeroTermuxModule.exists()) {
             if (!FileUrl.zeroTermuxModule.mkdirs()) {
                 LogUtils.d(TAG, "getModuleFiles create folder is fail, path: " + FileUrl.zeroTermuxModule.absolutePath)

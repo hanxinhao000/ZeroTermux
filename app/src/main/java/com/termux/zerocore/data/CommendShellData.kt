@@ -2,6 +2,7 @@ package com.termux.zerocore.data
 
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.zerocore.ftp.utils.UserSetManage
 import java.io.File
 
 object CommendShellData {
@@ -13,6 +14,7 @@ object CommendShellData {
     //"cd ~ && cd ~ && tar -zcvf - TemporaryMark | pv -s $(($(du -sk TemporaryMark | awk '{print $1}') * 1024)) | gzip > ./storage/shared/xinhao/data/systemName
    // public var SHELL_BACKUP = "cd ~ && cd ~ && tar -TemporaryMark - /data/data/com.termux/files | pv -s $(($(du -sk /data/data/com.termux/files | awk '{print $1}') * 1024)) | gzip > ./storage/shared/xinhao/data/systemName && echo \"${UUtils.getString(R.string.backup_success)}\" \n"
     public var SHELL_BACKUP = "cd ~ && cd ~ && tar -TemporaryMark ./storage/shared/xinhao/data/systemName /data/data/com.termux/files && echo \"${UUtils.getString(R.string.backup_success)}\" \n"
+    public var SHELL_BACKUP_ANDROID = "cd ~ && cd ~ && tar -TemporaryMark ./storage/shared/Android/data/com.termux/files/xinhao/data/systemName /data/data/com.termux/files && echo \"${UUtils.getString(R.string.backup_success_android)}\" \n"
     public const val SHELL_TAR_GZ = "zcvf"
     public const val SHELL_TAR_BZ2 = "jcvf"
     public const val SHELL_TAR_XZ = "Jcvf"
@@ -27,6 +29,10 @@ object CommendShellData {
     //欢迎语
     public const val SHELL_WELCOME_MESSAGE =  "echo \"+++++++++++++START+++++++++++++\" \n"
     public fun getShellRestore(command: String, tarFle: File, createFile: File): String {
-        return  "cd ~ && cd ~ && tar -v -${command} ./storage/shared/xinhao/data/" + tarFle.getName().replace(" ","") + "  -C ../../" + createFile.getName() + " && mv ../../" + createFile.getName() + "/data/data/com.termux/files/home ../../" + createFile.getName() +" && "+ "mv ../../" + createFile.getName() + "/data/data/com.termux/files/usr ../../" + createFile.getName()+" && rm -rf ../../"+createFile.getName()+"/data && echo \"${UUtils.getString(R.string.system_restore_success)}\" \n"
+        return if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
+            "cd ~ && cd ~ && tar -v -${command} ./storage/shared/Android/data/com.termux/files/xinhao/data/" + tarFle.getName().replace(" ","") + "  -C ../../" + createFile.getName() + " && mv ../../" + createFile.getName() + "/data/data/com.termux/files/home ../../" + createFile.getName() +" && "+ "mv ../../" + createFile.getName() + "/data/data/com.termux/files/usr ../../" + createFile.getName()+" && rm -rf ../../"+createFile.getName()+"/data && echo \"${UUtils.getString(R.string.system_restore_success)}\" \n"
+        } else {
+            "cd ~ && cd ~ && tar -v -${command} ./storage/shared/xinhao/data/" + tarFle.getName().replace(" ","") + "  -C ../../" + createFile.getName() + " && mv ../../" + createFile.getName() + "/data/data/com.termux/files/home ../../" + createFile.getName() +" && "+ "mv ../../" + createFile.getName() + "/data/data/com.termux/files/usr ../../" + createFile.getName()+" && rm -rf ../../"+createFile.getName()+"/data && echo \"${UUtils.getString(R.string.system_restore_success)}\" \n"
+        }
     }
 }

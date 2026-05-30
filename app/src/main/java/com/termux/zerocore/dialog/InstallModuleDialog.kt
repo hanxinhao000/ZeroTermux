@@ -16,6 +16,7 @@ import com.termux.zerocore.back.bean.DataBean
 import com.termux.zerocore.back.listener.RestoreFileDataListener
 import com.termux.zerocore.back.listener.RestoreRefreshFileListener
 import com.termux.zerocore.dialog.adapter.ModuleAdapter
+import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.utils.FileIOUtils
 import com.termux.zerocore.utils.ModuleInstallUtils
 import com.termux.zerocore.utils.Z7ExtracatUtils
@@ -74,6 +75,11 @@ class InstallModuleDialog: BaseDialogCentre {
 
     public fun initDataAndAdapter() {
         val moduleFiles = FileIOUtils.getModuleFiles()
+        mInstallEmpty?.text = if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
+            UUtils.getString(R.string.install_empty)
+        } else {
+            UUtils.getString(R.string.install_empty_android)
+        }
         if (moduleFiles == null || moduleFiles.isEmpty()) {
             mInstallEmpty?.visibility = View.VISIBLE
             mRecyclerView?.visibility = View.GONE

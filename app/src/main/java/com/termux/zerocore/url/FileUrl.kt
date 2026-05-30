@@ -17,42 +17,65 @@ object FileUrl {
     public val mainFilesUrl = TermuxConstants.TERMUX_FILES_DIR_PATH
     public val mainAppUrl = TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH
     public val mainHomeUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home"
+    public val mainHomeTemp = TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH + "/temp"
     public val mainBinUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/usr/bin"
     public val mainConfigUrl = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home/.termux/"
     public val mainConfigImg = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home/.img/"
 
+    public val MAIN_XINHAO_PATH = "/xinhao"
+    public val MAIN_XINHAO_DATA_PATH = "$MAIN_XINHAO_PATH/data"
+    public val MAIN_XINHAO_APK_PATH = "$MAIN_XINHAO_PATH/apk"
+    public val MAIN_XINHAO_WINDOWS_PATH = "$MAIN_XINHAO_PATH/windows"
+    public val MAIN_XINHAO_COMMAND_PATH = "$MAIN_XINHAO_PATH/command"
+    public val MAIN_XINHAO_FONT_PATH = "$MAIN_XINHAO_PATH/font"
+    public val MAIN_XINHAO_ISO_PATH = "$MAIN_XINHAO_PATH/iso"
+    public val MAIN_XINHAO_MYSQL_PATH = "$MAIN_XINHAO_PATH/mysql"
+    public val MAIN_XINHAO_ONLINE_SYSTEM_PATH = "$MAIN_XINHAO_PATH/online_system"
+    public val MAIN_XINHAO_QEMU_PATH = "$MAIN_XINHAO_PATH/qemu"
+    public val MAIN_XINHAO_SERVER_PATH = "$MAIN_XINHAO_PATH/server"
+    public val MAIN_XINHAO_SHARE_PATH = "$MAIN_XINHAO_PATH/share"
+    public val MAIN_XINHAO_SYSTEM_PATH = "$MAIN_XINHAO_PATH/system"
+    public val MAIN_XINHAO_WEB_CONFIG_PATH = "$MAIN_XINHAO_PATH/web_config"
+    public val MAIN_XINHAO_MODULE_PATH = "$MAIN_XINHAO_PATH/module"
+    public val MAIN_XINHAO_WINDOWS_CONFIG_PATH = "$MAIN_XINHAO_PATH/windows_config"
+    public val MAIN_XINHAO_TYPE_ANDROID_PATH = "$MAIN_XINHAO_PATH/sdcard_android"
+    public val MAIN_XINHAO_TYPE_PATH = "$MAIN_XINHAO_PATH/sdcard_xinhao"
+
+
 
     //主目录
-    public val zeroTermuxHome = File(Environment.getExternalStorageDirectory(), "/xinhao/")
+    public val zeroTermuxHome = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_PATH)
     //恢复目录
-    public val zeroTermuxData = File(Environment.getExternalStorageDirectory(), "/xinhao/data/")
+    public val zeroTermuxData = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_DATA_PATH)
     //APK目录
-    public val zeroTermuxApk = File(Environment.getExternalStorageDirectory(), "/xinhao/apk/")
+    public val zeroTermuxApk = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_APK_PATH)
     //windows目录
-    public val zeroTermuxWindows = File(Environment.getExternalStorageDirectory(), "/xinhao/windows/")
-   //命令目录
-    public val zeroTermuxCommand = File(Environment.getExternalStorageDirectory(), "/xinhao/command/")
-   //字体目录
-    public val zeroTermuxFont = File(Environment.getExternalStorageDirectory(), "/xinhao/font")
-   //iso目录
-    public val zeroTermuxIso = File(Environment.getExternalStorageDirectory(), "/xinhao/iso")
-   //mysql目录
-    public val zeroTermuxMysql = File(Environment.getExternalStorageDirectory(), "/xinhao/mysql")
+    public val zeroTermuxWindows = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_WINDOWS_PATH)
+    //命令目录
+    public val zeroTermuxCommand = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_COMMAND_PATH)
+    //字体目录
+    public val zeroTermuxFont = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_FONT_PATH)
+    //iso目录
+    public val zeroTermuxIso = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_ISO_PATH)
+    //mysql目录
+    public val zeroTermuxMysql = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_MYSQL_PATH)
     //online_system 目录
-    public val zeroTermuxOnlineSystem = File(Environment.getExternalStorageDirectory(), "/xinhao/online_system")
-   //qemu目录
-    public val zeroTermuxQemu = File(Environment.getExternalStorageDirectory(), "/xinhao/qemu")
-   //server目录
-    public val zeroTermuxServer = File(Environment.getExternalStorageDirectory(), "/xinhao/server")
-   //share目录
-    public val zeroTermuxShare = File(Environment.getExternalStorageDirectory(), "/xinhao/share")
+    public val zeroTermuxOnlineSystem = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_ONLINE_SYSTEM_PATH)
+    //qemu目录
+    public val zeroTermuxQemu = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_QEMU_PATH)
+    //server目录
+    public val zeroTermuxServer = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_SERVER_PATH)
+    //share目录
+    public val zeroTermuxShare = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_SHARE_PATH)
     //system目录
-    public val zeroTermuxSystem = File(Environment.getExternalStorageDirectory(), "/xinhao/system")
+    public val zeroTermuxSystem = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_SYSTEM_PATH)
     //web_config
-    public val zeroTermuxWebConfig = File(Environment.getExternalStorageDirectory(), "/xinhao/web_config")
+    public val zeroTermuxWebConfig = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_WEB_CONFIG_PATH)
     //模块包目录
-    public val zeroTermuxModule = File(Environment.getExternalStorageDirectory(), "/xinhao/module")
-     val zeroTermuxWindowsConfig = File(Environment.getExternalStorageDirectory(), "/xinhao/windows_config/")
+    public val zeroTermuxModule = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_MODULE_PATH)
+    //windows_config目录
+    public val zeroTermuxWindowsConfig = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_WINDOWS_CONFIG_PATH)
+    public val zeroTermuxType = File(Environment.getExternalStorageDirectory(), MAIN_XINHAO_TYPE_PATH)
 
     //官方 sources 路径[源路径]
     public val sourcesUrl = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/etc/apt/sources.list"
@@ -102,6 +125,11 @@ object FileUrl {
     public val smsZeroBashrcFileD = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/home/.xinhao_history"
     //Zero系统脚本
     public val smsZeroBashrcFile = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/home/.xinhao_history/start_command.sh"
+    // 容器JSON
+    public val xinhaoSystemPath = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/xinhao_system.infoJson"
+    // boxbusy
+    public val busyboxStaticPath = "${TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH}/busybox_static"
+    public val busyboxPath = "${TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH}/busybox"
 
 
 

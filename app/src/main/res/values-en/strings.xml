@@ -1430,19 +1430,28 @@ cd ~ &amp;&amp; pkg update -y \n
         If you need to change your usage habits later, you can adjust them by entering the settings from the left sidebar on the main screen.
     </string>
     <string name="guide_zerotermux_create_folder">Create Folder</string>
-    <string name="guide_zerotermux_create_folder_summary"> ZeroTermux needs to create the following folders in your internal storage\n\n
-        If you don\'t understand, just tap "Continue" \n\n
-        Suggestion: Under normal circumstances, please place them in internal storage. If placed in the Android/data directory, all saved data packages and all other data under the xinhao folder will be cleared after uninstalling the app. Please choose carefully.\n\n
-        Note: Setting to internal storage/Android/data may cause unknown issues. If you encounter any, please report them on GitHub.\n
-        Android specification (/internal storage/Android/data/com.termux/files/xinhao/)\n
-        Simple and easy to use (/internal storage/xinhao)\n\n
-        Directory description: data (backup packages), apk (temporary APKs), windows (QEMU directory),
-        command (command directory), font (font directory), iso (image directory), mysql (mysql temporary files),
-        online_system (offline termux packages), qemu (QEMU directory), server (server directory), share (share directory), web_config (web temporary directory)\n\n
-        If you need to change the directory later, you can modify it in ZeroTermux settings. Please note: the data in the two directories are displayed separately.
+    <string name="guide_zerotermux_create_folder_summary"> "ZeroTermux needs to create the following folders in your internal storage\n\n
+        If you don't understand, simply tap "Continue"\n\n
+        Note:\n
+        Currently unsupported data pages:\n
+        1. Windows Emulation\n
+        1.1 If you want to use Windows emulation features, you can only create the internal storage/xinhao/windows folder on the SD card\n
+        1.2 If you do not want to create the relevant folders in internal storage, you can choose not to use this module feature (Left main menu → QEMU → Zero/UTermux Emulation)\n
+        2. Module Installation\n
+        2.1 If you want to use module-related features, you can only create the internal storage/xinhao/module folder on the SD card\n
+        2.2 If you do not want to create the relevant folders in internal storage, you can choose not to use this module feature (Left main menu → Module Installation)\n
+        \n\n
+        Suggestion: Under normal circumstances, please place it in internal storage. If placed in the Android/data directory, all saved data packages and all data under the xinhao folder will be cleared after uninstalling the app. Please choose carefully.\n\n
+        Note: Placing files in internal storage/Android/data may cause unknown issues. If you encounter any, please provide feedback on GitHub.\n
+        Android standard (/internal storage/Android/data/com.termux/files/xinhao/)\n
+        Simple and easy (/internal storage/xinhao)\n\n
+        Directory descriptions: data (backup packages), apk (temporary APKs), windows (QEMU directory),
+        command (command directory), font (font directory), iso (image directory), mysql (MySQL temporary files),
+        online_system (offline Termux packages), qemu (QEMU directory), server (server directory), share (share directory), web_config (web temporary directory)\n\n
+        If you need to change the directory later, you can modify it in ZeroTermux settings. Please note: the data in the two directories are displayed separately."
     </string>
     <string name="guide_zerotermux_create_sdcard">Internal Storage</string>
-    <string name="guide_zerotermux_create_android">(NotAvailable)Internal Storage/Android/data</string>
+    <string name="guide_zerotermux_create_android">Internal Storage/Android/data</string>
     <string name="guide_zerotermux_create_toast_ok">Successfully created</string>
     <string name="guide_zerotermux_create_toast_no">Creation failed, please check your permissions</string>
     <string name="install_zerotermux_os_title">Install OS</string>
@@ -1456,4 +1465,40 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="settings_keyword_item1">Keyboard</string>
     <string name="settings_keyword_item2">Disable</string>
     <string name="settings_keyword_item3">Custom command</string>
+
+    <string name="save_path">Set Storage Path (BETA)</string>
+    <string name="save_path_summary">
+        Set the current storage path directory\n
+        Internal storage/xinhao\n
+        Internal storage/Android/data/com.termux/files/xinhao\n
+        Please note that copying files to the Android data directory requires some relevant knowledge</string>
+    <string name="backup_success_android">Backup complete. Backup files are in -> Internal storage/Android/data/com.termux/files/xinhao/data/| directory</string>
+    <string name="add_containers">Add Container</string>
+    <string name="item_containers_path">Path:</string>
+    <string name="item_containers_toast_create_system_error">System creation failed! Please try again</string>
+    <string name="item_containers_dialog_input_linux_name">"Please enter a new Linux name"</string>
+    <string name="item_containers_toast_def_system">"Default system"</string>
+    <string name="item_containers_error_system">"Corrupted system"</string>
+    <string name="item_containers_toast_not_config">"Your current default system has no configuration file"</string>
+    <string name="item_containers_toast_config_error">"The configuration file is corrupted. Please re-enter creation and tap a few more times until you get in"</string>
+    <string name="item_containers_toast_settings_ok_reboot">"Settings applied! Please restart the app"</string>
+    <string name="item_containers_dialog_no_need">"No need"</string>
+    <string name="item_containers_dialog_need">"Need"</string>
+    <string name="item_containers_dialog_manual_exit">"Please manually exit the app"</string>
+    <string name="item_containers_dialog_msg">"Switch successful!\nRestart the app for changes to take effect\nNeed to restart?\nActually tapping \"Need\" is useless\nManually restart yourself\nGo to Task Manager, usually tap the '□' button, then swipe away the app"</string>
+    <string name="item_containers_dialog_read_failed">"Read failed!"</string>
+    <string name="item_containers_toast_ignoring_operations">"Operation ignored"</string>
+    <string name="item_containers_dialog_don_t_delete_it">"Don\'t delete"</string>
+    <string name="item_containers_dialog_i_don_t_delete_it">I won\'t delete</string>
+    <string name="item_containers_dialog_deleted_successfully">"Deleted successfully!"</string>
+    <string name="item_containers_toast_clearing_system_residues">"Clearing system residue files"</string>
+    <string name="item_containers_dialog_delete_system_loading_msg">"The time required depends on the size of your system"</string>
+    <string name="item_containers_dialog_delete_system_loading_title">Deleting, please wait patiently...</string>
+    <string name="item_containers_toast_not_delete_main_system">You cannot delete the main system</string>
+    <string name="item_containers_dialog_i_m_sure">"I\'m sure"</string>
+    <string name="item_containers_dialog_delete_system_msg">"Please ensure your SD card permissions have NOT been granted!\nOtherwise, it may erase all contents on your SD card (internal storage)!\nOtherwise, it may erase all contents on your SD card (internal storage)!\nOtherwise, it may erase all contents on your SD card (internal storage)!\nAre you sure you want to delete your system?\nPlease be careful. After deletion, your data cannot be recovered!!!!!!"</string>
+    <string name="item_containers_dialog_delete_system_title">Are you sure you want to delete?</string>
+    <string name="item_containers_main_name">Main Container</string>
+    <string name="item_containers_time">Creation time:</string>
+    <string name="install_empty_android">Android/data/files/xinhao/module, no module package</string>
 </resources>

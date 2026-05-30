@@ -3,44 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_161823"
-    android:orientation="vertical"
-    android:paddingTop="20dp"
-  >
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/容器切换"
-        android:textColor="#fff"
-        android:textSize="18sp" />
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/color_2b2b2b"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:layout_height="match_parent">
-
         <ListView
             android:id="@+id/list_switch"
+            android:layout_above="@+id/add_containers"
             android:layout_width="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_height="match_parent" />
 
-
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentRight="true"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            app:cardElevation="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/add_containers"
+            app:cardBackgroundColor="@color/color_55000000"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="40dp"
-            android:id="@+id/create_img"
-            android:layout_marginBottom="80dp"
-            android:src="@mipmap/rongqi_new_ico" />
-
+            app:cardCornerRadius="6dp"
+            android:layout_height="50dp">
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
+               <TextView
+                   android:id="@+id/title"
+                   android:layout_width="wrap_content"
+                   android:layout_centerVertical="true"
+                   android:layout_centerHorizontal="true"
+                   android:text="@string/add_containers"
+                   android:textSize="17sp"
+                   android:textColor="@color/white"
+                   android:layout_height="wrap_content"/>
+           </RelativeLayout>
+        </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
 

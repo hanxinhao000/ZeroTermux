@@ -9,6 +9,10 @@ import com.termux.R
 import com.termux.app.activities.SettingsActivity
 import com.termux.zerocore.ai.activity.MainAiSettings
 import com.termux.zerocore.ai.deepseek.activity.ZeroTermuxDeepSeekSettingsActivity
+import com.termux.zerocore.guide.TermuxGuideActivity
+import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_CREATE_FOLDER
+import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_EXTRA
+import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_EXTRA_JUMP_OTHER
 
 class ZtSettingsActivity : BaseTitleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +35,12 @@ class ZtSettingsActivity : BaseTitleActivity() {
         }
         findViewById<CardView>(R.id.install_card_view).setOnClickListener {
             startActivity(Intent(this, ZTInstallActivity::class.java))
+        }
+        findViewById<CardView>(R.id.save_path).setOnClickListener {
+            val intent1 = Intent(this, TermuxGuideActivity::class.java)
+            intent1.putExtra(GUIDE_EXTRA, GUIDE_CREATE_FOLDER)
+            intent1.putExtra(GUIDE_EXTRA_JUMP_OTHER, true)
+            startActivity(intent1)
         }
         setBaseTitle(UUtils.getString(R.string.zt_settings))
 
