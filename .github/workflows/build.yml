@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - all
+          - universal
           - arm
           - arm64
           - x86
@@ -85,11 +86,12 @@ jobs:
         id: abi
         run: |
           case "${{ inputs.arch }}" in
-            all)    echo "abi=universal" >> $GITHUB_OUTPUT ;;
-            arm)    echo "abi=armeabi-v7a" >> $GITHUB_OUTPUT ;;
-            arm64)  echo "abi=arm64-v8a" >> $GITHUB_OUTPUT ;;
-            x86)    echo "abi=x86" >> $GITHUB_OUTPUT ;;
-            x86_64) echo "abi=x86_64" >> $GITHUB_OUTPUT ;;
+            all)       echo "abi=universal" >> $GITHUB_OUTPUT ;;
+            universal) echo "abi=universal" >> $GITHUB_OUTPUT ;;
+            arm)       echo "abi=armeabi-v7a" >> $GITHUB_OUTPUT ;;
+            arm64)     echo "abi=arm64-v8a" >> $GITHUB_OUTPUT ;;
+            x86)       echo "abi=x86" >> $GITHUB_OUTPUT ;;
+            x86_64)    echo "abi=x86_64" >> $GITHUB_OUTPUT ;;
           esac
 
       - name: 编译 APK (${{ inputs.arch }})
