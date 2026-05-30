@@ -19,7 +19,7 @@ android {
 
         ndk {
             def buildArch = System.getProperty("arch", "all")
-            if (buildArch == "all") {
+            if (buildArch == "universal" || buildArch == "all") {
                 abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
             } else {
                 def abi = buildArch == "arm" ? "armeabi-v7a" :

@@ -154,12 +154,16 @@ android {
     def buildArch = System.getProperty("arch", "all")
     splits {
         abi {
-            enable buildArch != "all"
-            reset()
-            if (buildArch == "all") {
+            if (buildArch == "universal") {
+                enable false
+            } else if (buildArch == "all") {
+                enable true
+                reset()
                 include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
                 universalApk true
             } else {
+                enable true
+                reset()
                 def abi = buildArch == "arm" ? "armeabi-v7a" :
                           buildArch == "arm64" ? "arm64-v8a" :
                           buildArch == "x86" ? "x86" :
@@ -264,13 +268,8 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            if (variant.buildType.name == "debug") {
-                def abi = output.getFilter(com.android.build.OutputFile.ABI)
-                outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : project.ext.packageVariant + "-" + "debug") + "_" + (abi ? abi : "universal") + ".apk")
-            } else if (variant.buildType.name == "release") {
-                def abi = output.getFilter(com.android.build.OutputFile.ABI)
-                outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : project.ext.packageVariant + "-" + "release") + "_" + (abi ? abi : "universal") + ".apk")
-            }
+            def abi = output.getFilter(com.android.build.OutputFile.ABI) ?: "universal"
+            outputFileName = "ZeroTermux-${variant.versionName}_${variant.buildType.name}_${abi}.apk"
         }
     }
 
