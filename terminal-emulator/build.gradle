@@ -18,7 +18,16 @@ android {
         }
 
         ndk {
-            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            def buildArch = System.getProperty("arch", "all")
+            if (buildArch == "all") {
+                abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            } else {
+                def abi = buildArch == "arm" ? "armeabi-v7a" :
+                          buildArch == "arm64" ? "arm64-v8a" :
+                          buildArch == "x86" ? "x86" :
+                          buildArch == "x86_64" ? "x86_64" : ""
+                abiFilters abi
+            }
         }
     }
 

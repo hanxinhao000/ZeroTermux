@@ -22,9 +22,6 @@ android {
     ndkVersion = System.getenv("JITPACK_NDK_VERSION") ?: project.properties.ndkVersion
     def appVersionName = System.getenv("TERMUX_APP_VERSION_NAME") ?: ""
     def apkVersionTag = System.getenv("TERMUX_APK_VERSION_TAG") ?: ""
-    def splitAPKsForDebugBuilds = System.getenv("TERMUX_SPLIT_APKS_FOR_DEBUG_BUILDS") ?: "1"
-    def splitAPKsForReleaseBuilds = System.getenv("TERMUX_SPLIT_APKS_FOR_RELEASE_BUILDS") ?: "0" // F-Droid does not support split APKs #1904
-
     dependencies {
         implementation "androidx.annotation:annotation:1.9.0"
         implementation "androidx.core:core:1.13.1"
@@ -150,24 +147,26 @@ android {
             }
         }
 
-        splits {
-            abi {
-                enable((gradle.startParameter.taskNames.any { it.contains("Debug") } && splitAPKsForDebugBuilds == "1") ||
-                    (gradle.startParameter.taskNames.any { it.contains("Release") } && splitAPKsForReleaseBuilds == "1"))
-                reset()
-                include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
-                universalApk true
-            }
-        }
     }
     // ZeroTermux add {@
-    // 添加以下配置
+    // 通过 -Darch={arm|arm64|x86|x86_64|all} 控制构建架构，默认all生成通用APK
 
-    splits.abi {
-        enable true
-        reset()
-        include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
-        universalApk true
+    def buildArch = System.getProperty("arch", "all")
+    splits {
+        abi {
+            enable buildArch != "all"
+            reset()
+            if (buildArch == "all") {
+                include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
+                universalApk true
+            } else {
+                def abi = buildArch == "arm" ? "armeabi-v7a" :
+                          buildArch == "arm64" ? "arm64-v8a" :
+                          buildArch == "x86" ? "x86" :
+                          buildArch == "x86_64" ? "x86_64" : ""
+                include abi
+            }
+        }
     }
     // 添加 Kotlin 编译选项
     kotlinOptions {
