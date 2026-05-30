@@ -140,10 +140,6 @@ https://github.com/testica/codeeditor
 ## ZeroTermux鸣谢所有在此项目当中引用的作者，项目展示可能不完全，请谅解。
 ## ZeroTermux thanks all the authors cited in this project, the project presentation may not be complete, please understand.
 
-## 如果项目对你有用，请支持下吧~~~
-
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/alipay.png" height="360" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/wechat.png" height="360" width="360">
-
 
 
 
