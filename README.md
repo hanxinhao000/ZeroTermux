@@ -7,16 +7,9 @@ Group ② 885832352
 # ZeroTermux
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="150">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="150">
-  <img height="150" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
-</div>
-
-<br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="250">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg" height="250">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="200">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="200">
+  <img height="200" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
 </div>
 
 ## X11 aar implemented via internal channel
@@ -114,16 +107,9 @@ Chinese English
 # ZeroTermux
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="150">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="150">
-  <img height="150" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
-</div>
-
-<br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="250">
-  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg" height="250">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="200">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="200">
+  <img height="200" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
 </div>
 
 ## 内部通道实现的X11 aar
