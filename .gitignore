@@ -6,6 +6,7 @@
 build/
 *.apk
 *.so
+!app/src/main/assets/x11/libXlorie-*.so
 .externalNativeBuild
 .cxx
 *.zip

@@ -151,7 +151,7 @@ public class ZeroTermuxX11Settings extends BaseTitleActivity {
                     UUtils.runOnUIThread(loadingDialog::dismiss);
                     return;
                 }
-                ZFileUUtils.writerFile("x11/libXlorie-arm64-v8a.so", aislePathSo);
+                ZFileUUtils.writerFile(FileUrl.INSTANCE.getAisleXlorieAssetPath(), aislePathSo);
                 try {
                     Os.chmod(aislePathAPKFile.getAbsolutePath(), 0444);
                     Os.chmod(aislePathAPKSh.getAbsolutePath(), 0777);
