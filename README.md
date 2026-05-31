@@ -6,11 +6,18 @@ Group ② 885832352
 
 # ZeroTermux
 
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="500" width="500">
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="500" width="500">
-<img width="500" height="430" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
+<div align="center">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="150">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="150">
+  <img height="150" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
+</div>
 
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg"  height="720" width="360">
+<br>
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="250">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg" height="250">
+</div>
 
 ## X11 aar implemented via internal channel
 
@@ -56,18 +63,18 @@ Chinese English
 
 # Statement
 
-All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! or illegal use!
-
-1. This software (ZeroTermux) is open source software, you can freely distribute, copy, and change, but please follow the GPL agreement!
-2. The software follows the GPL agreement (http://www.opensource.org/licenses/gpl-2.0.php)
-3. All functions of this software (ZeroTermux) are for learning and communication use only, do not use commercially. Accidental operations, intentional operations, unintentional operations, etc. of the user (users who use ZeroTermux) are borne by the user!
-4. This software (ZeroTermux) is used for free learning and communication as in the first regulation. The icons and fonts involved in the software are all from the Internet.
-   4.1. The font is the Android default font. If you use other fonts, the user (users using ZeroTermux) shall bear all risks and legal responsibilities.
-   4.2. The icon is used as the public library of Alibaba ICO. The principle of using the icon is for learning and communication, not for commercial use. If there is any infringement, it will be deleted immediately.
-5. The recovery packages, data packages, zip packages, etc. used in this software (ZeroTermux) are all at risk. All of them are from the Internet. Please use them at your discretion. If any irreparable loss is caused, the user shall bear the risk.
-6. ZeroTermux cannot control the content of any recovery packages, data packages, zip packages, or module packages. If there is any infringement within the package, the author of this software does not bear any responsibility, and the creator of the recovery package, data package, or zip package shall bear the responsibility (tar.gz backup function legal statement).
-7. Thanks to all the authors of the functions applied to this project.
-8. Using ZeroTermux may directly or indirectly damage your device. If any irreparable loss is caused, the user shall bear the responsibility. This software and its author do not assume any legal or other liability.
+| # | Statement |
+|---|-----------|
+| 1 | This software (ZeroTermux) is open source software. You may freely distribute, copy, and modify it, but you must follow the terms of the GPL license. |
+| 2 | This software is distributed under the GPL license: [http://www.opensource.org/licenses/gpl-2.0.php](http://www.opensource.org/licenses/gpl-2.0.php) |
+| 3 | All functions of this software (ZeroTermux) are intended solely for learning and communication purposes. Commercial use is prohibited. The user (anyone using ZeroTermux) bears full responsibility for any accidental, intentional, or unintentional operations performed using this software. |
+| 4 | As stated in point 1, this software (ZeroTermux) is provided free of charge for learning and communication. The icons and fonts used in the software are sourced from the internet. |
+| 4.1 | The default font is the Android system font. If you use other fonts, the user (anyone using ZeroTermux) assumes all risks and legal responsibilities. |
+| 4.2 | Icons are sourced from the Alibaba ICO public icon library. They are used for learning and communication purposes only, not for commercial use. If any copyright infringement occurs, the infringing content will be removed immediately. |
+| 5 | Recovery packages, data packages, ZIP files, etc., used with this software (ZeroTermux) carry inherent risks. All such files are sourced from the internet. Users should exercise discretion when using them. The user assumes all risk for any irreparable loss resulting from their use. |
+| 6 | ZeroTermux has no control over the content of any recovery packages, data packages, ZIP files, or module packages. If any such package contains infringing content, the author of this software bears no responsibility. Responsibility lies solely with the creator of the recovery package, data package, or ZIP package (see also the legal notice for the `tar.gz` backup function). |
+| 7 | Thanks to all authors whose work has been used in this project. |
+| 8 | Using ZeroTermux may directly or indirectly damage your device. The user assumes full responsibility for any irreparable loss. Neither this software nor its author accept any legal or other liability. |
 
 ## use item:
 
@@ -106,11 +113,18 @@ All functions of ZeroTermux can only be used for personal learning and communica
 
 # ZeroTermux
 
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="500" width="500">
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="500" width="500">
-<img width="500" height="430" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
+<div align="center">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/6c5478a95ca60212eaee2f71f3e9f838_720.jpg" height="150">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/95d76c74cd49693d074d2eda75d20a03_720.jpg" height="150">
+  <img height="150" alt="BC087C09330C7E37195809039DE72886" src="https://github.com/user-attachments/assets/b3805e55-0f7c-49f5-8330-f14fff9f491f" />
+</div>
 
-<img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="720" width="360"><img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg"  height="720" width="360">
+<br>
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210701-120322.jpg" height="250">
+  <img src="https://raw.githubusercontent.com/hanxinhao000/ZeroTermux/main/img/Screenshot_20210620-091454.jpg" height="250">
+</div>
 
 ## 内部通道实现的X11 aar
 
@@ -156,18 +170,18 @@ ZeroTermux 是根据 Termux 二次开发的一个非盈利性的软件
 
 # 声明
 
-ZeroTermux所有功能只能用于个人学习交流使用，不得用于商业用途以及非法用途！
-
-1. 本软件（ZeroTermux）为开源软件，你可以自由分发、复制、更改，但请遵循GPL协议！
-2. 软件遵循GPL协议（http://www.opensource.org/licenses/gpl-2.0.php）
-3. 本软件（ZeroTermux）的所有功能均为学习交流使用，切勿商用。如用户（使用ZeroTermux的用户）的意外操作、有意操作、无意操作等由用户承担！
-4. 本软件（ZeroTermux）与第一条一样为免费学习交流使用，软件内涉及的图标以及字体均来源于互联网。
-   4.1. 字体为Android默认字体，如使用其他字体请用户（使用ZeroTermux的用户）承担所有风险以及法律责任。
-   4.2. 图标使用为阿里巴巴ICO公用图库，使用该图标的原则是学习与交流，并非商用，如有侵权立即删除。
-5. 在本软件（ZeroTermux）内使用的恢复包、数据包、zip包等都有使用风险，且全部都来源于互联网，请用户酌情使用，如有造成无法挽回的损失，请用户承担风险。
-6. 所有恢复包、数据包、zip包、模块包，ZeroTermux不能控制其内容，如有包内侵权本软件作者不承担任何责任，均由恢复包、数据包、zip包制作者承担（tar.gz备份功能法律声明）。
-7. 感谢所有该项目所应用到功能的作者。
-8. 使用ZeroTermux会直接或间接损害你的设备，如有造成无法挽回的损失由用户承担，本软件以及作者不承担任何法律等责任。
+| # | 声明 |
+|---|------|
+| 1 | 本软件（ZeroTermux）为开源软件，你可以自由分发、复制、更改，但请遵循GPL协议！ |
+| 2 | 软件遵循GPL协议（http://www.opensource.org/licenses/gpl-2.0.php） |
+| 3 | 本软件（ZeroTermux）的所有功能均为学习交流使用，切勿商用。如用户（使用ZeroTermux的用户）的意外操作、有意操作、无意操作等由用户承担！ |
+| 4 | 本软件（ZeroTermux）与第一条一样为免费学习交流使用，软件内涉及的图标以及字体均来源于互联网。 |
+| 4.1 | 字体为Android默认字体，如使用其他字体请用户（使用ZeroTermux的用户）承担所有风险以及法律责任。 |
+| 4.2 | 图标使用为阿里巴巴ICO公用图库，使用该图标的原则是学习与交流，并非商用，如有侵权立即删除。 |
+| 5 | 在本软件（ZeroTermux）内使用的恢复包、数据包、zip包等都有使用风险，且全部都来源于互联网，请用户酌情使用，如有造成无法挽回的损失，请用户承担风险。 |
+| 6 | 所有恢复包、数据包、zip包、模块包，ZeroTermux不能控制其内容，如有包内侵权本软件作者不承担任何责任，均由恢复包、数据包、zip包制作者承担（tar.gz备份功能法律声明）。 |
+| 7 | 感谢所有该项目所应用到功能的作者。 |
+| 8 | 使用ZeroTermux会直接或间接损害你的设备，如有造成无法挽回的损失由用户承担，本软件以及作者不承担任何法律等责任。 |
 
 ## 使用项目：
 
