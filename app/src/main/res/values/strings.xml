@@ -192,7 +192,7 @@
     <string name="无名称系统">无名称容器</string>
     <string name="删除">删除</string>
     <string name="切换">切换</string>
-    <string name="删除完成_需要重进才能刷新">删除完成_需要重进才能刷新</string>
+    <string name="删除完成_需要重进才能刷新">请选择菜单功能</string>
     <string name="备份">备份</string>
     <string name="恢复">恢复</string>
     <string name="设置">设置</string>

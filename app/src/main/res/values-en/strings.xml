@@ -207,7 +207,7 @@
     <string name="无名称系统">UnnamedContainer</string>
     <string name="删除">delete</string>
     <string name="切换">Switch</string>
-    <string name="删除完成_需要重进才能刷新">Delete complete_ need to re-enter to refresh</string>
+    <string name="删除完成_需要重进才能刷新">Please select menu function</string>
     <string name="备份">Backup</string>
     <string name="恢复">restore</string>
     <string name="设置">Setting</string>
