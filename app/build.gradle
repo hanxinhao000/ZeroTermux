@@ -146,27 +146,16 @@ android {
                 cFlags "-std=c11", "-Wall", "-Wextra", "-Werror", "-Os", "-fno-stack-protector", "-Wl,--gc-sections"
             }
         }
-
     }
-    // ZeroTermux add {@
-    // 通过 -Darch={arm|arm64|x86|x86_64|all} 控制构建架构，默认all生成通用APK
 
-    def buildArch = System.getProperty("arch", "all")
-    splits {
-        abi {
-            enable buildArch != "all"
-            reset()
-            if (buildArch == "all") {
-                include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
-                universalApk true
-            } else {
-                def abi = buildArch == "arm" ? "armeabi-v7a" :
-                    buildArch == "arm64" ? "arm64-v8a" :
-                        buildArch == "x86" ? "x86" :
-                            buildArch == "x86_64" ? "x86_64" : ""
-                include abi
-            }
-        }
+    // ZeroTermux add {@
+    // 添加以下配置
+
+    splits.abi {
+        enable true
+        reset()
+        include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
+        universalApk true
     }
     // 添加 Kotlin 编译选项
     kotlinOptions {
@@ -210,7 +199,6 @@ android {
             minifyEnabled true
             shrinkResources false // Reproducible builds
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
 
         debug {
