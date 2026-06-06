@@ -1297,6 +1297,42 @@
     <string name="zt_xml_settings_title">禁用使用配置文件来设置左菜单</string>
     <string name="zt_xml_settings_summary">(需重启APP)打开此选项将不在载入xml配置文件作为左侧菜单数据源</string>
 
+    <string name="menu_package_card_title">Menu 菜单</string>
+    <string name="menu_package_current_menu">当前菜单：%1$s</string>
+    <string name="menu_package_network_update">默认菜单</string>
+    <string name="menu_package_update">更新</string>
+    <string name="menu_package_install">安装菜单包</string>
+    <string name="menu_package_install_time_prefix">安装时间：</string>
+    <string name="menu_package_backup">备份</string>
+    <string name="menu_package_backup_name_title">备份菜单</string>
+    <string name="menu_package_backup_name_hint">请输入备份名称</string>
+    <string name="menu_package_backup_name_empty">备份名称不能为空</string>
+    <string name="menu_package_install_pick_title">选择菜单包（xinhao/menu）</string>
+    <string name="menu_package_install_empty">xinhao/menu 目录下没有 zip 菜单包</string>
+    <string name="menu_package_default_label">默认菜单</string>
+    <string name="menu_package_network_label">网络菜单</string>
+    <string name="menu_package_local_label">本地菜单</string>
+    <string name="left_menu_settings_title">左侧菜单设置</string>
+    <string name="left_menu_settings_summary">配置左侧菜单更新源等选项</string>
+    <string name="menu_update_source_settings_title">菜单更新源</string>
+    <string name="menu_update_source_settings_summary">选择或添加菜单 zip 下载地址</string>
+    <string name="menu_update_source_default">默认源</string>
+    <string name="menu_update_source_custom">自定义源</string>
+    <string name="menu_update_source_add">添加源</string>
+    <string name="menu_update_source_input_title">请输入菜单地址</string>
+    <string name="menu_update_source_input_hint">https://example.com/menu.zip</string>
+    <string name="menu_update_source_input_empty">菜单地址不能为空</string>
+    <string name="menu_update_source_input_duplicate">该地址已存在</string>
+    <string name="menu_package_network_success">菜单已从网络更新</string>
+    <string name="menu_package_network_fallback">网络获取失败，已使用内置默认菜单</string>
+    <string name="menu_package_apply_success">菜单已切换</string>
+    <string name="menu_package_apply_fail">菜单切换失败</string>
+    <string name="menu_package_install_success">菜单包安装成功</string>
+    <string name="menu_package_install_fail">菜单包安装失败</string>
+    <string name="menu_package_backup_success">已备份到 xinhao/menu/</string>
+    <string name="menu_package_backup_fail">备份失败</string>
+    <string name="menu_package_install_pick">请选择菜单 zip 包</string>
+
     <string name="zt_usage_habits_title">使用习惯</string>
     <string name="zt_usage_habits_content">注意(使用习惯相关选项可以在ZT设置重新自定义)\n
         选择一个使用习惯\n

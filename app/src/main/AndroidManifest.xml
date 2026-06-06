@@ -94,6 +94,14 @@
             android:name=".zerocore.settings.ZeroTermuxSettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.settings.LeftMenuSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.settings.MenuUpdateSourceActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".zerocore.ai.deepseek.activity.ZeroTermuxDeepSeekSettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

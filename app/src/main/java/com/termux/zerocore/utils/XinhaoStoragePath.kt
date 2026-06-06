@@ -111,6 +111,14 @@ object XinhaoStoragePath {
         getChild(context, FileUrl.MAIN_XINHAO_MODULE_PATH)
 
     @JvmStatic @JvmOverloads
+    fun getMenuDir(context: Context = UUtils.getContext()) =
+        getChild(context, FileUrl.MAIN_XINHAO_MENU_PATH)
+
+    @JvmStatic
+    fun getMenuPackageDir(context: Context, packageName: String): File =
+        File(getMenuDir(context), packageName)
+
+    @JvmStatic @JvmOverloads
     fun getTypeMarkerDir(context: Context = UUtils.getContext()): File {
         return if (isAndroidDataMode()) {
             getChild(context, FileUrl.MAIN_XINHAO_TYPE_ANDROID_PATH)
@@ -146,6 +154,7 @@ object XinhaoStoragePath {
             getSystemDir(context),
             getWebConfigDir(context),
             getModuleDir(context),
+            getMenuDir(context),
             getWindowsConfigDir(context),
             getChild(context, FileUrl.MAIN_XINHAO_TYPE_PATH)
         )
@@ -169,6 +178,7 @@ object XinhaoStoragePath {
             FileUrl.MAIN_XINHAO_SYSTEM_PATH,
             FileUrl.MAIN_XINHAO_WEB_CONFIG_PATH,
             FileUrl.MAIN_XINHAO_MODULE_PATH,
+            FileUrl.MAIN_XINHAO_MENU_PATH,
             FileUrl.MAIN_XINHAO_WINDOWS_CONFIG_PATH,
             FileUrl.MAIN_XINHAO_TYPE_ANDROID_PATH
         )

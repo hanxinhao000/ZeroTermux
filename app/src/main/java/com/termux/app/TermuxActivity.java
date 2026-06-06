@@ -116,10 +116,14 @@ import com.termux.zerocore.bean.ZTUserBean;
 import com.termux.zerocore.broadcast.LocalReceiver;
 import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.config.ZTConstantConfig;
-import com.termux.zerocore.config.mainmenu.MainMenuConfig;
+import com.termux.zerocore.config.mainmenu.MainMenuPackageInfo;
+import com.termux.zerocore.config.mainmenu.MainMenuPackageManager;
 import com.termux.zerocore.config.mainmenu.XMLMainMenuConfig;
 import com.termux.zerocore.config.mainmenu.data.MainMenuCategoryData;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
+import com.termux.zerocore.config.mainmenu.dialog.MenuPackagePickDialog;
+import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuPackageAdapter;
+import com.termux.zerocore.dialog.YesNoDialog;
 import com.termux.zerocore.config.other.ZTGitHubVersion;
 import com.termux.zerocore.config.ztcommand.config.XmlMenuConfig;
 import com.termux.zerocore.ai.deepseek.DeepSeekTransitFragment;
@@ -168,6 +172,7 @@ import androidx.viewpager.widget.ViewPager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1247,6 +1252,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private RelativeLayout session_rl;
     private RelativeLayout mGuideLayout;
     private RecyclerView mMainMenuList;
+    private RecyclerView mMenuPackageList;
+    private MainMenuPackageAdapter mMenuPackageAdapter;
+    private View menu_package_header;
+    private TextView menu_package_current;
+    private ImageView open_image_menu;
+    private boolean mMenuPackageExpanded;
     private Button mKeyBordButton;
 	private SlidingConsumer mSlidingConsumer;
     private View mLayoutMenuAll;
@@ -1257,6 +1268,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void initZeroView() {
         mMainMenuList = findViewById(R.id.main_menu_list);
+        mMenuPackageList = findViewById(R.id.menu_package_list);
+        menu_package_header = findViewById(R.id.menu_package_header);
+        menu_package_current = findViewById(R.id.menu_package_current);
+        open_image_menu = findViewById(R.id.open_image_menu);
         scrollView_main = findViewById(R.id.scrollView_main);
         file_layout = findViewById(R.id.file_layout);
         main_card = findViewById(R.id.main_card);
@@ -1325,6 +1340,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 open_image.setRotation(0);
             }
         });
+        if (menu_package_header != null) {
+            menu_package_header.setOnClickListener(v -> toggleMenuPackageExpand());
+        }
         boolean hideGuideLayout = UserSetManage.Companion.get().getZTUserBean().isHideGuideLayout();
         if (hideGuideLayout) {
             mGuideLayout.setVisibility(View.GONE);
@@ -1876,12 +1894,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void initMenu() {
         writerMainMenuConfig(false);
+        initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
+        initMenuPackageCard();
         ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
-        if (ztUserBean.isDisableMainConfigMenu()) {
-            initListMenu(MainMenuConfig.getMainMenuCategoryDatas());
-        } else {
-            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
-        }
         UUtils.runOnThread(() -> {
             //写入菜单背景
             if (!ztUserBean.isWriterMenuBack()) {
@@ -2221,6 +2236,138 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainMenuAdapter = null;
         }
         initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(TermuxActivity.this));
+        refreshMenuPackageList();
+    }
+
+    private void initMenuPackageCard() {
+        if (mMenuPackageList == null) {
+            return;
+        }
+        mMenuPackageExpanded = false;
+        mMenuPackageList.setVisibility(View.GONE);
+        if (open_image_menu != null) {
+            open_image_menu.setRotation(0);
+        }
+        refreshMenuPackageHeader();
+        mMenuPackageAdapter = new MainMenuPackageAdapter(
+            MainMenuPackageManager.buildListItems(this),
+            new MainMenuPackageAdapter.Listener() {
+                @Override
+                public void onNetworkUpdate() {
+                    startMenuNetworkUpdate();
+                }
+
+                @Override
+                public void onPackageSelected(MainMenuPackageInfo info) {
+                    if (MainMenuPackageManager.applyMenuPackageInfo(TermuxActivity.this, info)) {
+                        UUtils.showMsg(UUtils.getString(R.string.menu_package_apply_success));
+                        refreshMainMenu();
+                    } else {
+                        UUtils.showMsg(UUtils.getString(R.string.menu_package_apply_fail));
+                    }
+                }
+
+                @Override
+                public void onInstallClick() {
+                    showMenuPackagePickDialog();
+                }
+
+                @Override
+                public void onBackupClick(MainMenuPackageInfo info) {
+                    showMenuBackupNameDialog();
+                }
+            });
+        mMenuPackageList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mMenuPackageList.setAdapter(mMenuPackageAdapter);
+    }
+
+    private void toggleMenuPackageExpand() {
+        if (mMenuPackageList == null) {
+            return;
+        }
+        mMenuPackageExpanded = !mMenuPackageExpanded;
+        mMenuPackageList.setVisibility(mMenuPackageExpanded ? View.VISIBLE : View.GONE);
+        if (open_image_menu != null) {
+            open_image_menu.setRotation(mMenuPackageExpanded ? 180 : 0);
+        }
+    }
+
+    private void refreshMenuPackageHeader() {
+        if (menu_package_current == null) {
+            return;
+        }
+        String label = MainMenuPackageManager.getActivePackageLabel(this);
+        menu_package_current.setText(getString(R.string.menu_package_current_menu, label));
+    }
+
+    private void startMenuNetworkUpdate() {
+        if (mMenuPackageAdapter != null) {
+            mMenuPackageAdapter.setNetworkUpdating(true);
+        }
+        MainMenuPackageManager.fetchFromNetwork(TermuxActivity.this, (success, message) -> {
+            if (mMenuPackageAdapter != null) {
+                mMenuPackageAdapter.setNetworkUpdating(false);
+            }
+            UUtils.showMsg(message);
+            refreshMainMenu();
+        });
+    }
+
+    private void showMenuBackupNameDialog() {
+        YesNoDialog dialog = new YesNoDialog(this);
+        dialog.createEditDialog(UUtils.getString(R.string.menu_package_backup_name_title));
+        dialog.getInputSystemName().setHint(UUtils.getString(R.string.menu_package_backup_name_hint));
+        dialog.getYesTv().setOnClickListener(v -> {
+            String name = dialog.getInputSystemName().getText().toString().trim();
+            if (TextUtils.isEmpty(name)) {
+                UUtils.showMsg(UUtils.getString(R.string.menu_package_backup_name_empty));
+                return;
+            }
+            dialog.dismiss();
+            UUtils.runOnThread(() -> {
+                File backup = MainMenuPackageManager.backupCurrentMenu(TermuxActivity.this, name);
+                UUtils.runOnUIThread(() -> {
+                    if (backup != null) {
+                        UUtils.showMsg(UUtils.getString(R.string.menu_package_backup_success)
+                            + "\n" + backup.getName());
+                        refreshMenuPackageList();
+                    } else {
+                        UUtils.showMsg(UUtils.getString(R.string.menu_package_backup_fail));
+                    }
+                });
+            });
+        });
+        dialog.show();
+    }
+
+    private void showMenuPackagePickDialog() {
+        MenuPackagePickDialog dialog = new MenuPackagePickDialog(this);
+        dialog.setOnPickListener(zipFile -> {
+            LoadingDialog loadingDialog = new LoadingDialog(TermuxActivity.this);
+            loadingDialog.show();
+            loadingDialog.getMsg().setText(UUtils.getString(R.string.正在载入中));
+            UUtils.runOnThread(() -> {
+                boolean success = MainMenuPackageManager.installAndApplyFromMenuZip(
+                    TermuxActivity.this, zipFile);
+                UUtils.runOnUIThread(() -> {
+                    loadingDialog.dismiss();
+                    if (success) {
+                        UUtils.showMsg(UUtils.getString(R.string.menu_package_install_success));
+                        refreshMainMenu();
+                    } else {
+                        UUtils.showMsg(UUtils.getString(R.string.menu_package_install_fail));
+                    }
+                });
+            });
+        });
+        dialog.show();
+    }
+
+    private void refreshMenuPackageList() {
+        refreshMenuPackageHeader();
+        if (mMenuPackageAdapter != null) {
+            mMenuPackageAdapter.updateItems(MainMenuPackageManager.buildListItems(this));
+        }
     }
 
     private void initZeroTermux() {

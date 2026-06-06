@@ -39,6 +39,7 @@ object FileUrl {
     public val MAIN_XINHAO_SYSTEM_PATH = "$MAIN_XINHAO_PATH/system"
     public val MAIN_XINHAO_WEB_CONFIG_PATH = "$MAIN_XINHAO_PATH/web_config"
     public val MAIN_XINHAO_MODULE_PATH = "$MAIN_XINHAO_PATH/module"
+    public val MAIN_XINHAO_MENU_PATH = "$MAIN_XINHAO_PATH/menu"
     public val MAIN_XINHAO_WINDOWS_CONFIG_PATH = "$MAIN_XINHAO_PATH/windows_config"
     public val MAIN_XINHAO_TYPE_ANDROID_PATH = "$MAIN_XINHAO_PATH/sdcard_android"
     public val MAIN_XINHAO_TYPE_PATH = "$MAIN_XINHAO_PATH/sdcard_xinhao"
@@ -61,6 +62,7 @@ object FileUrl {
     public val zeroTermuxSystem: File get() = XinhaoStoragePath.getSystemDir(UUtils.getContext())
     public val zeroTermuxWebConfig: File get() = XinhaoStoragePath.getWebConfigDir(UUtils.getContext())
     public val zeroTermuxModule: File get() = XinhaoStoragePath.getModuleDir(UUtils.getContext())
+    public val zeroTermuxMenu: File get() = XinhaoStoragePath.getMenuDir(UUtils.getContext())
     public val zeroTermuxWindowsConfig: File get() = XinhaoStoragePath.getWindowsConfigDir(UUtils.getContext())
     public val zeroTermuxType: File get() = XinhaoStoragePath.getTypeMarkerDir(UUtils.getContext())
 
