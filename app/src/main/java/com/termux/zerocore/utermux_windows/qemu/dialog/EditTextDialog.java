@@ -61,7 +61,7 @@ public class EditTextDialog extends BaseDialogCentre {
             fileNameDialog.show();
             fileNameDialog.setOnSaveFileNameListener(name -> {
                 fileNameDialog.dismiss();
-                UUtils.setFileString(new File(Environment.getExternalStorageDirectory(),"/xinhao/windows_config/" + name + ".txt"),edit_text.getText().toString());
+                UUtils.setFileString(new File(com.termux.zerocore.utils.XinhaoStoragePath.getWindowsConfigDir(mContext), name + ".txt"), edit_text.getText().toString());
             });
         });
         start.setOnClickListener(v -> {

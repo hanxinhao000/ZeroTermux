@@ -82,11 +82,7 @@ public class FontActivity extends BaseThemeActivity {
     }
 
     private File getFontPath() {
-        if (UserSetManage.Companion.get().getZTUserBean().isCreateFolderForSdcardAndroid()) {
-            return FileIOUtils.INSTANCE.getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.INSTANCE.getMAIN_XINHAO_FONT_PATH());
-        } else {
-            return new File(Environment.getExternalStorageDirectory(), FileUrl.INSTANCE.getMAIN_XINHAO_FONT_PATH());
-        }
+        return com.termux.zerocore.utils.XinhaoStoragePath.getFontDir(this);
     }
 
     @Override

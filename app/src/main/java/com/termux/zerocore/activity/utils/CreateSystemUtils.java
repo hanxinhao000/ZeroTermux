@@ -1,174 +1,427 @@
 package com.termux.zerocore.activity.utils;
 
-import static com.termux.shared.termux.TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH;
-
-import android.util.Log;
-import android.widget.Toast;
+import android.content.Context;
+import android.content.res.AssetManager;
 
 import com.example.xh_lib.utils.LogUtils;
 import com.example.xh_lib.utils.UUtils;
 import com.google.gson.Gson;
 import com.termux.R;
+import com.termux.app.TermuxInstaller;
+import com.termux.shared.termux.TermuxConstants;
 import com.termux.zerocore.bean.CreateSystemBean;
 import com.termux.zerocore.bean.ReadSystemBean;
+import com.termux.zerocore.shell.ExeCommand;
 import com.termux.zerocore.url.FileUrl;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * 切换容器的类（SwitchActivity）写的太乱了，无力吐槽当时的编码习惯，
- * 本类是规整的切换容器工具类，等后续重写 SwitchActivity
+ * 容器（多 Termux 环境）的创建、列表、切换、删除等核心逻辑。
  */
-public class CreateSystemUtils {
-    private final static String TAG = CreateSystemUtils.class.getSimpleName();
-    private final static String STRING_FILES = "files";
-    private final static String STRING_JSON_PATH = "xinhao_system.infoJson";
-    private final static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    // 创建系统
-    public static void createSystem(String name) {
-        //先扫描有多少文件
-        File[] files = getRootFile().listFiles();
-        if (files.length == 1) {
-            //默认只有一个系统
-            File createFile = new File(getRootFile(), STRING_FILES + "1");
-            createFile.mkdirs();
-            writerSystemFile(createFile, name);
-        } else {
-            //有多个系统
-            int max = getContainerIndex(getRootFile().listFiles());
-            LogUtils.i(TAG, "createSystem The current number of containers is: " + max);
-            File createFile = new File(getRootFile(), STRING_FILES + (max + 1));
-            createFile.mkdirs();
-            writerSystemFile(createFile, name);
+public final class CreateSystemUtils {
+
+    private static final String TAG = CreateSystemUtils.class.getSimpleName();
+    private static final String CONTAINER_DIR_PREFIX = "files";
+    private static final String INFO_JSON_FILE = "xinhao_system.infoJson";
+    private static final SimpleDateFormat DATE_FORMAT =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private static final Gson GSON = new Gson();
+
+    private CreateSystemUtils() {
+    }
+
+    /** 加载容器列表的结果 */
+    public static final class LoadResult {
+        public final List<ReadSystemBean> containers;
+        public final boolean configError;
+
+        private LoadResult(List<ReadSystemBean> containers, boolean configError) {
+            this.containers = containers;
+            this.configError = configError;
+        }
+
+        public static LoadResult success(List<ReadSystemBean> containers) {
+            return new LoadResult(containers, false);
+        }
+
+        public static LoadResult configError() {
+            return new LoadResult(new ArrayList<>(), true);
         }
     }
 
-    private ArrayList<ReadSystemBean> readFile() {
-        File[] files = getRootFile().listFiles();
-        ArrayList<ReadSystemBean> arrayList = new ArrayList<>();
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].getName().startsWith(STRING_FILES)) {
-                ReadSystemBean readSystemBean = new ReadSystemBean();
-                readSystemBean.dir = files[i].getAbsolutePath();
-                CreateSystemBean createSystemBean = readInfo(files[i].getAbsolutePath());
-                LogUtils.i(TAG, "readFile read info: " + createSystemBean);
-                String name = createSystemBean.systemName;
-                if (name == null) {
-                    new File(files[i], "/" + STRING_JSON_PATH).delete();
-                    Toast.makeText(UUtils.getContext(), UUtils.getString(R.string.item_containers_toast_config_error), Toast.LENGTH_SHORT).show();
-                    return null;
-                }
-                readSystemBean.name = name;
-                readSystemBean.time = createSystemBean.time;
-                arrayList.add(readSystemBean);
-            }
+    /** 删除容器的结果 */
+    public static final class DeleteResult {
+        public final boolean blockedAsMain;
+        public final boolean deleted;
+        public final boolean needsFallbackCleanup;
+
+        private DeleteResult(boolean blockedAsMain, boolean deleted, boolean needsFallbackCleanup) {
+            this.blockedAsMain = blockedAsMain;
+            this.deleted = deleted;
+            this.needsFallbackCleanup = needsFallbackCleanup;
         }
-        Log.e("XINHAO_HAN", "readFile: " + arrayList);
-        return arrayList;
+
+        public static DeleteResult blockedAsMain() {
+            return new DeleteResult(true, false, false);
+        }
+
+        public static DeleteResult deleted() {
+            return new DeleteResult(false, true, false);
+        }
+
+        public static DeleteResult needsFallbackCleanup() {
+            return new DeleteResult(false, false, true);
+        }
     }
 
-    private CreateSystemBean readInfo(String path) {
+    // -------------------------------------------------------------------------
+    // 公开 API
+    // -------------------------------------------------------------------------
+
+    /** 若当前活跃容器配置文件不存在，则写入默认主系统配置。 */
+    public static void ensureDefaultActiveConfig() {
+        File configFile = getActiveConfigFile();
+        if (configFile.exists()) {
+            return;
+        }
         try {
-            BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(new File(new File(path), "/" + STRING_JSON_PATH))));
-            String temp = "";
-            String tempSystem = "";
-            while ((temp = bufferedReader.readLine()) != null) {
-                tempSystem += temp;
-            }
-            bufferedReader.close();
-            CreateSystemBean createSystemBean = new Gson().fromJson(tempSystem, CreateSystemBean.class);
-            if (createSystemBean == null) {
-                createSystemBean.systemName = UUtils.getString(R.string.item_containers_error_system);
-            }
-            return createSystemBean;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            configFile.getParentFile().mkdirs();
+            configFile.createNewFile();
+            CreateSystemBean bean = new CreateSystemBean();
+            bean.systemName = UUtils.getString(R.string.item_containers_main_name);
+            bean.dir = TermuxConstants.TERMUX_FILES_DIR_PATH;
+            bean.time = DATE_FORMAT.format(new Date());
+            writeJson(configFile, bean);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.e(TAG, "ensureDefaultActiveConfig failed: " + e.getMessage());
         }
-        CreateSystemBean createSystemBean = new CreateSystemBean();
-        createSystemBean.systemName = UUtils.getString(R.string.item_containers_toast_def_system);
-        return createSystemBean;
     }
 
-    private static File getRootFile() {
-        return new File(FileUrl.INSTANCE.getMainFilesUrl() + "/");
-    }
-
-    // 获取容器数量
-    private static int getContainerIndex(File[] rootFiles) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        for (int i = 0; i < rootFiles.length; i++) {
-            if (rootFiles[i].getName().startsWith(STRING_FILES)) {
-                String name1 = rootFiles[i].getName();
-                String substring = name1.substring(5, name1.length());
-                if (substring.isEmpty()) {
-                    arrayList.add(0);
-                } else {
-                    arrayList.add(Integer.parseInt(substring));
-                }
+    /** 扫描并加载所有容器目录。 */
+    public static LoadResult loadContainers() {
+        File[] entries = listAppDataEntries();
+        List<ReadSystemBean> containers = new ArrayList<>();
+        for (File entry : entries) {
+            if (!isContainerDir(entry)) {
+                continue;
             }
+            CreateSystemBean info = readContainerInfo(entry);
+            if (info.systemName == null) {
+                getContainerInfoFile(entry).delete();
+                return LoadResult.configError();
+            }
+            ReadSystemBean item = new ReadSystemBean();
+            item.dir = entry.getAbsolutePath();
+            item.name = info.systemName;
+            item.time = info.time;
+            containers.add(item);
         }
-        return getMax(arrayList);
+        return LoadResult.success(containers);
     }
 
-    // 写入到文件
-    private static boolean writerSystemFile(File createFile, String name) {
-        LogUtils.i(TAG, "writerSystemFile create system info createFile: "
-            + createFile.getAbsolutePath() + " ,name: " + name);
-        File fileInfo = getXinhaoJsonPath(createFile);
-        CreateSystemBean createSystemBean = new CreateSystemBean();
-        createSystemBean.dir = createFile.getAbsolutePath();
-        createSystemBean.time = SIMPLE_DATE_FORMAT.format(new Date());
-        createSystemBean.systemName = name;
-        String s = new Gson().toJson(createSystemBean);
-        PrintWriter printWriter = null;
+    /** 根据活跃配置标记列表中当前选中的容器。 */
+    public static void markActiveContainer(List<ReadSystemBean> containers) {
+        CreateSystemBean active = readActiveConfig();
+        if (active == null || active.systemName == null) {
+            return;
+        }
+        for (ReadSystemBean container : containers) {
+            container.isCkeck = active.systemName.equals(container.name);
+        }
+    }
+
+    /** 创建新容器目录及其元数据文件。 */
+    public static boolean createContainer(String name) {
+        int nextIndex = getNextContainerIndex();
+        File containerDir = new File(getAppDataDir(), CONTAINER_DIR_PREFIX + nextIndex);
+        if (!containerDir.mkdirs() && !containerDir.exists()) {
+            return false;
+        }
+        return writeContainerInfo(containerDir, name);
+    }
+
+    /**
+     * 切换到目标容器：更新元数据并通过目录重命名交换 files 与目标目录的内容。
+     *
+     * @return 切换是否成功
+     */
+    public static boolean switchContainer(ReadSystemBean target) {
+        CreateSystemBean activeConfig = readActiveConfig();
+        if (activeConfig == null) {
+            return false;
+        }
+
+        File targetDir = new File(target.dir);
+        File activeDir = new File(activeConfig.dir);
+        File tempDir = new File(FileUrl.INSTANCE.getMainHomeTemp());
+
         try {
-            fileInfo.createNewFile();
-            printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileInfo)));
-            printWriter.print(s);
-            printWriter.flush();
-            printWriter.close();
+            // 更新活跃目录（files）中的配置，指向即将激活的容器
+            CreateSystemBean newActiveInfo = copyOf(activeConfig);
+            newActiveInfo.dir = target.dir;
+            newActiveInfo.time = DATE_FORMAT.format(new Date());
+            writeJson(getContainerInfoFile(activeDir), newActiveInfo);
+            writeJson(getActiveConfigFile(), newActiveInfo);
+
+            // 更新目标目录中的配置，记录被换出的旧容器信息
+            CreateSystemBean swappedInfo = copyOf(activeConfig);
+            swappedInfo.dir = TermuxConstants.TERMUX_FILES_DIR_PATH;
+            swappedInfo.systemName = target.name;
+            writeJson(getContainerInfoFile(targetDir), swappedInfo);
+
+            // 三目录轮换：target -> temp, active -> target, temp -> active
+            if (!targetDir.renameTo(tempDir)) {
+                return false;
+            }
+            if (!activeDir.renameTo(targetDir)) {
+                tempDir.renameTo(targetDir);
+                return false;
+            }
+            if (!tempDir.renameTo(activeDir)) {
+                return false;
+            }
             return true;
         } catch (IOException e) {
-            Toast.makeText(UUtils.getContext(), UUtils.getString(R.string.item_containers_toast_create_system_error), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            LogUtils.e(TAG, "switchContainer failed: " + e.getMessage());
             return false;
-        } finally {
-            if (printWriter != null) {
-                printWriter.close();
-            }
         }
     }
 
-    public static void replaceContainer(File newPath, File oldPath) {
+    /** 删除非主容器目录。需在后台线程调用。 */
+    public static DeleteResult deleteContainer(Context context, String containerDir) {
+        if (isMainContainer(containerDir)) {
+            return DeleteResult.blockedAsMain();
+        }
 
-    }
-
-    // 获取路径
-    private static File getXinhaoJsonPath(File createFile) {
-        return new File(createFile, "/" + STRING_JSON_PATH);
-    }
-    //比大小
-    private static int getMax(ArrayList<Integer> number) {
-        int temp = number.get(0);
-        for (int i = 0; i < number.size(); i++) {
-            if (number.get(i) > temp) {
-                temp = number.get(i);
+        prepareBusybox(context);
+        ExeCommand cmd = new ExeCommand(false).run(
+            FileUrl.INSTANCE.getBusyboxPath() + " rm -rf " + containerDir, 60000, false);
+        while (cmd.isRunning()) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
             }
         }
-        return temp;
+
+        if (new File(containerDir).exists()) {
+            return DeleteResult.needsFallbackCleanup();
+        }
+        return DeleteResult.deleted();
+    }
+
+    public static boolean isMainContainer(String containerDir) {
+        return TermuxConstants.TERMUX_FILES_DIR_PATH.equals(containerDir);
+    }
+
+    public static void clearActiveMarks(List<ReadSystemBean> containers) {
+        for (ReadSystemBean container : containers) {
+            container.isCkeck = false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // 内部实现
+    // -------------------------------------------------------------------------
+
+    private static File getAppDataDir() {
+        return new File(TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH);
+    }
+
+    private static File getActiveConfigFile() {
+        return new File(FileUrl.INSTANCE.getXinhaoSystemPath());
+    }
+
+    private static File getContainerInfoFile(File containerDir) {
+        return new File(containerDir, INFO_JSON_FILE);
+    }
+
+    private static File[] listAppDataEntries() {
+        File[] entries = getAppDataDir().listFiles();
+        return entries != null ? entries : new File[0];
+    }
+
+    private static boolean isContainerDir(File file) {
+        return file.isDirectory() && file.getName().startsWith(CONTAINER_DIR_PREFIX);
+    }
+
+    private static int getNextContainerIndex() {
+        int maxIndex = 0;
+        boolean found = false;
+        for (File entry : listAppDataEntries()) {
+            if (!isContainerDir(entry)) {
+                continue;
+            }
+            int index = parseContainerIndex(entry.getName());
+            if (!found || index > maxIndex) {
+                maxIndex = index;
+                found = true;
+            }
+        }
+        return found ? maxIndex + 1 : 1;
+    }
+
+    private static int parseContainerIndex(String dirName) {
+        String suffix = dirName.substring(CONTAINER_DIR_PREFIX.length());
+        if (suffix.isEmpty()) {
+            return 0;
+        }
+        return Integer.parseInt(suffix);
+    }
+
+    private static CreateSystemBean readActiveConfig() {
+        File configFile = getActiveConfigFile();
+        if (!configFile.exists()) {
+            return null;
+        }
+        try {
+            CreateSystemBean bean = readJson(configFile, CreateSystemBean.class);
+            if (bean == null) {
+                bean = defaultActiveConfig();
+            }
+            return bean;
+        } catch (IOException e) {
+            LogUtils.e(TAG, "readActiveConfig failed: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private static CreateSystemBean defaultActiveConfig() {
+        CreateSystemBean bean = new CreateSystemBean();
+        bean.dir = TermuxConstants.TERMUX_FILES_DIR_PATH;
+        bean.time = DATE_FORMAT.format(new Date());
+        bean.systemName = UUtils.getString(R.string.item_containers_toast_def_system);
+        return bean;
+    }
+
+    private static CreateSystemBean readContainerInfo(File containerDir) {
+        File infoFile = getContainerInfoFile(containerDir);
+        if (!infoFile.exists()) {
+            CreateSystemBean fallback = new CreateSystemBean();
+            fallback.systemName = UUtils.getString(R.string.item_containers_toast_def_system);
+            return fallback;
+        }
+        try {
+            CreateSystemBean bean = readJson(infoFile, CreateSystemBean.class);
+            if (bean == null) {
+                bean = new CreateSystemBean();
+                bean.systemName = UUtils.getString(R.string.item_containers_error_system);
+            }
+            return bean;
+        } catch (IOException e) {
+            LogUtils.e(TAG, "readContainerInfo failed: " + containerDir + ", " + e.getMessage());
+            CreateSystemBean fallback = new CreateSystemBean();
+            fallback.systemName = UUtils.getString(R.string.item_containers_toast_def_system);
+            return fallback;
+        }
+    }
+
+    private static boolean writeContainerInfo(File containerDir, String name) {
+        CreateSystemBean bean = new CreateSystemBean();
+        bean.dir = containerDir.getAbsolutePath();
+        bean.systemName = name;
+        bean.time = DATE_FORMAT.format(new Date());
+        try {
+            File infoFile = getContainerInfoFile(containerDir);
+            infoFile.getParentFile().mkdirs();
+            writeJson(infoFile, bean);
+            return true;
+        } catch (IOException e) {
+            LogUtils.e(TAG, "writeContainerInfo failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private static CreateSystemBean copyOf(CreateSystemBean source) {
+        CreateSystemBean copy = new CreateSystemBean();
+        copy.systemName = source.systemName;
+        copy.dir = source.dir;
+        copy.time = source.time;
+        return copy;
+    }
+
+    private static <T> T readJson(File file, Class<T> clazz) throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+            new InputStreamReader(new FileInputStream(file)))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+            }
+        }
+        return GSON.fromJson(content.toString(), clazz);
+    }
+
+    private static void writeJson(File file, Object data) throws IOException {
+        file.getParentFile().mkdirs();
+        try (PrintWriter writer = new PrintWriter(
+            new OutputStreamWriter(new FileOutputStream(file)))) {
+            writer.print(GSON.toJson(data));
+            writer.flush();
+        }
+    }
+
+    private static void prepareBusybox(Context context) {
+        String arch = TermuxInstaller.determineTermuxArchName();
+        File busybox = new File(FileUrl.INSTANCE.getBusyboxPath());
+        File busyboxStatic = new File(FileUrl.INSTANCE.getBusyboxStaticPath());
+
+        switch (arch) {
+            case "aarch64":
+                copyAsset(context.getAssets(), "arm_64/busybox", busybox);
+                copyAsset(context.getAssets(), "arm_64/busybox_static", busyboxStatic);
+                break;
+            case "arm":
+                copyAsset(context.getAssets(), "arm/busybox", busybox);
+                break;
+            case "x86_64":
+                copyAsset(context.getAssets(), "x86/busybox", busybox);
+                break;
+            default:
+                break;
+        }
+
+        chmod(busybox);
+        chmod(busyboxStatic);
+    }
+
+    private static void copyAsset(AssetManager assets, String assetPath, File dest) {
+        try (InputStream in = assets.open(assetPath);
+             FileOutputStream out = new FileOutputStream(dest)) {
+            if (!dest.exists()) {
+                dest.createNewFile();
+            }
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+            out.flush();
+        } catch (IOException e) {
+            LogUtils.e(TAG, "copyAsset failed: " + assetPath + ", " + e.getMessage());
+        }
+    }
+
+    private static void chmod(File file) {
+        try {
+            Runtime.getRuntime().exec("chmod 777 " + file.getAbsolutePath());
+        } catch (IOException e) {
+            LogUtils.e(TAG, "chmod failed: " + file + ", " + e.getMessage());
+        }
     }
 }

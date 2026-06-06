@@ -19,26 +19,8 @@ import com.termux.app.TermuxActivity
 import com.termux.zerocore.dialog.SwitchDialog
 import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.settings.BaseTitleActivity
-import com.termux.zerocore.url.FileUrl
-import com.termux.zerocore.url.FileUrl.MAIN_XINHAO_PATH
-import com.termux.zerocore.url.FileUrl.zeroTermuxApk
-import com.termux.zerocore.url.FileUrl.zeroTermuxCommand
-import com.termux.zerocore.url.FileUrl.zeroTermuxData
-import com.termux.zerocore.url.FileUrl.zeroTermuxFont
-import com.termux.zerocore.url.FileUrl.zeroTermuxHome
-import com.termux.zerocore.url.FileUrl.zeroTermuxIso
-import com.termux.zerocore.url.FileUrl.zeroTermuxModule
-import com.termux.zerocore.url.FileUrl.zeroTermuxMysql
-import com.termux.zerocore.url.FileUrl.zeroTermuxOnlineSystem
-import com.termux.zerocore.url.FileUrl.zeroTermuxQemu
-import com.termux.zerocore.url.FileUrl.zeroTermuxServer
-import com.termux.zerocore.url.FileUrl.zeroTermuxShare
-import com.termux.zerocore.url.FileUrl.zeroTermuxSystem
-import com.termux.zerocore.url.FileUrl.zeroTermuxType
-import com.termux.zerocore.url.FileUrl.zeroTermuxWebConfig
-import com.termux.zerocore.url.FileUrl.zeroTermuxWindows
-import com.termux.zerocore.url.FileUrl.zeroTermuxWindowsConfig
 import com.termux.zerocore.utils.FileIOUtils
+import com.termux.zerocore.utils.XinhaoStoragePath
 import com.termux.zerocore.utils.FileIOUtils.HTML_PATH
 import com.termux.zerocore.utils.FileIOUtils.HTML_ZT_LINK_PATH
 import com.termux.zerocore.utils.FileIOUtils.XINHAO_PATH
@@ -72,26 +54,6 @@ class TermuxGuideActivity: BaseTitleActivity() {
     // 创建文件夹
     private var mCreateFolderSdcard: CardView? = null
     private var mCreateFolderSdcardAndroid: CardView? = null
-
-    private val mFolders = listOf(
-        zeroTermuxHome,
-        zeroTermuxData,
-        zeroTermuxApk,
-        zeroTermuxWindows,
-        zeroTermuxCommand,
-        zeroTermuxFont,
-        zeroTermuxIso,
-        zeroTermuxMysql,
-        zeroTermuxOnlineSystem,
-        zeroTermuxQemu,
-        zeroTermuxServer,
-        zeroTermuxShare,
-        zeroTermuxSystem,
-        zeroTermuxWebConfig,
-        zeroTermuxModule,
-        zeroTermuxWindowsConfig,
-        zeroTermuxType
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -271,25 +233,13 @@ class TermuxGuideActivity: BaseTitleActivity() {
         }
         return intent.getBooleanExtra(GUIDE_EXTRA_JUMP_OTHER, false)
     }
-    // 创建 Sdcard/Android/data/com.termux 目录
+    // 创建 Android/data/com.termux/files/xinhao 目录
     private fun createSdcardAndroidFiles() {
-        val androidDataHome = FileIOUtils.getAndroidDataHome(applicationContext)
-        androidDataHome?.let {
-            if (!it.exists()) {
-                it.mkdirs()
-            }
+        if (XinhaoStoragePath.createAndroidDataModeFolders(applicationContext)) {
+            UUtils.showMsg(UUtils.getString(R.string.guide_zerotermux_create_toast_ok))
+        } else {
+            UUtils.showMsg(UUtils.getString(R.string.guide_zerotermux_create_toast_no))
         }
-        listOf(
-            FileUrl.MAIN_XINHAO_DATA_PATH, FileUrl.MAIN_XINHAO_APK_PATH,
-            FileUrl.MAIN_XINHAO_WINDOWS_PATH, FileUrl.MAIN_XINHAO_COMMAND_PATH, FileUrl.MAIN_XINHAO_FONT_PATH,
-            FileUrl.MAIN_XINHAO_ISO_PATH, FileUrl.MAIN_XINHAO_MYSQL_PATH, FileUrl.MAIN_XINHAO_ONLINE_SYSTEM_PATH,
-            FileUrl.MAIN_XINHAO_QEMU_PATH, FileUrl.MAIN_XINHAO_SERVER_PATH, FileUrl.MAIN_XINHAO_SHARE_PATH,
-            FileUrl.MAIN_XINHAO_SYSTEM_PATH, FileUrl.MAIN_XINHAO_WEB_CONFIG_PATH, FileUrl.MAIN_XINHAO_MODULE_PATH,
-            FileUrl.MAIN_XINHAO_WINDOWS_CONFIG_PATH, FileUrl.MAIN_XINHAO_TYPE_ANDROID_PATH
-        ).forEach { path ->
-            FileIOUtils.getAndroidDataHomeChildPath(applicationContext, path).takeIf { !it.exists() }?.mkdirs()
-        }
-        UUtils.showMsg(UUtils.getString(R.string.guide_zerotermux_create_toast_ok))
         foldJumpActivity()
     }
 
@@ -338,13 +288,10 @@ class TermuxGuideActivity: BaseTitleActivity() {
     }
 
     private fun createXinhaoFolders() {
-        mFolders.forEach { folder ->
-            if (!folder.exists()) {
-                folder.mkdirs()
-            }
-        }
+        XinhaoStoragePath.createSdcardModeFolders(applicationContext)
     }
+
     private fun isXinhaoFold(): Boolean {
-        return mFolders.all { it.exists() }
+        return XinhaoStoragePath.getSdcardModeFolders(applicationContext).all { it.exists() }
     }
 }

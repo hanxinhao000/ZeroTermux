@@ -13,7 +13,7 @@ import com.hjq.permissions.XXPermissions
 import com.termux.R
 import com.termux.zerocore.dialog.LoadingDialog
 import com.termux.zerocore.dialog.SwitchDialog
-import com.termux.zerocore.url.FileUrl.zeroTermuxApk
+import com.termux.zerocore.utils.XinhaoStoragePath
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -131,13 +131,11 @@ class ZTInstallActivity : BaseTitleActivity(), View.OnClickListener {
                         all: Boolean
                     ) {
                         if (all) {
-                            if (!zeroTermuxApk.exists()) {
-                                zeroTermuxApk.mkdirs()
+                            val apkDir = XinhaoStoragePath.getApkDir(this@ZTInstallActivity)
+                            if (!apkDir.exists()) {
+                                apkDir.mkdirs()
                             }
-                            val file1 = File(
-                                Environment.getExternalStorageDirectory(),
-                                "/xinhao/apk/$fileName.apk"
-                            )
+                            val file1 = File(apkDir, "$fileName.apk")
                             val loadingDialog =
                                 LoadingDialog(this@ZTInstallActivity)
                             loadingDialog.show()

@@ -79,7 +79,7 @@ public class FileListDialog extends BaseDialogCentre {
 
     @Override
     public void initViewDialog(View mView) {
-        file =  new File(Environment.getExternalStorageDirectory(),"/xinhao/windows");
+        file = com.termux.zerocore.utils.XinhaoStoragePath.getWindowsDir(mContext);
         list_view = mView.findViewById(R.id.list_view);
         title = mView.findViewById(R.id.title);
         tv_empty = mView.findViewById(R.id.tv_empty);

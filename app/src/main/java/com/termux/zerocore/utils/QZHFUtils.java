@@ -144,7 +144,8 @@ public class QZHFUtils {
                     public void run() {
                         myDialog.dismiss();
 
-                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal("cd ~ && cd ~ && tar -zcvf ./storage/shared/xinhao/data/" + systemName + " /data/data/com.termux/files && echo \"备份完成，备份文件在->内部存储/xinhao/data/|目录下\" \n");
+                        com.termux.zerocore.utils.SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener().sendTextToTerminal(
+                            com.termux.zerocore.utils.XinhaoStoragePath.getShellBackup(systemName, "zcvf"));
 
 
                         restoreFragment.getActivity().finish();

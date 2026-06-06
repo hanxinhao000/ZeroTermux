@@ -35,7 +35,9 @@ object FileIOUtils {
     public const val TERMUX_WGET = "/data/data/com.termux/files/usr/bin/wget"
     public const val TERMUX_QEMU = "/data/data/com.termux/files/usr/bin/qemu-system-x86_64"
 
-    public  val TERMUX_XINHAO_CONFIG = Environment.getExternalStorageDirectory().absolutePath + "/xinhao/config/"
+    public fun getConfigFilePath(): String {
+        return XinhaoStoragePath.getConfigDir(UUtils.getContext()).absolutePath + "/"
+    }
     //ROM信息文件地址
     public const val MAIN_MENU_XML_PATH = "/ZtInfo/main_menu_path.xml"
     public const val MAIN_MENU_EDIT_MENU_ICON_PATH = "/ZtInfo/edit_menu.png"
@@ -276,11 +278,7 @@ object FileIOUtils {
     }
 
     public fun getXinHaoDataPathFile(): File {
-        return if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
-            FileIOUtils.getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_DATA_PATH)
-        } else {
-            File(getSdcardPath(), FileUrl.MAIN_XINHAO_DATA_PATH)
-        }
+        return XinhaoStoragePath.getDataDir(UUtils.getContext())
     }
 
     public fun getSdcardPath(): String {
@@ -304,10 +302,6 @@ object FileIOUtils {
             return true
         }
         return false
-    }
-
-    public fun getConfigFilePath() :String {
-        return TERMUX_XINHAO_CONFIG
     }
 
     public fun createSystem(mContext: Context, name: String): File? {
@@ -420,7 +414,7 @@ object FileIOUtils {
     }
 
     public fun getLogPath(): String {
-        return getSdcardPath() + "/xinhao/ZeroTermuxLog"
+        return XinhaoStoragePath.getLogDir(UUtils.getContext()).absolutePath
     }
 
     public fun isLogPath(): Boolean {
@@ -482,7 +476,7 @@ object FileIOUtils {
     }
 
     public fun getAndroidDataHomeChildPath(context: Context, path: String): File {
-        return File(getAndroidDataHome(context), path)
+        return XinhaoStoragePath.getChild(context, path)
     }
 
 
@@ -527,32 +521,21 @@ object FileIOUtils {
     }
 
     public fun createWebConfig() {
-        val createFolderForSdcardAndroid =
-            UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid
-
         val fileZtLinkPATH = File(getHomePath(UUtils.getContext()), HTML_ZT_LINK_PATH)
         val fileHtmlPATH = File(getHomePath(UUtils.getContext()), HTML_PATH)
         val fileXinHaoPATH = File(getHomePath(UUtils.getContext()), XINHAO_PATH)
-        val file1 = if (createFolderForSdcardAndroid) {
-            getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_WEB_CONFIG_PATH)
-        } else {
-            File(FileUrl.zeroTermuxHome, "web_config")
-        }
+        val webConfigDir = XinhaoStoragePath.getWebConfigDir(UUtils.getContext())
+        val xinhaoRoot = XinhaoStoragePath.getRoot(UUtils.getContext())
 
         if (!fileZtLinkPATH.exists()) {
             fileZtLinkPATH.mkdirs()
         }
-        if (!file1.exists()) {
-            file1.mkdirs()
+        if (!webConfigDir.exists()) {
+            webConfigDir.mkdirs()
         }
         try {
-            Os.symlink(file1.absolutePath, fileHtmlPATH.absolutePath)
-            if (createFolderForSdcardAndroid) {
-                Os.symlink(getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_PATH).absolutePath,
-                    fileXinHaoPATH.absolutePath)
-            } else {
-                Os.symlink(FileUrl.zeroTermuxHome.absolutePath, fileXinHaoPATH.absolutePath)
-            }
+            Os.symlink(webConfigDir.absolutePath, fileHtmlPATH.absolutePath)
+            Os.symlink(xinhaoRoot.absolutePath, fileXinHaoPATH.absolutePath)
         } catch (e: Exception) {
             LogUtils.i(TAG, "createWebConfig is error: $e")
             e.printStackTrace()
@@ -578,18 +561,14 @@ object FileIOUtils {
     }
     //获取模块包路径
     public fun getModuleFiles(): ArrayList<File>? {
-        if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
-            val arrayList = ArrayList<File>()
-            arrayList.addAll(getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.MAIN_XINHAO_MODULE_PATH).listFiles())
-            return arrayList
-        }
-        if (!FileUrl.zeroTermuxModule.exists()) {
-            if (!FileUrl.zeroTermuxModule.mkdirs()) {
-                LogUtils.d(TAG, "getModuleFiles create folder is fail, path: " + FileUrl.zeroTermuxModule.absolutePath)
+        val moduleDir = XinhaoStoragePath.getModuleDir(UUtils.getContext())
+        if (!moduleDir.exists()) {
+            if (!moduleDir.mkdirs()) {
+                LogUtils.d(TAG, "getModuleFiles create folder is fail, path: " + moduleDir.absolutePath)
                 return null
             }
         }
-        val listFiles = FileUrl.zeroTermuxModule.listFiles()
+        val listFiles = moduleDir.listFiles()
         if (listFiles == null || listFiles.isEmpty()) {
             LogUtils.d(TAG, "getModuleFiles module listFiles is empty ")
             return null

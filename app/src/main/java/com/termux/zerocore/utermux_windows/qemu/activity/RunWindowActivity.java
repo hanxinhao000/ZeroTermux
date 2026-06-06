@@ -30,6 +30,7 @@ import com.termux.zerocore.utermux_windows.qemu.dialog.FileListDialog;
 import com.termux.zerocore.utermux_windows.qemu.dialog.FileNameDialog;
 import com.termux.zerocore.utermux_windows.qemu.dialog.SwitchQemuDialog;
 import com.termux.zerocore.utils.SaveData;
+import com.termux.zerocore.utils.XinhaoStoragePath;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,23 +58,35 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
     private File mFileQemuStart1 = new File("/data/data/com.termux/files/home/.qemustart");
     private File mFile1 = new File("/data/data/com.termux/files/usr/bin/qemu-x86_64-static");
     private File mFile2 = new File("/data/data/com.termux/files/usr/bin/qemu-system-i386");
-    private File mWin10 = new File(Environment.getExternalStorageDirectory(), "/xinhao/windows/Utermux_win10.vhd");
-    private File mWin10RunPath = new File("/data/data/com.termux/files/home/storage/shared/xinhao/windows/Utermux_win10.vhd");
-
-
-    private File mWin7 = new File(Environment.getExternalStorageDirectory(), "/xinhao/windows/Utermux_win7.vhd");
-    private File mWin7RunPath = new File("/data/data/com.termux/files/home/storage/shared/xinhao/windows/Utermux_win7.vhd");
-
-    private File mWinConfig = new File(Environment.getExternalStorageDirectory(), "/xinhao/windows_config/");
-    private File mWinWindows = new File(Environment.getExternalStorageDirectory(), "/xinhao/windows/");
-
-    private File mWinxp = new File(Environment.getExternalStorageDirectory(), "/xinhao/windows/Utermux_xp.qcow2");
-    private File mWinxpRunPath = new File("/data/data/com.termux/files/home/storage/shared/xinhao/windows/Utermux_xp.qcow2");
-
-    private File mMac = new File(Environment.getExternalStorageDirectory(), "/xinhao/windows/Utermux-mac.qcow2");
-    private File mMacRunPath = new File("/data/data/com.termux/files/home/storage/shared/xinhao/windows/Utermux-mac.qcow2");
+    private File mWin10;
+    private File mWin10RunPath;
+    private File mWin7;
+    private File mWin7RunPath;
+    private File mWinConfig;
+    private File mWinWindows;
+    private File mWinxp;
+    private File mWinxpRunPath;
+    private File mMac;
+    private File mMacRunPath;
 
     private boolean mkdirs = false;
+
+    private void initStoragePaths() {
+        mWinWindows = XinhaoStoragePath.getWindowsDir(this);
+        mWinConfig = XinhaoStoragePath.getWindowsConfigDir(this);
+        mWin10 = XinhaoStoragePath.getWindowsFile(this, "Utermux_win10.vhd");
+        mWin10RunPath = new File(XinhaoStoragePath.getTerminalWindowsAbsolutePath("Utermux_win10.vhd"));
+        mWin7 = XinhaoStoragePath.getWindowsFile(this, "Utermux_win7.vhd");
+        mWin7RunPath = new File(XinhaoStoragePath.getTerminalWindowsAbsolutePath("Utermux_win7.vhd"));
+        mWinxp = XinhaoStoragePath.getWindowsFile(this, "Utermux_xp.qcow2");
+        mWinxpRunPath = new File(XinhaoStoragePath.getTerminalWindowsAbsolutePath("Utermux_xp.qcow2"));
+        mMac = XinhaoStoragePath.getWindowsFile(this, "Utermux-mac.qcow2");
+        mMacRunPath = new File(XinhaoStoragePath.getTerminalWindowsAbsolutePath("Utermux-mac.qcow2"));
+    }
+
+    private String qemuWindowsPath(String fileName) {
+        return XinhaoStoragePath.getTerminalWindowsAbsolutePath(fileName);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +108,7 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
         if (!mFileQemuStart1.exists())
             mkdirs = mFileQemuStart1.mkdirs();
 
+        initStoragePaths();
         setConfig();
         isQemuExe();
 
@@ -192,8 +206,8 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                         editTextDialog.setSystemSwitchListener(new EditTextDialog.SystemSwitchListener() {
                             @Override
                             public void switchEdit(EditText editText) {
-                                SaveData.saveData("mac_config", "cd ~ && qemu-system-ppc -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mMac.getName() + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33\n");
-                                editText.setText("cd ~ && qemu-system-ppc -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mMac.getName() + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33\n");
+                                SaveData.saveData("mac_config", "cd ~ && qemu-system-ppc -hda " + qemuWindowsPath(mMac.getName()) + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33\n");
+                                editText.setText("cd ~ && qemu-system-ppc -hda " + qemuWindowsPath(mMac.getName()) + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33\n");
                             }
                         });
 
@@ -229,13 +243,13 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                             fileListDialog.dismiss();
                             switch (string) {
                                 case "amd":
-                                    cmd[0] = "qemu-system-x86_64 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + file.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
+                                    cmd[0] = "qemu-system-x86_64 -hda " + qemuWindowsPath(file.getName()) + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
                                     break;
                                 case "i386":
-                                    cmd[0] = "qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + file.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
+                                    cmd[0] = "qemu-system-i386 -hda " + qemuWindowsPath(file.getName()) + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4";
                                     break;
                                 case "mac":
-                                    cmd[0] = "qemu-system-ppc -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + file.getName() + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33";
+                                    cmd[0] = "qemu-system-ppc -hda " + qemuWindowsPath(file.getName()) + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33";
                                     break;
                             }
 
@@ -511,8 +525,8 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                     editTextDialog.setSystemSwitchListener(new EditTextDialog.SystemSwitchListener() {
                         @Override
                         public void switchEdit(EditText editText) {
-                            SaveData.saveData("win7_config", "cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWin7RunPath.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
-                            editText.setText("cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWin7RunPath.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+                            SaveData.saveData("win7_config", "cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWin7RunPath.getName()) + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+                            editText.setText("cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWin7RunPath.getName()) + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
                         }
                     });
 
@@ -606,8 +620,8 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                         editTextDialog.setSystemSwitchListener(new EditTextDialog.SystemSwitchListener() {
                             @Override
                             public void switchEdit(EditText editText) {
-                                SaveData.saveData("win10_config", "cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWinxpRunPath.getName() + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
-                                editText.setText("cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWin10RunPath.getName() + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+                                SaveData.saveData("win10_config", "cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWinxpRunPath.getName()) + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+                                editText.setText("cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWin10RunPath.getName()) + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
                             }
                         });
 
@@ -699,9 +713,9 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
                         editTextDialog.setSystemSwitchListener(new EditTextDialog.SystemSwitchListener() {
                             @Override
                             public void switchEdit(EditText editText) {
-                                SaveData.saveData("winxp_config", "cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWinxpRunPath.getName() + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+                                SaveData.saveData("winxp_config", "cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWinxpRunPath.getName()) + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
 
-                                editText.setText("cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWinxpRunPath.getName() + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+                                editText.setText("cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWinxpRunPath.getName()) + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
                             }
                         });
 
@@ -737,28 +751,28 @@ public class RunWindowActivity extends AppCompatActivity implements TermuxData.I
         String win10_config = SaveData.getData("win10_config");
         if (win10_config == null || win10_config.isEmpty() || "def".equals(win10_config)) {
 
-            SaveData.saveData("win10_config", "cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWin10RunPath.getName() + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+            SaveData.saveData("win10_config", "cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWin10RunPath.getName()) + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
 
         }
 
         String win7_config = SaveData.getData("win7_config");
         if (win7_config == null || win7_config.isEmpty() || "def".equals(win7_config)) {
 
-            SaveData.saveData("win7_config", "cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWin7RunPath.getName() + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+            SaveData.saveData("win7_config", "cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWin7RunPath.getName()) + " -boot d -m 800  -device e1000,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
 
         }
 
         String winxp_config = SaveData.getData("winxp_config");
         if (winxp_config == null || winxp_config.isEmpty() || "def".equals(winxp_config)) {
 
-            SaveData.saveData("winxp_config", "cd ~ && qemu-system-i386 -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mWinxpRunPath.getName() + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
+            SaveData.saveData("winxp_config", "cd ~ && qemu-system-i386 -hda " + qemuWindowsPath(mWinxpRunPath.getName()) + " -boot d -m 900  -device rtl8139,id=d-net1  -vnc :33 -cpu Skylake-Server-IBRS --accel tcg,thread=multi -smp 4\n");
 
         }
 
         String mac_config = SaveData.getData("mac_config");
         if (mac_config == null || mac_config.isEmpty() || "def".equals(mac_config)) {
 
-            SaveData.saveData("mac_config", "cd ~ && qemu-system-ppc -hda /data/data/com.termux/files/home/storage/shared/xinhao/windows/" + mMac.getName() + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33\n");
+            SaveData.saveData("mac_config", "cd ~ && qemu-system-ppc -hda " + qemuWindowsPath(mMac.getName()) + " -M mac99 -m 512 -g 800x600x32 -machine usb=on -device  usb-tablet  -vnc :33\n");
 
         }
 

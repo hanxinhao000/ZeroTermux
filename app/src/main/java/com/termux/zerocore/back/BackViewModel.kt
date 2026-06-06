@@ -145,19 +145,12 @@ class BackViewModel : BackupClickListener {
                 }
                 withContext(Dispatchers.Main) {
                     mLoadingDialog?.dismiss()
-                    if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
-                        val replace = CommendShellData.SHELL_BACKUP_ANDROID.replace(
-                            "systemName",
-                            FileIOUtils.getTimeFileName(name)
-                        ).replace("TemporaryMark", command)
-                        sendTextToTerminal(replace)
-                    } else {
-                        val replace = CommendShellData.SHELL_BACKUP.replace(
-                            "systemName",
-                            FileIOUtils.getTimeFileName(name)
-                        ).replace("TemporaryMark", command)
-                        sendTextToTerminal(replace)
-                    }
+                    sendTextToTerminal(
+                        CommendShellData.getShellBackup(
+                            FileIOUtils.getTimeFileName(name),
+                            command
+                        )
+                    )
 
                     UUtils.showMsg(UUtils.getString(R.string.开始备份))
                    // mBackupStoreDialogCloseListener?.backupStoreDismiss()

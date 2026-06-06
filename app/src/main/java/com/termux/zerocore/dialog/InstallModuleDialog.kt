@@ -75,11 +75,9 @@ class InstallModuleDialog: BaseDialogCentre {
 
     public fun initDataAndAdapter() {
         val moduleFiles = FileIOUtils.getModuleFiles()
-        mInstallEmpty?.text = if (UserSetManage.get().getZTUserBean().isCreateFolderForSdcardAndroid) {
-            UUtils.getString(R.string.install_empty)
-        } else {
-            UUtils.getString(R.string.install_empty_android)
-        }
+        mInstallEmpty?.text = UUtils.getString(
+            com.termux.zerocore.utils.XinhaoStoragePath.getModuleEmptyMessageRes()
+        )
         if (moduleFiles == null || moduleFiles.isEmpty()) {
             mInstallEmpty?.visibility = View.VISIBLE
             mRecyclerView?.visibility = View.GONE

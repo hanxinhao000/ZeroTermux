@@ -43,7 +43,7 @@ public class RestoreFragment extends BaseFragment {
 
     private File mFile12 = new File("/data/data/com.termux/files/usr");
     private File mFile13 = new File("/data/data/com.termux/files/home");
-    private File mSdFile = new File(Environment.getExternalStorageDirectory(), "/xinhao/data/");
+    private File mSdFile;
     private File mFileHomeFiles = new File("/data/data/com.termux/files/");
     private File mFileHome = new File("/data/data/com.termux/busybox");
     private File mFileHomeStatic = new File("/data/data/com.termux/busybox_static");
@@ -65,6 +65,7 @@ public class RestoreFragment extends BaseFragment {
 
     @Override
     public void initFragmentView(View mView) {
+        mSdFile = com.termux.zerocore.utils.XinhaoStoragePath.getDataDir(getContext());
 
         mListView = (ListView) findViewById(R.id.list_view);
         mTitle = (TextView) findViewById(R.id.title);

@@ -20,7 +20,7 @@ import java.io.File;
  * @create By ZEL on 2020/10/20 14:23
  **/
 public class FileNameDialog extends BaseDialogCentre {
-    private File mWinConfig = new File(Environment.getExternalStorageDirectory(),"/xinhao/windows_config/");
+    private File mWinConfig;
     private EditText edit_text;
     private TextView commit;
     private TextView cancel;
@@ -34,6 +34,7 @@ public class FileNameDialog extends BaseDialogCentre {
 
     @Override
    public void initViewDialog(View mView) {
+        mWinConfig = com.termux.zerocore.utils.XinhaoStoragePath.getWindowsConfigDir(mContext);
         edit_text = mView.findViewById(R.id.edit_text);
         commit = mView.findViewById(R.id.commit);
         cancel = mView.findViewById(R.id.cancel);

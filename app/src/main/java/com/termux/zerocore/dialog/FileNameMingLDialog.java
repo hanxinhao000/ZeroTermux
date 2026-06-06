@@ -19,7 +19,7 @@ import java.io.File;
  * @create By ZEL on 2020/10/20 14:23
  **/
 public class FileNameMingLDialog extends BaseDialogCentre {
-    private File mWinConfig = new File(Environment.getExternalStorageDirectory(),"/xinhao/command/");
+    private File mWinConfig;
     private EditText edit_text;
     private TextView commit;
     private TextView cancel;
@@ -33,6 +33,7 @@ public class FileNameMingLDialog extends BaseDialogCentre {
 
     @Override
     void initViewDialog(View mView) {
+        mWinConfig = com.termux.zerocore.utils.XinhaoStoragePath.getCommandDir(mContext);
         edit_text = mView.findViewById(R.id.edit_text);
         commit = mView.findViewById(R.id.commit);
         cancel = mView.findViewById(R.id.cancel);

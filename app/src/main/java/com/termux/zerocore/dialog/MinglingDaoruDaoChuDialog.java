@@ -97,11 +97,7 @@ public class MinglingDaoruDaoChuDialog extends BaseDialogCentre {
     }
 
     private File getCommandPathFile() {
-        if (UserSetManage.Companion.get().getZTUserBean().isCreateFolderForSdcardAndroid()) {
-            return FileIOUtils.INSTANCE.getAndroidDataHomeChildPath(UUtils.getContext(), FileUrl.INSTANCE.getMAIN_XINHAO_COMMAND_PATH());
-        } else {
-            return new File(Environment.getExternalStorageDirectory(), FileUrl.INSTANCE.getMAIN_XINHAO_COMMAND_PATH());
-        }
+        return com.termux.zerocore.utils.XinhaoStoragePath.getCommandDir(mContext);
     }
 
     @Override

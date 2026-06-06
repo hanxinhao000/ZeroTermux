@@ -8,7 +8,9 @@ import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.dialog.YesNoDialog
+import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.FileIOUtils
+import com.termux.zerocore.utils.XinhaoStoragePath
 import java.io.File
 
 class MyUsedSoftLinksDataClickConfig: BaseMenuClickConfig() {
@@ -36,12 +38,15 @@ class MyUsedSoftLinksDataClickConfig: BaseMenuClickConfig() {
             yesNoDialog.dismiss()
             if (TextUtils.isEmpty(toString)) {
                 FileIOUtils.setupFileSymlinks(
-                    File(FileIOUtils.getSdcardPath(), "/xinhao/data").absolutePath,
+                    com.termux.zerocore.utils.XinhaoStoragePath.getDataDir(UUtils.getContext()).absolutePath,
                     "${FileIOUtils.getXinhaoLinkPath(UUtils.getContext())}/xinhao_data")
                 UUtils.showMsg(UUtils.getString(R.string.成功))
             } else {
-                val file =
+                val file = if (toString.startsWith(FileUrl.MAIN_XINHAO_PATH)) {
+                    XinhaoStoragePath.getChild(UUtils.getContext(), toString)
+                } else {
                     File(FileIOUtils.getSdcardPath(), toString)
+                }
                 if (!file.exists()) {
                     UUtils.showMsg(UUtils.getString(R.string.my_commonly_used_soft_links_repeat))
                     LogUtils.d(TAG, "clickItem path is not exists")

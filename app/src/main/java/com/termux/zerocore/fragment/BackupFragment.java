@@ -50,8 +50,8 @@ public class BackupFragment extends BaseFragment implements View.OnClickListener
     private File mFileHomeStatic = new File("/data/data/com.termux/busybox_static");
     private File mFileSupport = new File("/data/data/com.termux/files/support");
     private File mFileSupportSh = new File("/data/data/com.termux/files/support/extractFilesystem.sh");
-    private File mFileHomeFilesGz = new File(Environment.getExternalStorageDirectory() + "/xinhao/data/");
-    private File mFileHomeFilesGzHome = new File(Environment.getExternalStorageDirectory() + "/xinhao/data/");
+    private File mFileHomeFilesGz;
+    private File mFileHomeFilesGzHome;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 
@@ -62,6 +62,8 @@ public class BackupFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void initFragmentView(View mView) {
+        mFileHomeFilesGz = com.termux.zerocore.utils.XinhaoStoragePath.getDataDir(getContext());
+        mFileHomeFilesGzHome = mFileHomeFilesGz;
 
         if (!mFileHomeFilesGzHome.exists()) {
 
