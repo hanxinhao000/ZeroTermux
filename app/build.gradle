@@ -124,7 +124,7 @@ android {
         // versionCode 118
         // versionName "0.118.0"
         versionCode 118
-        versionName "0.118.3.60"
+        versionName "0.118.3.61"
         // @}
         if (appVersionName) versionName = appVersionName
         validateVersionName(versionName)
