@@ -16,6 +16,9 @@ import com.termux.zerocore.url.FileUrl;
 import com.zp.z_file.util.ZFileUUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class FixEnvironmentalErrorClickConfig extends BaseMenuClickConfig {
     @Override
@@ -60,7 +63,22 @@ public class FixEnvironmentalErrorClickConfig extends BaseMenuClickConfig {
             } catch (ErrnoException e) {
                 e.printStackTrace();
             }
-            ZFileUUtils.writerFile(FileUrl.INSTANCE.getAisleXlorieAssetPath(), aislePathSo);
+            try {
+                File srcSo = new File(context.getApplicationInfo().nativeLibraryDir, "libXlorie.so");
+                if (srcSo.exists()) {
+                    aislePathSo.getParentFile().mkdirs();
+                    try (FileInputStream fis = new FileInputStream(srcSo);
+                         FileOutputStream fos = new FileOutputStream(aislePathSo)) {
+                        byte[] buf = new byte[8192];
+                        int len;
+                        while ((len = fis.read(buf)) > 0) {
+                            fos.write(buf, 0, len);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                Log.e("FixEnvironmentalError", "Failed to copy libXlorie.so", e);
+            }
             UUtils.runOnUIThread(() -> {
                 UUtils.showMsg(context.getString(R.string.x11_so_install_ok));
             });

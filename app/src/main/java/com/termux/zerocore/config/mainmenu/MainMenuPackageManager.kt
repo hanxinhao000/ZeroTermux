@@ -38,8 +38,8 @@ object MainMenuPackageManager {
     @JvmStatic
     fun ensureMenuDir(context: Context): File {
         val dir = XinhaoStoragePath.getMenuDir(context)
-        if (!dir.exists()) {
-            dir.mkdirs()
+        if (!dir.exists() && !dir.mkdirs()) {
+            android.util.Log.e("MainMenuPackageManager", "Failed to create menu dir: " + dir.absolutePath)
         }
         return dir
     }
@@ -47,18 +47,23 @@ object MainMenuPackageManager {
     @JvmStatic
     fun ensureDefaultActiveMenu(context: Context) {
         val menuDir = ensureMenuDir(context)
+        if (!menuDir.exists()) return
         val migrationFile = File(menuDir, PROGRAM_DEFAULT_MIGRATION_FILE)
-        if (!migrationFile.exists()) {
-            val activeId = getActivePackageId(context)
-            if (!isUserInstalledPackageId(activeId)) {
+        try {
+            if (!migrationFile.exists()) {
+                val activeId = getActivePackageId(context)
+                if (!isUserInstalledPackageId(activeId)) {
+                    applyProgramMenu(context)
+                }
+                migrationFile.writeText("1")
+                return
+            }
+            val activeFile = File(menuDir, ACTIVE_PACKAGE_FILE)
+            if (!activeFile.exists() || activeFile.readText().trim().isEmpty()) {
                 applyProgramMenu(context)
             }
-            migrationFile.writeText("1")
-            return
-        }
-        val activeFile = File(menuDir, ACTIVE_PACKAGE_FILE)
-        if (!activeFile.exists() || activeFile.readText().trim().isEmpty()) {
-            applyProgramMenu(context)
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "ensureDefaultActiveMenu failed", e)
         }
     }
 
@@ -385,11 +390,25 @@ object MainMenuPackageManager {
     }
 
     private fun saveActivePackageId(context: Context, packageId: String) {
-        File(ensureMenuDir(context), ACTIVE_PACKAGE_FILE).writeText(packageId)
+        try {
+            val dir = ensureMenuDir(context)
+            if (dir.exists()) {
+                File(dir, ACTIVE_PACKAGE_FILE).writeText(packageId)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "saveActivePackageId failed", e)
+        }
     }
 
     private fun saveActivePackageLabel(context: Context, label: String) {
-        File(ensureMenuDir(context), ACTIVE_LABEL_FILE).writeText(label)
+        try {
+            val dir = ensureMenuDir(context)
+            if (dir.exists()) {
+                File(dir, ACTIVE_LABEL_FILE).writeText(label)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "saveActivePackageLabel failed", e)
+        }
     }
 
     private fun resolveLabelFromPackageId(packageId: String): String {

@@ -27,6 +27,9 @@ import com.termux.zerocore.utils.UUUtils;
 import com.zp.z_file.util.ZFileUUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class ZeroTermuxX11Settings extends BaseTitleActivity {
     // 内部通道
@@ -151,7 +154,7 @@ public class ZeroTermuxX11Settings extends BaseTitleActivity {
                     UUtils.runOnUIThread(loadingDialog::dismiss);
                     return;
                 }
-                ZFileUUtils.writerFile(FileUrl.INSTANCE.getAisleXlorieAssetPath(), aislePathSo);
+                copyNativeLibToPath("libXlorie.so", aislePathSo);
                 try {
                     Os.chmod(aislePathAPKFile.getAbsolutePath(), 0444);
                     Os.chmod(aislePathAPKSh.getAbsolutePath(), 0777);
@@ -239,6 +242,27 @@ public class ZeroTermuxX11Settings extends BaseTitleActivity {
         } else {
             external_channels.setCardBackgroundColor(getColor(R.color.color_5548baf3));
             setX11SettingsEnable(false);
+        }
+    }
+
+    private void copyNativeLibToPath(String libName, File dest) {
+        try {
+            File src = new File(getApplicationInfo().nativeLibraryDir, libName);
+            if (!src.exists()) {
+                Log.e("ZeroTermuxX11Settings", "Native lib not found: " + src.getAbsolutePath());
+                return;
+            }
+            dest.getParentFile().mkdirs();
+            try (FileInputStream fis = new FileInputStream(src);
+                 FileOutputStream fos = new FileOutputStream(dest)) {
+                byte[] buf = new byte[8192];
+                int len;
+                while ((len = fis.read(buf)) > 0) {
+                    fos.write(buf, 0, len);
+                }
+            }
+        } catch (IOException e) {
+            Log.e("ZeroTermuxX11Settings", "Failed to copy " + libName, e);
         }
     }
 
