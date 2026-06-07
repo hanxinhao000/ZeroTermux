@@ -1,14 +1,11 @@
 package com.termux.zerocore.settings.services
 
-
-import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.IBinder
-import android.os.Message
+import android.os.Looper
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.ftp.utils.TimerSetManage
@@ -17,58 +14,33 @@ import com.termux.zerocore.settings.timer.TimerBean
 import com.termux.zerocore.utils.NotificationUtils
 import com.topjohnwu.superuser.Shell
 import com.zp.z_file.util.LogUtils
-import java.util.Locale
-
+import java.util.concurrent.atomic.AtomicBoolean
 
 class TimerExeService : Service(), LibSuManage.TimerListener {
 
     companion object {
-        public const val TIMER_EXE_START = "timer_exe_start"
-        public const val TIMER_EXE_END = "timer_exe_end"
+        const val TIMER_EXE_START = "timer_exe_start"
+        const val TIMER_EXE_END = "timer_exe_end"
         private const val TAG = "TimerExeService"
         private const val NOTIFICATION_ID = 1556
-        private const val IS_DEBUG = false
+        /** Shell 仍存活时的重试间隔，避免 5 秒高频唤醒 */
+        private const val SHELL_IDLE_RETRY_MS = 30_000L
+        private const val MAX_SHELL_IDLE_RETRIES = 6
     }
 
     private var mTimerBean: TimerBean? = null
     private var mLibSuManage: LibSuManage? = null
-    private var mCountDownTimer: CountDownTimer? = null
-     class TimerExeLocalBinder : Binder {
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val isActive = AtomicBoolean(false)
+    private var shellIdleRetries = 0
+
+    private val scheduleRunnable = Runnable { onIntervalElapsed() }
+    private val shellRetryRunnable = Runnable { ensureShellIdleAndRun() }
+
+    class TimerExeLocalBinder : Binder {
         val service: TimerExeService
         constructor(timerExeService: TimerExeService) {
             service = timerExeService
-        }
-    }
-
-    private val mHandler1: Handler =
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            LogUtils.e(TAG, "startTimerNum  sendHandler.....RUN")
-            val cachedShell = Shell.getCachedShell()
-            if (cachedShell == null || !(cachedShell.isAlive)) {
-                execCommand()
-                startTimerNum()
-            } else {
-                LibSuManage.getInstall().stop()
-                mHandler2.sendMessageDelayed(Message(), 5000)
-            }
-
-        }
-    }
-
-    private val mHandler2: Handler =
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            val cachedShell = Shell.getCachedShell()
-            if (cachedShell == null || !(cachedShell.isAlive)) {
-                execCommand()
-                startTimerNum()
-            } else {
-                LibSuManage.getInstall().stop()
-                mHandler1.sendMessageDelayed(Message(), 5000)
-            }
         }
     }
 
@@ -78,134 +50,161 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         mLibSuManage = LibSuManage.getInstall()
         mLibSuManage?.setTimerListener(this)
         mLibSuManage?.cunt = 0
-        if (IS_DEBUG) {
-            mLibSuManage?.deleteAllFile()
-        }
-        if (!(mLibSuManage!!.isFileExists)) {
+        if (!mLibSuManage!!.isFileExists) {
             mLibSuManage?.writerFile()
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            val action = intent.action
-            if (action != null) {
-                when (action) {
-                    // 启动定时任务
-                    TIMER_EXE_START -> {
-                        LogUtils.e(TAG, "onStartCommand....TIMER_EXE_START")
-                        startTimer()
-                    }
-                    //关闭定时任务
-                    TIMER_EXE_END -> {
-                        LogUtils.e(TAG, "onStartCommand....TIMER_EXE_END")
-                        //endTime()
-                    }
-                }
+        when (intent?.action) {
+            TIMER_EXE_START -> {
+                LogUtils.e(TAG, "onStartCommand TIMER_EXE_START")
+                startTimer()
+                return START_STICKY
+            }
+            TIMER_EXE_END -> {
+                LogUtils.e(TAG, "onStartCommand TIMER_EXE_END")
+                endTime()
+                return START_NOT_STICKY
             }
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
+    }
+
+    private fun startTimer() {
+        if (!isActive.compareAndSet(false, true)) {
+            return
+        }
+        shellIdleRetries = 0
+        mTimerBean = TimerSetManage.get().getZTTimerBean()
+        mLibSuManage?.setTimerListener(this)
+        startForeground(
+            NOTIFICATION_ID,
+            NotificationUtils.buildTimerNotification(
+                applicationContext,
+                UUtils.getString(R.string.zt_timer_notification_timer_title),
+                buildWaitingMessage()
+            )
+        )
+        scheduleNextExecution()
+    }
+
+    private fun scheduleNextExecution() {
+        if (!isActive.get()) return
+        mainHandler.removeCallbacks(scheduleRunnable)
+        val delay = getIntervalMs()
+        updateWaitingNotification()
+        mainHandler.postDelayed(scheduleRunnable, delay)
+    }
+
+    private fun onIntervalElapsed() {
+        if (!isActive.get()) return
+        shellIdleRetries = 0
+        ensureShellIdleAndRun()
+    }
+
+    private fun ensureShellIdleAndRun() {
+        if (!isActive.get()) return
+        val cachedShell = Shell.getCachedShell()
+        if (cachedShell != null && cachedShell.isAlive) {
+            if (shellIdleRetries >= MAX_SHELL_IDLE_RETRIES) {
+                mLibSuManage?.stop()
+                shellIdleRetries = 0
+                mainHandler.postDelayed(shellRetryRunnable, SHELL_IDLE_RETRY_MS)
+                return
+            }
+            shellIdleRetries++
+            mLibSuManage?.stop()
+            mainHandler.postDelayed(shellRetryRunnable, SHELL_IDLE_RETRY_MS)
+            return
+        }
+        shellIdleRetries = 0
+        runScheduledCommand()
+    }
+
+    private fun runScheduledCommand() {
+        if (!isActive.get()) return
+        NotificationUtils.updateNotification(
+            applicationContext,
+            NOTIFICATION_ID,
+            UUtils.getString(R.string.zt_timer_notification_timer_title),
+            UUtils.getString(R.string.zt_timer_notification_timer_kill)
+        )
+        execCommand {
+            if (isActive.get()) {
+                scheduleNextExecution()
+            }
+        }
+    }
+
+    private fun execCommand(onComplete: Runnable?) {
+        val manage = mLibSuManage ?: return
+        manage.cunt = manage.cunt + 1
+        mTimerBean = TimerSetManage.get().getZTTimerBean()
+        val command = if (mTimerBean!!.isZeroTermux) "shell_ZeroTermux" else "shell_Android"
+        manage.shellCommandExec(command, onComplete)
     }
 
     private fun endTime() {
-        LibSuManage.getInstall().stop()
-        NotificationUtils.cancelNotification(applicationContext, NOTIFICATION_ID)
-        mHandler1.removeCallbacksAndMessages(null)
-        mHandler2.removeCallbacksAndMessages(null)
-        mCountDownTimer?.cancel()
-    }
-    private fun startTimer() {
-       // mLibSuManage?.writerDebugFile()
-       // mLibSuManage?.shellCommandExec("shell_main")
-        NotificationUtils.showNotification(applicationContext,
-            NOTIFICATION_ID,
-            UUtils.getString(R.string.zt_timer_notification_timer_title),
-            "${UUtils.getString(R.string.zt_timer_notification_timer_sum)} ${getTime()}\n${UUtils.getString(R.string.zt_timer_notification_timer_cunt)} ${mLibSuManage!!.cunt}"
-        )
-        startTimerNum()
-    }
-
-    private fun execCommand() {
-        if (mLibSuManage == null) {
+        if (!isActive.getAndSet(false)) {
+            stopSelf()
             return
         }
-        var cunt = mLibSuManage!!.cunt
-        mLibSuManage!!.cunt = cunt + 1
-        mTimerBean =  TimerSetManage.get().getZTTimerBean()
-        if (mTimerBean!!.isZeroTermux) {
-            mLibSuManage?.shellCommandExec("shell_ZeroTermux")
+        mainHandler.removeCallbacks(scheduleRunnable)
+        mainHandler.removeCallbacks(shellRetryRunnable)
+        mLibSuManage?.stop()
+        mLibSuManage?.logThreadStop()
+        mLibSuManage?.setTimerListener(null)
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        NotificationUtils.cancelNotification(applicationContext, NOTIFICATION_ID)
+        stopSelf()
+    }
+
+    private fun getIntervalMs(): Long {
+        mTimerBean = TimerSetManage.get().getZTTimerBean()
+        return if (mTimerBean!!.timerNumber == TimerBean.TIMER_OTHER) {
+            mTimerBean!!.timerOtherNumber.coerceAtLeast(30_000L)
         } else {
-            mLibSuManage?.shellCommandExec("shell_Android")
+            mTimerBean!!.timerNumber.toLong().coerceAtLeast(30_000L)
         }
     }
-    //开始计时
-    private fun startTimerNum() {
-        mLibSuManage?.stop()
-        var time = 0L
-        if (TimerSetManage.get().getZTTimerBean().timerNumber == TimerBean.TIMER_OTHER) {
-            time = mTimerBean!!.timerOtherNumber
-        } else {
-            time = mTimerBean!!.timerNumber.toLong()
-        }
 
-        mCountDownTimer = object : CountDownTimer(time, 1000) {
-            // 参数分别是总时长和间隔时长（这里是1秒）
-            override fun onTick(millisUntilFinished: Long) {
-                val seconds = millisUntilFinished / 1000
-                val minutes = seconds / 60
-                val hours = minutes / 60
-                val timeLeftFormatted = String.format(
-                    Locale.getDefault(), "%02d:%02d:%02d",
-                    hours % 24, minutes % 60, seconds % 60
-                )
-                NotificationUtils.updateNotification(
-                    applicationContext,
-                    NOTIFICATION_ID,
-                    UUtils.getString(R.string.zt_timer_notification_timer_title),
-                    "${UUtils.getString(R.string.zt_timer_notification_timer_sum)} $timeLeftFormatted \n" +
-                        "${UUtils.getString(R.string.zt_timer_notification_timer_cunt)} ${mLibSuManage!!.cunt}"
-                )
-            }
+    private fun buildWaitingMessage(): String {
+        return "${UUtils.getString(R.string.zt_timer_notification_timer_sum)} ${getTimeLabel()}\n" +
+            "${UUtils.getString(R.string.zt_timer_notification_timer_cunt)} ${mLibSuManage?.cunt ?: 0}"
+    }
 
-            override fun onFinish() {
-                NotificationUtils.updateNotification(
-                    applicationContext,
-                    NOTIFICATION_ID,
-                    UUtils.getString(R.string.zt_timer_notification_timer_title),
-                    "${UUtils.getString(R.string.zt_timer_notification_timer_kill)}"
-                )
-                LogUtils.e(TAG, "startTimerNum  sendHandler.....")
-                mHandler1.sendMessageDelayed(Message(), 5000)
+    private fun updateWaitingNotification() {
+        NotificationUtils.updateNotification(
+            applicationContext,
+            NOTIFICATION_ID,
+            UUtils.getString(R.string.zt_timer_notification_timer_title),
+            buildWaitingMessage()
+        )
+    }
+
+    private fun getTimeLabel(): String {
+        mTimerBean = TimerSetManage.get().getZTTimerBean()
+        if (mTimerBean!!.timerNumber == TimerBean.TIMER_OTHER) {
+            return if (mTimerBean!!.timerOtherNumber > 60 * 1000) {
+                "${mTimerBean!!.timerOtherNumber / 60 / 1000} ${UUtils.getString(R.string.zt_timer_minute)}"
+            } else {
+                "< 1 ${UUtils.getString(R.string.zt_timer_minute)}"
             }
         }
-        mCountDownTimer?.start()
+        return "${mTimerBean!!.timerNumber / 60 / 1000} ${UUtils.getString(R.string.zt_timer_minute)}"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return TimerExeLocalBinder(this)
     }
 
-    private fun getTime(): String {
-        if (TimerSetManage.get().getZTTimerBean().timerNumber == TimerBean.TIMER_OTHER) {
-            if (mTimerBean!!.timerOtherNumber > (60 * 1000)) {
-                return "${mTimerBean!!.timerOtherNumber / 60 / 1000} ${UUtils.getString(R.string.zt_timer_minute)}"
-            } else {
-                return "< 1 ${UUtils.getString(R.string.zt_timer_minute)}"
-            }
-        } else {
-            return "${mTimerBean!!.timerNumber / 60 / 1000} ${UUtils.getString(R.string.zt_timer_minute)}"
-        }
-
-    }
-
     override fun onDestroy() {
-        super.onDestroy()
-        LogUtils.e(TAG, "onDestroy....")
         endTime()
+        super.onDestroy()
     }
 
     override fun onAddElement(msg: String?) {
-        LogUtils.e(TAG, "onAddElement....: $msg")
-
+        LogUtils.e(TAG, "onAddElement: $msg")
     }
 }

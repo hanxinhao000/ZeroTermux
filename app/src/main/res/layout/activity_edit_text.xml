@@ -300,7 +300,7 @@
             android:id="@+id/code_editor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:text="loading..."
+            app:text="@string/code_editor_loading"
             app:textSize="13sp" />
 
         <RelativeLayout
@@ -738,6 +738,34 @@
                         android:paddingLeft="14dp"
                         android:paddingRight="14dp"
                         android:text="@string/editor_sidebar_create_python"
+                        android:textColor="#F5F5F5"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/sidebar_create_php"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/shape_editor_symbol_key"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:text="@string/editor_sidebar_create_php"
+                        android:textColor="#F5F5F5"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/sidebar_create_node"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/shape_editor_symbol_key"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:text="@string/editor_sidebar_create_node"
                         android:textColor="#F5F5F5"
                         android:textSize="14sp" />
 

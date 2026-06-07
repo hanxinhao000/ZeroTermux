@@ -854,15 +854,21 @@ Reset successfully</string>
     <string name="editor_run_install_c_message">C compiler (gcc/clang) was not found. Install it in Termux?</string>
     <string name="editor_run_install_python_title">Install Python</string>
     <string name="editor_run_install_python_message">Python was not found. Install it in Termux?</string>
+    <string name="editor_run_install_php_title">Install PHP</string>
+    <string name="editor_run_install_php_message">PHP/Composer was not found. Install them in Termux?</string>
+    <string name="editor_run_install_node_title">Install Node.js</string>
+    <string name="editor_run_install_node_message">Node.js/npm was not found. Install them in Termux?</string>
     <string name="editor_java_terminal_unavailable">Cannot reach the Termux terminal. Open the main terminal first.</string>
     <string name="editor_java_save_failed">Failed to save the file. Run aborted.</string>
     <string name="editor_sidebar_files">Files</string>
     <string name="editor_sidebar_page_browser">Browse</string>
     <string name="editor_sidebar_page_project">New project</string>
-    <string name="editor_sidebar_project_path_label">Creates project_java / project_c / project_python folders under:</string>
+    <string name="editor_sidebar_project_path_label">Creates project_java / project_c / project_python / project_php / project_node folders under:</string>
     <string name="editor_sidebar_create_java">Create Java project</string>
     <string name="editor_sidebar_create_c">Create C project</string>
     <string name="editor_sidebar_create_python">Create Python project</string>
+    <string name="editor_sidebar_create_php">Create PHP (Composer) project</string>
+    <string name="editor_sidebar_create_node">Create Node.js (npm) project</string>
     <string name="editor_sidebar_create_android">Create Android project</string>
     <string name="editor_sidebar_android_project_created">Android project created: %1$s</string>
     <string name="editor_sidebar_android_project_failed">Failed to create Android project</string>
@@ -1013,6 +1019,13 @@ Reset successfully</string>
     <string name="developer_activity">Please enter in DEBUG mode</string>
 
     <string name="common_functions">Common Functions</string>
+    <string name="menu_create_project">Create Project</string>
+    <string name="menu_create_project_c">C</string>
+    <string name="menu_create_project_java">JAVA</string>
+    <string name="menu_create_project_python">PYTHON</string>
+    <string name="menu_create_project_php">PHP</string>
+    <string name="menu_create_project_npm">NPM</string>
+    <string name="menu_open_project">Open Project</string>
     <string name="beautification_function">Beautification/UI function</string>
     <string name="online_features">online features</string>
     <string name="zt_features">ZT function</string>
@@ -1600,4 +1613,5 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="item_containers_main_name">Main Container</string>
     <string name="item_containers_time">Creation time:</string>
     <string name="install_empty_android">Android/data/files/xinhao/module, no module package</string>
+    <string name="code_editor_loading">Loading...(If the directory is open, ignore this loading screen...You can start operating immediately; no waiting is required.)</string>
 </resources>

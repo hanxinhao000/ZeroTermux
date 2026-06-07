@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 
@@ -57,7 +56,9 @@ public class LibSuManage {
     private final List<String> mConsoleList = new TimerCallbackList();
 
     private Thread mThread;
-    private ShellLogRunnable mShellLogRunnable;
+    private ShellLogWriter mShellLogWriter;
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private final ExecutorService mShellExecutor = Executors.newSingleThreadExecutor();
 
     private boolean isRun = false;
 
@@ -97,8 +98,8 @@ public class LibSuManage {
     }
 
     public void initRunnable() {
-        mShellLogRunnable = new ShellLogRunnable(new File(BASHRC_SHELL_DIR_LOG, "/" + getLogName()));
-        new Thread(mShellLogRunnable).start();
+        logThreadStop();
+        mShellLogWriter = new ShellLogWriter(new File(BASHRC_SHELL_DIR_LOG, getLogName()));
     }
 
     public boolean writerFile() {
@@ -141,14 +142,21 @@ public class LibSuManage {
     }
 
     public void shellCommandExec(String funName) {
-        try {
-            mThread = new Thread(new ShellCommandExecRunnable(funName, mConsoleList));
-            mThread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogUtils.e(TAG, "shellCommandExec is error: " + e);
-        }
+        shellCommandExec(funName, null);
+    }
 
+    public void shellCommandExec(String funName, Runnable onComplete) {
+        mShellExecutor.execute(() -> {
+            try {
+                Shell.cmd(funName).to(mConsoleList).exec();
+            } catch (Exception e) {
+                LogUtils.e(TAG, "shellCommandExec error: " + e);
+            } finally {
+                if (onComplete != null) {
+                    mMainHandler.post(onComplete);
+                }
+            }
+        });
     }
 
     public void stop() {
@@ -164,17 +172,14 @@ public class LibSuManage {
     }
 
     public void logThreadStop() {
-        if (mShellLogRunnable != null) {
-            mShellLogRunnable.stop();
-            mShellLogRunnable = null;
+        if (mShellLogWriter != null) {
+            mShellLogWriter.stop();
+            mShellLogWriter = null;
         }
     }
 
     public boolean isRun() {
-        if (mShellLogRunnable == null) {
-            return false;
-        }
-        return !mShellLogRunnable.isStop;
+        return mShellLogWriter != null && !mShellLogWriter.isStop();
     }
 
     public void shellCommandSubmit(String funName) {
@@ -244,64 +249,60 @@ public class LibSuManage {
                 mTimerListener.onAddElement(s);
             }
             //输出LOG到指定目录
-            if (mShellLogRunnable != null) {
-                mShellLogRunnable.writerString(s);
+            if (mShellLogWriter != null) {
+                mShellLogWriter.writerString(s);
             }
         }
     }
 
 
-    private static class ShellLogRunnable implements Runnable {
-        private  File mFilePath;
-        private  boolean isStop;
-        private  String message = "";
-        PrintWriter printWriter;
-        public ShellLogRunnable(File mFilePath) {
-            this.mFilePath = mFilePath;
-            isStop = false;
-            try {
-                if (mFilePath.exists()) {
-                    mFilePath.createNewFile();
-                }
-                printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(mFilePath)));
-            } catch (FileNotFoundException e) {
-              e.printStackTrace();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-        }
-        @Override
-        public void run() {
-            while (true) {
-                if (isStop) {
-                    LogUtils.e(TAG, "ShellLogRunnable stop...");
-                    break;
-                }
-                try {
-                    Thread.sleep(500);
-                    if (mFilePath.exists()) {
-                        mFilePath.createNewFile();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    private static class ShellLogWriter {
+        private final PrintWriter printWriter;
+        private volatile boolean isStop;
 
-                if(printWriter != null && (message != null || !message.isEmpty())) {
-                    printWriter.print(message);
-                    printWriter.flush();
-                    message = "";
+        ShellLogWriter(File filePath) {
+            isStop = false;
+            PrintWriter writer = null;
+            try {
+                File parent = filePath.getParentFile();
+                if (parent != null && !parent.exists()) {
+                    parent.mkdirs();
                 }
+                if (!filePath.exists()) {
+                    filePath.createNewFile();
+                }
+                writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filePath, true)));
+            } catch (IOException e) {
+                LogUtils.e(TAG, "ShellLogWriter init error: " + e);
+            }
+            printWriter = writer;
+        }
+
+        public void writerString(String msg) {
+            if (isStop || printWriter == null || msg == null) {
+                return;
+            }
+            synchronized (this) {
+                if (isStop || printWriter == null) {
+                    return;
+                }
+                printWriter.println(msg);
+                printWriter.flush();
             }
         }
 
         public void stop() {
             isStop = true;
+            synchronized (this) {
+                if (printWriter != null) {
+                    printWriter.flush();
+                    printWriter.close();
+                }
+            }
         }
 
-        public void writerString(String msg) {
-            message += "\n" + msg;
+        public boolean isStop() {
+            return isStop;
         }
     }
     public void setTimerListener(TimerListener timerListener) {

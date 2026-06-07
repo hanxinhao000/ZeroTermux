@@ -829,15 +829,21 @@
     <string name="editor_run_install_c_message">未检测到 C 编译环境（gcc/clang）。是否在 Termux 中安装？</string>
     <string name="editor_run_install_python_title">安装 Python</string>
     <string name="editor_run_install_python_message">未检测到 Python 运行环境。是否在 Termux 中安装？</string>
+    <string name="editor_run_install_php_title">安装 PHP</string>
+    <string name="editor_run_install_php_message">未检测到 PHP/Composer 运行环境。是否在 Termux 中安装？</string>
+    <string name="editor_run_install_node_title">安装 Node.js</string>
+    <string name="editor_run_install_node_message">未检测到 Node.js/npm 运行环境。是否在 Termux 中安装？</string>
     <string name="editor_java_terminal_unavailable">无法连接 Termux 终端，请先从主界面打开终端后再试</string>
     <string name="editor_java_save_failed">保存文件失败，无法运行</string>
     <string name="editor_sidebar_files">文件</string>
     <string name="editor_sidebar_page_browser">浏览</string>
     <string name="editor_sidebar_page_project">创建项目</string>
-    <string name="editor_sidebar_project_path_label">将在以下目录下创建 project_java / project_c / project_python 等文件夹：</string>
+    <string name="editor_sidebar_project_path_label">将在以下目录下创建 project_java / project_c / project_python / project_php / project_node 等文件夹：</string>
     <string name="editor_sidebar_create_java">创建 Java 项目</string>
     <string name="editor_sidebar_create_c">创建 C 语言项目</string>
     <string name="editor_sidebar_create_python">创建 Python 项目</string>
+    <string name="editor_sidebar_create_php">创建 PHP (Composer) 项目</string>
+    <string name="editor_sidebar_create_node">创建 Node.js (npm) 项目</string>
     <string name="editor_sidebar_create_android">创建 Android 项目</string>
     <string name="editor_sidebar_android_project_created">已创建 Android 项目：%1$s</string>
     <string name="editor_sidebar_android_project_failed">创建 Android 项目失败</string>
@@ -986,6 +992,13 @@
     <string name="developer_activity">请在DEBUG模式下进入</string>
     <string name="input_content_cannot_be_empty">输入内容不能为空</string>
     <string name="common_functions">常用功能</string>
+    <string name="menu_create_project">创建项目</string>
+    <string name="menu_create_project_c">C</string>
+    <string name="menu_create_project_java">JAVA</string>
+    <string name="menu_create_project_python">PYTHON</string>
+    <string name="menu_create_project_php">PHP</string>
+    <string name="menu_create_project_npm">NPM</string>
+    <string name="menu_open_project">打开项目</string>
     <string name="beautification_function">美化/UI功能</string>
     <string name="online_features">线上功能</string>
     <string name="zt_features">ZT功能</string>
@@ -1561,4 +1574,6 @@
     <string name="item_containers_main_name">主容器</string>
     <string name="item_containers_time">创建时间:</string>
     <string name="install_empty_android">Android/data/files/xinhao/module,没有模块包</string>
+    <string name="code_editor_loading">Loading...(如果为打开目录，则忽略此loading...，直接开始操作即可，无需等待)</string>
+
 </resources>

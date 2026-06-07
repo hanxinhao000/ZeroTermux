@@ -123,6 +123,27 @@
             click="java:com.termux.zerocore.config.mainmenu.config.ZTSettingsClickConfig" />
     </group>
 
+    <group name="Create Project">
+        <item tag="C"
+            name="C"
+            click="java:com.termux.zerocore.config.mainmenu.config.CreateCProjectClickConfig" />
+        <item tag="JAVA"
+            name="JAVA"
+            click="java:com.termux.zerocore.config.mainmenu.config.CreateJavaProjectClickConfig" />
+        <item tag="PYTHON"
+            name="PYTHON"
+            click="java:com.termux.zerocore.config.mainmenu.config.CreatePythonProjectClickConfig" />
+        <item tag="PHP"
+            name="PHP"
+            click="java:com.termux.zerocore.config.mainmenu.config.CreatePhpProjectClickConfig" />
+        <item tag="NPM"
+            name="NPM"
+            click="java:com.termux.zerocore.config.mainmenu.config.CreateNpmProjectClickConfig" />
+        <item tag="Open Project"
+            name="Open Project"
+            click="java:com.termux.zerocore.config.mainmenu.config.OpenProjectClickConfig" />
+    </group>
+
     <group name="X11 Functions">
         <item tag="X11 Settings"
             click="java:com.termux.zerocore.config.mainmenu.config.X11SettingsClickConfig" />

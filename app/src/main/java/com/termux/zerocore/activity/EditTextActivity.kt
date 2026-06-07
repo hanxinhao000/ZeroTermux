@@ -56,6 +56,8 @@ import com.termux.zerocore.editor.EditorFileTreeIcon
 import com.termux.zerocore.editor.EditorFileTreeListView
 import com.termux.zerocore.editor.EditorFileTreeOperations
 import com.termux.zerocore.editor.EditorFileTreeScrollView
+import com.termux.zerocore.editor.EditorHelloProjectCreator
+import com.termux.zerocore.editor.EditorHelloProjectType
 import com.termux.zerocore.editor.EditorProgramRunner
 import com.termux.zerocore.editor.EditorRunDetector
 import com.termux.zerocore.editor.EditorRunLanguage
@@ -146,41 +148,7 @@ class EditTextActivity : AppCompatActivity() {
         const val SIDEBAR_ANIMATION_DURATION = 200L
         const val SIDEBAR_FLING_VELOCITY_DP = 400
         const val REQUEST_EDITOR_FONT_FILE = 1001
-
-        private val JAVA_HELLO_TEMPLATE = """
-            public class Hello {
-                public static void main(String[] args) {
-                    System.out.println("Hello, World!");
-                }
-            }
-        """.trimIndent()
-
-        private val C_HELLO_TEMPLATE = """
-            #include <stdio.h>
-
-            int main(void) {
-                printf("Hello, World!\n");
-                return 0;
-            }
-        """.trimIndent()
-
-        private val PYTHON_HELLO_TEMPLATE = """
-            #!/usr/bin/env python3
-
-            def main():
-                print("Hello, World!")
-
-
-            if __name__ == "__main__":
-                main()
-        """.trimIndent()
     }
-
-    private data class HelloProjectSpec(
-        val dirBaseName: String,
-        val entryFileName: String,
-        val content: String
-    )
 
     private data class SidebarSearchMatch(
         val line: Int,
@@ -343,11 +311,50 @@ class EditTextActivity : AppCompatActivity() {
             return
         }
         val file = File(stringExtra)
+        if (file.isDirectory) {
+            if (!file.exists() && !file.mkdirs()) {
+                finish()
+                return
+            }
+            if (!file.isDirectory) {
+                finish()
+                return
+            }
+            loadingFunDirectory(savedInstanceState, file)
+            return
+        }
         if (!file.exists() || !canOpenFile(file)) {
             finish()
             return
         }
         loadingFun(savedInstanceState, file)
+    }
+
+    private fun loadingFunDirectory(savedInstanceState: Bundle?, directory: File) {
+        lspManager = EditorLspManager(applicationContext)
+        programRunner = EditorProgramRunner(applicationContext)
+        androidRunner = EditorAndroidRunner(applicationContext)
+        lifecycleScope.launch(Dispatchers.IO) {
+            loadEditorSettings()
+            applyLspSettings()
+            setupTextmate()
+            val ztUserBean = UserSetManage.get().getZTUserBean()
+            withContext(Dispatchers.Main) {
+                ensureTextmateTheme()
+                code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
+                applyEditorFont(false)
+                initEditorTopBar()
+                initEditorTerminal(savedInstanceState)
+                initSymbolInput()
+                initSidebar()
+                restoreSidebarState(savedInstanceState)
+                initFileTree(directory)
+                setSidebarVisible(true, animated = false)
+                showFilePanel(updateSearch = false)
+                showSidebarBrowserPage()
+                dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
+            }
+        }
     }
 
     private fun loadingFun(savedInstanceState: Bundle?, file: File) {
@@ -594,6 +601,14 @@ class EditTextActivity : AppCompatActivity() {
             EditorRunLanguage.PYTHON -> {
                 titleRes = R.string.editor_run_install_python_title
                 messageRes = R.string.editor_run_install_python_message
+            }
+            EditorRunLanguage.PHP -> {
+                titleRes = R.string.editor_run_install_php_title
+                messageRes = R.string.editor_run_install_php_message
+            }
+            EditorRunLanguage.NODE -> {
+                titleRes = R.string.editor_run_install_node_title
+                messageRes = R.string.editor_run_install_node_message
             }
         }
         AlertDialog.Builder(this)
@@ -2299,13 +2314,19 @@ class EditTextActivity : AppCompatActivity() {
         mSidebarPageBrowserTab?.setOnClickListener { showSidebarBrowserPage() }
         mSidebarPageProjectTab?.setOnClickListener { showSidebarProjectPage() }
         findViewById<TextView>(R.id.sidebar_create_java)?.setOnClickListener {
-            createHelloProject(HelloProjectSpec("project_java", "Hello.java", JAVA_HELLO_TEMPLATE))
+            createHelloProject(EditorHelloProjectType.JAVA)
         }
         findViewById<TextView>(R.id.sidebar_create_c)?.setOnClickListener {
-            createHelloProject(HelloProjectSpec("project_c", "hello.c", C_HELLO_TEMPLATE))
+            createHelloProject(EditorHelloProjectType.C)
         }
         findViewById<TextView>(R.id.sidebar_create_python)?.setOnClickListener {
-            createHelloProject(HelloProjectSpec("project_python", "hello.py", PYTHON_HELLO_TEMPLATE))
+            createHelloProject(EditorHelloProjectType.PYTHON)
+        }
+        findViewById<TextView>(R.id.sidebar_create_php)?.setOnClickListener {
+            createHelloProject(EditorHelloProjectType.PHP)
+        }
+        findViewById<TextView>(R.id.sidebar_create_node)?.setOnClickListener {
+            createHelloProject(EditorHelloProjectType.NPM)
         }
         findViewById<TextView>(R.id.sidebar_create_android)?.setOnClickListener {
             createAndroidProject()
@@ -2365,22 +2386,18 @@ class EditTextActivity : AppCompatActivity() {
         }
     }
 
-    private fun createHelloProject(spec: HelloProjectSpec) {
+    private fun createHelloProject(type: EditorHelloProjectType) {
         val parentDir = getProjectTargetDir()
         if (parentDir == null || !parentDir.isDirectory) {
             UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
             return
         }
-        val projectDir = allocateProjectDirectory(parentDir, spec.dirBaseName)
-        if (!projectDir.mkdirs()) {
+        val targetFile = EditorHelloProjectCreator.createInDirectory(parentDir, type)
+        if (targetFile == null) {
             UUtils.showMsg(UUtils.getString(R.string.save_error_))
             return
         }
-        val targetFile = File(projectDir, spec.entryFileName)
-        if (!UUtils.setFileString(targetFile, spec.content)) {
-            UUtils.showMsg(UUtils.getString(R.string.save_error_))
-            return
-        }
+        val projectDir = targetFile.parentFile ?: return
         UUtils.showMsg(getString(R.string.editor_sidebar_project_created, projectDir.name))
         if (fileTreeRoot?.absolutePath != parentDir.absolutePath) {
             initFileTree(parentDir)

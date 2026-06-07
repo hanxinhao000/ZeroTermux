@@ -2,6 +2,7 @@ package com.termux.zerocore.settings
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -93,19 +94,12 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
                             return@setOnCheckedChangeListener
                         }
                         LogUtils.e(TAG, "onAddElement: start")
-                       // mLibSuManage?.writerDebugFile()
-                       // mLibSuManage?.shellCommandExec("shell_main")
                         mLibSuManage?.initRunnable()
-                        val intent = Intent(this, TimerExeService::class.java)
-                        intent.action = TimerExeService.TIMER_EXE_START
-                        startService(intent)
+                        startTimerService()
                     } else {
                         mLibSuManage?.logThreadStop()
                         LogUtils.e(TAG, "onAddElement: stop")
-                       // mLibSuManage?.stop()
-                        val intent = Intent(this, TimerExeService::class.java)
-                        intent.action = TimerExeService.TIMER_EXE_END
-                        stopService(intent)
+                        stopTimerService()
                     }
                 }
                 mStartSwitchEnvironmentSwitch -> {
@@ -206,5 +200,21 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
             R.id.m_30 -> {switchIndex(TimerBean.TIMER_30_MINUTE)}
             R.id.other -> {switchIndex(TimerBean.TIMER_OTHER)}
         }
+    }
+
+    private fun startTimerService() {
+        val intent = Intent(this, TimerExeService::class.java)
+        intent.action = TimerExeService.TIMER_EXE_START
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+    }
+
+    private fun stopTimerService() {
+        val intent = Intent(this, TimerExeService::class.java)
+        intent.action = TimerExeService.TIMER_EXE_END
+        startService(intent)
     }
 }

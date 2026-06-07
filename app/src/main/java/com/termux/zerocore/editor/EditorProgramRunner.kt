@@ -20,6 +20,8 @@ class EditorProgramRunner(private val context: Context) {
             EditorRunLanguage.JAVA -> commandExists("javac") && commandExists("java")
             EditorRunLanguage.C -> commandExists("gcc") || commandExists("clang") || commandExists("cc")
             EditorRunLanguage.PYTHON -> commandExists("python3") || commandExists("python")
+            EditorRunLanguage.PHP -> commandExists("php")
+            EditorRunLanguage.NODE -> commandExists("node")
         }
     }
 
@@ -36,6 +38,14 @@ class EditorProgramRunner(private val context: Context) {
             EditorRunLanguage.PYTHON -> {
                 sendToTerminal("echo '[ZeroTermux Editor] Installing Python...'\n")
                 sendToTerminal("pkg install -y python\n")
+            }
+            EditorRunLanguage.PHP -> {
+                sendToTerminal("echo '[ZeroTermux Editor] Installing PHP & Composer...'\n")
+                sendToTerminal("pkg install -y php composer\n")
+            }
+            EditorRunLanguage.NODE -> {
+                sendToTerminal("echo '[ZeroTermux Editor] Installing Node.js & npm...'\n")
+                sendToTerminal("pkg install -y nodejs\n")
             }
         }
         mainHandler.post { onFinished() }
@@ -62,6 +72,14 @@ class EditorProgramRunner(private val context: Context) {
                 val python = if (commandExists("python3")) "python3" else "python"
                 sendToTerminal("echo '[ZeroTermux Editor] Run ${file.name}'\n")
                 sendToTerminal("cd $directory && $python $sourceName\n")
+            }
+            EditorRunLanguage.PHP -> {
+                sendToTerminal("echo '[ZeroTermux Editor] Run ${file.name}'\n")
+                sendToTerminal("cd $directory && php $sourceName\n")
+            }
+            EditorRunLanguage.NODE -> {
+                sendToTerminal("echo '[ZeroTermux Editor] Run ${file.name}'\n")
+                sendToTerminal("cd $directory && node $sourceName\n")
             }
         }
     }

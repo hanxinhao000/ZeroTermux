@@ -12,26 +12,48 @@ public class NotificationUtils {
     private static final String CHANNEL_ID = "channel_timer_notification";
     private static final String CHANNEL_NAME = "channel_timer";
 
-    public static void showNotification(Context context, int notificationId, String title, String message) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // 创建通知渠道（仅适用于Android 8.0以上版本）
+    private static void ensureTimerChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager == null) {
+                return;
+            }
+            NotificationChannel existing = notificationManager.getNotificationChannel(CHANNEL_ID);
+            if (existing != null) {
+                return;
+            }
+            NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_LOW
+            );
+            channel.setShowBadge(false);
+            channel.enableVibration(false);
+            channel.setSound(null, null);
             notificationManager.createNotificationChannel(channel);
         }
+    }
 
-        // 创建通知
+    public static Notification buildTimerNotification(Context context, String title, String message) {
+        ensureTimerChannel(context);
         Notification.Builder builder = new Notification.Builder(context)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.drawable.ic_launcher);
-
-        // 发送通知
+            .setSmallIcon(R.drawable.ic_launcher)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(CHANNEL_ID);
         }
-        notificationManager.notify(notificationId, builder.build());
+        return builder.build();
+    }
+
+    public static void showNotification(Context context, int notificationId, String title, String message) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        ensureTimerChannel(context);
+        Notification notification = buildTimerNotification(context, title, message);
+        notificationManager.notify(notificationId, notification);
     }
 
     public static void cancelNotification(Context context, int notificationId) {
@@ -41,18 +63,17 @@ public class NotificationUtils {
 
     public static void updateNotification(Context context, int notificationId, String updatedTitle, String updatedMessage) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // 创建通知
+        ensureTimerChannel(context);
         Notification.Builder builder = new Notification.Builder(context)
             .setContentTitle(updatedTitle)
             .setContentText(updatedMessage)
             .setSmallIcon(R.drawable.ic_launcher)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .setSound(null);
 
-        // 更新通知
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             builder.setChannelId(CHANNEL_ID);
-            builder.setOnlyAlertOnce(true);
         }
         notificationManager.notify(notificationId, builder.build());
     }

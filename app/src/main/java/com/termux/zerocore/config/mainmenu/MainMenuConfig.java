@@ -15,6 +15,12 @@ import com.termux.zerocore.config.mainmenu.config.CloseTurnNetworkAdbClickConfig
 import com.termux.zerocore.config.mainmenu.config.CommandDefinitionCLickConfig;
 import com.termux.zerocore.config.mainmenu.config.CommonlyUsedSoftLinksDataClickConfig;
 import com.termux.zerocore.config.mainmenu.config.ContainerSwitchClickConfig;
+import com.termux.zerocore.config.mainmenu.config.CreateCProjectClickConfig;
+import com.termux.zerocore.config.mainmenu.config.CreateJavaProjectClickConfig;
+import com.termux.zerocore.config.mainmenu.config.CreateNpmProjectClickConfig;
+import com.termux.zerocore.config.mainmenu.config.CreatePhpProjectClickConfig;
+import com.termux.zerocore.config.mainmenu.config.CreatePythonProjectClickConfig;
+import com.termux.zerocore.config.mainmenu.config.OpenProjectClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DataMessageClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DefBashClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DockerCheckClickConfig;
@@ -73,6 +79,7 @@ public class MainMenuConfig implements BaseConfig {
     public static final int CODE_ZT_ROOT = 5;
     public static final int CODE_ZT_ENGINE = 6;
     public static final int CODE_ZT_CONFIG = 7;
+    public static final int CODE_CREATE_PROJECT = 8;
 
     // 主页分类
     private static ArrayList<MainMenuCategoryData> MAIN_MENU_CATEGORY_DATAS = new ArrayList<>();
@@ -89,6 +96,16 @@ public class MainMenuConfig implements BaseConfig {
         commonClicks.add(new QEMUClickConfig());
         commonClicks.add(new ZTSettingsClickConfig());
         MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.common_functions), CODE_COMMON_FUNCTIONS, commonClicks));
+
+        // 创建项目
+        ArrayList<MainMenuClickConfig> createProjectClicks = new ArrayList<>();
+        createProjectClicks.add(new CreateCProjectClickConfig());
+        createProjectClicks.add(new CreateJavaProjectClickConfig());
+        createProjectClicks.add(new CreatePythonProjectClickConfig());
+        createProjectClicks.add(new CreatePhpProjectClickConfig());
+        createProjectClicks.add(new CreateNpmProjectClickConfig());
+        createProjectClicks.add(new OpenProjectClickConfig());
+        MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.menu_create_project), CODE_CREATE_PROJECT, createProjectClicks));
 
         // x11功能
         ArrayList<MainMenuClickConfig> x11Clicks = new ArrayList<>();
