@@ -47,6 +47,7 @@ class BeautifySettingDialog : BaseDialogDown {
     private var mBlurSeekBar: SeekBar? = null
     private var mBlurLabel: TextView? = null
     private var mTextShadowSeekBar: SeekBar? = null
+    private var mTextShadowSwitch: Switch? = null
 
     private var fontColor:Int = Color.parseColor("#ffffff")
     private var fontColorProgress:Int = 0
@@ -72,6 +73,7 @@ class BeautifySettingDialog : BaseDialogDown {
         mBlurSeekBar = mView.findViewById(R.id.blur_seekbar)
         mBlurLabel = mView.findViewById(R.id.blur_label)
         mTextShadowSeekBar = mView.findViewById(R.id.text_shadow_seekbar)
+        mTextShadowSwitch = mView.findViewById(R.id.text_shadow_switch)
         setColorAll()
         initProgress()
     }
@@ -85,6 +87,7 @@ class BeautifySettingDialog : BaseDialogDown {
         val blurEnabled = SaveData.getStringOther("blur_enabled")
         val blurRadius = SaveData.getStringOther("blur_radius")
         val textShadowStrength = SaveData.getStringOther("text_shadow_strength")
+        val textShadowEnabled = SaveData.getStringOther("text_shadow_enabled")
 
         if(!(stringOther == null || stringOther.isEmpty() || stringOther == "def")){
             try {
@@ -124,6 +127,9 @@ class BeautifySettingDialog : BaseDialogDown {
                 mTextShadowSeekBar?.progress = textShadowStrength.toInt()
             } catch (e: Exception) { }
         }
+        val textShadowOn = textShadowEnabled != "false"
+        mTextShadowSwitch?.isChecked = textShadowOn
+        mTextShadowSeekBar?.isEnabled = textShadowOn
 
         val fileImg = File("${FileUrl.mainConfigImg}/back.jpg")
         Log.e(LOG_TAG, "initProgress: check jpg exists: " + fileImg.exists())
@@ -221,9 +227,17 @@ class BeautifySettingDialog : BaseDialogDown {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
+        mTextShadowSwitch?.setOnCheckedChangeListener { _, isChecked ->
+            mTextShadowSeekBar?.isEnabled = isChecked
+            SaveData.saveStringOther("text_shadow_enabled", if (isChecked) "true" else "false")
+            mOnTextShadowChangeListener?.onTextShadowChanged(
+                if (isChecked) mTextShadowSeekBar?.progress ?: 50 else 0
+            )
+        }
+
         mTextShadowSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
+                if (fromUser && mTextShadowSwitch?.isChecked == true) {
                     SaveData.saveStringOther("text_shadow_strength", "$progress")
                     mOnTextShadowChangeListener?.onTextShadowChanged(progress)
                 }

@@ -83,7 +83,9 @@ class EditorLspInstaller(private val context: Context) {
 
     fun isPackageInstalled(packageId: String): Boolean {
         val serverPackage = packageById(packageId) ?: return false
-        return serverPackage.commands.values.all { command -> commandExists(command.substringBefore(' ')) }
+        return serverPackage.commands.values.all { command ->
+            EditorLspCommandResolver.isCommandAvailable(command)
+        }
     }
 
     fun isLanguageInstalled(languageId: String): Boolean {
@@ -93,9 +95,17 @@ class EditorLspInstaller(private val context: Context) {
     }
 
     fun commandForLanguage(languageId: String): String? {
-        return PACKAGES.firstOrNull { serverPackage ->
-            languageId in serverPackage.languageIds && isPackageInstalled(serverPackage.id)
-        }?.commands?.get(languageId)
+        return launchSpecForLanguage(languageId)?.let { spec ->
+            (listOf(spec.executable) + spec.arguments).joinToString(" ")
+        }
+    }
+
+    fun launchSpecForLanguage(languageId: String): EditorLspLaunchSpec? {
+        val serverPackage = PACKAGES.firstOrNull { pkg ->
+            languageId in pkg.languageIds && isPackageInstalled(pkg.id)
+        } ?: return null
+        val raw = serverPackage.commands[languageId] ?: return null
+        return EditorLspCommandResolver.resolveLaunchSpec(raw)
     }
 
     private fun installPackageWorker(serverPackage: ServerPackage) {
@@ -146,7 +156,11 @@ class EditorLspInstaller(private val context: Context) {
     private fun sendLspInstallToTerminal(serverPackage: ServerPackage) {
         val npmPackages = serverPackage.npmPackages.joinToString(" ")
         sendToTerminal("echo '[ZeroTermux Editor] Installing LSP: ${serverPackage.displayName}'\n")
-        sendToTerminal("npm install -g --no-audit --no-fund $npmPackages\n")
+        sendToTerminal(
+            "mkdir -p ~/.zerotermux/editor-lsp && cd ~/.zerotermux/editor-lsp && " +
+                "(test -f package.json || npm init -y >/dev/null 2>&1 || true) && " +
+                "npm install --no-audit --no-fund --save $npmPackages\n"
+        )
     }
 
     private fun waitForCondition(check: () -> Boolean, timeoutMs: Long): Boolean {
@@ -175,7 +189,8 @@ class EditorLspInstaller(private val context: Context) {
     }
 
     private fun installPackageBlocking(serverPackage: ServerPackage) {
-        baseDir().mkdirs()
+        val base = baseDir()
+        base.mkdirs()
         if (!isNpmInstalled()) {
             installNpmBlocking()
         }
@@ -185,11 +200,15 @@ class EditorLspInstaller(private val context: Context) {
             export HOME=${shellQuote(TermuxConstants.TERMUX_HOME_DIR_PATH)}
             export PREFIX=${shellQuote(TermuxConstants.TERMUX_PREFIX_DIR_PATH)}
             export PATH=${shellQuote(buildPath(null))}
-            npm install -g --no-audit --no-fund $npmPackages
+            cd ${shellQuote(base.absolutePath)}
+            if [ ! -f package.json ]; then
+                npm init -y >/dev/null 2>&1 || echo '{"name":"zerotermux-editor-lsp","private":true}' > package.json
+            fi
+            npm install --no-audit --no-fund --save $npmPackages
         """.trimIndent()
         runShellScript(script)
         if (!isPackageInstalled(serverPackage.id)) {
-            throw IllegalStateException("LSP 命令未就绪，请检查 npm 全局安装路径")
+            throw IllegalStateException("LSP 命令未就绪，请检查 ~/.zerotermux/editor-lsp 安装结果")
         }
     }
 
@@ -200,7 +219,7 @@ class EditorLspInstaller(private val context: Context) {
         processBuilder.directory(TermuxConstants.TERMUX_HOME_DIR)
         processBuilder.redirectErrorStream(true)
         processBuilder.environment().putAll(TermuxShellEnvironment().getEnvironment(context, false))
-        processBuilder.environment()["PATH"] = buildPath(processBuilder.environment()["PATH"])
+        processBuilder.environment()["PATH"] = EditorLspCommandResolver.buildPath(processBuilder.environment()["PATH"])
         val process = processBuilder.start()
         val output = StringBuilder()
         BufferedReader(InputStreamReader(process.inputStream)).useLines { lines ->
@@ -217,7 +236,7 @@ class EditorLspInstaller(private val context: Context) {
     }
 
     private fun commandExists(commandName: String): Boolean {
-        return File(TermuxConstants.TERMUX_BIN_PREFIX_DIR, commandName).canExecute()
+        return EditorLspCommandResolver.resolveExecutablePath(commandName) != null
     }
 
     private fun markerFile(packageId: String): File {
@@ -297,13 +316,7 @@ class EditorLspInstaller(private val context: Context) {
         }
 
         fun buildPath(existingPath: String?): String {
-            val parts = arrayListOf(
-                TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH,
-                "/system/bin",
-                "/system/xbin"
-            )
-            existingPath?.split(':')?.filterTo(parts) { it.isNotBlank() }
-            return parts.distinct().joinToString(":")
+            return EditorLspCommandResolver.buildPath(existingPath)
         }
 
         fun packageById(packageId: String): ServerPackage? {

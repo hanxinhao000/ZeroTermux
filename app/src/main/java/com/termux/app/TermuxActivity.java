@@ -2720,8 +2720,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             BackgroundBlurUtils.removeBlur(back_img);
         }
 
+        String textShadowEnabled = SaveData.INSTANCE.getStringOther("text_shadow_enabled");
         String textShadowStrength = SaveData.INSTANCE.getStringOther("text_shadow_strength");
-        if (textShadowStrength != null && !textShadowStrength.isEmpty() && !textShadowStrength.equals("def")) {
+        if (textShadowEnabled != null && textShadowEnabled.equals("false")) {
+            TerminalRenderer.TEXT_SHADOW_PROGRESS = 0;
+        } else if (textShadowStrength != null && !textShadowStrength.isEmpty() && !textShadowStrength.equals("def")) {
             try { TerminalRenderer.TEXT_SHADOW_PROGRESS = Integer.parseInt(textShadowStrength); } catch (Exception e) { }
         }
 

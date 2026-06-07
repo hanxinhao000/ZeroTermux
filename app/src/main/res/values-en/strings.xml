@@ -1133,6 +1133,22 @@ Reset successfully</string>
     <string name="zt_timer_notification_timer_sum">Current scheduled interval:</string>
     <string name="zt_timer_notification_timer_cunt">Current execution count:</string>
     <string name="zt_timer_notification_timer_kill">Forcefully closing the current task！</string>
+    <string name="zt_timer_countdown_label">Countdown to next run</string>
+    <string name="zt_timer_execute_count_label">Execution count</string>
+    <string name="zt_timer_edit_script">Edit script</string>
+    <string name="zt_timer_edit_script_sum">Open and edit the timer script for the current environment</string>
+    <string name="zt_timer_view_log">View log</string>
+    <string name="zt_timer_view_log_sum">Open the execution log under ~/.timerdir/log/</string>
+    <string name="zt_timer_execution_log_label">Execution log</string>
+    <string name="zt_timer_execution_log_sum">Shows the latest 100 lines, newest on top</string>
+    <string name="zt_timer_log_empty">No execution log yet</string>
+    <string name="zt_timer_second_unit">seconds</string>
+    <string name="zt_timer_status_executing">Running scheduled script…</string>
+    <string name="zt_timer_waiting_script">Waiting for script to finish</string>
+    <string name="zt_timer_executing_current_script">Running current script</string>
+    <string name="zt_timer_notification_permission_required">Notification permission is required for scheduled tasks</string>
+    <string name="zt_timer_main_program_missing">Main terminal is unavailable. Open ZeroTermux first.</string>
+    <string name="zt_timer_script_missing">Script file not found. Please try again.</string>
     <string name="zt_env_shell_title">ADB Shell runs Termux</string>
     <string name="zt_env_shell_sum">Turn this option on to output the sh script to the specified directory\nClose it to cancel this script output</string>
     <string name="zt_env_shell_sum_msg">Open adb shell and run the following command:\n1.adb shell\n2.</string>
@@ -1523,6 +1539,7 @@ cd ~ &amp;&amp; pkg update -y \n
 
     <string name="back_menu_visible">Left/Right panel displays background image</string>
     <string name="back_menu_visible_summary">You must ensure that the following path:\n~Ztinfo/menuBack/\ncontains left.png and right.png</string>
+    <string name="text_shadow_enable">Enable text contrast</string>
 
     <string name="guide_zerotermux_settings_agreement">ZeroTermux Terms of Use</string>
     <string name="guide_zerotermux_previous">Back</string>

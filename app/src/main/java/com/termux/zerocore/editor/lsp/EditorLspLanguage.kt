@@ -39,13 +39,20 @@ class EditorLspLanguage(
         delegate.requireAutoComplete(content, position, publisher, extraArguments)
         val id = languageId ?: return
         if (!lspManager.isEnabledFor(id)) return
-        publisher.checkCancelled()
-        val items = ArrayList<CompletionItem>()
-        lspManager.completion(file, id, content, position).forEach { candidate ->
-            items.add(EditorLspCompletionItem(candidate))
+        try {
+            publisher.checkCancelled()
+            val items = ArrayList<CompletionItem>()
+            lspManager.completion(file, id, content, position).forEach { candidate ->
+                items.add(EditorLspCompletionItem(candidate))
+            }
+            if (items.isNotEmpty()) {
+                publisher.addItems(items)
+                publisher.updateList(true)
+            }
+        } catch (e: CompletionCancelledException) {
+            throw e
+        } catch (_: Exception) {
         }
-        publisher.addItems(items)
-        publisher.updateList(true)
     }
 
     override fun getIndentAdvance(content: ContentReference, line: Int, column: Int): Int {

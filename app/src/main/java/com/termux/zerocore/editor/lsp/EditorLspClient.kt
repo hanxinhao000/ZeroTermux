@@ -19,10 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class EditorLspClient(
     private val context: Context,
-    private val command: String,
+    private val launchSpec: EditorLspLaunchSpec,
     private val rootDirectory: File?,
     private val timeoutMillis: Long,
-    private val onError: (String) -> Unit
+    private val onError: (String) -> Unit,
+    private val environmentExtras: Map<String, String> = emptyMap(),
+    private val initializationOptions: JSONObject? = null
 ) {
     private data class PendingRequest(
         val latch: CountDownLatch = CountDownLatch(1),
@@ -46,12 +48,18 @@ class EditorLspClient(
     fun start(): Boolean {
         if (running && initialized) return true
         return try {
-            val shell = File(TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH, "sh")
-            val shellPath = if (shell.canExecute()) shell.absolutePath else "/system/bin/sh"
-            val processBuilder = ProcessBuilder(shellPath, "-lc", command)
+            val command = ArrayList<String>(1 + launchSpec.arguments.size)
+            command.add(launchSpec.executable)
+            command.addAll(launchSpec.arguments)
+            val processBuilder = ProcessBuilder(command)
             processBuilder.directory(rootDirectory?.takeIf { it.isDirectory } ?: TermuxConstants.TERMUX_HOME_DIR)
             processBuilder.environment().putAll(TermuxShellEnvironment().getEnvironment(context, false))
             processBuilder.environment()["PATH"] = buildPath(processBuilder.environment()["PATH"])
+            environmentExtras.forEach { (key, value) ->
+                processBuilder.environment()[key] = value
+            }
+            processBuilder.environment()["TMPDIR"] =
+                processBuilder.environment()["TMPDIR"] ?: TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH
             process = processBuilder.start()
             running = true
             startReaderThread()
@@ -60,7 +68,9 @@ class EditorLspClient(
             if (!initialized) shutdown()
             initialized
         } catch (e: Exception) {
-            onError(e.message ?: "LSP server start failed")
+            onError(
+                e.message ?: "LSP server start failed: ${launchSpec.executable} ${launchSpec.arguments.joinToString(" ")}"
+            )
             shutdown()
             false
         }
@@ -173,6 +183,7 @@ class EditorLspClient(
             .put("rootUri", rootUri ?: JSONObject.NULL)
             .put("capabilities", capabilities)
             .put("clientInfo", JSONObject().put("name", "ZeroTermux Editor"))
+        initializationOptions?.let { params.put("initializationOptions", it) }
         val response = request("initialize", params) ?: return false
         notify("initialized", JSONObject())
         return response is JSONObject
@@ -255,7 +266,8 @@ class EditorLspClient(
             try {
                 BufferedReader(InputStreamReader(errorStream)).useLines { lines ->
                     lines.forEach { line ->
-                        if (line.isNotBlank()) onError(line)
+                        if (line.isBlank() || shouldIgnoreStderrLine(line)) return@forEach
+                        onError(line)
                     }
                 }
             } catch (_: Exception) {
@@ -331,6 +343,13 @@ class EditorLspClient(
     }
 
     private fun buildPath(existingPath: String?): String {
-        return EditorLspInstaller.buildPath(existingPath)
+        return EditorLspCommandResolver.buildPath(existingPath)
+    }
+
+    private fun shouldIgnoreStderrLine(line: String): Boolean {
+        val normalized = line.lowercase()
+        return normalized.contains("shellcheck") ||
+            normalized.contains("shfmt") ||
+            normalized.contains("explainshell")
     }
 }

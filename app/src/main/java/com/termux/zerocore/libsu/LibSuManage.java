@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.example.xh_lib.utils.UUtils;
 import com.termux.BuildConfig;
 import com.termux.R;
+import com.termux.zerocore.settings.timer.TimerExecutionLog;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.FileIOUtils;
 import com.topjohnwu.superuser.CallbackList;
@@ -26,8 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,6 +63,7 @@ public class LibSuManage {
     private ShellLogWriter mShellLogWriter;
     private final Handler mMainHandler = new Handler(Looper.getMainLooper());
     private final ExecutorService mShellExecutor = Executors.newSingleThreadExecutor();
+    private volatile boolean mShellExecuting = false;
 
     private boolean isRun = false;
 
@@ -98,8 +103,19 @@ public class LibSuManage {
     }
 
     public void initRunnable() {
+        initRunnable(true);
+    }
+
+    public void initRunnable(boolean zeroTermux) {
         logThreadStop();
-        mShellLogWriter = new ShellLogWriter(new File(BASHRC_SHELL_DIR_LOG, getLogName()));
+        TimerExecutionLog.INSTANCE.ensureLogDir();
+        mShellLogWriter = new ShellLogWriter(TimerExecutionLog.INSTANCE.logFile(zeroTermux));
+    }
+
+    public void writeRunHeader(int runNumber) {
+        if (mShellLogWriter != null) {
+            mShellLogWriter.writeRunHeader(TimerExecutionLog.INSTANCE.formatRunHeader(runNumber));
+        }
     }
 
     public boolean writerFile() {
@@ -147,16 +163,26 @@ public class LibSuManage {
 
     public void shellCommandExec(String funName, Runnable onComplete) {
         mShellExecutor.execute(() -> {
+            mShellExecuting = true;
             try {
                 Shell.cmd(funName).to(mConsoleList).exec();
             } catch (Exception e) {
                 LogUtils.e(TAG, "shellCommandExec error: " + e);
             } finally {
+                mShellExecuting = false;
                 if (onComplete != null) {
                     mMainHandler.post(onComplete);
                 }
             }
         });
+    }
+
+    public boolean isShellCommandRunning() {
+        if (mShellExecuting) {
+            return true;
+        }
+        Shell shell = Shell.getCachedShell();
+        return shell != null && shell.isAlive();
     }
 
     public void stop() {
@@ -259,6 +285,8 @@ public class LibSuManage {
     private static class ShellLogWriter {
         private final PrintWriter printWriter;
         private volatile boolean isStop;
+        private final SimpleDateFormat timestampFormat =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
         ShellLogWriter(File filePath) {
             isStop = false;
@@ -278,6 +306,20 @@ public class LibSuManage {
             printWriter = writer;
         }
 
+        public void writeRunHeader(String header) {
+            if (isStop || printWriter == null || header == null) {
+                return;
+            }
+            synchronized (this) {
+                if (isStop || printWriter == null) {
+                    return;
+                }
+                printWriter.println();
+                printWriter.println(header);
+                printWriter.flush();
+            }
+        }
+
         public void writerString(String msg) {
             if (isStop || printWriter == null || msg == null) {
                 return;
@@ -286,7 +328,7 @@ public class LibSuManage {
                 if (isStop || printWriter == null) {
                     return;
                 }
-                printWriter.println(msg);
+                printWriter.println("[" + timestampFormat.format(new Date()) + "] " + msg);
                 printWriter.flush();
             }
         }
@@ -311,9 +353,5 @@ public class LibSuManage {
 
     public interface TimerListener {
         public void onAddElement(String msg);
-    }
-
-    private String getLogName() {
-        return "ZeroTermuxTimer_" + System.currentTimeMillis() + ".log";
     }
 }

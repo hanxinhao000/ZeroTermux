@@ -1072,6 +1072,22 @@
     <string name="zt_timer_notification_timer_sum">当前计划时间间隔:</string>
     <string name="zt_timer_notification_timer_cunt">当前执行次数:</string>
     <string name="zt_timer_notification_timer_kill">正在强制关闭当前任务！</string>
+    <string name="zt_timer_countdown_label">下次执行倒计时</string>
+    <string name="zt_timer_execute_count_label">已执行次数</string>
+    <string name="zt_timer_edit_script">编辑脚本</string>
+    <string name="zt_timer_edit_script_sum">打开并编辑当前环境对应的定时脚本</string>
+    <string name="zt_timer_view_log">查看日志</string>
+    <string name="zt_timer_view_log_sum">打开 ~/.timerdir/log/ 下的执行日志文件</string>
+    <string name="zt_timer_execution_log_label">执行日志</string>
+    <string name="zt_timer_execution_log_sum">最多显示最近 100 行，最新日志在最上方</string>
+    <string name="zt_timer_log_empty">暂无执行日志</string>
+    <string name="zt_timer_second_unit">秒</string>
+    <string name="zt_timer_status_executing">正在执行定时脚本…</string>
+    <string name="zt_timer_waiting_script">正在等待脚本完成</string>
+    <string name="zt_timer_executing_current_script">正在执行当前脚本</string>
+    <string name="zt_timer_notification_permission_required">定时任务需要通知权限，请授予后再使用</string>
+    <string name="zt_timer_main_program_missing">主程序终端不存在，请先打开 ZeroTermux 主界面</string>
+    <string name="zt_timer_script_missing">脚本文件不存在，请稍后重试</string>
     <string name="zt_env_shell_title">ADB Shell运行Termux</string>
     <string name="zt_env_shell_sum">打开此选项输出sh脚本到指定目录\n关闭则取消此脚本输出</string>
     <string name="zt_env_shell_sum_msg">打开adb shell 运行以下命令:\n1.adb shell\n2.</string>
@@ -1484,6 +1500,7 @@
 
     <string name="back_menu_visible">左/右栏目显示背景图片</string>
     <string name="back_menu_visible_summary">你必须确保路径:\n~Ztinfo/menuBack/\n路径下有 left.png 以及 right.png</string>
+    <string name="text_shadow_enable">启用文字对比度</string>
 
     <string name="guide_zerotermux_settings_agreement">ZeroTermux 使用协议</string>
     <string name="guide_zerotermux_previous">返回</string>

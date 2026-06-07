@@ -148,6 +148,9 @@ class EditTextActivity : AppCompatActivity() {
         const val SIDEBAR_ANIMATION_DURATION = 200L
         const val SIDEBAR_FLING_VELOCITY_DP = 400
         const val REQUEST_EDITOR_FONT_FILE = 1001
+
+        @Volatile
+        private var textmateInitialized = false
     }
 
     private data class SidebarSearchMatch(
@@ -334,26 +337,11 @@ class EditTextActivity : AppCompatActivity() {
         lspManager = EditorLspManager(applicationContext)
         programRunner = EditorProgramRunner(applicationContext)
         androidRunner = EditorAndroidRunner(applicationContext)
-        lifecycleScope.launch(Dispatchers.IO) {
-            loadEditorSettings()
-            applyLspSettings()
-            setupTextmate()
-            val ztUserBean = UserSetManage.get().getZTUserBean()
-            withContext(Dispatchers.Main) {
-                ensureTextmateTheme()
-                code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
-                applyEditorFont(false)
-                initEditorTopBar()
-                initEditorTerminal(savedInstanceState)
-                initSymbolInput()
-                initSidebar()
-                restoreSidebarState(savedInstanceState)
-                initFileTree(directory)
-                setSidebarVisible(true, animated = false)
-                showFilePanel(updateSearch = false)
-                showSidebarBrowserPage()
-                dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
-            }
+        initializeEditorEnvironment(savedInstanceState) {
+            initFileTree(directory)
+            setSidebarVisible(true, animated = false)
+            showFilePanel(updateSearch = false)
+            showSidebarBrowserPage()
         }
     }
 
@@ -361,25 +349,28 @@ class EditTextActivity : AppCompatActivity() {
         lspManager = EditorLspManager(applicationContext)
         programRunner = EditorProgramRunner(applicationContext)
         androidRunner = EditorAndroidRunner(applicationContext)
-        lifecycleScope.launch(Dispatchers.IO) {
-            loadEditorSettings()
-            applyLspSettings()
-            setupTextmate()
-            val ztUserBean = UserSetManage.get().getZTUserBean()
-            withContext(Dispatchers.Main) {
-                ensureTextmateTheme()
-                code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
-                applyEditorFont(false)
-                initEditorTopBar()
-                initEditorTerminal(savedInstanceState)
-                initSymbolInput()
-                initSidebar()
-                restoreSidebarState(savedInstanceState)
-                loadFile(file)
-                initFileTree(file.parentFile ?: file)
-                dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
-            }
+        initializeEditorEnvironment(savedInstanceState) {
+            loadFile(file)
+            initFileTree(file.parentFile ?: file)
         }
+    }
+
+    private fun initializeEditorEnvironment(savedInstanceState: Bundle?, onReady: () -> Unit) {
+        loadEditorSettings()
+        applyLspSettings()
+        setupTextmate()
+        ensureTextmateTheme()
+        val ztUserBean = UserSetManage.get().getZTUserBean()
+        code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
+        applyEditorFont(false)
+        initEditorTopBar()
+        initEditorTerminal(savedInstanceState)
+        initSymbolInput()
+        configureCodeEditorInput()
+        initSidebar()
+        restoreSidebarState(savedInstanceState)
+        onReady()
+        dirtyCheckHandler.postDelayed(dirtyCheckRunnable, DIRTY_CHECK_INTERVAL)
     }
 
     private fun initViews() {
@@ -888,6 +879,20 @@ class EditTextActivity : AppCompatActivity() {
 
     private fun lspLanguageId(extension: String): String? {
         return EditorLspManager.languageIdForExtension(extension)
+    }
+
+    private fun syncLspDocument(file: File, extension: String, content: String) {
+        if (!lspEnabled || !::lspManager.isInitialized) return
+        val languageId = lspLanguageId(extension) ?: return
+        if (!lspManager.isLanguageInstalled(languageId)) {
+            if (languageId == EditorLspManager.LANGUAGE_SHELL) {
+                lspManager.ensureBasicShellInstalled()
+            }
+            return
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            lspManager.openDocument(file, languageId, content)
+        }
     }
 
     private fun closeLspDocument(file: File) {
@@ -1601,9 +1606,22 @@ class EditTextActivity : AppCompatActivity() {
         mEditorSvgPreview?.visibility = View.GONE
         code_editor?.visibility = View.VISIBLE
         updatePreviewModeToggle(extension, false)
-        code_editor?.setEditorLanguage(createEditorLanguage(extension, tab.file))
-        code_editor?.setText(tab.content)
+        applyEditorLanguageAndContent(tab, extension)
         updateRunButton()
+    }
+
+    private fun applyEditorLanguageAndContent(tab: EditorTab, extension: String) {
+        ensureTextmateTheme()
+        val editor = code_editor ?: return
+        editor.setText(tab.content)
+        editor.setEditorLanguage(createEditorLanguage(extension, tab.file))
+        editor.post {
+            ensureTextmateTheme()
+            editor.setEditorLanguage(createEditorLanguage(extension, tab.file))
+            editor.invalidate()
+            configureCodeEditorInput()
+        }
+        syncLspDocument(tab.file, extension, tab.content)
     }
 
     private fun createEditorLanguage(extension: String, file: File): Language {
@@ -1618,7 +1636,7 @@ class EditTextActivity : AppCompatActivity() {
         val tab = currentTab() ?: return
         if (tab.previewOnly || isTextPreviewMode(tab)) return
         val extension = getFileExtension(tab.file)
-        code_editor?.setEditorLanguage(createEditorLanguage(extension, tab.file))
+        applyEditorLanguageAndContent(tab, extension)
     }
 
     private fun showPreviewTab(tab: EditorTab) {
@@ -3260,14 +3278,17 @@ class EditTextActivity : AppCompatActivity() {
         return CODE_SHELL
     }
     private fun setupTextmate() {
-        // Add assets file provider so that files in assets can be loaded
-        FileProviderRegistry.getInstance().addFileProvider(
-            AssetsFileResolver(
-                applicationContext.assets // use application context
-            )
-        )
+        synchronized(EditTextActivity::class.java) {
+            if (!textmateInitialized) {
+                FileProviderRegistry.getInstance().addFileProvider(
+                    AssetsFileResolver(applicationContext.assets)
+                )
+                textmateInitialized = true
+            }
+        }
         loadDefaultThemes()
         loadDefaultLanguages()
+        ThemeRegistry.getInstance().setTheme(currentThemeName)
     }
 
     private /*suspend*/ fun loadDefaultLanguages() /*= withContext(Dispatchers.Main)*/ {
@@ -3275,18 +3296,12 @@ class EditTextActivity : AppCompatActivity() {
     }
 
     private fun ensureTextmateTheme() {
-        resetColorScheme()
-        var editorColorScheme = code_editor?.colorScheme
-        if (editorColorScheme !is TextMateColorScheme) {
-            editorColorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
-            code_editor?.colorScheme = editorColorScheme
-        }
+        val editor = code_editor ?: return
+        editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
     }
 
     private fun resetColorScheme() {
-        val editor = code_editor ?: return
-        val colorScheme = editor.colorScheme
-        editor.colorScheme = colorScheme
+        ensureTextmateTheme()
     }
 
     private /*suspend*/ fun loadDefaultThemes() /*= withContext(Dispatchers.IO)*/ {

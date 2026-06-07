@@ -64,6 +64,10 @@ class EditorLspManager(private val context: Context) {
         return currentSettings.enabled && lspInstaller.isLanguageInstalled(languageId)
     }
 
+    fun isLanguageInstalled(languageId: String): Boolean {
+        return lspInstaller.isLanguageInstalled(languageId)
+    }
+
     fun openDocument(file: File, languageId: String, text: String) {
         if (!canUseLsp(languageId, text)) return
         val uri = file.toURI().toString()
@@ -168,8 +172,19 @@ class EditorLspManager(private val context: Context) {
     }
 
     private fun clientFor(file: File, languageId: String): EditorLspClient? {
-        val command = lspInstaller.commandForLanguage(languageId)?.trim().orEmpty()
-        if (!settings.enabled || command.isEmpty()) return null
+        if (!settings.enabled) return null
+        if (!lspInstaller.isLanguageInstalled(languageId)) {
+            if (languageId == LANGUAGE_SHELL) {
+                lspInstaller.ensureBasicShellInstalled()
+            }
+            showErrorOnce("LSP 服务器未安装，请先在设置中安装 Shell 基础 LSP")
+            return null
+        }
+        val launchSpec = lspInstaller.launchSpecForLanguage(languageId)
+        if (launchSpec == null) {
+            showErrorOnce("LSP 服务器命令未找到，请重新安装对应语言包")
+            return null
+        }
         synchronized(failedLanguages) {
             if (failedLanguages.contains(languageId)) return null
         }
@@ -180,10 +195,12 @@ class EditorLspManager(private val context: Context) {
         }
         val client = EditorLspClient(
             context.applicationContext,
-            command,
+            launchSpec,
             file.parentFile,
             settings.timeoutMillis,
-            ::showErrorOnce
+            ::showErrorOnce,
+            EditorLspCommandResolver.environmentForLanguage(languageId),
+            EditorLspCommandResolver.initializationOptionsForLanguage(languageId)
         )
         return if (client.start()) {
             clients[languageId] = client
