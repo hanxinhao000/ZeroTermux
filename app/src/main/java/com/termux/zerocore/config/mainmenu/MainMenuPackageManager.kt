@@ -31,6 +31,7 @@ object MainMenuPackageManager {
     private const val ICON_DIR_NAME = "icon"
     private const val ACTIVE_PACKAGE_FILE = "active_package.txt"
     private const val ACTIVE_LABEL_FILE = "active_label.txt"
+    private const val PROGRAM_DEFAULT_MIGRATION_FILE = "program_default_v1.done"
     private const val NETWORK_PACKAGE_NAME = "network_latest"
     private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
@@ -43,12 +44,39 @@ object MainMenuPackageManager {
         return dir
     }
 
-    /** 构建列表：网络更新 + 历史包 + 安装。 */
+    @JvmStatic
+    fun ensureDefaultActiveMenu(context: Context) {
+        val menuDir = ensureMenuDir(context)
+        val migrationFile = File(menuDir, PROGRAM_DEFAULT_MIGRATION_FILE)
+        if (!migrationFile.exists()) {
+            val activeId = getActivePackageId(context)
+            if (!isUserInstalledPackageId(activeId)) {
+                applyProgramMenu(context)
+            }
+            migrationFile.writeText("1")
+            return
+        }
+        val activeFile = File(menuDir, ACTIVE_PACKAGE_FILE)
+        if (!activeFile.exists() || activeFile.readText().trim().isEmpty()) {
+            applyProgramMenu(context)
+        }
+    }
+
+    /** 构建列表：程序菜单 + 默认菜单 + 历史包 + 安装。 */
     @JvmStatic
     fun buildListItems(context: Context): List<MainMenuPackageInfo> {
         ensureMenuDir(context)
         val activeId = getActivePackageId(context)
         val items = ArrayList<MainMenuPackageInfo>()
+
+        items.add(
+            MainMenuPackageInfo(
+                id = MainMenuPackageInfo.ID_PROGRAM,
+                label = UUtils.getString(R.string.menu_package_program_label),
+                type = MainMenuPackageInfo.TYPE_PROGRAM,
+                isActive = isProgramMenuActive(activeId)
+            )
+        )
 
         val latestNetworkDir = getLatestNetworkPackageDir(context)
         items.add(
@@ -98,30 +126,27 @@ object MainMenuPackageManager {
                 val tempZip = File(menuDir, "menu_download_temp.zip")
                 val updateUrl = MenuUpdateSourceManager.getSelectedUrl(context)
                 if (!downloadFile(updateUrl, tempZip)) {
-                    val applied = applyDefaultFromAssets(context)
                     UUtils.runOnUIThread {
-                        callback.onResult(applied, UUtils.getString(R.string.menu_package_network_fallback))
+                        callback.onResult(false, UUtils.getString(R.string.menu_package_network_update_fail))
                     }
                     return@Thread
                 }
                 val packageName = NETWORK_PACKAGE_NAME + "_" + System.currentTimeMillis()
                 val installed = installFromZip(context, tempZip, packageName)
                 tempZip.delete()
-                if (installed && applyPackage(context, packageName)) {
+                if (installed && applyPackage(context, packageName, UUtils.getString(R.string.menu_package_default_label))) {
                     UUtils.runOnUIThread {
                         callback.onResult(true, UUtils.getString(R.string.menu_package_network_success))
                     }
                 } else {
-                    val applied = applyDefaultFromAssets(context)
                     UUtils.runOnUIThread {
-                        callback.onResult(applied, UUtils.getString(R.string.menu_package_network_fallback))
+                        callback.onResult(false, UUtils.getString(R.string.menu_package_network_update_fail))
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                val applied = applyDefaultFromAssets(context)
                 UUtils.runOnUIThread {
-                    callback.onResult(applied, UUtils.getString(R.string.menu_package_network_fallback))
+                    callback.onResult(false, UUtils.getString(R.string.menu_package_network_update_fail))
                 }
             }
         }.start()
@@ -157,7 +182,7 @@ object MainMenuPackageManager {
         }
         val packageId = getActivePackageId(context)
         if (packageId.isEmpty()) {
-            return UUtils.getString(R.string.menu_package_default_label)
+            return UUtils.getString(R.string.menu_package_program_label)
         }
         return resolveLabelFromPackageId(packageId)
     }
@@ -188,10 +213,37 @@ object MainMenuPackageManager {
 
     @JvmStatic
     fun applyMenuPackageInfo(context: Context, info: MainMenuPackageInfo): Boolean {
+        if (info.type == MainMenuPackageInfo.TYPE_PROGRAM) {
+            return applyProgramMenu(context)
+        }
         if (info.type == MainMenuPackageInfo.TYPE_NETWORK) {
-            return applyLatestNetworkPackage(context)
+            return applyDefaultMenu(context)
         }
         return applyPackage(context, info.id, info.label)
+    }
+
+    /** 切换到默认菜单模式，保留现有 XML，仅在文件不存在时从 assets 初始化。 */
+    @JvmStatic
+    fun applyDefaultMenu(context: Context): Boolean {
+        val activeXml = FileIOUtils.getMainMenuXmlPathFile()
+        if (!activeXml.exists()) {
+            return applyDefaultFromAssets(context)
+        }
+        saveActivePackageId(context, MainMenuPackageInfo.ID_DEFAULT_XML)
+        saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_default_label))
+        return true
+    }
+
+    @JvmStatic
+    fun applyProgramMenu(context: Context): Boolean {
+        saveActivePackageId(context, MainMenuPackageInfo.ID_PROGRAM)
+        saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_program_label))
+        return true
+    }
+
+    @JvmStatic
+    fun isProgramMenuActive(context: Context): Boolean {
+        return isProgramMenuActive(getActivePackageId(context))
     }
 
     @JvmStatic
@@ -250,6 +302,29 @@ object MainMenuPackageManager {
         saveActivePackageId(context, "assets_default_$lang")
         saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_default_label))
         return activeXml.exists()
+    }
+
+    /** 删除已安装的本地菜单包（不含默认菜单）。若当前正在使用，会切回默认菜单。 */
+    @JvmStatic
+    fun deleteInstalledPackage(context: Context, info: MainMenuPackageInfo): Boolean {
+        if (info.type != MainMenuPackageInfo.TYPE_INSTALLED) {
+            return false
+        }
+        val packageDir = info.packageDir ?: XinhaoStoragePath.getMenuPackageDir(context, info.id)
+        if (!packageDir.exists()) {
+            return false
+        }
+        val wasActive = info.isActive
+        return try {
+            deleteRecursive(packageDir)
+            if (wasActive) {
+                applyProgramMenu(context)
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     @JvmStatic
@@ -318,6 +393,12 @@ object MainMenuPackageManager {
     }
 
     private fun resolveLabelFromPackageId(packageId: String): String {
+        if (packageId == MainMenuPackageInfo.ID_PROGRAM) {
+            return UUtils.getString(R.string.menu_package_program_label)
+        }
+        if (packageId == MainMenuPackageInfo.ID_DEFAULT_XML) {
+            return UUtils.getString(R.string.menu_package_default_label)
+        }
         if (packageId.startsWith("assets_default")) {
             return UUtils.getString(R.string.menu_package_default_label)
         }
@@ -348,8 +429,35 @@ object MainMenuPackageManager {
         return dir.name.startsWith("${NETWORK_PACKAGE_NAME}_")
     }
 
+    /** 用户自行安装的本地菜单包（zip 解压目录名），升级时不自动改选程序菜单。 */
+    private fun isUserInstalledPackageId(activeId: String): Boolean {
+        if (activeId.isEmpty()) {
+            return false
+        }
+        if (activeId == MainMenuPackageInfo.ID_PROGRAM) {
+            return false
+        }
+        if (activeId == MainMenuPackageInfo.ID_DEFAULT_XML) {
+            return false
+        }
+        if (activeId.startsWith("assets_default")) {
+            return false
+        }
+        if (activeId.startsWith(NETWORK_PACKAGE_NAME)) {
+            return false
+        }
+        return true
+    }
+
+    private fun isProgramMenuActive(activeId: String): Boolean {
+        return activeId.isEmpty() || activeId == MainMenuPackageInfo.ID_PROGRAM
+    }
+
     private fun isDefaultMenuActive(activeId: String): Boolean {
-        return activeId.isEmpty()
+        if (isProgramMenuActive(activeId)) {
+            return false
+        }
+        return activeId == MainMenuPackageInfo.ID_DEFAULT_XML
             || activeId.startsWith("assets_default")
             || activeId.startsWith(NETWORK_PACKAGE_NAME)
     }

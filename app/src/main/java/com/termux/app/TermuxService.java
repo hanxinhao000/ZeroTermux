@@ -956,4 +956,11 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         return mWantsToStop;
     }
 
+    // ZeroTermux add {@
+    public static TermuxService fromBinder(IBinder binder) {
+        if (!(binder instanceof LocalBinder)) return null;
+        return ((LocalBinder) binder).service;
+    }
+    //@}
+
 }

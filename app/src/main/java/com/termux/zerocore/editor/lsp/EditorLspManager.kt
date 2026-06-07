@@ -117,6 +117,34 @@ class EditorLspManager(private val context: Context) {
         }
     }
 
+    fun ensureBasicShellInstalled(onFinished: ((Boolean) -> Unit)? = null) {
+        lspInstaller.ensureBasicShellInstalled(onFinished)
+    }
+
+    fun availablePackages(): List<EditorLspInstaller.ServerPackage> {
+        return lspInstaller.availablePackages()
+    }
+
+    fun installPackage(
+        packageId: String,
+        quietIfInstalled: Boolean = false,
+        onFinished: ((Boolean, String) -> Unit)? = null
+    ) {
+        lspInstaller.installPackage(packageId, quietIfInstalled, onFinished)
+    }
+
+    fun isPackageInstalled(packageId: String): Boolean {
+        return lspInstaller.isPackageInstalled(packageId)
+    }
+
+    fun isPackageInstalling(packageId: String): Boolean {
+        return lspInstaller.isInstalling(packageId)
+    }
+
+    fun isNpmInstalled(): Boolean {
+        return lspInstaller.isNpmInstalled()
+    }
+
     private fun openDocumentLocked(file: File, languageId: String, text: String) {
         val client = clientFor(file, languageId) ?: return
         val uri = file.toURI().toString()

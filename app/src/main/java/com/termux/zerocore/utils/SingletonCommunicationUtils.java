@@ -51,6 +51,11 @@ public class SingletonCommunicationUtils {
     public void setSingletonCommunicationListener(SingletonCommunicationListener singletonCommunicationListener) {
         LogUtils.e(TAG, "setSingletonCommunicationListener: " + singletonCommunicationListener);
         this.mSingletonCommunicationListener = singletonCommunicationListener;
+        isSingletonCommunicationListenerNull = singletonCommunicationListener == null;
+    }
+
+    public boolean hasTerminalListener() {
+        return mSingletonCommunicationListener != null;
     }
 
     public SingletonCommunicationListener getmSingletonCommunicationListener() {

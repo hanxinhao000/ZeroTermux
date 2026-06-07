@@ -29,6 +29,9 @@ import com.termux.shared.termux.terminal.io.BellHandler;
 import com.termux.shared.logger.Logger;
 import com.termux.terminal.TerminalColors;
 import com.termux.terminal.TerminalSession;
+// ZeroTermux add {@
+import com.termux.zerocore.editor.EditorTerminalSessionRelay;
+//@}
 import com.termux.terminal.TerminalSessionClient;
 import com.termux.terminal.TextStyle;
 
@@ -116,9 +119,20 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     @Override
     public void onTextChanged(@NonNull TerminalSession changedSession) {
-        if (!mActivity.isVisible()) return;
+        // ZeroTermux modify {@
+        // if (!mActivity.isVisible()) return;
+        if (!mActivity.isVisible()) {
 
+            EditorTerminalSessionRelay.onTextChanged(changedSession);
+
+            return;
+        }
+        //@}
         if (mActivity.getCurrentSession() == changedSession) mActivity.getTerminalView().onScreenUpdated();
+
+        // ZeroTermux add {@
+        EditorTerminalSessionRelay.onTextChanged(changedSession);
+        //@}
     }
 
     @Override
@@ -182,14 +196,27 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     @Override
     public void onCopyTextToClipboard(@NonNull TerminalSession session, String text) {
-        if (!mActivity.isVisible()) return;
+        // ZeroTermux modify {@
+        if (!mActivity.isVisible()) {
+            ShareUtils.copyTextToClipboard(mActivity.getApplicationContext(), text);
+            return;
+        }
+        //@}
 
         ShareUtils.copyTextToClipboard(mActivity, text);
     }
 
     @Override
     public void onPasteTextFromClipboard(@Nullable TerminalSession session) {
-        if (!mActivity.isVisible()) return;
+        // ZeroTermux modify {@
+        if (!mActivity.isVisible()) {
+            String text = ShareUtils.getTextStringFromClipboardIfSet(mActivity.getApplicationContext(), true);
+            if (text != null && session != null && session.getEmulator() != null) {
+                session.getEmulator().paste(text);
+            }
+            return;
+        }
+        //@}
 
         String text = ShareUtils.getTextStringFromClipboardIfSet(mActivity, true);
         if (text != null)

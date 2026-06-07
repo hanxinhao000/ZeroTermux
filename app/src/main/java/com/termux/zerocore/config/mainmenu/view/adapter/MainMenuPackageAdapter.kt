@@ -26,6 +26,7 @@ class MainMenuPackageAdapter(
         fun onPackageSelected(info: MainMenuPackageInfo)
         fun onInstallClick()
         fun onBackupClick(info: MainMenuPackageInfo)
+        fun onDeleteClick(info: MainMenuPackageInfo)
     }
 
     fun updateItems(newItems: List<MainMenuPackageInfo>) {
@@ -54,11 +55,17 @@ class MainMenuPackageAdapter(
         holder.normalRow.visibility = View.VISIBLE
         holder.installRow.visibility = View.GONE
         holder.updateWrap.visibility = View.GONE
+        holder.delete.visibility = View.GONE
+        holder.backup.visibility = View.GONE
         holder.content.setOnClickListener(null)
         holder.installRow.setOnClickListener(null)
+        holder.delete.setOnClickListener(null)
         bindInstallTime(holder, info, "")
 
         when (info.type) {
+            MainMenuPackageInfo.TYPE_PROGRAM -> {
+                holder.content.setOnClickListener { listener.onPackageSelected(info) }
+            }
             MainMenuPackageInfo.TYPE_NETWORK -> {
                 bindInstallTime(holder, info, UUtils.getString(R.string.menu_package_install_time_prefix))
                 holder.updateWrap.visibility = View.VISIBLE
@@ -79,8 +86,10 @@ class MainMenuPackageAdapter(
             }
             else -> {
                 bindInstallTime(holder, info, UUtils.getString(R.string.menu_package_install_time_prefix))
+                holder.delete.visibility = View.VISIBLE
                 holder.backup.visibility = View.VISIBLE
                 holder.content.setOnClickListener { listener.onPackageSelected(info) }
+                holder.delete.setOnClickListener { listener.onDeleteClick(info) }
                 holder.backup.setOnClickListener { listener.onBackupClick(info) }
             }
         }
@@ -130,6 +139,7 @@ class MainMenuPackageAdapter(
         val updateWrap: FrameLayout = itemView.findViewById(R.id.menu_package_update_wrap)
         val update: TextView = itemView.findViewById(R.id.menu_package_update)
         val updateLoading: ProgressBar = itemView.findViewById(R.id.menu_package_update_loading)
+        val delete: TextView = itemView.findViewById(R.id.menu_package_delete)
         val backup: TextView = itemView.findViewById(R.id.menu_package_backup)
     }
 }

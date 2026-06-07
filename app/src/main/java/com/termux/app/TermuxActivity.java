@@ -118,6 +118,7 @@ import com.termux.zerocore.code.CodeString;
 import com.termux.zerocore.config.ZTConstantConfig;
 import com.termux.zerocore.config.mainmenu.MainMenuPackageInfo;
 import com.termux.zerocore.config.mainmenu.MainMenuPackageManager;
+import com.termux.zerocore.config.mainmenu.ProgramMainMenuConfig;
 import com.termux.zerocore.config.mainmenu.XMLMainMenuConfig;
 import com.termux.zerocore.config.mainmenu.data.MainMenuCategoryData;
 import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuAdapter;
@@ -1894,8 +1895,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void initMenu() {
         writerMainMenuConfig(false);
-        initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
-        initMenuPackageCard();
+        loadActiveMainMenu();
         ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
         UUtils.runOnThread(() -> {
             //写入菜单背景
@@ -1908,6 +1908,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
             showMenuBack();
         });
+    }
+
+    private void loadActiveMainMenu() {
+        MainMenuPackageManager.ensureDefaultActiveMenu(this);
+        if (MainMenuPackageManager.isProgramMenuActive(this)) {
+            initListMenu(ProgramMainMenuConfig.getProgramMainMenuCategoryDatas(this));
+        } else {
+            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
+        }
+        initMenuPackageCard();
     }
 
     private void showMenuBack() {
@@ -1948,13 +1958,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 UUtils.writerFile("mainmenu/cn/zt_menu_config.xml", mainMenuXmlPathFile);
             }
         } else {
-            Log.i(TAG, "writerMainMenuConfig smart update for language: " + targetLang);
-            try {
-                com.termux.zerocore.utils.XMLMergeUtils.smartUpdateMenuLanguage(this, targetLang);
-            } catch (Throwable e) {
-                Log.e(TAG, "Critical Error: XMLMergeUtils failed!", e);
-                e.printStackTrace();
-            }
+            Log.i(TAG, "writerMainMenuConfig keep existing menu file");
         }
     }
 
@@ -2235,7 +2239,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainMenuAdapter.release();
             mMainMenuAdapter = null;
         }
-        initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(TermuxActivity.this));
+        MainMenuPackageManager.ensureDefaultActiveMenu(this);
+        if (MainMenuPackageManager.isProgramMenuActive(this)) {
+            initListMenu(ProgramMainMenuConfig.getProgramMainMenuCategoryDatas(TermuxActivity.this));
+        } else {
+            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(TermuxActivity.this));
+        }
         refreshMenuPackageList();
     }
 
@@ -2254,7 +2263,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             new MainMenuPackageAdapter.Listener() {
                 @Override
                 public void onNetworkUpdate() {
-                    startMenuNetworkUpdate();
+                    showMenuNetworkUpdateConfirmDialog();
                 }
 
                 @Override
@@ -2275,6 +2284,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 @Override
                 public void onBackupClick(MainMenuPackageInfo info) {
                     showMenuBackupNameDialog();
+                }
+
+                @Override
+                public void onDeleteClick(MainMenuPackageInfo info) {
+                    showMenuDeleteConfirmDialog(info);
                 }
             });
         mMenuPackageList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -2298,6 +2312,56 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
         String label = MainMenuPackageManager.getActivePackageLabel(this);
         menu_package_current.setText(getString(R.string.menu_package_current_menu, label));
+    }
+
+    private void showMenuDeleteConfirmDialog(MainMenuPackageInfo info) {
+        YesNoDialog dialog = new YesNoDialog(this);
+        dialog.getTitleTv().setText(UUtils.getString(R.string.提示));
+        int msgRes = info.isActive()
+            ? R.string.menu_package_delete_confirm_active
+            : R.string.menu_package_delete_confirm;
+        dialog.getMsgTv().setText(getString(msgRes, info.getLabel()));
+        dialog.getMsgTv().setVisibility(View.VISIBLE);
+        dialog.getInputSystemName().setVisibility(View.GONE);
+        dialog.getNoTv().setOnClickListener(v -> dialog.dismiss());
+        dialog.getYesTv().setOnClickListener(v -> {
+            dialog.dismiss();
+            performMenuPackageDelete(info);
+        });
+        dialog.show();
+    }
+
+    private void performMenuPackageDelete(MainMenuPackageInfo info) {
+        UUtils.runOnThread(() -> {
+            boolean success = MainMenuPackageManager.deleteInstalledPackage(
+                TermuxActivity.this, info);
+            UUtils.runOnUIThread(() -> {
+                if (success) {
+                    UUtils.showMsg(UUtils.getString(R.string.menu_package_delete_success));
+                    if (info.isActive()) {
+                        refreshMainMenu();
+                    } else {
+                        refreshMenuPackageList();
+                    }
+                } else {
+                    UUtils.showMsg(UUtils.getString(R.string.menu_package_delete_fail));
+                }
+            });
+        });
+    }
+
+    private void showMenuNetworkUpdateConfirmDialog() {
+        YesNoDialog dialog = new YesNoDialog(this);
+        dialog.getTitleTv().setText(UUtils.getString(R.string.提示));
+        dialog.getMsgTv().setText(UUtils.getString(R.string.menu_package_network_update_confirm));
+        dialog.getMsgTv().setVisibility(View.VISIBLE);
+        dialog.getInputSystemName().setVisibility(View.GONE);
+        dialog.getNoTv().setOnClickListener(v -> dialog.dismiss());
+        dialog.getYesTv().setOnClickListener(v -> {
+            dialog.dismiss();
+            startMenuNetworkUpdate();
+        });
+        dialog.show();
     }
 
     private void startMenuNetworkUpdate() {

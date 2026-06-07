@@ -2,8 +2,14 @@ package com.termux.zerocore.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.text.TextPaint
+import android.util.TypedValue
 import android.net.Uri
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,8 +19,12 @@ import android.text.TextWatcher
 import android.util.Base64
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.EditorInfo
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -23,6 +33,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.ScrollView
@@ -33,9 +44,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.dialog.LoadingDialog
+import com.termux.zerocore.editor.AndroidProjectManager
+import com.termux.zerocore.editor.EditorAndroidRunner
+import com.termux.zerocore.editor.EditorFileTreeClipboard
+import com.termux.zerocore.editor.EditorFileTreeIcon
+import com.termux.zerocore.editor.EditorFileTreeListView
+import com.termux.zerocore.editor.EditorFileTreeOperations
+import com.termux.zerocore.editor.EditorFileTreeScrollView
+import com.termux.zerocore.editor.EditorProgramRunner
+import com.termux.zerocore.editor.EditorRunDetector
+import com.termux.zerocore.editor.EditorRunLanguage
+import com.termux.zerocore.editor.EditorTerminalInputView
+import com.termux.zerocore.editor.EditorTerminalPanel
+import com.termux.zerocore.editor.lsp.EditorLspLanguage
+import com.termux.zerocore.editor.lsp.EditorLspManager
+import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
 import com.termux.zerocore.ftp.utils.UserSetManage
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
@@ -49,8 +77,10 @@ import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.SymbolInputView
+import com.termux.shared.view.KeyboardUtils
+import com.termux.view.TerminalView
+import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.commonmark.parser.Parser
@@ -60,10 +90,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.util.LinkedHashSet
 import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
+import kotlin.math.abs
+import kotlin.math.max
 
 class EditTextActivity : AppCompatActivity() {
     companion object {
@@ -97,17 +130,57 @@ class EditTextActivity : AppCompatActivity() {
         const val EDITOR_PREF_TAB_SIZE = "tab_size"
         const val EDITOR_PREF_THEME = "theme"
         const val EDITOR_PREF_FONT_PATH = "font_path"
+        const val EDITOR_PREF_LSP_ENABLED = "lsp_enabled"
+        const val EDITOR_PREF_LSP_TIMEOUT = "lsp_timeout"
         const val EDITOR_STATE_SIDEBAR_VISIBLE = "sidebar_visible"
         const val EDITOR_STATE_SIDEBAR_SEARCH_PANEL = "sidebar_search_panel"
         const val EDITOR_STATE_SIDEBAR_SEARCH_QUERY = "sidebar_search_query"
         const val EDITOR_STATE_SIDEBAR_REPLACE_QUERY = "sidebar_replace_query"
         const val EDITOR_STATE_SIDEBAR_REGEX = "sidebar_regex"
         const val EDITOR_STATE_SIDEBAR_MATCH_CASE = "sidebar_match_case"
+        const val EDITOR_STATE_TERMINAL_VISIBLE = "terminal_visible"
         const val DEFAULT_TAB_SIZE = 4
         const val DIRTY_CHECK_INTERVAL = 600L
         const val SIDEBAR_WIDTH_DP = 280
+        const val SIDEBAR_EDGE_SWIPE_DP = 28
+        const val SIDEBAR_ANIMATION_DURATION = 200L
+        const val SIDEBAR_FLING_VELOCITY_DP = 400
         const val REQUEST_EDITOR_FONT_FILE = 1001
+
+        private val JAVA_HELLO_TEMPLATE = """
+            public class Hello {
+                public static void main(String[] args) {
+                    System.out.println("Hello, World!");
+                }
+            }
+        """.trimIndent()
+
+        private val C_HELLO_TEMPLATE = """
+            #include <stdio.h>
+
+            int main(void) {
+                printf("Hello, World!\n");
+                return 0;
+            }
+        """.trimIndent()
+
+        private val PYTHON_HELLO_TEMPLATE = """
+            #!/usr/bin/env python3
+
+            def main():
+                print("Hello, World!")
+
+
+            if __name__ == "__main__":
+                main()
+        """.trimIndent()
     }
+
+    private data class HelloProjectSpec(
+        val dirBaseName: String,
+        val entryFileName: String,
+        val content: String
+    )
 
     private data class SidebarSearchMatch(
         val line: Int,
@@ -118,7 +191,17 @@ class EditTextActivity : AppCompatActivity() {
         val preview: String
     )
 
-    private data class FileTreeNode(val file: File, val depth: Int)
+    private enum class FileTreeEntryKind {
+        NORMAL,
+        GO_UP,
+        NEW_MENU
+    }
+
+    private data class FileTreeNode(
+        val kind: FileTreeEntryKind,
+        val file: File,
+        val depth: Int
+    )
 
     private data class EditorTab(
         val file: File,
@@ -140,17 +223,30 @@ class EditTextActivity : AppCompatActivity() {
     private var mEditorUndoButton: ImageView? = null
     private var mEditorRedoButton: ImageView? = null
     private var mEditorMoreButton: ImageView? = null
+    private var mEditorTerminalButton: ImageView? = null
+    private var mEditorRunButton: ImageView? = null
+    private var mEditorRunLoading: ProgressBar? = null
+    private var editorTerminalPanel: EditorTerminalPanel? = null
+    private var programRunner: EditorProgramRunner? = null
+    private var isProgramRunInProgress = false
+    private var mEditorAndroidBuildButton: ImageView? = null
+    private var mEditorAndroidBuildLoading: ProgressBar? = null
+    private var androidRunner: EditorAndroidRunner? = null
+    private var activeAndroidProjectRoot: File? = null
+    private var isAndroidBuildInProgress = false
     private var mEditorToolbar: View? = null
     private var mEditorTabBar: View? = null
     private var mEditorTabsContainer: LinearLayout? = null
     private var mEditorContentLayout: RelativeLayout? = null
     private var mEditorSymbolBar: LinearLayout? = null
+    private var mEditorTerminalPanelView: View? = null
     private var mEditorSidebar: LinearLayout? = null
     private var mSidebarFileTab: TextView? = null
     private var mSidebarSearchTab: TextView? = null
     private var mSidebarFilePanel: LinearLayout? = null
     private var mSidebarSearchPanel: LinearLayout? = null
     private var mSidebarFilePath: TextView? = null
+    private var mSidebarFileTreeScroll: EditorFileTreeScrollView? = null
     private var mSidebarFileTree: ListView? = null
     private var mSidebarSearchInput: EditText? = null
     private var mSidebarReplaceInput: EditText? = null
@@ -162,6 +258,11 @@ class EditTextActivity : AppCompatActivity() {
     private var mSidebarNext: TextView? = null
     private var mSidebarReplaceOne: TextView? = null
     private var mSidebarReplaceAll: TextView? = null
+    private var mSidebarMainPage: LinearLayout? = null
+    private var mSidebarProjectPage: View? = null
+    private var mSidebarProjectPath: TextView? = null
+    private var mSidebarPageBrowserTab: TextView? = null
+    private var mSidebarPageProjectTab: TextView? = null
     private var mEditorSymbolInput: SymbolInputView? = null
     private var mEditorSettings: TextView? = null
     private var mEditorPreviewContainer: RelativeLayout? = null
@@ -171,13 +272,27 @@ class EditTextActivity : AppCompatActivity() {
 
     private var currentFile: File? = null
     private var fileTreeRoot: File? = null
+    private var fileTreeCurrentDir: File? = null
     private var isDirty = false
     private var currentThemeName = "vscode_dark"
     private var currentTabSize = DEFAULT_TAB_SIZE
     private var currentFontPath = ""
+    private var lspEnabled = false
+    private var lspTimeoutMillis = EditorLspManager.DEFAULT_TIMEOUT_MILLIS
+    private lateinit var lspManager: EditorLspManager
     private var editorSettingsFontInput: EditText? = null
     private var isSidebarVisible = false
     private var isSidebarSearchPanelVisible = false
+    private var sidebarGestureActive = false
+    private var sidebarGestureDragging = false
+    private var sidebarGestureOpenedFromClosed = false
+    private var sidebarGestureDownX = 0f
+    private var sidebarGestureDownY = 0f
+    private var sidebarGestureStartTranslation = 0f
+    private var sidebarVelocityTracker: VelocityTracker? = null
+    private var sidebarAnimator: ValueAnimator? = null
+    private val sidebarTouchSlop by lazy { ViewConfiguration.get(this).scaledTouchSlop }
+    private var lspInstallRefreshRunnable: Runnable? = null
     private var currentSidebarMatchIndex = -1
     private var isRegexSearch = false
     private var isMatchCase = false
@@ -236,15 +351,20 @@ class EditTextActivity : AppCompatActivity() {
     }
 
     private fun loadingFun(savedInstanceState: Bundle?, file: File) {
+        lspManager = EditorLspManager(applicationContext)
+        programRunner = EditorProgramRunner(applicationContext)
+        androidRunner = EditorAndroidRunner(applicationContext)
         lifecycleScope.launch(Dispatchers.IO) {
             loadEditorSettings()
+            applyLspSettings()
             setupTextmate()
-            ensureTextmateTheme()
             val ztUserBean = UserSetManage.get().getZTUserBean()
             withContext(Dispatchers.Main) {
+                ensureTextmateTheme()
                 code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
                 applyEditorFont(false)
                 initEditorTopBar()
+                initEditorTerminal(savedInstanceState)
                 initSymbolInput()
                 initSidebar()
                 restoreSidebarState(savedInstanceState)
@@ -266,16 +386,23 @@ class EditTextActivity : AppCompatActivity() {
         mEditorUndoButton = findViewById(R.id.editor_action_undo)
         mEditorRedoButton = findViewById(R.id.editor_action_redo)
         mEditorMoreButton = findViewById(R.id.editor_action_more)
+        mEditorTerminalButton = findViewById(R.id.editor_action_terminal)
+        mEditorRunButton = findViewById(R.id.editor_action_run)
+        mEditorRunLoading = findViewById(R.id.editor_action_run_loading)
+        mEditorAndroidBuildButton = findViewById(R.id.editor_action_android_build)
+        mEditorAndroidBuildLoading = findViewById(R.id.editor_action_android_build_loading)
         mEditorTabBar = findViewById(R.id.editor_tab_bar)
         mEditorTabsContainer = findViewById(R.id.editor_tabs_container)
         mEditorContentLayout = findViewById(R.id.editor_content_layout)
         mEditorSymbolBar = findViewById(R.id.editor_symbol_bar)
+        mEditorTerminalPanelView = findViewById(R.id.editor_terminal_panel)
         mEditorSidebar = findViewById(R.id.editor_sidebar)
         mSidebarFileTab = findViewById(R.id.sidebar_file_tab)
         mSidebarSearchTab = findViewById(R.id.sidebar_search_tab)
         mSidebarFilePanel = findViewById(R.id.sidebar_file_panel)
         mSidebarSearchPanel = findViewById(R.id.sidebar_search_panel)
         mSidebarFilePath = findViewById(R.id.sidebar_file_path)
+        mSidebarFileTreeScroll = findViewById(R.id.sidebar_file_tree_scroll)
         mSidebarFileTree = findViewById(R.id.sidebar_file_tree)
         mSidebarSearchInput = findViewById(R.id.sidebar_search_input)
         mSidebarReplaceInput = findViewById(R.id.sidebar_replace_input)
@@ -287,6 +414,11 @@ class EditTextActivity : AppCompatActivity() {
         mSidebarNext = findViewById(R.id.sidebar_next)
         mSidebarReplaceOne = findViewById(R.id.sidebar_replace_one)
         mSidebarReplaceAll = findViewById(R.id.sidebar_replace_all)
+        mSidebarMainPage = findViewById(R.id.sidebar_main_page)
+        mSidebarProjectPage = findViewById(R.id.sidebar_project_page)
+        mSidebarProjectPath = findViewById(R.id.sidebar_project_path)
+        mSidebarPageBrowserTab = findViewById(R.id.sidebar_page_browser_tab)
+        mSidebarPageProjectTab = findViewById(R.id.sidebar_page_project_tab)
         mEditorSymbolInput = findViewById(R.id.editor_symbol_input)
         mEditorSettings = findViewById(R.id.editor_settings)
         mEditorPreviewContainer = findViewById(R.id.editor_preview_container)
@@ -304,6 +436,13 @@ class EditTextActivity : AppCompatActivity() {
             setSoftKeyboardEnabled(true)
             setDisableSoftKbdIfHardKbdAvailable(false)
             isFocusableInTouchMode = true
+            getComponent(EditorAutoCompletion::class.java)?.isEnabled = true
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus && editorTerminalPanel?.isVisible() == true) {
+                    findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)?.clearFocus()
+                    setSoftKeyboardEnabled(true)
+                }
+            }
         }
     }
 
@@ -343,6 +482,15 @@ class EditTextActivity : AppCompatActivity() {
             invokeEditorAction("redo")
             updateEditorActionButtons()
         }
+        mEditorRunButton?.setOnClickListener {
+            onRunProgramClicked()
+        }
+        mEditorAndroidBuildButton?.setOnClickListener {
+            onAndroidBuildClicked()
+        }
+        mEditorTerminalButton?.setOnClickListener {
+            editorTerminalPanel?.toggle()
+        }
         mEditorMoreButton?.setOnClickListener { view ->
             showEditorMoreMenu(view)
         }
@@ -359,6 +507,289 @@ class EditTextActivity : AppCompatActivity() {
             togglePreviewMode()
         }
         updateEditorActionButtons()
+    }
+
+    private fun initEditorTerminal(savedInstanceState: Bundle?) {
+        val panel = findViewById<View>(R.id.editor_terminal_panel) ?: return
+        val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view) ?: return
+        val inputView = findViewById<EditorTerminalInputView>(R.id.editor_terminal_input) ?: return
+        val contentLayout = mEditorContentLayout ?: return
+        val symbolBar = mEditorSymbolBar ?: return
+        // 每次进入编辑器默认隐藏终端，仅在配置变更（如旋转屏幕）时恢复状态
+        val restoredVisible = savedInstanceState?.getBoolean(EDITOR_STATE_TERMINAL_VISIBLE, false) == true
+        editorTerminalPanel = EditorTerminalPanel(
+            activity = this,
+            panelView = panel,
+            terminalView = terminalView,
+            inputView = inputView,
+            contentLayout = contentLayout,
+            symbolBar = symbolBar,
+            onBlurEditor = { blurEditorForTerminal() },
+            onRestoreEditorFocus = { restoreEditorFocusAfterTerminal() }
+        ) { visible -> updateTerminalToolbarState(visible) }
+        val resizeHandle = findViewById<View>(R.id.editor_terminal_resize_handle) ?: return
+        editorTerminalPanel?.init(restoredVisible, resizeHandle)
+        findViewById<View>(R.id.editor_terminal_hide)?.setOnClickListener {
+            editorTerminalPanel?.setVisible(false)
+        }
+    }
+
+    private fun updateTerminalToolbarState(visible: Boolean) {
+        mEditorTerminalButton?.alpha = if (visible) 1f else 0.65f
+        mEditorSymbolBar?.visibility = if (visible) View.GONE else View.VISIBLE
+    }
+
+    private fun blurEditorForTerminal() {
+        code_editor?.let { editor ->
+            editor.setSoftKeyboardEnabled(false)
+            KeyboardUtils.hideSoftKeyboard(this, editor)
+            editor.clearFocus()
+        }
+        currentFocus?.clearFocus()
+    }
+
+    private fun restoreEditorFocusAfterTerminal() {
+        findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)?.clearFocus()
+        code_editor?.setSoftKeyboardEnabled(true)
+        code_editor?.requestFocus()
+    }
+
+    private fun onRunProgramClicked() {
+        if (isProgramRunInProgress) return
+        val runner = programRunner ?: return
+        val file = currentFile ?: return
+        val content = code_editor?.text?.toString().orEmpty()
+        val language = EditorRunDetector.detect(file.name, content) ?: return
+        if (!runner.canUseTerminal()) {
+            UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
+            return
+        }
+        setRunLoading(true)
+        editorTerminalPanel?.setVisible(true)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val runtimeInstalled = runner.isRuntimeInstalled(language)
+            withContext(Dispatchers.Main) {
+                if (!runtimeInstalled) {
+                    setRunLoading(false)
+                    showInstallRuntimeDialog(runner, language)
+                } else {
+                    runProgramWithRuntime(runner, language, file, content)
+                }
+            }
+        }
+    }
+
+    private fun showInstallRuntimeDialog(runner: EditorProgramRunner, language: EditorRunLanguage) {
+        val titleRes: Int
+        val messageRes: Int
+        when (language) {
+            EditorRunLanguage.JAVA -> {
+                titleRes = R.string.editor_java_install_jdk_title
+                messageRes = R.string.editor_java_install_jdk_message
+            }
+            EditorRunLanguage.C -> {
+                titleRes = R.string.editor_run_install_c_title
+                messageRes = R.string.editor_run_install_c_message
+            }
+            EditorRunLanguage.PYTHON -> {
+                titleRes = R.string.editor_run_install_python_title
+                messageRes = R.string.editor_run_install_python_message
+            }
+        }
+        AlertDialog.Builder(this)
+            .setTitle(titleRes)
+            .setMessage(messageRes)
+            .setPositiveButton(R.string.editor_java_install_jdk_confirm) { _, _ ->
+                runner.installRuntimeViaTerminal(language) { }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun runProgramWithRuntime(
+        runner: EditorProgramRunner,
+        language: EditorRunLanguage,
+        file: File,
+        content: String
+    ) {
+        if (!saveCurrentFileForRun()) {
+            setRunLoading(false)
+            UUtils.showMsg(getString(R.string.editor_java_save_failed))
+            return
+        }
+        runner.runProgram(language, file, content)
+        setRunLoading(false)
+        updateRunButton()
+    }
+
+    private fun saveCurrentFileForRun(): Boolean {
+        val file = currentFile ?: return false
+        val tab = currentTab() ?: return false
+        if (tab.previewOnly || isTextPreviewMode(tab)) return false
+        val content = code_editor?.text?.toString().orEmpty()
+        if (content.isEmpty()) return false
+        return if (UUtils.setFileString(file, content)) {
+            tab.content = content
+            tab.savedContent = content
+            tab.dirty = false
+            isDirty = false
+            renderEditorTabs()
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun setRunLoading(loading: Boolean) {
+        isProgramRunInProgress = loading
+        updateRunButton()
+    }
+
+    private fun updateRunButton() {
+        val file = currentFile
+        val tab = currentTab()
+        val content = code_editor?.text?.toString().orEmpty()
+        val canRun = file != null
+            && tab != null
+            && !tab.previewOnly
+            && !isTextPreviewMode(tab)
+            && EditorRunDetector.detect(file.name, content) != null
+        if (!canRun) {
+            mEditorRunButton?.visibility = View.GONE
+            mEditorRunLoading?.visibility = View.GONE
+        } else if (isProgramRunInProgress) {
+            mEditorRunButton?.visibility = View.GONE
+            mEditorRunLoading?.visibility = View.VISIBLE
+        } else {
+            mEditorRunButton?.visibility = View.VISIBLE
+            mEditorRunLoading?.visibility = View.GONE
+        }
+        refreshActiveAndroidProjectRoot()
+        updateAndroidBuildButton()
+    }
+
+    private fun refreshActiveAndroidProjectRoot() {
+        val contexts = listOfNotNull(currentFile, fileTreeCurrentDir, fileTreeRoot)
+        activeAndroidProjectRoot = contexts
+            .mapNotNull { AndroidProjectManager.findProjectRoot(it) }
+            .distinctBy { it.absolutePath }
+            .firstOrNull { root ->
+                contexts.any { context -> AndroidProjectManager.isPathInsideProject(root, context) }
+            }
+    }
+
+    private fun updateAndroidBuildButton() {
+        val show = activeAndroidProjectRoot != null
+        if (!show) {
+            mEditorAndroidBuildButton?.visibility = View.GONE
+            mEditorAndroidBuildLoading?.visibility = View.GONE
+            return
+        }
+        if (isAndroidBuildInProgress) {
+            mEditorAndroidBuildButton?.visibility = View.GONE
+            mEditorAndroidBuildLoading?.visibility = View.VISIBLE
+        } else {
+            mEditorAndroidBuildButton?.visibility = View.VISIBLE
+            mEditorAndroidBuildLoading?.visibility = View.GONE
+        }
+    }
+
+    private fun onAndroidBuildClicked() {
+        if (isAndroidBuildInProgress) return
+        val runner = androidRunner ?: return
+        val projectRoot = activeAndroidProjectRoot ?: return
+        if (!runner.canUseTerminal()) {
+            UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
+            return
+        }
+        setAndroidBuildLoading(true)
+        editorTerminalPanel?.setVisible(true)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val envReady = runner.isGradleEnvInstalled()
+            withContext(Dispatchers.Main) {
+                if (!envReady) {
+                    setAndroidBuildLoading(false)
+                    showInstallGradleDialog(runner, projectRoot)
+                } else {
+                    runAndroidBuild(runner, projectRoot)
+                }
+            }
+        }
+    }
+
+    private fun showInstallGradleDialog(runner: EditorAndroidRunner, projectRoot: File) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.editor_android_install_gradle_title)
+            .setMessage(R.string.editor_android_install_gradle_message)
+            .setPositiveButton(R.string.editor_android_install_gradle_confirm) { _, _ ->
+                editorTerminalPanel?.setVisible(true)
+                runner.installGradleEnvViaTerminal { }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun runAndroidBuild(runner: EditorAndroidRunner, projectRoot: File) {
+        storeCurrentTabState()
+        saveCurrentFileForRun()
+        runner.prepareAndBuild(projectRoot)
+        setAndroidBuildLoading(false)
+        updateAndroidBuildButton()
+    }
+
+    private fun setAndroidBuildLoading(loading: Boolean) {
+        isAndroidBuildInProgress = loading
+        updateAndroidBuildButton()
+    }
+
+    private fun createAndroidProject() {
+        val parentDir = getProjectTargetDir()
+        if (parentDir == null || !parentDir.isDirectory) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
+            return
+        }
+        val projectDir = allocateProjectDirectory(parentDir, "Android_project")
+        val loadingDialog = LoadingDialog(this)
+        loadingDialog.show()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val success = AndroidProjectManager.createFromAssets(applicationContext, projectDir)
+            withContext(Dispatchers.Main) {
+                loadingDialog.dismiss()
+                if (!success) {
+                    UUtils.showMsg(getString(R.string.editor_sidebar_android_project_failed))
+                    return@withContext
+                }
+                UUtils.showMsg(getString(R.string.editor_sidebar_android_project_created, projectDir.name))
+                if (fileTreeRoot?.absolutePath != parentDir.absolutePath) {
+                    initFileTree(parentDir)
+                }
+                initFileTree(projectDir)
+                activeAndroidProjectRoot = projectDir
+                AndroidProjectManager.defaultEntryFile(projectDir)?.let { entry ->
+                    if (canOpenFile(entry)) {
+                        loadFile(entry)
+                    }
+                }
+                updateAndroidBuildButton()
+                setSidebarVisible(false)
+                promptInstallGradleAfterProjectCreated()
+            }
+        }
+    }
+
+    private fun promptInstallGradleAfterProjectCreated() {
+        val runner = androidRunner ?: return
+        if (!runner.canUseTerminal()) return
+        if (runner.isGradleEnvInstalled()) return
+        AlertDialog.Builder(this)
+            .setTitle(R.string.editor_android_install_gradle_title)
+            .setMessage(R.string.editor_android_install_gradle_message)
+            .setPositiveButton(R.string.editor_android_install_gradle_confirm) { _, _ ->
+                editorTerminalPanel?.setVisible(true)
+                runner.installGradleEnvViaTerminal { }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun showEditorFileMenu(anchor: View) {
@@ -430,6 +861,36 @@ class EditTextActivity : AppCompatActivity() {
         currentTabSize = prefs.getInt(EDITOR_PREF_TAB_SIZE, DEFAULT_TAB_SIZE).coerceIn(2, 8)
         currentThemeName = prefs.getString(EDITOR_PREF_THEME, "vscode_dark") ?: "vscode_dark"
         currentFontPath = prefs.getString(EDITOR_PREF_FONT_PATH, "")?.trim().orEmpty()
+        lspEnabled = prefs.getBoolean(EDITOR_PREF_LSP_ENABLED, false)
+        lspTimeoutMillis = prefs.getLong(EDITOR_PREF_LSP_TIMEOUT, EditorLspManager.DEFAULT_TIMEOUT_MILLIS)
+            .coerceIn(500L, 30000L)
+    }
+
+    private fun applyLspSettings() {
+        if (!::lspManager.isInitialized) return
+        lspManager.updateSettings(EditorLspManager.Settings(lspEnabled, lspTimeoutMillis))
+    }
+
+    private fun lspLanguageId(extension: String): String? {
+        return EditorLspManager.languageIdForExtension(extension)
+    }
+
+    private fun closeLspDocument(file: File) {
+        if (!::lspManager.isInitialized) return
+        lifecycleScope.launch(Dispatchers.IO) {
+            lspManager.closeDocument(file)
+        }
+    }
+
+    private fun shutdownLspManager() {
+        if (!::lspManager.isInitialized) return
+        val manager = lspManager
+        Thread({
+            manager.closeAll()
+        }, "ZT-LSP-Shutdown").apply {
+            isDaemon = true
+            start()
+        }
     }
 
     private fun showEditorSettingsDialog() {
@@ -486,11 +947,40 @@ class EditTextActivity : AppCompatActivity() {
             }
             setOnClickListener { showSymbolCustomizeDialog() }
         }
-        val lspTodoLabel = TextView(this).apply {
+        val lspEnableSwitch = android.widget.CheckBox(this).apply {
+            text = getString(R.string.editor_settings_lsp_enable)
+            isChecked = lspEnabled
+            setTextColor(0xffd4d4d4.toInt())
+            setPadding(0, dp(4), 0, dp(4))
+        }
+        val lspTimeoutInput = EditText(this).apply {
+            setText(lspTimeoutMillis.toString())
+            hint = getString(R.string.editor_settings_lsp_timeout_hint)
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setTextColor(ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff))
+            setHintTextColor(0xff9d9d9d.toInt())
+            setPadding(dp(14), dp(8), dp(14), dp(8))
+        }
+        val lspDescLabel = TextView(this).apply {
             text = getString(R.string.editor_settings_lsp_download_desc)
             setTextColor(0xff9d9d9d.toInt())
             textSize = 12f
             setPadding(0, 0, 0, dp(6))
+        }
+        val lspManageButton = TextView(this).apply {
+            text = getString(R.string.editor_settings_lsp_download)
+            setTextColor(0xffd4d4d4.toInt())
+            textSize = 14f
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(dp(14), 0, dp(14), 0)
+            setBackgroundResource(R.drawable.shape_editor_symbol_key)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(40)
+            ).apply {
+                setMargins(0, dp(8), 0, 0)
+            }
+            setOnClickListener { showLspServersDialog() }
         }
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -505,7 +995,11 @@ class EditTextActivity : AppCompatActivity() {
             addView(buildSettingsLabel(getString(R.string.editor_settings_symbols)))
             addView(symbolSettingsButton)
             addView(buildSettingsLabel(getString(R.string.editor_settings_lsp)))
-            addView(lspTodoLabel)
+            addView(lspEnableSwitch)
+            addView(buildSettingsLabel(getString(R.string.editor_settings_lsp_timeout)))
+            addView(lspTimeoutInput)
+            addView(lspDescLabel)
+            addView(lspManageButton)
         }
         val scrollView = ScrollView(this).apply {
             addView(container)
@@ -527,21 +1021,34 @@ class EditTextActivity : AppCompatActivity() {
                 currentTabSize = tabSizeInput.text.toString().toIntOrNull()?.coerceIn(2, 8) ?: DEFAULT_TAB_SIZE
                 currentThemeName = themeSpinner.selectedItem.toString()
                 currentFontPath = newFontPath
-                val editor = getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE).edit()
+                lspEnabled = lspEnableSwitch.isChecked
+                lspTimeoutMillis = lspTimeoutInput.text.toString().toLongOrNull()
+                    ?.coerceIn(500L, 30000L) ?: EditorLspManager.DEFAULT_TIMEOUT_MILLIS
+                getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE).edit()
                     .putInt(EDITOR_PREF_TAB_SIZE, currentTabSize)
                     .putString(EDITOR_PREF_THEME, currentThemeName)
                     .putString(EDITOR_PREF_FONT_PATH, currentFontPath)
-                editor.apply()
+                    .putBoolean(EDITOR_PREF_LSP_ENABLED, lspEnabled)
+                    .putLong(EDITOR_PREF_LSP_TIMEOUT, lspTimeoutMillis)
+                    .apply()
                 applyEditorTabSize()
                 applyEditorTheme(currentThemeName)
                 applyEditorFont(true)
+                applyLspSettings()
                 reloadCurrentEditorLanguage()
+                if (lspEnabled) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        lspManager.ensureBasicShellInstalled()
+                    }
+                }
                 dialog.dismiss()
             }
             dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
                 currentTabSize = DEFAULT_TAB_SIZE
                 currentThemeName = "vscode_dark"
                 currentFontPath = ""
+                lspEnabled = false
+                lspTimeoutMillis = EditorLspManager.DEFAULT_TIMEOUT_MILLIS
                 getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE)
                     .edit()
                     .clear()
@@ -549,6 +1056,7 @@ class EditTextActivity : AppCompatActivity() {
                 applyEditorTabSize()
                 applyEditorTheme(currentThemeName)
                 applyEditorFont(false)
+                applyLspSettings()
                 reloadCurrentEditorLanguage()
                 dialog.dismiss()
             }
@@ -557,6 +1065,55 @@ class EditTextActivity : AppCompatActivity() {
             editorSettingsFontInput = null
         }
         dialog.show()
+    }
+
+    private fun showLspServersDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_lsp_servers, null)
+        val listView = dialogView.findViewById<RecyclerView>(R.id.lsp_server_list)
+        lateinit var lspServerAdapter: EditorLspServerAdapter
+        lspServerAdapter = EditorLspServerAdapter(lspManager) { serverPackage ->
+            lspManager.installPackage(serverPackage.id) { _, _ ->
+                runOnUiThread {
+                    lspServerAdapter.refresh()
+                    stopLspInstallRefresh()
+                }
+            }
+            lspServerAdapter.refresh()
+            startLspInstallRefresh(lspServerAdapter)
+        }
+        listView.layoutManager = LinearLayoutManager(this)
+        listView.adapter = lspServerAdapter
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+        dialogView.findViewById<View>(R.id.lsp_dialog_close).setOnClickListener {
+            stopLspInstallRefresh()
+            dialog.dismiss()
+        }
+        dialog.setOnDismissListener {
+            stopLspInstallRefresh()
+        }
+        dialog.show()
+    }
+
+    private fun startLspInstallRefresh(adapter: EditorLspServerAdapter) {
+        stopLspInstallRefresh()
+        val refreshRunnable = object : Runnable {
+            override fun run() {
+                adapter.refresh()
+                if (adapter.hasInstallingPackage()) {
+                    dirtyCheckHandler.postDelayed(this, 800L)
+                }
+            }
+        }
+        lspInstallRefreshRunnable = refreshRunnable
+        dirtyCheckHandler.postDelayed(refreshRunnable, 800L)
+    }
+
+    private fun stopLspInstallRefresh() {
+        lspInstallRefreshRunnable?.let { dirtyCheckHandler.removeCallbacks(it) }
+        lspInstallRefreshRunnable = null
     }
 
     private fun openEditorFontPicker() {
@@ -941,6 +1498,7 @@ class EditTextActivity : AppCompatActivity() {
             updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
             updateDirtyState()
             updateEditorActionButtons()
+            updateRunButton()
         } catch (e: Exception) {
             UUtils.showMsg(e.message ?: UUtils.getString(R.string.save_error_))
         }
@@ -1028,12 +1586,16 @@ class EditTextActivity : AppCompatActivity() {
         mEditorSvgPreview?.visibility = View.GONE
         code_editor?.visibility = View.VISIBLE
         updatePreviewModeToggle(extension, false)
-        code_editor?.setEditorLanguage(createEditorLanguage(extension))
+        code_editor?.setEditorLanguage(createEditorLanguage(extension, tab.file))
         code_editor?.setText(tab.content)
+        updateRunButton()
     }
 
-    private fun createEditorLanguage(extension: String): Language {
-        return TextMateLanguage.create(getCodeType(extension), true)
+    private fun createEditorLanguage(extension: String, file: File): Language {
+        val delegate = TextMateLanguage.create(getCodeType(extension), true)
+        if (!lspEnabled) return delegate
+        val languageId = lspLanguageId(extension) ?: return delegate
+        return EditorLspLanguage(delegate, lspManager, file, languageId)
     }
 
     private fun reloadCurrentEditorLanguage() {
@@ -1041,7 +1603,7 @@ class EditTextActivity : AppCompatActivity() {
         val tab = currentTab() ?: return
         if (tab.previewOnly || isTextPreviewMode(tab)) return
         val extension = getFileExtension(tab.file)
-        code_editor?.setEditorLanguage(createEditorLanguage(extension))
+        code_editor?.setEditorLanguage(createEditorLanguage(extension, tab.file))
     }
 
     private fun showPreviewTab(tab: EditorTab) {
@@ -1073,6 +1635,7 @@ class EditTextActivity : AppCompatActivity() {
                 mEditorImagePreview?.setImageURI(Uri.fromFile(tab.file))
             }
         }
+        updateRunButton()
     }
 
     private fun updatePreviewModeToggle(extension: String, previewMode: Boolean) {
@@ -1225,6 +1788,7 @@ class EditTextActivity : AppCompatActivity() {
             renderEditorTabs()
         }
         updateEditorActionButtons()
+        updateRunButton()
     }
 
     private fun renderEditorTabs() {
@@ -1316,6 +1880,7 @@ class EditTextActivity : AppCompatActivity() {
     private fun removeEditorTab(tab: EditorTab) {
         val wasActive = tab.file.absolutePath == currentFile?.absolutePath
         val index = editorTabs.indexOf(tab)
+        closeLspDocument(tab.file)
         editorTabs.remove(tab)
         if (editorTabs.isEmpty()) {
             finish()
@@ -1382,75 +1947,328 @@ class EditTextActivity : AppCompatActivity() {
         outState.putString(EDITOR_STATE_SIDEBAR_REPLACE_QUERY, mSidebarReplaceInput?.text?.toString().orEmpty())
         outState.putBoolean(EDITOR_STATE_SIDEBAR_REGEX, isRegexSearch)
         outState.putBoolean(EDITOR_STATE_SIDEBAR_MATCH_CASE, isMatchCase)
+        outState.putBoolean(
+            EDITOR_STATE_TERMINAL_VISIBLE,
+            editorTerminalPanel?.isVisible() == true
+        )
     }
 
     override fun onBackPressed() {
         confirmExitIfDirty()
     }
 
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val inputView = findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)
+        val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view)
+        if (editorTerminalPanel?.isVisible() == true && inputView != null && inputView.hasFocus()) {
+            val session = terminalView?.currentSession
+            if (session != null && event.action == KeyEvent.ACTION_DOWN) {
+                when (event.keyCode) {
+                    KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+                        session.write("\r")
+                        terminalView?.onScreenUpdated()
+                        return true
+                    }
+                    KeyEvent.KEYCODE_DEL -> {
+                        session.write("\u007f")
+                        terminalView?.onScreenUpdated()
+                        return true
+                    }
+                }
+            }
+            if (terminalView != null && terminalView.dispatchKeyEvent(event)) {
+                return true
+            }
+        }
+        return super.dispatchKeyEvent(event)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (handleSidebarSwipeGesture(ev)) {
+            return true
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        editorTerminalPanel?.onResume()
+    }
+
     override fun onDestroy() {
         dirtyCheckHandler.removeCallbacks(dirtyCheckRunnable)
+        stopLspInstallRefresh()
+        sidebarAnimator?.cancel()
+        cancelSidebarGesture()
+        shutdownLspManager()
+        editorTerminalPanel?.destroy()
+        editorTerminalPanel = null
         super.onDestroy()
     }
 
     private fun toggleSidebar() {
-        setSidebarVisible(!(mEditorSidebar?.visibility == View.VISIBLE))
+        setSidebarVisible(!isSidebarVisible)
     }
 
-    private fun setSidebarVisible(visible: Boolean) {
-        isSidebarVisible = visible
+    private fun getSidebarWidthPx(): Float {
+        return dp(SIDEBAR_WIDTH_DP).toFloat()
+    }
+
+    private fun setSidebarVisible(visible: Boolean, animated: Boolean = true) {
         val sidebar = mEditorSidebar ?: return
-        val sidebarWidth = dp(SIDEBAR_WIDTH_DP).toFloat()
+        val sidebarWidth = getSidebarWidthPx()
+        cancelSidebarGesture()
         sidebar.animate().cancel()
+        sidebarAnimator?.cancel()
+
         if (visible) {
-            adjustEditorLayoutForSidebar(true)
-            if (sidebar.visibility == View.VISIBLE && sidebar.translationX == 0f) return
-            sidebar.visibility = View.VISIBLE
-            sidebar.translationX = -sidebarWidth
-            sidebar.animate().translationX(0f).setDuration(180).start()
-        } else {
-            if (sidebar.visibility != View.VISIBLE) {
-                sidebar.visibility = View.GONE
-                sidebar.translationX = 0f
-                adjustEditorLayoutForSidebar(false)
+            if (isSidebarVisible && sidebar.visibility == View.VISIBLE && sidebar.translationX == 0f) {
                 return
             }
-            sidebar.animate()
-                .translationX(-sidebarWidth)
-                .setDuration(160)
-                .withEndAction {
-                    sidebar.visibility = View.GONE
-                    sidebar.translationX = 0f
-                    adjustEditorLayoutForSidebar(false)
-                }
-                .start()
+            sidebar.visibility = View.VISIBLE
+            val startTx = if (sidebar.translationX != 0f) sidebar.translationX else -sidebarWidth
+            applySidebarTranslation(startTx)
+            if (animated) {
+                animateSidebarTo(0f, true)
+            } else {
+                finishSidebarState(true)
+            }
+        } else {
+            if (!isSidebarVisible && sidebar.visibility != View.VISIBLE) {
+                finishSidebarState(false)
+                return
+            }
+            if (animated) {
+                val startTx = if (sidebar.visibility == View.VISIBLE) sidebar.translationX else -sidebarWidth
+                applySidebarTranslation(startTx)
+                animateSidebarTo(-sidebarWidth, false)
+            } else {
+                finishSidebarState(false)
+            }
         }
     }
 
-    private fun adjustEditorLayoutForSidebar(visible: Boolean) {
-        val sidebarWidth = if (visible) dp(SIDEBAR_WIDTH_DP) else 0
-        (mEditorToolbar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
-            leftMargin = sidebarWidth
-            mEditorToolbar?.layoutParams = this
+    private fun applySidebarTranslation(translationX: Float) {
+        val sidebar = mEditorSidebar ?: return
+        val sidebarWidth = getSidebarWidthPx()
+        val clamped = translationX.coerceIn(-sidebarWidth, 0f)
+        val progress = 1f + clamped / sidebarWidth
+        sidebar.translationX = clamped
+        if (progress > 0.001f) {
+            sidebar.visibility = View.VISIBLE
         }
-        (mEditorTabBar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
-            leftMargin = sidebarWidth
-            mEditorTabBar?.layoutParams = this
+        applySidebarLeftMargin((sidebarWidth * progress).toInt())
+    }
+
+    private fun applySidebarLeftMargin(margin: Int) {
+        listOf(
+            mEditorToolbar,
+            mEditorTabBar,
+            mEditorContentLayout,
+            mEditorTerminalPanelView,
+            mEditorSymbolBar
+        ).forEach { view ->
+            (view?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
+                if (leftMargin != margin) {
+                    leftMargin = margin
+                    view.layoutParams = this
+                }
+            }
         }
-        (mEditorContentLayout?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
-            leftMargin = sidebarWidth
-            mEditorContentLayout?.layoutParams = this
+        editorTerminalPanel?.onHostLayoutChanged()
+    }
+
+    private fun finishSidebarState(visible: Boolean) {
+        isSidebarVisible = visible
+        val sidebar = mEditorSidebar ?: return
+        if (visible) {
+            applySidebarTranslation(0f)
+            sidebar.translationX = 0f
+            scheduleFileTreeContentWidthUpdate()
+        } else {
+            sidebar.visibility = View.GONE
+            sidebar.translationX = 0f
+            applySidebarLeftMargin(0)
         }
-        (mEditorSymbolBar?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
-            leftMargin = sidebarWidth
-            mEditorSymbolBar?.layoutParams = this
+    }
+
+    private fun animateSidebarTo(targetTranslation: Float, visible: Boolean) {
+        val sidebar = mEditorSidebar ?: return
+        val sidebarWidth = getSidebarWidthPx()
+        val start = sidebar.translationX
+        sidebarAnimator?.cancel()
+        if (abs(start - targetTranslation) < 1f) {
+            finishSidebarState(visible)
+            return
         }
+        val duration = (SIDEBAR_ANIMATION_DURATION * abs(start - targetTranslation) / sidebarWidth)
+            .toLong()
+            .coerceIn(80L, SIDEBAR_ANIMATION_DURATION)
+        sidebarAnimator = ValueAnimator.ofFloat(start, targetTranslation).apply {
+            this.duration = duration
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                applySidebarTranslation(animator.animatedValue as Float)
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    finishSidebarState(visible)
+                    sidebarAnimator = null
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                    sidebarAnimator = null
+                }
+            })
+            start()
+        }
+    }
+
+    private fun isTouchOnFileTree(ev: MotionEvent): Boolean {
+        val scroll = mSidebarFileTreeScroll ?: return false
+        if (scroll.visibility != View.VISIBLE) return false
+        if (mSidebarFilePanel?.visibility != View.VISIBLE) return false
+        val location = IntArray(2)
+        scroll.getLocationOnScreen(location)
+        return ev.rawX >= location[0] && ev.rawX < location[0] + scroll.width &&
+            ev.rawY >= location[1] && ev.rawY < location[1] + scroll.height
+    }
+
+    private fun shouldStartSidebarGesture(ev: MotionEvent): Boolean {
+        if (sidebarGestureActive || sidebarGestureDragging) return false
+        val sidebar = mEditorSidebar ?: return false
+        if (isSidebarVisible && sidebar.visibility == View.VISIBLE) {
+            if (isTouchOnFileTree(ev)) return false
+            val location = IntArray(2)
+            sidebar.getLocationOnScreen(location)
+            val x = ev.rawX
+            val y = ev.rawY
+            return x >= location[0] && x < location[0] + sidebar.width &&
+                y >= location[1] && y < location[1] + sidebar.height
+        }
+        if (!isSidebarVisible) {
+            return ev.rawX <= dp(SIDEBAR_EDGE_SWIPE_DP)
+        }
+        return false
+    }
+
+    private fun beginSidebarGesture(ev: MotionEvent) {
+        val sidebar = mEditorSidebar ?: return
+        val sidebarWidth = getSidebarWidthPx()
+        sidebarGestureActive = true
+        sidebarGestureDragging = false
+        sidebarGestureOpenedFromClosed = !isSidebarVisible
+        sidebarGestureDownX = ev.rawX
+        sidebarGestureDownY = ev.rawY
+        sidebarGestureStartTranslation = if (isSidebarVisible) {
+            sidebar.translationX
+        } else {
+            sidebar.visibility = View.VISIBLE
+            -sidebarWidth
+        }
+        sidebar.translationX = sidebarGestureStartTranslation
+        applySidebarTranslation(sidebarGestureStartTranslation)
+        sidebarVelocityTracker?.recycle()
+        sidebarVelocityTracker = VelocityTracker.obtain()
+        sidebarVelocityTracker?.addMovement(ev)
+    }
+
+    private fun beginSidebarGestureDrag(startRawX: Float, startRawY: Float, ev: MotionEvent) {
+        beginSidebarGesture(ev)
+        sidebarGestureDownX = startRawX
+        sidebarGestureDownY = startRawY
+        sidebarGestureDragging = true
+        mEditorSidebar?.animate()?.cancel()
+        sidebarAnimator?.cancel()
+    }
+
+    private fun updateSidebarGestureDrag(ev: MotionEvent): Boolean {
+        if (!sidebarGestureActive) return false
+        sidebarVelocityTracker?.addMovement(ev)
+        if (!sidebarGestureDragging) {
+            val dx = ev.rawX - sidebarGestureDownX
+            val dy = ev.rawY - sidebarGestureDownY
+            if (abs(dx) < sidebarTouchSlop && abs(dy) < sidebarTouchSlop) {
+                return false
+            }
+            if (abs(dy) > abs(dx)) {
+                cancelSidebarGesture(resetPartialOpen = true)
+                return false
+            }
+            sidebarGestureDragging = true
+            mEditorSidebar?.animate()?.cancel()
+            sidebarAnimator?.cancel()
+        }
+        val dx = ev.rawX - sidebarGestureDownX
+        val newTranslation = (sidebarGestureStartTranslation + dx)
+            .coerceIn(-getSidebarWidthPx(), 0f)
+        applySidebarTranslation(newTranslation)
+        return true
+    }
+
+    private fun finishSidebarGestureDrag(ev: MotionEvent): Boolean {
+        if (!sidebarGestureDragging) {
+            cancelSidebarGesture(resetPartialOpen = true)
+            return false
+        }
+        sidebarVelocityTracker?.addMovement(ev)
+        sidebarVelocityTracker?.computeCurrentVelocity(1000)
+        val velocityX = sidebarVelocityTracker?.xVelocity ?: 0f
+        snapSidebarFromGesture(velocityX)
+        cancelSidebarGesture()
+        return true
+    }
+
+    private fun cancelSidebarGesture(resetPartialOpen: Boolean = false) {
+        sidebarGestureActive = false
+        sidebarGestureDragging = false
+        mSidebarFileTreeScroll?.resetSidebarDragState()
+        sidebarVelocityTracker?.recycle()
+        sidebarVelocityTracker = null
+        if (resetPartialOpen && sidebarGestureOpenedFromClosed && !isSidebarVisible) {
+            finishSidebarState(false)
+        }
+        sidebarGestureOpenedFromClosed = false
+    }
+
+    private fun snapSidebarFromGesture(velocityX: Float) {
+        val sidebarWidth = getSidebarWidthPx()
+        val current = mEditorSidebar?.translationX ?: return
+        val flingVelocity = dp(SIDEBAR_FLING_VELOCITY_DP).toFloat()
+        val open = when {
+            velocityX > flingVelocity -> true
+            velocityX < -flingVelocity -> false
+            current > -sidebarWidth * 0.5f -> true
+            else -> false
+        }
+        animateSidebarTo(if (open) 0f else -sidebarWidth, open)
+    }
+
+    private fun handleSidebarSwipeGesture(ev: MotionEvent): Boolean {
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                sidebarAnimator?.cancel()
+                if (shouldStartSidebarGesture(ev)) {
+                    beginSidebarGesture(ev)
+                }
+                return false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (!sidebarGestureActive) return false
+                return updateSidebarGestureDrag(ev)
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (!sidebarGestureActive) return false
+                return finishSidebarGestureDrag(ev)
+            }
+        }
+        return false
     }
 
     private fun restoreSidebarState(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             showFilePanel(updateSearch = false)
-            setSidebarVisible(false)
+            setSidebarVisible(false, animated = false)
             return
         }
 
@@ -1466,7 +2284,10 @@ class EditTextActivity : AppCompatActivity() {
             showFilePanel(updateSearch = false)
         }
 
-        setSidebarVisible(savedInstanceState.getBoolean(EDITOR_STATE_SIDEBAR_VISIBLE, false))
+        setSidebarVisible(
+            savedInstanceState.getBoolean(EDITOR_STATE_SIDEBAR_VISIBLE, false),
+            animated = false
+        )
         if (isSidebarVisible) {
             updateSidebarSearch(mSidebarSearchInput?.text?.toString() ?: "")
         }
@@ -1475,10 +2296,100 @@ class EditTextActivity : AppCompatActivity() {
     private fun initSidebar() {
         mSidebarFileTab?.setOnClickListener { showFilePanel() }
         mSidebarSearchTab?.setOnClickListener { showSearchPanel() }
+        mSidebarPageBrowserTab?.setOnClickListener { showSidebarBrowserPage() }
+        mSidebarPageProjectTab?.setOnClickListener { showSidebarProjectPage() }
+        findViewById<TextView>(R.id.sidebar_create_java)?.setOnClickListener {
+            createHelloProject(HelloProjectSpec("project_java", "Hello.java", JAVA_HELLO_TEMPLATE))
+        }
+        findViewById<TextView>(R.id.sidebar_create_c)?.setOnClickListener {
+            createHelloProject(HelloProjectSpec("project_c", "hello.c", C_HELLO_TEMPLATE))
+        }
+        findViewById<TextView>(R.id.sidebar_create_python)?.setOnClickListener {
+            createHelloProject(HelloProjectSpec("project_python", "hello.py", PYTHON_HELLO_TEMPLATE))
+        }
+        findViewById<TextView>(R.id.sidebar_create_android)?.setOnClickListener {
+            createAndroidProject()
+        }
         initFileTreeAdapter()
+        initFileTreeScrollGesture()
         initSidebarSearch()
         showFilePanel(updateSearch = false)
+        showSidebarBrowserPage()
         updateSearchToggles()
+    }
+
+    private fun showSidebarBrowserPage() {
+        mSidebarMainPage?.visibility = View.VISIBLE
+        mSidebarProjectPage?.visibility = View.GONE
+        mSidebarPageBrowserTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb)
+        mSidebarPageProjectTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb_inactive)
+        mSidebarPageBrowserTab?.setTextColor(0xfff5f5f5.toInt())
+        mSidebarPageProjectTab?.setTextColor(0xff9d9d9d.toInt())
+        mSidebarPageBrowserTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+        mSidebarPageProjectTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+    }
+
+    private fun showSidebarProjectPage() {
+        mSidebarMainPage?.visibility = View.GONE
+        mSidebarProjectPage?.visibility = View.VISIBLE
+        mSidebarPageBrowserTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb_inactive)
+        mSidebarPageProjectTab?.setBackgroundResource(R.drawable.shape_editor_slider_thumb)
+        mSidebarPageBrowserTab?.setTextColor(0xff9d9d9d.toInt())
+        mSidebarPageProjectTab?.setTextColor(0xfff5f5f5.toInt())
+        mSidebarPageBrowserTab?.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+        mSidebarPageProjectTab?.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+        updateSidebarProjectPath()
+    }
+
+    private fun getProjectTargetDir(): File? {
+        val current = fileTreeCurrentDir
+        if (current != null && current.isDirectory) return current
+        val parent = currentFile?.parentFile
+        if (parent != null && parent.isDirectory) return parent
+        return null
+    }
+
+    private fun updateSidebarProjectPath() {
+        mSidebarProjectPath?.text = getProjectTargetDir()?.absolutePath
+            ?: getString(R.string.editor_sidebar_project_dir_invalid)
+    }
+
+    private fun allocateProjectDirectory(parent: File, baseName: String): File {
+        val first = File(parent, baseName)
+        if (!first.exists()) return first
+        var index = 1
+        while (true) {
+            val candidate = File(parent, baseName + index)
+            if (!candidate.exists()) return candidate
+            index++
+        }
+    }
+
+    private fun createHelloProject(spec: HelloProjectSpec) {
+        val parentDir = getProjectTargetDir()
+        if (parentDir == null || !parentDir.isDirectory) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
+            return
+        }
+        val projectDir = allocateProjectDirectory(parentDir, spec.dirBaseName)
+        if (!projectDir.mkdirs()) {
+            UUtils.showMsg(UUtils.getString(R.string.save_error_))
+            return
+        }
+        val targetFile = File(projectDir, spec.entryFileName)
+        if (!UUtils.setFileString(targetFile, spec.content)) {
+            UUtils.showMsg(UUtils.getString(R.string.save_error_))
+            return
+        }
+        UUtils.showMsg(getString(R.string.editor_sidebar_project_created, projectDir.name))
+        if (fileTreeRoot?.absolutePath != parentDir.absolutePath) {
+            initFileTree(parentDir)
+        }
+        initFileTree(projectDir)
+        if (canOpenFile(targetFile)) {
+            loadFile(targetFile)
+            setSidebarVisible(false)
+        }
     }
 
     private fun showFilePanel(updateSearch: Boolean = true) {
@@ -1513,53 +2424,474 @@ class EditTextActivity : AppCompatActivity() {
     private fun initFileTree(root: File) {
         fileTreeRoot = if (root.isDirectory) root else root.parentFile
         fileTreeRoot?.absolutePath?.let { expandedDirectories.add(it) }
-        mSidebarFilePath?.text = fileTreeRoot?.absolutePath ?: ""
+        setFileTreeCurrentDir(fileTreeRoot ?: return)
         refreshFileTree()
     }
 
+    private fun setFileTreeCurrentDir(directory: File?) {
+        if (directory == null || !directory.isDirectory) return
+        fileTreeCurrentDir = directory
+        mSidebarFilePath?.text = directory.absolutePath
+        refreshActiveAndroidProjectRoot()
+        updateAndroidBuildButton()
+        updateSidebarProjectPath()
+    }
+
     private fun initFileTreeAdapter() {
-        fileTreeAdapter = object : ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, fileTreeItems) {
+        fileTreeAdapter = object : ArrayAdapter<String>(this, R.layout.item_editor_file_tree, fileTreeItems) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getView(position, convertView, parent)
-                val textView = view.findViewById<TextView>(android.R.id.text1)
+                val view = convertView ?: layoutInflater.inflate(R.layout.item_editor_file_tree, parent, false)
+                val iconView = view.findViewById<ImageView>(R.id.file_tree_icon)
+                val textView = view.findViewById<TextView>(R.id.file_tree_name)
                 val node = fileTreeNodes.getOrNull(position)
-                val isDirectory = node?.file?.isDirectory == true
-                val isCurrentFile = node?.file?.absolutePath == currentFile?.absolutePath
-                val depthPadding = node?.let { dp(12 + it.depth * 18) } ?: dp(10)
-                view.setBackgroundResource(if (isCurrentFile) R.drawable.shape_editor_toolbar_chip_active else android.R.color.transparent)
-                textView.text = fileTreeItems.getOrNull(position).orEmpty()
-                textView.setBackgroundResource(android.R.color.transparent)
-                textView.setTextColor(
-                    when {
-                        isCurrentFile -> 0xfff5f5f5.toInt()
-                        isDirectory -> 0xffcccccc.toInt()
-                        else -> 0xffd4d4d4.toInt()
-                    }
+                val depthPadding = node?.let { dp(10 + it.depth * 18) } ?: dp(10)
+                view.layoutParams = android.widget.AbsListView.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                textView.textSize = 13f
-                textView.setTypeface(Typeface.DEFAULT, if (isCurrentFile || isDirectory) Typeface.BOLD else Typeface.NORMAL)
-                textView.setPadding(depthPadding, dp(11), dp(10), dp(11))
-                textView.minHeight = dp(38)
-                textView.gravity = android.view.Gravity.CENTER_VERTICAL
-                textView.includeFontPadding = false
+                view.setPadding(depthPadding, view.paddingTop, view.paddingRight, view.paddingBottom)
+                when (node?.kind) {
+                    FileTreeEntryKind.GO_UP -> {
+                        view.setBackgroundResource(android.R.color.transparent)
+                        textView.text = fileTreeItems.getOrNull(position).orEmpty()
+                        textView.setTextColor(0xff9cdcfe.toInt())
+                        textView.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+                        iconView.visibility = View.VISIBLE
+                        iconView.setImageResource(R.drawable.ic_editor_go_up)
+                        iconView.setColorFilter(0xff9cdcfe.toInt(), PorterDuff.Mode.SRC_IN)
+                    }
+                    FileTreeEntryKind.NEW_MENU -> {
+                        view.setBackgroundResource(android.R.color.transparent)
+                        textView.text = fileTreeItems.getOrNull(position).orEmpty()
+                        textView.setTextColor(0xffb5cea8.toInt())
+                        textView.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+                        iconView.visibility = View.VISIBLE
+                        iconView.setImageResource(R.drawable.ic_editor_add)
+                        iconView.setColorFilter(0xffb5cea8.toInt(), PorterDuff.Mode.SRC_IN)
+                    }
+                    else -> {
+                        val isDirectory = node?.file?.isDirectory == true
+                        val isCurrentFile = node?.file?.absolutePath == currentFile?.absolutePath
+                        view.setBackgroundResource(
+                            if (isCurrentFile) R.drawable.shape_editor_toolbar_chip_active else android.R.color.transparent
+                        )
+                        textView.text = fileTreeItems.getOrNull(position).orEmpty()
+                        textView.setTextColor(
+                            when {
+                                isCurrentFile -> 0xfff5f5f5.toInt()
+                                isDirectory -> 0xffcccccc.toInt()
+                                else -> 0xffd4d4d4.toInt()
+                            }
+                        )
+                        textView.setTypeface(Typeface.DEFAULT, if (isCurrentFile || isDirectory) Typeface.BOLD else Typeface.NORMAL)
+                        if (node != null) {
+                            val expanded = node.file.isDirectory &&
+                                expandedDirectories.contains(node.file.absolutePath)
+                            val iconStyle = EditorFileTreeIcon.resolve(node.file, expanded = expanded)
+                            iconView.visibility = View.VISIBLE
+                            iconView.setImageResource(iconStyle.drawableRes)
+                            iconView.setColorFilter(iconStyle.tintColor, PorterDuff.Mode.SRC_IN)
+                        } else {
+                            iconView.visibility = View.GONE
+                        }
+                    }
+                }
                 return view
             }
         }
         mSidebarFileTree?.adapter = fileTreeAdapter
-        mSidebarFileTree?.setOnItemClickListener { _, _, position, _ ->
+        mSidebarFileTree?.setOnItemClickListener { _, view, position, _ ->
             val node = fileTreeNodes.getOrNull(position) ?: return@setOnItemClickListener
-            if (node.file.isDirectory) {
-                val path = node.file.absolutePath
-                if (expandedDirectories.contains(path)) {
-                    expandedDirectories.remove(path)
-                } else {
-                    expandedDirectories.add(path)
+            when (node.kind) {
+                FileTreeEntryKind.GO_UP -> navigateFileTreeUp()
+                FileTreeEntryKind.NEW_MENU -> showFileTreeCreateMenu(view)
+                FileTreeEntryKind.NORMAL -> {
+                    if (node.file.isDirectory) {
+                        val path = node.file.absolutePath
+                        if (expandedDirectories.contains(path)) {
+                            expandedDirectories.remove(path)
+                        } else {
+                            expandedDirectories.add(path)
+                        }
+                        setFileTreeCurrentDir(node.file)
+                        refreshFileTree()
+                    } else if (canOpenFile(node.file)) {
+                        loadFile(node.file)
+                        setSidebarVisible(false)
+                    }
                 }
-                refreshFileTree()
-            } else if (canOpenFile(node.file)) {
-                loadFile(node.file)
-                setSidebarVisible(false)
             }
+        }
+        mSidebarFileTree?.setOnItemLongClickListener { _, view, position, _ ->
+            val node = fileTreeNodes.getOrNull(position) ?: return@setOnItemLongClickListener false
+            if (node.kind == FileTreeEntryKind.GO_UP) return@setOnItemLongClickListener false
+            if (node.kind == FileTreeEntryKind.NEW_MENU && !EditorFileTreeClipboard.hasContent()) {
+                showFileTreeCreateMenu(view)
+                return@setOnItemLongClickListener true
+            }
+            showFileTreeItemMenu(node, view)
+            true
+        }
+    }
+
+    private fun initFileTreeScrollGesture() {
+        mSidebarFileTreeScroll?.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            scheduleFileTreeContentWidthUpdate()
+        }
+        mSidebarFileTreeScroll?.sidebarGestureDelegate = object : EditorFileTreeScrollView.SidebarGestureDelegate {
+            override fun onSidebarGestureDragStart(startRawX: Float, startRawY: Float, ev: MotionEvent) {
+                beginSidebarGestureDrag(startRawX, startRawY, ev)
+            }
+
+            override fun onSidebarGestureMove(ev: MotionEvent): Boolean {
+                return updateSidebarGestureDrag(ev)
+            }
+
+            override fun onSidebarGestureUp(ev: MotionEvent): Boolean {
+                return finishSidebarGestureDrag(ev)
+            }
+        }
+    }
+
+    private fun scheduleFileTreeContentWidthUpdate() {
+        mSidebarFileTreeScroll?.post { updateFileTreeContentWidth() }
+    }
+
+    private fun updateFileTreeContentWidth() {
+        val scroll = mSidebarFileTreeScroll ?: return
+        val list = mSidebarFileTree as? EditorFileTreeListView ?: return
+        val viewportWidth = scroll.width
+        if (viewportWidth <= 0) return
+        val textPaint = TextPaint().apply {
+            textSize = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                13f,
+                resources.displayMetrics
+            )
+        }
+        var maxRowWidth = viewportWidth
+        for (i in fileTreeNodes.indices) {
+            val node = fileTreeNodes[i]
+            val label = fileTreeItems.getOrNull(i).orEmpty()
+            val paddingStart = dp(10 + node.depth * 18)
+            val iconWidth = dp(18 + 8)
+            val paddingEnd = dp(10)
+            val bold = node.kind == FileTreeEntryKind.NORMAL &&
+                (node.file.isDirectory || node.file.absolutePath == currentFile?.absolutePath)
+            textPaint.typeface = Typeface.create(Typeface.DEFAULT, if (bold) Typeface.BOLD else Typeface.NORMAL)
+            val textWidth = textPaint.measureText(label).toInt()
+            val rowWidth = paddingStart + iconWidth + textWidth + paddingEnd
+            maxRowWidth = max(maxRowWidth, rowWidth)
+        }
+        if (list.contentWidth == maxRowWidth) return
+        list.contentWidth = maxRowWidth
+        list.requestLayout()
+        scroll.requestLayout()
+        scroll.post {
+            val maxScrollX = scroll.maxScrollX()
+            if (scroll.scrollX > maxScrollX) {
+                scroll.scrollTo(maxScrollX, 0)
+            }
+        }
+    }
+
+    private fun navigateFileTreeUp() {
+        val parent = fileTreeRoot?.parentFile ?: return
+        if (!parent.isDirectory) return
+        initFileTree(parent)
+    }
+
+    private fun showFileTreeCreateMenu(anchor: View) {
+        PopupMenu(this, anchor).apply {
+            menu.add(0, 1, 0, getString(R.string.editor_sidebar_create_folder))
+            menu.add(0, 2, 1, getString(R.string.editor_sidebar_create_file))
+            if (EditorFileTreeClipboard.hasContent()) {
+                menu.add(0, 12, 2, getString(R.string.editor_sidebar_paste))
+            }
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    1 -> showCreateFileTreeEntryDialog(isFolder = true)
+                    2 -> showCreateFileTreeEntryDialog(isFolder = false)
+                    12 -> pasteFileTreeEntry(resolvePasteTargetDir(null))
+                }
+                true
+            }
+            show()
+        }
+    }
+
+    private fun showFileTreeItemMenu(node: FileTreeNode, anchor: View) {
+        PopupMenu(this, anchor).apply {
+            if (node.kind == FileTreeEntryKind.NORMAL) {
+                menu.add(0, 10, 0, getString(R.string.editor_sidebar_copy))
+                menu.add(0, 11, 1, getString(R.string.editor_sidebar_cut))
+                menu.add(0, 13, 2, getString(R.string.editor_sidebar_delete))
+            }
+            if (EditorFileTreeClipboard.hasContent()) {
+                menu.add(0, 12, 3, getString(R.string.editor_sidebar_paste))
+            }
+            if (menu.size() == 0) return
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    10 -> copyFileTreeEntry(node.file)
+                    11 -> cutFileTreeEntry(node.file)
+                    12 -> pasteFileTreeEntry(resolvePasteTargetDir(node))
+                    13 -> confirmDeleteFileTreeEntry(node.file)
+                }
+                true
+            }
+            show()
+        }
+    }
+
+    private fun resolvePasteTargetDir(node: FileTreeNode?): File? {
+        if (node?.kind == FileTreeEntryKind.NORMAL) {
+            if (node.file.isDirectory) return node.file
+            return node.file.parentFile?.takeIf { it.isDirectory }
+        }
+        return fileTreeCurrentDir ?: fileTreeRoot
+    }
+
+    private fun copyFileTreeEntry(file: File) {
+        if (!file.exists()) return
+        EditorFileTreeClipboard.setCopy(file)
+        UUtils.showMsg(getString(R.string.editor_sidebar_clipboard_copied, file.name))
+    }
+
+    private fun cutFileTreeEntry(file: File) {
+        if (!file.exists()) return
+        EditorFileTreeClipboard.setCut(file)
+        UUtils.showMsg(getString(R.string.editor_sidebar_clipboard_cut, file.name))
+    }
+
+    private fun pasteFileTreeEntry(targetDir: File?) {
+        if (targetDir == null || !targetDir.isDirectory) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
+            return
+        }
+        val source = EditorFileTreeClipboard.source() ?: return
+        val cut = EditorFileTreeClipboard.mode() == EditorFileTreeClipboard.Mode.CUT
+        if (!EditorFileTreeOperations.canPasteInto(source, targetDir)) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_paste_failed))
+            return
+        }
+        val result = EditorFileTreeOperations.paste(source, targetDir, cut)
+        if (result == null) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_paste_failed))
+            return
+        }
+        if (cut) {
+            relocateEditorTabsAfterMove(source, result)
+            relocateFileTreeStateAfterMove(source, result)
+        }
+        UUtils.showMsg(getString(R.string.editor_sidebar_paste_success, result.name))
+        refreshFileTreeAfterMutation()
+        if (!cut && result.isFile && canOpenFile(result)) {
+            loadFile(result)
+        }
+    }
+
+    private fun confirmDeleteFileTreeEntry(file: File) {
+        if (!file.exists()) return
+        val messageRes = if (file.isDirectory) {
+            R.string.editor_sidebar_delete_confirm_folder
+        } else {
+            R.string.editor_sidebar_delete_confirm_file
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.editor_sidebar_delete)
+            .setMessage(getString(messageRes, file.name))
+            .setPositiveButton(R.string.editor_sidebar_delete) { _, _ ->
+                deleteFileTreeEntry(file)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun deleteFileTreeEntry(file: File) {
+        if (!file.exists()) return
+        if (!EditorFileTreeOperations.deleteEntry(file)) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_delete_failed))
+            return
+        }
+        EditorFileTreeClipboard.clearIfMatches(file)
+        expandedDirectories.remove(file.absolutePath)
+        forceRemoveEditorTabsUnder(file)
+        if (fileTreeCurrentDir?.let { EditorFileTreeOperations.isSameOrDescendant(it, file) } == true) {
+            val fallback = fileTreeRoot?.takeIf { it.isDirectory && it.exists() }
+                ?: file.parentFile?.takeIf { it.isDirectory }
+            if (fallback != null) {
+                setFileTreeCurrentDir(fallback)
+            }
+        }
+        UUtils.showMsg(getString(R.string.editor_sidebar_delete_success, file.name))
+        refreshFileTreeAfterMutation()
+    }
+
+    private fun refreshFileTreeAfterMutation() {
+        refreshFileTree()
+        updateSidebarProjectPath()
+        refreshActiveAndroidProjectRoot()
+        updateAndroidBuildButton()
+        fileTreeAdapter?.notifyDataSetChanged()
+    }
+
+    private fun forceRemoveEditorTabsUnder(path: File) {
+        val affected = editorTabs.filter { tab ->
+            EditorFileTreeOperations.isSameOrDescendant(tab.file, path) ||
+                tab.file.absolutePath == path.absolutePath
+        }
+        if (affected.isEmpty()) return
+        val activeRemoved = affected.any { it.file.absolutePath == currentFile?.absolutePath }
+        affected.forEach { tab ->
+            closeLspDocument(tab.file)
+            editorTabs.remove(tab)
+        }
+        if (editorTabs.isEmpty()) {
+            currentFile = null
+            code_editor?.setText("")
+            renderEditorTabs()
+            updateRunButton()
+            return
+        }
+        if (activeRemoved) {
+            currentFile = null
+            loadFile(editorTabs[0].file, storeCurrent = false)
+        } else {
+            renderEditorTabs()
+            updateRunButton()
+        }
+    }
+
+    private fun canonicalOrAbsolute(file: File): String {
+        return try {
+            file.canonicalPath
+        } catch (_: Exception) {
+            file.absolutePath
+        }
+    }
+
+    private fun relocateEditorTabsAfterMove(source: File, destination: File) {
+        val sourcePath = canonicalOrAbsolute(source)
+        val destPath = canonicalOrAbsolute(destination)
+        val sourcePrefix = sourcePath + File.separator
+        var activeRelocated = false
+        for (i in editorTabs.indices) {
+            val tab = editorTabs[i]
+            val tabPath = canonicalOrAbsolute(tab.file)
+            val newFile = when {
+                tabPath == sourcePath -> destination
+                tabPath.startsWith(sourcePrefix) -> File(destination, tabPath.removePrefix(sourcePrefix))
+                else -> null
+            } ?: continue
+            if (!newFile.exists()) continue
+            val wasActive = tab.file.absolutePath == currentFile?.absolutePath
+            closeLspDocument(tab.file)
+            editorTabs[i] = tab.copy(file = newFile)
+            if (wasActive) {
+                currentFile = newFile
+                activeRelocated = true
+            }
+        }
+        if (activeRelocated) {
+            currentTab()?.let { tab ->
+                val extension = getFileExtension(tab.file)
+                if (tab.previewOnly || isTextPreviewMode(tab)) {
+                    showPreviewTab(tab)
+                } else {
+                    showEditorTab(tab, extension)
+                }
+            }
+        }
+        renderEditorTabs()
+        updatePositionText()
+        updateRunButton()
+        fileTreeAdapter?.notifyDataSetChanged()
+    }
+
+    private fun relocateFileTreeStateAfterMove(source: File, destination: File) {
+        val sourcePath = canonicalOrAbsolute(source)
+        val destPath = canonicalOrAbsolute(destination)
+        val sourcePrefix = sourcePath + File.separator
+        fileTreeRoot?.let { root ->
+            val rootPath = canonicalOrAbsolute(root)
+            when {
+                rootPath == sourcePath -> fileTreeRoot = destination
+                rootPath.startsWith(sourcePrefix) -> {
+                    fileTreeRoot = File(destination, rootPath.removePrefix(sourcePrefix))
+                }
+            }
+        }
+        fileTreeCurrentDir?.let { dir ->
+            val dirPath = canonicalOrAbsolute(dir)
+            when {
+                dirPath == sourcePath -> setFileTreeCurrentDir(destination)
+                dirPath.startsWith(sourcePrefix) -> {
+                    setFileTreeCurrentDir(File(destination, dirPath.removePrefix(sourcePrefix)))
+                }
+            }
+        }
+        val expanded = expandedDirectories.toList()
+        expandedDirectories.clear()
+        for (path in expanded) {
+            when {
+                path == sourcePath -> expandedDirectories.add(destPath)
+                path.startsWith(sourcePrefix) -> {
+                    expandedDirectories.add(File(destination, path.removePrefix(sourcePrefix)).absolutePath)
+                }
+                else -> expandedDirectories.add(path)
+            }
+        }
+    }
+
+    private fun showCreateFileTreeEntryDialog(isFolder: Boolean) {
+        val root = fileTreeCurrentDir ?: fileTreeRoot ?: return
+        val input = EditText(this).apply {
+            hint = getString(R.string.editor_sidebar_create_name_hint)
+            setTextColor(ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff))
+            setHintTextColor(0xff9d9d9d.toInt())
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+            inputType = InputType.TYPE_CLASS_TEXT
+        }
+        val titleRes = if (isFolder) {
+            R.string.editor_sidebar_create_folder
+        } else {
+            R.string.editor_sidebar_create_file
+        }
+        AlertDialog.Builder(this)
+            .setTitle(titleRes)
+            .setView(input)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                createFileTreeEntry(root, input.text?.toString().orEmpty(), isFolder)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun createFileTreeEntry(root: File, rawName: String, isFolder: Boolean) {
+        val name = rawName.trim()
+        if (name.isEmpty() || name.contains('/') || name.contains('\\')) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_create_failed))
+            return
+        }
+        val target = File(root, name)
+        if (target.exists()) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_create_exists, name))
+            return
+        }
+        val success = if (isFolder) {
+            target.mkdirs()
+        } else {
+            runCatching { target.createNewFile() }.getOrDefault(false)
+        }
+        if (!success) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_create_failed))
+            return
+        }
+        refreshFileTree()
+        updateSidebarProjectPath()
+        if (!isFolder && canOpenFile(target)) {
+            loadFile(target)
         }
     }
 
@@ -1570,13 +2902,19 @@ class EditTextActivity : AppCompatActivity() {
         if (root == null || !root.isDirectory) {
             fileTreeItems.add(getString(R.string.editor_sidebar_file_empty))
             fileTreeAdapter?.notifyDataSetChanged()
+            scheduleFileTreeContentWidthUpdate()
             return
         }
-        addFileTreeChildren(root, 0)
-        if (fileTreeItems.isEmpty()) {
-            fileTreeItems.add(getString(R.string.editor_sidebar_file_empty))
+        val parent = root.parentFile
+        if (parent != null && parent.isDirectory) {
+            fileTreeNodes.add(FileTreeNode(FileTreeEntryKind.GO_UP, parent, 0))
+            fileTreeItems.add(getString(R.string.editor_sidebar_go_up))
         }
+        fileTreeNodes.add(FileTreeNode(FileTreeEntryKind.NEW_MENU, root, 0))
+        fileTreeItems.add(getString(R.string.editor_sidebar_new_menu))
+        addFileTreeChildren(root, 0)
         fileTreeAdapter?.notifyDataSetChanged()
+        scheduleFileTreeContentWidthUpdate()
     }
 
     private fun addFileTreeChildren(directory: File, depth: Int) {
@@ -1584,7 +2922,7 @@ class EditTextActivity : AppCompatActivity() {
         val files = directory.listFiles()?.sortedWith(compareBy<File> { !it.isDirectory }.thenBy { it.name.lowercase(Locale.ROOT) }) ?: return
         for (file in files) {
             if (fileTreeNodes.size >= MAX_FILE_TREE_ITEMS) return
-            fileTreeNodes.add(FileTreeNode(file, depth))
+            fileTreeNodes.add(FileTreeNode(FileTreeEntryKind.NORMAL, file, depth))
             fileTreeItems.add(formatFileTreeItem(file))
             if (file.isDirectory && expandedDirectories.contains(file.absolutePath)) {
                 addFileTreeChildren(file, depth + 1)
@@ -1593,12 +2931,7 @@ class EditTextActivity : AppCompatActivity() {
     }
 
     private fun formatFileTreeItem(file: File): String {
-        return if (file.isDirectory) {
-            val icon = if (expandedDirectories.contains(file.absolutePath)) "▾" else "▸"
-            "$icon  ${file.name}/"
-        } else {
-            "  ${file.name}"
-        }
+        return if (file.isDirectory) "${file.name}/" else file.name
     }
 
     private fun initSidebarSearch() {
@@ -1759,28 +3092,28 @@ class EditTextActivity : AppCompatActivity() {
         if (position < 0 || position >= sidebarSearchMatches.size) return
         currentSidebarMatchIndex = position
         val match = sidebarSearchMatches[position]
-        val searcher = code_editor?.searcher ?: return
-        searcher.stopSearch()
-        val highlightText = if (isRegexSearch) match.matchText else mSidebarSearchInput?.text?.toString()?.trim().orEmpty()
-        if (highlightText.isNotEmpty()) {
-            searcher.search(highlightText, EditorSearcher.SearchOptions(false, false))
-            val previousCount = countLiteralOccurrencesBefore(highlightText, match.startOffset)
-            repeat(previousCount + 1) {
-                searcher.gotoNext()
-            }
+        val editor = code_editor ?: return
+        editor.searcher.stopSearch()
+
+        val content = editor.text
+        val lineCount = content.lineCount
+        if (lineCount <= 0) return
+
+        val text = content.toString()
+        val endLineColumn = offsetToLineColumn(buildLineStarts(text), match.endOffset.coerceIn(0, text.length))
+        val startLine = match.line.coerceIn(0, lineCount - 1)
+        val endLine = endLineColumn.first.coerceIn(0, lineCount - 1)
+        val startColumn = match.column.coerceIn(0, content.getColumnCount(startLine))
+        val endColumn = endLineColumn.second.coerceIn(0, content.getColumnCount(endLine))
+
+        if (startLine == endLine && startColumn == endColumn) {
+            editor.setSelection(startLine, startColumn, true)
+        } else {
+            editor.setSelectionRegion(startLine, startColumn, endLine, endColumn, true)
         }
+        editor.requestFocus()
         sidebarSearchAdapter?.notifyDataSetChanged()
         updatePositionText()
-    }
-
-    private fun countLiteralOccurrencesBefore(query: String, endOffset: Int): Int {
-        val text = code_editor?.text?.toString() ?: return 0
-        val beforeText = text.substring(0, endOffset.coerceIn(0, text.length))
-        val pattern = Pattern.compile(Pattern.quote(query), if (isMatchCase) 0 else Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE)
-        val matcher = pattern.matcher(beforeText)
-        var count = 0
-        while (matcher.find()) count++
-        return count
     }
 
     private fun replaceCurrentMatch() {
@@ -1934,11 +3267,9 @@ class EditTextActivity : AppCompatActivity() {
     }
 
     private fun resetColorScheme() {
-        code_editor!!.apply {
-            val colorScheme = this.colorScheme
-            // reset
-            this.colorScheme = colorScheme
-        }
+        val editor = code_editor ?: return
+        val colorScheme = editor.colorScheme
+        editor.colorScheme = colorScheme
     }
 
     private /*suspend*/ fun loadDefaultThemes() /*= withContext(Dispatchers.IO)*/ {
@@ -1964,15 +3295,16 @@ class EditTextActivity : AppCompatActivity() {
 
     private fun updatePositionText() {
         val tab = currentTab()
+        val editor = code_editor ?: return
         if (tab == null || tab.previewOnly || isTextPreviewMode(tab)) return
-        val cursor = code_editor!!.cursor
+        val cursor = editor.cursor
         var text =
             (1 + cursor.leftLine).toString() + ":" + cursor.leftColumn + ";" + cursor.left + " "
 
         text += if (cursor.isSelected) {
             "(" + (cursor.right - cursor.left) + " chars)"
         } else {
-            val content = code_editor!!.text
+            val content = editor.text
             if (content.getColumnCount(cursor.leftLine) == cursor.leftColumn) {
                 "(<" + content.getLine(cursor.leftLine).lineSeparator.let {
                     if (it == LineSeparator.NONE) {
@@ -1989,7 +3321,7 @@ class EditTextActivity : AppCompatActivity() {
         }
 
         // Indicator for text matching
-        val searcher = code_editor!!.searcher
+        val searcher = editor.searcher
         if (searcher.hasQuery()) {
             val idx = searcher.currentMatchedPositionIndex
             val count = searcher.matchedPositionCount

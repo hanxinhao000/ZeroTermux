@@ -70,6 +70,19 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/menu_package_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="6dp"
+            android:text="@string/menu_package_delete"
+            android:textColor="@color/red_error"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/menu_package_backup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

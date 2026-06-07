@@ -6,6 +6,7 @@ import android.os.Looper
 import com.example.xh_lib.utils.UUtils
 import com.termux.shared.termux.TermuxConstants
 import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment
+import com.termux.zerocore.utils.SingletonCommunicationUtils
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -27,6 +28,10 @@ class EditorLspInstaller(private val context: Context) {
         return PACKAGES
     }
 
+    fun isNpmInstalled(): Boolean {
+        return commandExists("npm")
+    }
+
     fun ensureBasicShellInstalled(onFinished: ((Boolean) -> Unit)? = null) {
         installPackage(SHELL_BASIC_ID, quietIfInstalled = true) { success, _ ->
             onFinished?.invoke(success)
@@ -46,22 +51,22 @@ class EditorLspInstaller(private val context: Context) {
                 return
             }
         }
-        postMessage("正在下载 ${serverPackage.displayName}")
+        postMessage("正在安装 ${serverPackage.displayName}")
         Thread {
             val result = runCatching {
-                installPackageBlocking(serverPackage)
+                installPackageWorker(serverPackage)
             }
             synchronized(installingPackages) {
                 installingPackages.remove(packageId)
             }
             if (result.isSuccess) {
                 markerFile(packageId).writeText(serverPackage.npmPackages.joinToString("\n"))
-                postMessage("${serverPackage.displayName} 下载完成")
-                onFinished?.invoke(true, "installed")
+                postMessage("${serverPackage.displayName} 安装完成")
+                mainHandler.post { onFinished?.invoke(true, "installed") }
             } else {
-                val message = result.exceptionOrNull()?.message ?: "下载失败"
-                postMessage("${serverPackage.displayName} 下载失败: ${message.take(120)}")
-                onFinished?.invoke(false, message)
+                val message = result.exceptionOrNull()?.message ?: "安装失败"
+                postMessage("${serverPackage.displayName} 安装失败: ${message.take(120)}")
+                mainHandler.post { onFinished?.invoke(false, message) }
             }
         }.apply {
             name = "ZT-LSP-Install-$packageId"
@@ -93,24 +98,102 @@ class EditorLspInstaller(private val context: Context) {
         }?.commands?.get(languageId)
     }
 
+    private fun installPackageWorker(serverPackage: ServerPackage) {
+        ensureNpmReady()
+        if (canUseTerminal()) {
+            sendLspInstallToTerminal(serverPackage)
+            if (!waitForCondition({ isPackageInstalled(serverPackage.id) }, LSP_INSTALL_WAIT_MS)) {
+                throw IllegalStateException("终端安装超时，请在 Termux 中确认命令是否执行完成")
+            }
+        } else {
+            installPackageBlocking(serverPackage)
+        }
+    }
+
+    private fun ensureNpmReady() {
+        if (isNpmInstalled()) return
+        if (canUseTerminal()) {
+            mainHandler.post {
+                postMessage("正在通过 Termux 终端安装 Node.js / npm…")
+                sendNpmInstallToTerminal()
+            }
+            if (!waitForCondition({ isNpmInstalled() }, NPM_INSTALL_WAIT_MS)) {
+                throw IllegalStateException("npm 安装超时，请在 Termux 终端中手动执行: pkg install -y nodejs-lts")
+            }
+            return
+        }
+        installNpmBlocking()
+        if (!isNpmInstalled()) {
+            throw IllegalStateException("npm 未安装且无法连接 Termux 终端")
+        }
+    }
+
+    private fun canUseTerminal(): Boolean {
+        return SingletonCommunicationUtils.getInstance().hasTerminalListener()
+    }
+
+    private fun sendToTerminal(command: String) {
+        SingletonCommunicationUtils.getInstance()
+            .getmSingletonCommunicationListener()
+            .sendTextToTerminal(command)
+    }
+
+    private fun sendNpmInstallToTerminal() {
+        sendToTerminal("echo '[ZeroTermux Editor] Installing nodejs/npm...'\n")
+        sendToTerminal("pkg install -y nodejs-lts || pkg install -y nodejs\n")
+    }
+
+    private fun sendLspInstallToTerminal(serverPackage: ServerPackage) {
+        val npmPackages = serverPackage.npmPackages.joinToString(" ")
+        sendToTerminal("echo '[ZeroTermux Editor] Installing LSP: ${serverPackage.displayName}'\n")
+        sendToTerminal("npm install -g --no-audit --no-fund $npmPackages\n")
+    }
+
+    private fun waitForCondition(check: () -> Boolean, timeoutMs: Long): Boolean {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            if (check()) return true
+            Thread.sleep(POLL_INTERVAL_MS)
+        }
+        return check()
+    }
+
+    private fun installNpmBlocking() {
+        val script = """
+            set -e
+            export HOME=${shellQuote(TermuxConstants.TERMUX_HOME_DIR_PATH)}
+            export PREFIX=${shellQuote(TermuxConstants.TERMUX_PREFIX_DIR_PATH)}
+            export PATH=${shellQuote(buildPath(null))}
+            if command -v pkg >/dev/null 2>&1; then
+                pkg install -y nodejs-lts || pkg install -y nodejs
+            else
+                echo "pkg not found"
+                exit 127
+            fi
+        """.trimIndent()
+        runShellScript(script)
+    }
+
     private fun installPackageBlocking(serverPackage: ServerPackage) {
         baseDir().mkdirs()
+        if (!isNpmInstalled()) {
+            installNpmBlocking()
+        }
         val npmPackages = serverPackage.npmPackages.joinToString(" ") { shellQuote(it) }
         val script = """
             set -e
             export HOME=${shellQuote(TermuxConstants.TERMUX_HOME_DIR_PATH)}
             export PREFIX=${shellQuote(TermuxConstants.TERMUX_PREFIX_DIR_PATH)}
             export PATH=${shellQuote(buildPath(null))}
-            if ! command -v npm >/dev/null 2>&1; then
-                if command -v pkg >/dev/null 2>&1; then
-                    pkg install -y nodejs-lts || pkg install -y nodejs
-                else
-                    echo "npm not found"
-                    exit 127
-                fi
-            fi
             npm install -g --no-audit --no-fund $npmPackages
         """.trimIndent()
+        runShellScript(script)
+        if (!isPackageInstalled(serverPackage.id)) {
+            throw IllegalStateException("LSP 命令未就绪，请检查 npm 全局安装路径")
+        }
+    }
+
+    private fun runShellScript(script: String) {
         val shell = File(TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH, "sh")
         val shellPath = if (shell.canExecute()) shell.absolutePath else "/system/bin/sh"
         val processBuilder = ProcessBuilder(shellPath, "-lc", script)
@@ -154,6 +237,9 @@ class EditorLspInstaller(private val context: Context) {
     companion object {
         const val SHELL_BASIC_ID = "shell-basic"
         private const val MAX_OUTPUT_LENGTH = 4000
+        private const val POLL_INTERVAL_MS = 2000L
+        private const val NPM_INSTALL_WAIT_MS = 10 * 60 * 1000L
+        private const val LSP_INSTALL_WAIT_MS = 15 * 60 * 1000L
         private val installingPackages = LinkedHashSet<String>()
 
         private val PACKAGES = listOf(
