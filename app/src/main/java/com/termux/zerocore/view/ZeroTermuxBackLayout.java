@@ -58,8 +58,13 @@ public class ZeroTermuxBackLayout extends RelativeLayout {
         // 加入是否显示逻辑
         boolean internalPassage = UserSetManage.Companion.get().getZTUserBean().isInternalPassage();
         if (internalPassage) {
-            mMainActivity = new MainActivity((Activity) mContext);
-            x11_view.addView(mMainActivity);
+            try {
+                mMainActivity = new MainActivity((Activity) mContext);
+                x11_view.addView(mMainActivity);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                android.util.Log.e("ZeroTermuxBackLayout", "X11 init failed, libXlorie.so may be missing for this ABI", e);
+            }
         }
         addView(viewLay);
     }

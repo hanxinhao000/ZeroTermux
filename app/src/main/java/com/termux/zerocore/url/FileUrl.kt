@@ -92,17 +92,6 @@ object FileUrl {
     public val aislePreferencePathSh = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/bin/termux-x11-preference"
     //通道二进制文
     public val aislePathSo = "${TermuxConstants.TERMUX_FILES_DIR_PATH}/usr/lib/libXlorie.so"
-    /** 根据设备 ABI 返回 assets 中对应的 libXlorie 文件名 */
-    public fun getAisleXlorieAssetPath(): String {
-        val abi = Build.SUPPORTED_ABIS[0]
-        return when {
-            abi.startsWith("arm64")   -> "x11/libXlorie-arm64-v8a.so"
-            abi.startsWith("armeabi") -> "x11/libXlorie-armeabi-v7a.so"
-            abi.startsWith("x86_64")  -> "x11/libXlorie-x86_64.so"
-            abi.startsWith("x86")     -> "x11/libXlorie-x86.so"
-            else -> "x11/libXlorie-arm64-v8a.so" // fallback
-        }
-    }
     //定时器目录
     public val timerTermuxDir = "${mainHomeUrl}/.timerdir"
     public val timerTermuxFile = "${mainHomeUrl}/.timerdir/termux_timer.sh"
