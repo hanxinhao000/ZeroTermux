@@ -42,6 +42,7 @@ ext.nightlyTermuxX11AarRepo = findProperty("nightlyTermuxX11AarRepo") ?: "XiaoTo
 ext.nightlyTermuxX11AarTag = findProperty("nightlyTermuxX11AarTag") ?: "nightly-termux-x11-aar-zt"
 ext.nightlyTermuxX11AarAssetName = findProperty("nightlyTermuxX11AarAssetName") ?: "termux-x11-zt-nightly.aar"
 ext.nightlyAisleLoaderAssetName = findProperty("nightlyAisleLoaderAssetName") ?: "aisle_zt_loader.apk"
+ext.skipSha256 = findProperty("skipSha256") ?: false
 
 def httpGetText = { String url, String githubToken ->
     def connection = new URL(url).openConnection()
@@ -126,9 +127,11 @@ tasks.register("downloadNightlyTermuxX11Aar") {
             throw new GradleException("SHA256SUMS does not contain ${nightlyTermuxX11AarAssetName}.")
         }
 
-        def actualSha = sha256Hex(aarTemp)
-        if (actualSha != expectedSha) {
-            throw new GradleException("SHA-256 mismatch for ${nightlyTermuxX11AarAssetName}: expected ${expectedSha}, got ${actualSha}")
+        if (!skipSha256) {
+            def actualSha = sha256Hex(aarTemp)
+            if (actualSha != expectedSha) {
+                throw new GradleException("SHA-256 mismatch for ${nightlyTermuxX11AarAssetName}: expected ${expectedSha}, got ${actualSha}")
+            }
         }
 
         targetAar.parentFile.mkdirs()
@@ -147,9 +150,11 @@ tasks.register("downloadNightlyTermuxX11Aar") {
         }
         def loaderTemp = new File(tempDir, nightlyAisleLoaderAssetName)
         downloadToFile(loaderAsset.browser_download_url.toString(), loaderTemp, githubToken)
-        def loaderActualSha = sha256Hex(loaderTemp)
-        if (loaderActualSha != loaderExpectedSha) {
-            throw new GradleException("SHA-256 mismatch for ${nightlyAisleLoaderAssetName}: expected ${loaderExpectedSha}, got ${loaderActualSha}")
+        if (!skipSha256) {
+            def loaderActualSha = sha256Hex(loaderTemp)
+            if (loaderActualSha != loaderExpectedSha) {
+                throw new GradleException("SHA-256 mismatch for ${nightlyAisleLoaderAssetName}: expected ${loaderExpectedSha}, got ${loaderActualSha}")
+            }
         }
         targetLoader.parentFile.mkdirs()
         targetLoader.bytes = loaderTemp.bytes
