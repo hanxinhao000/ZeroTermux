@@ -1,6 +1,5 @@
 package com.termux.zerocore.url
 
-import android.os.Build
 import com.example.xh_lib.utils.UUtils
 import com.termux.shared.termux.TermuxConstants
 import com.termux.zerocore.utils.XinhaoStoragePath
