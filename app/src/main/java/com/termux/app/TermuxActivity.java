@@ -2392,7 +2392,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 File backup = MainMenuPackageManager.backupCurrentMenu(TermuxActivity.this, name);
                 UUtils.runOnUIThread(() -> {
                     if (backup != null) {
-                        UUtils.showMsg(UUtils.getString(R.string.menu_package_backup_success)
+                        UUtils.showMsg(getString(R.string.menu_package_backup_success,
+                            MainMenuPackageManager.getMenuDirDisplayPath(TermuxActivity.this))
                             + "\n" + backup.getName());
                         refreshMenuPackageList();
                     } else {

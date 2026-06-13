@@ -52,6 +52,7 @@ class EditorTerminalViewClient(
 
     override fun onSingleTapUp(e: MotionEvent) {
         if (!isPanelVisible()) return
+        if (terminalView.isSelectingText) return
         val session = terminalView.currentSession ?: return
         val term = session.emulator ?: return
         if (term.isMouseTrackingActive || e.isFromSource(InputDevice.SOURCE_MOUSE)) return
@@ -59,7 +60,22 @@ class EditorTerminalViewClient(
     }
 
     override fun isTerminalViewSelected(): Boolean {
-        return isPanelVisible() && inputView.hasFocus()
+        if (!isPanelVisible()) return false
+        if (terminalView.isSelectingText) return true
+        return inputView.hasFocus()
+    }
+
+    override fun copyModeChanged(copyMode: Boolean) {
+        if (!isPanelVisible()) return
+        if (copyMode) {
+            inputView.removeCallbacks(showSoftKeyboardRunnable)
+            KeyboardUtils.hideSoftKeyboard(activity, inputView)
+            inputView.clearFocus()
+        }
+    }
+
+    override fun onLongPress(event: MotionEvent): Boolean {
+        return false
     }
 
     override fun shouldEnforceCharBasedInput(): Boolean {

@@ -1434,8 +1434,9 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="menu_package_backup_name_title">Backup Menu</string>
     <string name="menu_package_backup_name_hint">Enter backup name</string>
     <string name="menu_package_backup_name_empty">Backup name cannot be empty</string>
-    <string name="menu_package_install_pick_title">Select menu package (xinhao/menu)</string>
-    <string name="menu_package_install_empty">No zip menu packages in xinhao/menu</string>
+    <string name="menu_package_install_pick_title">Select menu package</string>
+    <string name="menu_package_install_path_hint">Zip directory: %1$s</string>
+    <string name="menu_package_install_empty">No zip menu packages in %1$s\n(Installed menus are extracted to app internal menu)</string>
     <string name="menu_package_default_label">Default menu</string>
     <string name="menu_package_program_label">Program menu</string>
     <string name="menu_package_network_label">Network menu</string>
@@ -1458,7 +1459,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="menu_package_apply_fail">Failed to switch menu</string>
     <string name="menu_package_install_success">Menu package installed</string>
     <string name="menu_package_install_fail">Failed to install menu package</string>
-    <string name="menu_package_backup_success">Backed up to xinhao/menu/</string>
+    <string name="menu_package_backup_success">Backed up to %1$s</string>
     <string name="menu_package_backup_fail">Backup failed</string>
     <string name="menu_package_install_pick">Select menu zip package</string>
 

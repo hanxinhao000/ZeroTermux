@@ -36,19 +36,29 @@ object MainMenuPackageManager {
     private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     @JvmStatic
-    fun ensureMenuDir(context: Context): File {
-        val dir = XinhaoStoragePath.getMenuDir(context)
+    fun ensureMenuBackupDir(context: Context): File {
+        val dir = XinhaoStoragePath.getMenuBackupDir(context)
         if (!dir.exists() && !dir.mkdirs()) {
-            android.util.Log.e("MainMenuPackageManager", "Failed to create menu dir: " + dir.absolutePath)
+            android.util.Log.e("MainMenuPackageManager", "Failed to create menu backup dir: " + dir.absolutePath)
         }
         return dir
     }
 
+    private fun ensureMenuInstallDir(context: Context): File =
+        XinhaoStoragePath.getMenuInstallDir(context)
+
+    private fun ensureMenuStateDir(context: Context): File =
+        XinhaoStoragePath.getMenuStateDir(context)
+
+    @JvmStatic
+    fun getMenuDirDisplayPath(context: Context): String {
+        return XinhaoStoragePath.getMenuBackupDirDisplayPath(context)
+    }
+
     @JvmStatic
     fun ensureDefaultActiveMenu(context: Context) {
-        val menuDir = ensureMenuDir(context)
-        if (!menuDir.exists()) return
-        val migrationFile = File(menuDir, PROGRAM_DEFAULT_MIGRATION_FILE)
+        val stateDir = ensureMenuStateDir(context)
+        val migrationFile = File(stateDir, PROGRAM_DEFAULT_MIGRATION_FILE)
         try {
             if (!migrationFile.exists()) {
                 val activeId = getActivePackageId(context)
@@ -58,7 +68,7 @@ object MainMenuPackageManager {
                 migrationFile.writeText("1")
                 return
             }
-            val activeFile = File(menuDir, ACTIVE_PACKAGE_FILE)
+            val activeFile = File(stateDir, ACTIVE_PACKAGE_FILE)
             if (!activeFile.exists() || activeFile.readText().trim().isEmpty()) {
                 applyProgramMenu(context)
             }
@@ -70,7 +80,7 @@ object MainMenuPackageManager {
     /** 构建列表：程序菜单 + 默认菜单 + 历史包 + 安装。 */
     @JvmStatic
     fun buildListItems(context: Context): List<MainMenuPackageInfo> {
-        ensureMenuDir(context)
+        ensureMenuInstallDir(context)
         val activeId = getActivePackageId(context)
         val items = ArrayList<MainMenuPackageInfo>()
 
@@ -95,7 +105,7 @@ object MainMenuPackageManager {
             )
         )
 
-        val menuDir = XinhaoStoragePath.getMenuDir(context)
+        val menuDir = XinhaoStoragePath.getMenuInstallDir(context)
         menuDir.listFiles()?.filter { it.isDirectory }?.sortedByDescending { it.lastModified() }
             ?.forEach { dir ->
                 if (!hasMenuXml(dir) || isNetworkPackageDir(dir)) {
@@ -127,8 +137,8 @@ object MainMenuPackageManager {
     fun fetchFromNetwork(context: Context, callback: NetworkFetchCallback) {
         Thread {
             try {
-                val menuDir = ensureMenuDir(context)
-                val tempZip = File(menuDir, "menu_download_temp.zip")
+                val installDir = ensureMenuInstallDir(context)
+                val tempZip = File(installDir, "menu_download_temp.zip")
                 val updateUrl = MenuUpdateSourceManager.getSelectedUrl(context)
                 if (!downloadFile(updateUrl, tempZip)) {
                     UUtils.runOnUIThread {
@@ -178,23 +188,28 @@ object MainMenuPackageManager {
 
     @JvmStatic
     fun getActivePackageLabel(context: Context): String {
-        val labelFile = File(ensureMenuDir(context), ACTIVE_LABEL_FILE)
-        if (labelFile.exists()) {
-            val label = labelFile.readText().trim()
-            if (label.isNotEmpty()) {
-                return label
+        return try {
+            val labelFile = File(ensureMenuStateDir(context), ACTIVE_LABEL_FILE)
+            if (labelFile.exists()) {
+                val label = labelFile.readText().trim()
+                if (label.isNotEmpty()) {
+                    return label
+                }
             }
+            val packageId = getActivePackageId(context)
+            if (packageId.isEmpty()) {
+                return UUtils.getString(R.string.menu_package_program_label)
+            }
+            resolveLabelFromPackageId(packageId)
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "getActivePackageLabel failed", e)
+            UUtils.getString(R.string.menu_package_program_label)
         }
-        val packageId = getActivePackageId(context)
-        if (packageId.isEmpty()) {
-            return UUtils.getString(R.string.menu_package_program_label)
-        }
-        return resolveLabelFromPackageId(packageId)
     }
 
     @JvmStatic
     fun listMenuZipFiles(context: Context): List<File> {
-        val menuDir = ensureMenuDir(context)
+        val menuDir = ensureMenuBackupDir(context)
         return menuDir.listFiles()
             ?.filter { it.isFile && it.name.endsWith(".zip", ignoreCase = true) }
             ?.sortedByDescending { it.lastModified() }
@@ -335,7 +350,7 @@ object MainMenuPackageManager {
     @JvmStatic
     fun backupCurrentMenu(context: Context, backupName: String): File? {
         return try {
-            val menuDir = ensureMenuDir(context)
+            val menuDir = ensureMenuBackupDir(context)
             val stagingDir = File(menuDir, ".backup_staging")
             if (stagingDir.exists()) {
                 deleteRecursive(stagingDir)
@@ -382,16 +397,21 @@ object MainMenuPackageManager {
 
     @JvmStatic
     fun getActivePackageId(context: Context): String {
-        val file = File(ensureMenuDir(context), ACTIVE_PACKAGE_FILE)
-        if (!file.exists()) {
-            return ""
+        return try {
+            val file = File(ensureMenuStateDir(context), ACTIVE_PACKAGE_FILE)
+            if (!file.exists()) {
+                return ""
+            }
+            file.readText().trim()
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "getActivePackageId failed", e)
+            ""
         }
-        return file.readText().trim()
     }
 
     private fun saveActivePackageId(context: Context, packageId: String) {
         try {
-            val dir = ensureMenuDir(context)
+            val dir = ensureMenuStateDir(context)
             if (dir.exists()) {
                 File(dir, ACTIVE_PACKAGE_FILE).writeText(packageId)
             }
@@ -402,7 +422,7 @@ object MainMenuPackageManager {
 
     private fun saveActivePackageLabel(context: Context, label: String) {
         try {
-            val dir = ensureMenuDir(context)
+            val dir = ensureMenuStateDir(context)
             if (dir.exists()) {
                 File(dir, ACTIVE_LABEL_FILE).writeText(label)
             }
@@ -482,7 +502,7 @@ object MainMenuPackageManager {
     }
 
     private fun getLatestNetworkPackageDir(context: Context): File? {
-        val menuDir = ensureMenuDir(context)
+        val menuDir = ensureMenuInstallDir(context)
         return menuDir.listFiles()
             ?.filter { it.isDirectory && isNetworkPackageDir(it) && hasMenuXml(it) }
             ?.maxByOrNull { it.lastModified() }

@@ -1987,6 +1987,11 @@ class EditTextActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view)
+        if (editorTerminalPanel?.isVisible() == true && terminalView?.isSelectingText == true) {
+            terminalView.stopTextSelectionMode()
+            return
+        }
         confirmExitIfDirty()
     }
 
