@@ -53,24 +53,29 @@ object MenuUpdateSourceManager {
 
     @JvmStatic
     fun getSelectedSourceId(context: Context): String {
-        val file = File(XinhaoStoragePath.getMenuDir(context), SELECTED_FILE)
-        if (!file.exists()) {
-            return MenuUpdateSource.DEFAULT_ID
+        return try {
+            val file = File(XinhaoStoragePath.getMenuStateDir(context), SELECTED_FILE)
+            if (!file.exists()) {
+                return MenuUpdateSource.DEFAULT_ID
+            }
+            val id = file.readText().trim()
+            if (id.isEmpty()) {
+                return MenuUpdateSource.DEFAULT_ID
+            }
+            if (id == MenuUpdateSource.DEFAULT_ID) {
+                return id
+            }
+            val exists = getCustomSources(context).any { it.id == id }
+            if (exists) id else MenuUpdateSource.DEFAULT_ID
+        } catch (e: Exception) {
+            android.util.Log.e("MenuUpdateSourceManager", "getSelectedSourceId failed", e)
+            MenuUpdateSource.DEFAULT_ID
         }
-        val id = file.readText().trim()
-        if (id.isEmpty()) {
-            return MenuUpdateSource.DEFAULT_ID
-        }
-        if (id == MenuUpdateSource.DEFAULT_ID) {
-            return id
-        }
-        val exists = getCustomSources(context).any { it.id == id }
-        return if (exists) id else MenuUpdateSource.DEFAULT_ID
     }
 
     @JvmStatic
     fun setSelectedSourceId(context: Context, sourceId: String) {
-        val menuDir = XinhaoStoragePath.getMenuDir(context)
+        val menuDir = XinhaoStoragePath.getMenuStateDir(context)
         menuDir.mkdirs()
         File(menuDir, SELECTED_FILE).writeText(sourceId)
     }
@@ -157,7 +162,7 @@ object MenuUpdateSourceManager {
     }
 
     private fun getCustomSources(context: Context): List<MenuUpdateSource> {
-        val file = File(XinhaoStoragePath.getMenuDir(context), SOURCES_FILE)
+        val file = File(XinhaoStoragePath.getMenuStateDir(context), SOURCES_FILE)
         if (!file.exists()) {
             return emptyList()
         }
@@ -171,7 +176,7 @@ object MenuUpdateSourceManager {
     }
 
     private fun saveCustomSources(context: Context, sources: List<MenuUpdateSource>) {
-        val menuDir = XinhaoStoragePath.getMenuDir(context)
+        val menuDir = XinhaoStoragePath.getMenuStateDir(context)
         menuDir.mkdirs()
         File(menuDir, SOURCES_FILE).writeText(gson.toJson(sources))
     }

@@ -28,12 +28,22 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/menu_package_pick_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/menu_package_install_pick_title"
                 android:textColor="@color/color_ffffff"
                 android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/menu_package_pick_path"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:textColor="@color/md_grey_500"
+                android:textSize="11sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/menu_package_pick_list"

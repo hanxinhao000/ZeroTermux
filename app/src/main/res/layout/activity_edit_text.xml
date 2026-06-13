@@ -231,8 +231,8 @@
                 android:id="@+id/editor_terminal_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:importantForAutofill="no"
                 android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
                 android:scrollbars="vertical" />

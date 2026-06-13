@@ -22,11 +22,13 @@ class MenuPackagePickDialog(context: Context) : BaseDialogDown(context) {
 
     private var pickList: RecyclerView? = null
     private var emptyView: TextView? = null
+    private var pathView: TextView? = null
     private var onPickListener: MenuPackagePickCallback? = null
 
     override fun initViewDialog(mView: View) {
         pickList = mView.findViewById(R.id.menu_package_pick_list)
         emptyView = mView.findViewById(R.id.menu_package_pick_empty)
+        pathView = mView.findViewById(R.id.menu_package_pick_path)
         mView.findViewById<ImageView>(R.id.close)?.setOnClickListener { dismiss() }
     }
 
@@ -37,10 +39,13 @@ class MenuPackagePickDialog(context: Context) : BaseDialogDown(context) {
     }
 
     fun refreshList() {
+        val menuPath = MainMenuPackageManager.getMenuDirDisplayPath(context)
+        pathView?.text = context.getString(R.string.menu_package_install_path_hint, menuPath)
         val zipFiles = MainMenuPackageManager.listMenuZipFiles(context)
         if (zipFiles.isEmpty()) {
             pickList?.visibility = View.GONE
             emptyView?.visibility = View.VISIBLE
+            emptyView?.text = context.getString(R.string.menu_package_install_empty, menuPath)
             return
         }
         emptyView?.visibility = View.GONE

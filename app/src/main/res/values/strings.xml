@@ -1397,8 +1397,9 @@
     <string name="menu_package_backup_name_title">备份菜单</string>
     <string name="menu_package_backup_name_hint">请输入备份名称</string>
     <string name="menu_package_backup_name_empty">备份名称不能为空</string>
-    <string name="menu_package_install_pick_title">选择菜单包（xinhao/menu）</string>
-    <string name="menu_package_install_empty">xinhao/menu 目录下没有 zip 菜单包</string>
+    <string name="menu_package_install_pick_title">选择菜单包</string>
+    <string name="menu_package_install_path_hint">zip 包目录：%1$s</string>
+    <string name="menu_package_install_empty">%1$s 目录下没有 zip 菜单包\n（安装后将解压到应用内部 menu）</string>
     <string name="menu_package_default_label">默认菜单</string>
     <string name="menu_package_program_label">程序菜单</string>
     <string name="menu_package_network_label">网络菜单</string>
@@ -1421,7 +1422,7 @@
     <string name="menu_package_apply_fail">菜单切换失败</string>
     <string name="menu_package_install_success">菜单包安装成功</string>
     <string name="menu_package_install_fail">菜单包安装失败</string>
-    <string name="menu_package_backup_success">已备份到 xinhao/menu/</string>
+    <string name="menu_package_backup_success">已备份到 %1$s</string>
     <string name="menu_package_backup_fail">备份失败</string>
     <string name="menu_package_install_pick">请选择菜单 zip 包</string>
 

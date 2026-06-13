@@ -38,9 +38,6 @@ class EditorTerminalInputView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN && !hasFocus()) {
-            requestFocus()
-        }
         val terminal = terminalView ?: return super.onTouchEvent(event)
         return terminal.onTouchEvent(event)
     }
