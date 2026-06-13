@@ -124,7 +124,7 @@ android {
         // versionCode 118
         // versionName "0.118.0"
         versionCode 118
-        versionName "0.118.3.61"
+        versionName "0.118.3.62"
         // @}
         if (appVersionName) versionName = appVersionName
         validateVersionName(versionName)
@@ -270,10 +270,12 @@ android {
         variant.outputs.all { output ->
             if (variant.buildType.name == "debug") {
                 def abi = output.getFilter(com.android.build.OutputFile.ABI)
-                outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : project.ext.packageVariant + "-" + "debug") + "_" + (abi ? abi : "universal") + ".apk")
+                //outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : project.ext.packageVariant + "-" + "debug") + "_" + (abi ? abi : "universal") + ".apk")
+                outputFileName = new File("ZeroTermux-" + (versionName + "-" + "debug") + "_" + (abi ? abi : "universal") + ".apk")
             } else if (variant.buildType.name == "release") {
                 def abi = output.getFilter(com.android.build.OutputFile.ABI)
-                outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : project.ext.packageVariant + "-" + "release") + "_" + (abi ? abi : "universal") + ".apk")
+                //outputFileName = new File("termux-app_" + (apkVersionTag ? apkVersionTag : project.ext.packageVariant + "-" + "release") + "_" + (abi ? abi : "universal") + ".apk")
+                outputFileName = new File("ZeroTermux-" + (versionName + "-" + "release") + "_" + (abi ? abi : "universal") + ".apk")
             }
         }
     }
@@ -408,11 +410,11 @@ task downloadBootstraps() {
         }
     }*/
     doLast {
-        def version = "2026.05.24-r1+apt.android-7"
-        downloadBootstrap("aarch64", "1f48f4d05da9fab3ce74fb1d9b137fdbc745ba1f7a6f9e8f743fd89b7047d17b", version)
-        downloadBootstrap("arm", "99b52156285beffbd79b565b7598ffca2e56fe2ee5e82531c4cdfcfc74d11eb2", version)
-        downloadBootstrap("i686", "849417137d11c5665ed4d0ec3385edd4b7acf531d236f478aa78c22e4068891e", version)
-        downloadBootstrap("x86_64", "2addf378b964f4258504eb0ac439248b7d261b57efedfbdd6a9a26f82c294875", version)
+        def version = "2026.06.07-r1+apt.android-7"
+        downloadBootstrap("aarch64", "9478e5749edbc6bce643e146f8966e8eb44894b4480885fdcb29112522063611", version)
+        downloadBootstrap("arm", "2428084a6a6a93bbcdeea829ebfe9db1d37115301a75889696f0292da75a8586", version)
+        downloadBootstrap("i686", "e5b368053917a8f305bfb1a5ebbf8bd00b580c8d0635466c5b9aad5506ee93f7", version)
+        downloadBootstrap("x86_64", "cc0149dcf517ed52ce7f15d02b2efbe7ff9b44ceb9c734513599c7be7c28922e", version)
     }
     // @}
 }
