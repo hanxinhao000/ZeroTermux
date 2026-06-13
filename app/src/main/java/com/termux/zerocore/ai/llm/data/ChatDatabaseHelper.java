@@ -460,12 +460,16 @@ public class ChatDatabaseHelper extends SQLiteOpenHelper {
     // 获取所有会话列表
     public List<ChatSession> getAllSessions() {
         List<ChatSession> sessions = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_CHAT_SESSIONS, null, null, null, null, null, COLUMN_CREATED_AT + " DESC");
-        while (cursor.moveToNext()) {
-            sessions.add(cursorToSession(cursor));
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.query(TABLE_CHAT_SESSIONS, null, null, null, null, null, COLUMN_CREATED_AT + " DESC");
+            while (cursor.moveToNext()) {
+                sessions.add(cursorToSession(cursor));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        cursor.close();
         return sessions;
     }
 

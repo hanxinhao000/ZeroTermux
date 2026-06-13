@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
+import com.example.xh_lib.utils.UUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,15 +198,20 @@ public class ChatDatabaseHelper extends SQLiteOpenHelper {
     // 获取所有会话列表
     public List<ChatSession> getAllSessions() {
         List<ChatSession> sessions = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_CHAT_SESSIONS, null, null, null, null, null, COLUMN_CREATED_AT + " DESC");
-        while (cursor.moveToNext()) {
-            String sessionId = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SESSION_ID));
-            String sessionName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SESSION_NAME));
-            long createdAt = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT));
-            sessions.add(new ChatSession(sessionId, sessionName, createdAt));
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.query(TABLE_CHAT_SESSIONS, null, null, null, null, null, COLUMN_CREATED_AT + " DESC");
+            while (cursor.moveToNext()) {
+                String sessionId = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SESSION_ID));
+                String sessionName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SESSION_NAME));
+                long createdAt = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT));
+                sessions.add(new ChatSession(sessionId, sessionName, createdAt));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            UUtils.showMsg(e.toString());
         }
-        cursor.close();
         return sessions;
     }
 
