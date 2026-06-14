@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZT电脑工作站</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header class="zt-topbar card">
+    <span id="zt-status-battery" class="zt-topbar-item">当前电量: --%</span>
+    <span id="zt-status-android" class="zt-topbar-item">Android 版本(当前版本: --)</span>
+    <span id="zt-status-zt" class="zt-topbar-item">ZT版本(当前版本: --)</span>
+  </header>
+  <div class="app">
+    <aside class="sidebar card">
+      <div class="brand">ZT 工作站</div>
+      <nav>
+        <button class="nav-btn active" data-panel="terminal" data-perm="terminal">终端</button>
+        <button class="nav-btn" data-panel="files" data-perm="files">文件</button>
+        <button class="nav-btn" data-panel="camera" data-perm="camera">摄像头</button>
+        <button class="nav-btn" data-panel="phone" data-perm="phoneSms">电话</button>
+        <button class="nav-btn" data-panel="sms" data-perm="phoneSms">短信</button>
+        <button class="nav-btn" data-panel="settings">设置</button>
+      </nav>
+    </aside>
+    <main class="workspace">
+      <section id="panel-blocked" class="panel card panel-blocked">
+        <div class="panel-blocked-inner">
+          <h2>功能未开启</h2>
+          <p id="panel-blocked-text">该功能未在手机端打开开关，请在 ZeroTermux 设置 → ZT电脑工作站 中开启对应权限后再使用。</p>
+        </div>
+      </section>
+
+      <section id="panel-terminal" class="panel active card terminal-panel">
+        <div id="terminal-container"></div>
+      </section>
+
+      <section id="panel-files" class="panel card file-browser-panel">
+        <div class="fb-header">
+          <div class="fb-toolbar">
+            <button id="fb-up" title="上级目录">⬆</button>
+            <button id="fb-refresh" title="刷新 (F5)">↻</button>
+            <span class="fb-toolbar-sep"></span>
+            <button id="fb-new-folder">新建文件夹</button>
+            <button id="fb-new-file">新建文件</button>
+            <label class="upload-btn">上传<input id="fb-upload" type="file" multiple hidden></label>
+            <span class="fb-toolbar-sep"></span>
+            <button id="fb-download" disabled>下载</button>
+            <button id="fb-rename" disabled>重命名</button>
+            <button id="fb-copy" disabled>复制</button>
+            <button id="fb-cut" disabled>剪切</button>
+            <button id="fb-paste" disabled>粘贴</button>
+            <button id="fb-delete" disabled>删除</button>
+            <span class="fb-toolbar-spacer"></span>
+            <input id="fb-search" type="search" placeholder="搜索当前目录..." class="fb-search">
+            <select id="fb-sort" class="fb-sort">
+              <option value="name">名称</option>
+              <option value="size">大小</option>
+              <option value="modified">修改时间</option>
+            </select>
+            <button id="fb-sort-dir" class="fb-sort-dir" title="排序方向">↑</button>
+            <button class="fb-view-btn active" data-view="list" title="列表视图">☰</button>
+            <button class="fb-view-btn" data-view="grid" title="网格视图">▦</button>
+          </div>
+          <nav id="fb-breadcrumb" class="fb-breadcrumb"></nav>
+        </div>
+        <div id="fb-dropzone" class="fb-dropzone">
+          <div id="fb-table-head" class="fb-table-head">
+            <label class="fb-check-all"><input type="checkbox" id="fb-select-all"></label>
+            <span class="fb-col-name">名称</span>
+            <span class="fb-col-size">大小</span>
+            <span class="fb-col-date">修改时间</span>
+          </div>
+          <div id="fb-list" class="fb-list fb-view-list"></div>
+        </div>
+        <div id="fb-status" class="fb-status"></div>
+        <div id="fb-context-menu" class="fb-context-menu hidden">
+          <button data-action="open">打开</button>
+          <button data-action="preview">预览</button>
+          <button data-action="download">下载</button>
+          <button data-action="rename">重命名</button>
+          <button data-action="copy">复制</button>
+          <button data-action="cut">剪切</button>
+          <button data-action="delete">删除</button>
+          <button data-action="info">属性</button>
+        </div>
+      </section>
+
+      <div id="fb-preview-modal" class="fb-modal hidden">
+        <div class="fb-modal-content card">
+          <div class="fb-modal-header">
+            <span id="fb-preview-title">预览</span>
+            <div class="fb-modal-actions">
+              <button id="fb-preview-save" class="hidden">保存</button>
+              <button id="fb-preview-close">×</button>
+            </div>
+          </div>
+          <div id="fb-preview-body" class="fb-preview-body"></div>
+        </div>
+      </div>
+
+      <section id="panel-camera" class="panel card">
+        <h2>摄像头</h2>
+        <div class="camera-toolbar">
+          <button id="camera-open">打开摄像头</button>
+          <button id="camera-close" disabled>关闭摄像头</button>
+          <button id="camera-switch" disabled>切换前置/后置</button>
+        </div>
+        <div id="camera-status" class="camera-status">请点击「打开摄像头」开始预览（默认前置）</div>
+        <div class="camera-preview-wrap card">
+          <div id="camera-facing-label" class="camera-label">前置摄像头</div>
+          <img id="camera-preview" alt="摄像头预览">
+        </div>
+      </section>
+
+      <section id="panel-phone" class="panel card">
+        <h2>电话通讯录</h2>
+        <div id="contacts-list" class="list-grid"></div>
+      </section>
+
+      <section id="panel-sms" class="panel card">
+        <h2>短信</h2>
+        <div id="sms-threads" class="list-grid"></div>
+      </section>
+
+      <section id="panel-settings" class="panel card">
+        <h2>ZeroTermux 设置</h2>
+        <div id="settings-pages" class="list-grid"></div>
+        <div id="settings-list" class="settings-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sms-dialog" class="sms-dialog hidden">
+    <div class="sms-dialog-content card">
+      <div class="sms-dialog-header">
+        <span id="sms-dialog-title">短信</span>
+        <button id="sms-dialog-close">×</button>
+      </div>
+      <div id="sms-messages" class="sms-messages"></div>
+      <div class="sms-compose">
+        <textarea id="sms-compose-input" rows="3" placeholder="输入短信内容..."></textarea>
+        <button id="sms-send-btn">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+  <script src="/static/terminal.js"></script>
+  <script src="/static/files.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

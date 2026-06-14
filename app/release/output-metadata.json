@@ -1,0 +1,97 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.termux",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "UNIVERSAL",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 118,
+      "versionName": "0.118.3.62",
+      "outputFile": "ZeroTermux-0.118.3.62-release_universal.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 118,
+      "versionName": "0.118.3.62",
+      "outputFile": "ZeroTermux-0.118.3.62-release_x86.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 118,
+      "versionName": "0.118.3.62",
+      "outputFile": "ZeroTermux-0.118.3.62-release_x86_64.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 118,
+      "versionName": "0.118.3.62",
+      "outputFile": "ZeroTermux-0.118.3.62-release_armeabi-v7a.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 118,
+      "versionName": "0.118.3.62",
+      "outputFile": "ZeroTermux-0.118.3.62-release_arm64-v8a.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/ZeroTermux-0.118.3.62-release_universal.dm",
+        "baselineProfiles/1/ZeroTermux-0.118.3.62-release_x86.dm",
+        "baselineProfiles/1/ZeroTermux-0.118.3.62-release_x86_64.dm",
+        "baselineProfiles/1/ZeroTermux-0.118.3.62-release_armeabi-v7a.dm",
+        "baselineProfiles/1/ZeroTermux-0.118.3.62-release_arm64-v8a.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/ZeroTermux-0.118.3.62-release_universal.dm",
+        "baselineProfiles/0/ZeroTermux-0.118.3.62-release_x86.dm",
+        "baselineProfiles/0/ZeroTermux-0.118.3.62-release_x86_64.dm",
+        "baselineProfiles/0/ZeroTermux-0.118.3.62-release_armeabi-v7a.dm",
+        "baselineProfiles/0/ZeroTermux-0.118.3.62-release_arm64-v8a.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 23
+}

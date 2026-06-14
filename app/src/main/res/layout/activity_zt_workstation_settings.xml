@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_2b2b2b">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <include
+            android:id="@+id/ws_master_card"
+            layout="@layout/item_zt_workstation_switch" />
+
+        <include
+            android:id="@+id/ws_auto_start_card"
+            layout="@layout/item_zt_workstation_switch" />
+
+        <include
+            android:id="@+id/ws_terminal_card"
+            layout="@layout/item_zt_workstation_switch" />
+
+        <include
+            android:id="@+id/ws_camera_card"
+            layout="@layout/item_zt_workstation_switch" />
+
+        <include
+            android:id="@+id/ws_files_card"
+            layout="@layout/item_zt_workstation_switch" />
+
+        <include
+            android:id="@+id/ws_phone_sms_card"
+            layout="@layout/item_zt_workstation_switch" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

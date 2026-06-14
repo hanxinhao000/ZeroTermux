@@ -1,6 +1,8 @@
 package com.termux.zerocore.settings
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -13,6 +15,7 @@ import com.termux.zerocore.dialog.KeyWordFunDialog
 import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.FileHttpUtils.Companion.get
+import com.termux.zerocore.workstation.ZtWorkstationSettingsActivity
 import com.topjohnwu.superuser.Shell
 import com.zp.z_file.util.LogUtils
 import java.io.File
@@ -21,6 +24,9 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
 
     private val ztDownloadServicesSwitch by lazy {findViewById<SwitchCompat>(R.id.zt_download_services_switch)}
     private val ztDownloadServicesLl by lazy {findViewById<LinearLayout>(R.id.zt_download_services_ll)}
+
+    private val ztWorkstationLl by lazy { findViewById<CardView>(R.id.zt_workstation_cv) }
+    private val ztWorkstationStatus by lazy { findViewById<TextView>(R.id.zt_workstation_status) }
 
     private val inputMethodTriggerCloseSwitch by lazy {findViewById<SwitchCompat>(R.id.input_method_trigger_close_switch)}
     private val inputMethodTriggerCloseLl by lazy {findViewById<LinearLayout>(R.id.input_method_trigger_close_ll)}
@@ -49,12 +55,14 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
     private val mainMenuConfigCloseSwitch by lazy {findViewById<SwitchCompat>(R.id.main_menu_config_close_switch)}
     private val mainMenuConfigCloseLl by lazy {findViewById<LinearLayout>(R.id.main_menu_config_close_ll)}
 
-private val editorWordWrapSwitch by lazy {findViewById<SwitchCompat>(R.id.editor_word_wrap_switch)}
+    private val editorWordWrapSwitch by lazy {findViewById<SwitchCompat>(R.id.editor_word_wrap_switch)}
     private val editorWordWrapLl by lazy {findViewById<LinearLayout>(R.id.editor_word_wrap_ll)}
 
 
     private val mSettingsKeywordFunCardViewLayout by lazy {findViewById<CardView>(R.id.settings_keyword_fun_card)}
+    private val mExperimentalFeature by lazy {findViewById<CardView>(R.id.experimental_feature)}
     private val mSettingsKeywordFunTextView by lazy {findViewById<TextView>(R.id.settings_keyword_fun_text_summary)}
+    private var index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +74,9 @@ private val editorWordWrapSwitch by lazy {findViewById<SwitchCompat>(R.id.editor
 
     private fun initView() {
         setSwitchStatus(ztDownloadServicesSwitch, ztDownloadServicesLl)
+        ztWorkstationLl.setOnClickListener {
+            startActivity(Intent(this, ZtWorkstationSettingsActivity::class.java))
+        }
         setSwitchStatus(inputMethodTriggerCloseSwitch, inputMethodTriggerCloseLl)
         setSwitchStatus(styleTriggerOffSwitch, styleTriggerOffLl)
         setSwitchStatus(isToolShowSwitch, isToolShowLl)
@@ -78,9 +89,25 @@ private val editorWordWrapSwitch by lazy {findViewById<SwitchCompat>(R.id.editor
 setSwitchStatus(editorWordWrapSwitch, editorWordWrapLl)
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshWorkstationStatus()
+    }
+
+    private fun refreshWorkstationStatus() {
+        val enabled = UserSetManage.get().getZTUserBean().isZtWorkstationEnabled
+        ztWorkstationStatus.text = if (enabled) {
+            UUtils.getString(R.string.zt_workstation_status_on)
+        } else {
+            UUtils.getString(R.string.zt_workstation_status_off)
+        }
+    }
+
     private fun initStatus() {
+        ztWorkstationLl.visibility = View.GONE
         val ztUserBean = UserSetManage.get().getZTUserBean()
         ztDownloadServicesSwitch.isChecked = ztUserBean.isOpenDownloadFileServices
+        refreshWorkstationStatus()
         inputMethodTriggerCloseSwitch.isChecked = ztUserBean.isInputMethodTriggerClose
         styleTriggerOffSwitch.isChecked = ztUserBean.isStyleTriggerOff
         isToolShowSwitch.isChecked = ztUserBean.isToolShow
@@ -90,7 +117,7 @@ setSwitchStatus(editorWordWrapSwitch, editorWordWrapLl)
         volumeFunctionSwitch.isChecked = ztUserBean.isResetVolume
         foldMenuCloseSwitch.isChecked = ztUserBean.isCloseFoldMenu
         mainMenuConfigCloseSwitch.isChecked = ztUserBean.isDisableMainConfigMenu
-editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
+        editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
         mSettingsKeywordFunTextView.text =
             "${UUtils.getString(R.string.settings_keyword_summary1)}: " +
                 "${KeyWordFunDialog.getDoubleClickString(ztUserBean.doubleClickFun)}\n" +
@@ -104,6 +131,14 @@ editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
                     "${UUtils.getString(R.string.settings_keyword_summary1)}: " +
                         "${KeyWordFunDialog.getDoubleClickString(ztUserBean1.doubleClickFun)}\n" +
                         "${UUtils.getString(R.string.settings_keyword_summary)}"
+            }
+        }
+        mExperimentalFeature.setOnClickListener {
+            // 此入口不稳定，不要轻易在正式版本放开
+            index += 1
+            if (index > 20) {
+                index = 0
+                ztWorkstationLl.visibility = View.VISIBLE
             }
         }
     }
@@ -126,8 +161,6 @@ editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
                             get().stopServer()
                         }
                     }.start()
-                }
-                inputMethodTriggerCloseSwitch -> {
                     ztUserBean.isInputMethodTriggerClose = switchCompat.isChecked
                 }
                 styleTriggerOffSwitch -> {
@@ -162,7 +195,7 @@ editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
                     ztUserBean.isDisableMainConfigMenu = switchCompat.isChecked
                     //Toast.makeText(this, UUtils.getString(R.string.zt_command_path_ok), Toast.LENGTH_SHORT).show()
                 }
-editorWordWrapSwitch -> {
+                editorWordWrapSwitch -> {
                     ztUserBean.isEditorWordWrap = switchCompat.isChecked
                 }
             }

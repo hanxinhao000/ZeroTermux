@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A terminal session, consisting of a process coupled to a terminal interface.
@@ -138,6 +139,9 @@ public final class TerminalSession extends TerminalOutput {
                     while (true) {
                         int read = termIn.read(buffer);
                         if (read == -1) return;
+                        //ZeroTermux add {@
+                        notifyOutputListeners(buffer, 0, read);
+                        //@}
                         if (!mProcessToTerminalIOQueue.write(buffer, 0, read)) return;
                         mMainThreadHandler.sendEmptyMessage(MSG_NEW_INPUT);
                     }
@@ -367,7 +371,34 @@ public final class TerminalSession extends TerminalOutput {
                 mClient.onSessionFinished(TerminalSession.this);
             }
         }
-
     }
+
+    //ZeroTermux add {@
+    public interface TerminalOutputListener {
+        void onTerminalOutput(byte[] data, int offset, int count);
+    }
+
+    private static final CopyOnWriteArrayList<TerminalOutputListener> sOutputListeners = new CopyOnWriteArrayList<>();
+
+    public static void addOutputListener(TerminalOutputListener listener) {
+        if (listener != null && !sOutputListeners.contains(listener)) {
+            sOutputListeners.add(listener);
+        }
+    }
+
+    public static void removeOutputListener(TerminalOutputListener listener) {
+        sOutputListeners.remove(listener);
+    }
+
+    private static void notifyOutputListeners(byte[] data, int offset, int count) {
+        if (sOutputListeners.isEmpty() || count <= 0) return;
+        for (TerminalOutputListener listener : sOutputListeners) {
+            try {
+                listener.onTerminalOutput(data, offset, count);
+            } catch (Exception ignored) {
+            }
+        }
+    }
+    //@}
 
 }

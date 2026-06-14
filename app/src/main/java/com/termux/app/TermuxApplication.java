@@ -168,6 +168,7 @@ ZFileManageHelp.getInstance().setFileOperateListener(new MyZFileOperateListener(
         //初始化定时器
         LibSuManage.getInstall().initTimer();
         MainMenuConfig.init(this);
+        com.termux.zerocore.workstation.ZtWorkstationLifecycleHelper.register(this);
         new ClipBoardUtil().registerClipEvents();
 /*        new Thread(new Runnable() {
             @Override

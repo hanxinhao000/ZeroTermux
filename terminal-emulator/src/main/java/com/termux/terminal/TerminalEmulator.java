@@ -2599,6 +2599,65 @@ public final class TerminalEmulator {
         if (bracketed) mSession.write("\033[201~");
     }
 
+    //ZeroTermux add {@
+    /** Export the visible screen with ANSI colors for web terminal initial sync. */
+    public String exportAnsiScreen() {
+        StringBuilder sb = new StringBuilder();
+        long prevStyle = -1;
+        for (int row = 0; row < mRows; row++) {
+            sb.append("\033[").append(row + 1).append(";1H");
+            prevStyle = -1;
+            for (int col = 0; col < mColumns; col++) {
+                long style = mScreen.getStyleAt(row, col);
+                if (style != prevStyle) {
+                    appendWebTerminalSgr(sb, style);
+                    prevStyle = style;
+                }
+                String text = mScreen.getSelectedText(col, row, col, row);
+                sb.append(text.isEmpty() ? ' ' : text);
+            }
+            sb.append("\033[K");
+        }
+        sb.append("\033[").append(getCursorRow() + 1).append(';').append(getCursorCol() + 1).append('H');
+        return sb.toString();
+    }
+
+    private void appendWebTerminalSgr(StringBuilder sb, long style) {
+        sb.append("\033[0");
+        int effect = TextStyle.decodeEffect(style);
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_BOLD) != 0) sb.append(";1");
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_DIM) != 0) sb.append(";2");
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_ITALIC) != 0) sb.append(";3");
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_UNDERLINE) != 0) sb.append(";4");
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_BLINK) != 0) sb.append(";5");
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_INVERSE) != 0) sb.append(";7");
+        if ((effect & TextStyle.CHARACTER_ATTRIBUTE_STRIKETHROUGH) != 0) sb.append(";9");
+        appendWebTerminalColor(sb, TextStyle.decodeForeColor(style), true);
+        appendWebTerminalColor(sb, TextStyle.decodeBackColor(style), false);
+        sb.append('m');
+    }
+
+    private void appendWebTerminalColor(StringBuilder sb, int color, boolean foreground) {
+        if ((color & 0xff000000) == 0xff000000) {
+            int rgb = color & 0xffffff;
+            sb.append(';').append(foreground ? "38" : "48").append(";2;")
+                .append((rgb >> 16) & 0xff).append(';')
+                .append((rgb >> 8) & 0xff).append(';')
+                .append(rgb & 0xff);
+        } else if (color == TextStyle.COLOR_INDEX_FOREGROUND) {
+            if (foreground) sb.append(";39");
+        } else if (color == TextStyle.COLOR_INDEX_BACKGROUND) {
+            if (!foreground) sb.append(";49");
+        } else if (color >= 0 && color < 8) {
+            sb.append(';').append(foreground ? (30 + color) : (40 + color));
+        } else if (color >= 8 && color < 16) {
+            sb.append(';').append(foreground ? (90 + color - 8) : (100 + color - 8));
+        } else if (color >= 16 && color < 256) {
+            sb.append(';').append(foreground ? "38" : "48").append(";5;").append(color);
+        }
+    }
+    //@}
+
     /** http://www.vt100.net/docs/vt510-rm/DECSC */
     static final class SavedScreenState {
         /** Saved state of the cursor position, Used to implement the save/restore cursor position escape sequences. */

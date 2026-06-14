@@ -5,6 +5,18 @@ import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
 public class ZTUserBean {
     // 是否打开ZT下载服务器
     private boolean isOpenDownloadFileServices = false;
+    // 是否打开ZT电脑工作站 (Web 19999)
+    private boolean isZtWorkstationEnabled = false;
+    // 工作站：APP 启动时自动运行
+    private boolean isZtWorkstationAutoStart = false;
+    // 工作站：允许 Web 使用终端
+    private boolean isZtWorkstationTerminalEnabled = false;
+    // 工作站：允许 Web 使用摄像头
+    private boolean isZtWorkstationCameraEnabled = false;
+    // 工作站：允许 Web 使用文件
+    private boolean isZtWorkstationFilesEnabled = false;
+    // 工作站：允许 Web 使用电话/短信
+    private boolean isZtWorkstationPhoneSmsEnabled = false;
     // 输入法调起侧边栏是否关闭
     private boolean inputMethodTriggerClose = false;
     // 美化设置关闭菜单
@@ -278,6 +290,54 @@ public class ZTUserBean {
 
     public void setOpenDownloadFileServices(boolean openDownloadFileServices) {
         isOpenDownloadFileServices = openDownloadFileServices;
+    }
+
+    public boolean isZtWorkstationEnabled() {
+        return isZtWorkstationEnabled;
+    }
+
+    public void setZtWorkstationEnabled(boolean ztWorkstationEnabled) {
+        isZtWorkstationEnabled = ztWorkstationEnabled;
+    }
+
+    public boolean isZtWorkstationAutoStart() {
+        return isZtWorkstationAutoStart;
+    }
+
+    public void setZtWorkstationAutoStart(boolean ztWorkstationAutoStart) {
+        isZtWorkstationAutoStart = ztWorkstationAutoStart;
+    }
+
+    public boolean isZtWorkstationTerminalEnabled() {
+        return isZtWorkstationTerminalEnabled;
+    }
+
+    public void setZtWorkstationTerminalEnabled(boolean ztWorkstationTerminalEnabled) {
+        isZtWorkstationTerminalEnabled = ztWorkstationTerminalEnabled;
+    }
+
+    public boolean isZtWorkstationCameraEnabled() {
+        return isZtWorkstationCameraEnabled;
+    }
+
+    public void setZtWorkstationCameraEnabled(boolean ztWorkstationCameraEnabled) {
+        isZtWorkstationCameraEnabled = ztWorkstationCameraEnabled;
+    }
+
+    public boolean isZtWorkstationFilesEnabled() {
+        return isZtWorkstationFilesEnabled;
+    }
+
+    public void setZtWorkstationFilesEnabled(boolean ztWorkstationFilesEnabled) {
+        isZtWorkstationFilesEnabled = ztWorkstationFilesEnabled;
+    }
+
+    public boolean isZtWorkstationPhoneSmsEnabled() {
+        return isZtWorkstationPhoneSmsEnabled;
+    }
+
+    public void setZtWorkstationPhoneSmsEnabled(boolean ztWorkstationPhoneSmsEnabled) {
+        isZtWorkstationPhoneSmsEnabled = ztWorkstationPhoneSmsEnabled;
     }
 
     public boolean isInputMethodTriggerClose() {
