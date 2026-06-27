@@ -47,7 +47,8 @@ public class MainMenuAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
         MainMenuItemAdapter mainMenuItemAdapter = new MainMenuItemAdapter(mContext, mMainMenuCategoryData.get(position).mClickArrayList);
         mainMenuItemAdapters.put(position, mainMenuItemAdapter);
         holder.mItemMenuRec.setAdapter(mainMenuItemAdapter);
-        if (!UserSetManage.Companion.get().getZTUserBean().isCloseFoldMenu()) {
+        boolean foldEnabled = !UserSetManage.Companion.get().getZTUserBean().isCloseFoldMenu();
+        if (foldEnabled) {
             holder.mOpenSettings.setVisibility(View.VISIBLE);
             boolean mainMenuItemShow = UserSetManage.Companion.get().getMainMenuItemShow(String.valueOf(id));
             Log.i(TAG, "onBindViewHolder mainMenuItemShow: " + mainMenuItemShow);
@@ -80,6 +81,33 @@ public class MainMenuAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     @Override
     public int getItemCount() {
         return mMainMenuCategoryData.size();
+    }
+
+    public int findGroupIndexByName(String groupName) {
+        if (groupName == null || groupName.trim().isEmpty()) {
+            return -1;
+        }
+        for (int i = 0; i < mMainMenuCategoryData.size(); i++) {
+            if (groupName.equals(mMainMenuCategoryData.get(i).mTitle)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** 折叠其他分组，展开指定选项卡。 */
+    public void activateGroup(int index) {
+        if (index < 0 || index >= mMainMenuCategoryData.size()) {
+            return;
+        }
+        for (int i = 0; i < mMainMenuCategoryData.size(); i++) {
+            String id = String.valueOf(mMainMenuCategoryData.get(i).mId);
+            String state = (i == index)
+                ? UserSetManage.Companion.getITEM_VISIBLE()
+                : UserSetManage.Companion.getITEM_GEON();
+            UserSetManage.Companion.get().setMainMenuItemShow(id, state);
+        }
+        notifyDataSetChanged();
     }
 
     public void release() {

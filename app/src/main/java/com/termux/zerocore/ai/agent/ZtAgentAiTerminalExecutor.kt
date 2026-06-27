@@ -8,8 +8,6 @@ import org.json.JSONObject
 object ZtAgentAiTerminalExecutor {
 
     private const val DEFAULT_MAX_CHARS = 8000
-    private const val MIN_MAX_CHARS = 500
-    private const val MAX_MAX_CHARS = 12000
 
     fun execute(toolCall: ZtAgentAiChatClient.ToolCall): String {
         if (!SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
@@ -24,6 +22,8 @@ object ZtAgentAiTerminalExecutor {
                 "send_terminal_key" -> sendKey(args, listener)
                 else -> "Error: unknown tool `${toolCall.name}`"
             }
+        } catch (e: InterruptedException) {
+            throw e
         } catch (e: Exception) {
             "Error: ${e.message ?: "tool execution failed"}"
         }
@@ -63,19 +63,18 @@ object ZtAgentAiTerminalExecutor {
         }
         val listener = SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener()
         return sendCommand(
-            JSONObject().put("command", ztLine).put("append_newline", true),
+            JSONObject()
+                .put("command", ztLine)
+                .put("append_newline", true),
             listener,
-            initialWaitMs = 500,
-            maxWaitMs = 6000
+            defaultMaxWaitMs = ZtTerminalWaitHelper.DEFAULT_ZT_COMMAND_MAX_WAIT_MS
         )
     }
 
     private fun sendCommand(
         args: JSONObject,
         listener: SingletonCommunicationUtils.SingletonCommunicationListener,
-        initialWaitMs: Long = 400,
-        pollIntervalMs: Long = 350,
-        maxWaitMs: Long = 4000
+        defaultMaxWaitMs: Long = ZtTerminalWaitHelper.DEFAULT_COMMAND_MAX_WAIT_MS
     ): String {
         val command = args.optString("command", "").trim()
         if (command.isEmpty()) {
@@ -91,17 +90,15 @@ object ZtAgentAiTerminalExecutor {
         } else {
             command
         }
-        listener.sendTextToTerminal(toSend)
-        val tail = waitForTerminalSettle(
-            initialWaitMs = initialWaitMs,
-            pollIntervalMs = pollIntervalMs,
-            maxWaitMs = maxWaitMs
+        val maxWaitMs = ZtTerminalWaitHelper.resolveMaxWaitMs(
+            args.optLong("max_wait_ms").takeIf { args.has("max_wait_ms") },
+            defaultMaxWaitMs
         )
-        return buildString {
-            appendLine("Command sent: $command")
-            appendLine()
-            append(tail)
-        }.trim()
+        listener.sendTextToTerminal(toSend)
+        val result = ZtTerminalWaitHelper.waitForTerminalSettle(
+            maxWaitMs = maxWaitMs
+        ) { captureSnapshot(2500) }
+        return ZtTerminalWaitHelper.formatCommandResult("Command sent: $command", result)
     }
 
     private fun sendKey(
@@ -123,43 +120,14 @@ object ZtAgentAiTerminalExecutor {
             "ctrl_z" -> listener.sendTextToTerminalCtrl("z", true)
             else -> return "Error: unsupported key `${args.optString("key")}`"
         }
-        val tail = waitForTerminalSettle(
+        val result = ZtTerminalWaitHelper.waitForTerminalSettle(
             initialWaitMs = 200,
             pollIntervalMs = 250,
-            maxWaitMs = 2000
+            maxWaitMs = ZtTerminalWaitHelper.DEFAULT_KEY_MAX_WAIT_MS
+        ) { captureSnapshot(2500) }
+        return ZtTerminalWaitHelper.formatCommandResult(
+            "Key sent: ${args.optString("key")}",
+            result
         )
-        return buildString {
-            appendLine("Key sent: ${args.optString("key")}")
-            appendLine()
-            append(tail)
-        }.trim()
-    }
-
-    private fun waitForTerminalSettle(
-        initialWaitMs: Long,
-        pollIntervalMs: Long,
-        maxWaitMs: Long
-    ): String {
-        Thread.sleep(initialWaitMs)
-        var waited = initialWaitMs
-        var lastContent = ""
-        var stableCount = 0
-        while (waited < maxWaitMs) {
-            val snap = captureSnapshot(2500)
-            if (snap == lastContent) {
-                stableCount++
-                if (stableCount >= 2) break
-            } else {
-                stableCount = 0
-                lastContent = snap
-            }
-            val lastLine = snap.lineSequence().lastOrNull { it.isNotBlank() }?.trim().orEmpty()
-            if (ZtTerminalAiSnapshot.isShellPrompt(lastLine) && waited >= initialWaitMs + pollIntervalMs) {
-                break
-            }
-            Thread.sleep(pollIntervalMs)
-            waited += pollIntervalMs
-        }
-        return captureSnapshot(2500)
     }
 }

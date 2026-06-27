@@ -2,15 +2,34 @@ package com.termux.zerocore.ai.agent
 
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.zerocore.ai.config.ZtAiConfigExecutor
 import org.json.JSONObject
 
 object ZtAgentAiToolExecutor {
+
+    private val configToolNames = setOf(
+        "list_zerotermux_capabilities",
+        "get_zerotermux_config",
+        "set_zerotermux_config",
+        "open_zerotermux_page",
+        "run_zerotermux_zt",
+        "get_zerotermux_left_menu",
+        "update_zerotermux_left_menu",
+        "list_zerotermux_pkg_sources",
+        "switch_zerotermux_pkg_source"
+    )
 
     fun execute(
         toolCall: ZtAgentAiChatClient.ToolCall,
         terminalEnabled: Boolean,
         ztControlEnabled: Boolean
     ): String {
+        if (toolCall.name in configToolNames) {
+            if (!ztControlEnabled) {
+                return UUtils.getString(R.string.zt_agent_ai_tool_disabled)
+            }
+            return ZtAiConfigExecutor.execute(toolCall)
+        }
         return when (toolCall.name) {
             "read_terminal", "send_terminal_command", "send_terminal_key" -> {
                 if (!terminalEnabled) {
@@ -32,6 +51,9 @@ object ZtAgentAiToolExecutor {
     }
 
     fun statusLabel(toolName: String): String {
+        if (toolName in configToolNames) {
+            return ZtAiConfigExecutor.statusLabel(toolName)
+        }
         return when (toolName) {
             "read_terminal" -> UUtils.getString(R.string.zt_agent_ai_tool_read_terminal)
             "send_terminal_command" -> UUtils.getString(R.string.zt_agent_ai_tool_send_command)

@@ -1981,12 +1981,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void loadActiveMainMenu() {
         MainMenuPackageManager.ensureDefaultActiveMenu(this);
-        if (MainMenuPackageManager.isProgramMenuActive(this)) {
-            initListMenu(ProgramMainMenuConfig.getProgramMainMenuCategoryDatas(this));
-        } else {
-            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this));
-        }
+        initListMenu(loadMainMenuCategoryDatas());
         initMenuPackageCard();
+    }
+
+    private ArrayList<MainMenuCategoryData> loadMainMenuCategoryDatas() {
+        if (MainMenuPackageManager.isProgramMenuActive(this)) {
+            return ProgramMainMenuConfig.getProgramMainMenuCategoryDatas(this);
+        }
+        return XMLMainMenuConfig.getXmlMainMenuCategoryDatas(this);
     }
 
     private void showMenuBack() {
@@ -2313,12 +2316,61 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             mMainMenuAdapter = null;
         }
         MainMenuPackageManager.ensureDefaultActiveMenu(this);
-        if (MainMenuPackageManager.isProgramMenuActive(this)) {
-            initListMenu(ProgramMainMenuConfig.getProgramMainMenuCategoryDatas(TermuxActivity.this));
-        } else {
-            initListMenu(XMLMainMenuConfig.getXmlMainMenuCategoryDatas(TermuxActivity.this));
-        }
+        initListMenu(loadMainMenuCategoryDatas());
         refreshMenuPackageList();
+    }
+
+    /** 供 AI / 外部刷新左侧 XML 菜单。 */
+    public void refreshMainMenuPublic() {
+        refreshMainMenu();
+    }
+
+    /** 刷新菜单并展开、滚动到指定分组（选项卡）。 */
+    public void refreshMainMenuAndSwitchToGroup(String groupName) {
+        refreshMainMenu();
+        if (mMainMenuList != null) {
+            mMainMenuList.post(() -> switchMainMenuToGroup(groupName));
+        } else {
+            switchMainMenuToGroup(groupName);
+        }
+    }
+
+    private void switchMainMenuToGroup(String groupName) {
+        if (mMainMenuAdapter == null || TextUtils.isEmpty(groupName)) {
+            return;
+        }
+        int index = mMainMenuAdapter.findGroupIndexByName(groupName);
+        if (index < 0) {
+            return;
+        }
+        mMainMenuAdapter.activateGroup(index);
+        mMainMenuList.smoothScrollToPosition(index);
+        if (getDrawer() != null && getDrawer().isClosed()) {
+            getDrawer().smoothLeftOpen();
+        }
+    }
+
+    /** 刷新 Menu 菜单包列表（供 AI 等外部调用）。 */
+    public void refreshMenuPackageListPublic() {
+        refreshMenuPackageList();
+    }
+
+    /** 刷新并切换到 Menu 菜单区的「AI创建」选项。 */
+    public void refreshMainMenuAndSelectAiMenuPackage() {
+        if (MainMenuPackageManager.applyAiCreatedMenuPackage(this)) {
+            refreshMainMenu();
+            refreshMenuPackageList();
+            if (!mMenuPackageExpanded && mMenuPackageList != null) {
+                mMenuPackageExpanded = true;
+                mMenuPackageList.setVisibility(View.VISIBLE);
+                if (open_image_menu != null) {
+                    open_image_menu.setRotation(180);
+                }
+            }
+            if (getDrawer() != null && getDrawer().isClosed()) {
+                getDrawer().smoothLeftOpen();
+            }
+        }
     }
 
     private void initMenuPackageCard() {
@@ -2406,7 +2458,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void performMenuPackageDelete(MainMenuPackageInfo info) {
         UUtils.runOnThread(() -> {
-            boolean success = MainMenuPackageManager.deleteInstalledPackage(
+            boolean success = MainMenuPackageManager.deleteMenuPackage(
                 TermuxActivity.this, info);
             UUtils.runOnUIThread(() -> {
                 if (success) {

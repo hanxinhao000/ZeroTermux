@@ -20,6 +20,7 @@ import android.widget.TextView
 import com.termux.R
 import com.termux.zerocore.ai.deepseek.markdown.MarkDownAPI
 import com.termux.zerocore.ai.deepseek.utils.SpannableTextUtil
+import com.termux.zerocore.utils.SingletonCommunicationUtils
 import io.noties.markwon.Markwon
 
 class ZtAiAgentPanelHelper(
@@ -41,6 +42,8 @@ class ZtAiAgentPanelHelper(
     private var agentRunner: ZtAgentAiAgentRunner? = null
     private var isSending = false
     private var agentCancelled = false
+    /** 悬浮窗是否处于打开状态（与 overlay 动画结束后的实际展示一致）。 */
+    private var isPanelShown = false
     private var lastPanelHeight = 0
     private var keyboardListenerAttached = false
 
@@ -59,8 +62,25 @@ class ZtAiAgentPanelHelper(
             .build()
     }
 
+    private val runningBanner: View? by lazy {
+        findRunningBannerView()
+    }
+
+    private fun findRunningBannerView(): View? {
+        var node: View? = overlay
+        while (node != null) {
+            node.findViewById<View>(R.id.ai_agent_running_banner)?.let { return it }
+            node = node.parent as? View
+        }
+        return panelCard.rootView.findViewById(R.id.ai_agent_running_banner)
+    }
+
+    private val panelStopBar: View? by lazy {
+        overlay.findViewById(R.id.ai_agent_panel_stop_bar)
+    }
+
     init {
-        panelRoot.findViewById<View>(R.id.ai_agent_panel_close).setOnClickListener { hide() }
+        panelRoot.findViewById<View>(R.id.ai_agent_panel_close).setOnClickListener { dismissPanel() }
         panelRoot.findViewById<View>(R.id.ai_agent_panel_reset).setOnClickListener {
             ZtAgentAiResetHelper.showResetConfirmDialog(panelRoot.context)
         }
@@ -68,10 +88,10 @@ class ZtAiAgentPanelHelper(
             openAgentSettings()
         }
         panelRoot.findViewById<View>(R.id.ai_agent_panel_open_menu).setOnClickListener {
-            hide()
+            dismissPanel()
             onOpenRightMenu?.run()
         }
-        overlay.setOnClickListener { hide() }
+        overlay.setOnClickListener { dismissPanel() }
         panelCard.isFocusable = false
         panelCard.isFocusableInTouchMode = false
         sendButton.setOnClickListener { onSendClicked() }
@@ -91,6 +111,44 @@ class ZtAiAgentPanelHelper(
         }
         restoreConversationUi()
         ZtAgentAiResetHelper.registerUiRefreshCallback { clearUiAfterReset() }
+        bindStopBar(panelStopBar)
+        bindStopBar(runningBanner, reopenOnLabelClick = true)
+    }
+
+    private fun bindStopBar(bar: View?, reopenOnLabelClick: Boolean = false) {
+        bar ?: return
+        bar.findViewById<View>(R.id.ai_agent_stop_button)?.setOnClickListener {
+            stopAgentExecution()
+        }
+        if (reopenOnLabelClick) {
+            bar.findViewById<View>(R.id.ai_agent_stop_bar_label)?.setOnClickListener {
+                show(null)
+            }
+        }
+    }
+
+    /** 打断 AI 自动执行（不关闭悬浮窗）。 */
+    fun stopAgentExecution() {
+        if (!isSending) return
+        agentCancelled = true
+        chatClient?.cancel()
+        agentRunner?.cancel()
+        sendTerminalInterrupt()
+        setSending(false)
+        pendingAssistantRow?.findViewById<TextView>(R.id.agent_message_content)?.let { content ->
+            renderMarkdown(content, panelCard.context.getString(R.string.zt_ai_agent_stopped))
+        }
+        pendingAssistantRow = null
+    }
+
+    private fun sendTerminalInterrupt() {
+        if (!ZtAgentAiConfigHelper.isTerminalEnabled()) return
+        val utils = SingletonCommunicationUtils.getInstance()
+        if (!utils.hasTerminalListener()) return
+        try {
+            utils.getmSingletonCommunicationListener()?.sendTextToTerminalCtrl("c", true)
+        } catch (_: Exception) {
+        }
     }
 
     private fun clearUiAfterReset() {
@@ -107,6 +165,7 @@ class ZtAiAgentPanelHelper(
         contextText.text = ""
         input.setText("")
         setSending(false)
+        updateStopBarsVisibility()
         scrollToBottom()
     }
 
@@ -201,6 +260,7 @@ class ZtAiAgentPanelHelper(
                 renderMarkdown(assistantView, message)
                 assistantView.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
                 setSending(false)
+                updateStopBarsVisibility()
             }
 
             override fun isCancelled(): Boolean = agentCancelled
@@ -219,6 +279,7 @@ class ZtAiAgentPanelHelper(
                 renderMarkdown(assistantView, message)
                 assistantView.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
                 setSending(false)
+                updateStopBarsVisibility()
             }
 
             override fun onComplete(fullText: String) {
@@ -229,6 +290,7 @@ class ZtAiAgentPanelHelper(
 
     private fun finishAssistantReply(assistantView: TextView, fullText: String) {
         setSending(false)
+        updateStopBarsVisibility()
         pendingAssistantRow = null
         if (fullText.isNotBlank()) {
             renderMarkdown(assistantView, fullText)
@@ -367,6 +429,7 @@ class ZtAiAgentPanelHelper(
         sendButton.isEnabled = !sending
         sendButton.alpha = if (sending) 0.5f else 1f
         input.isEnabled = !sending
+        updateStopBarsVisibility()
     }
 
     fun isVisible(): Boolean = overlay.visibility == View.VISIBLE
@@ -375,13 +438,16 @@ class ZtAiAgentPanelHelper(
         applySelectedText(selectedText)
         attachKeyboardListener()
         input.clearFocus()
-        if (isVisible() && panelCard.translationX == 0f) {
+        if (isPanelShown && overlay.visibility == View.VISIBLE && panelCard.translationX == 0f) {
+            updateStopBarsVisibility()
             scrollToBottomDelayed()
             return
         }
         panelCard.animate().cancel()
         overlay.animate().cancel()
         overlay.visibility = View.VISIBLE
+        isPanelShown = true
+        updateStopBarsVisibility()
         overlay.alpha = 0f
         panelCard.post {
             val slideDistance = slideDistance()
@@ -396,27 +462,55 @@ class ZtAiAgentPanelHelper(
                 .setInterpolator(DecelerateInterpolator())
                 .withEndAction {
                     scrollToBottomDelayed()
+                    updateStopBarsVisibility()
                 }
                 .start()
         }
     }
 
-    fun hide() {
-        if (!isVisible()) return
+    /** 收起悬浮窗；若 AI 仍在执行则转入后台并显示主界面顶部提示条。 */
+    fun dismissPanel() {
+        if (!isPanelShown) return
         hideInputKeyboard()
-        agentCancelled = true
-        chatClient?.cancel()
-        agentRunner?.cancel()
-        setSending(false)
-        pendingAssistantRow = null
+        if (!isSending) {
+            pendingAssistantRow = null
+        }
         animatePanelAway()
+    }
+
+    /** 强制停止 AI 并关闭面板（重置等场景使用）。 */
+    fun hide() {
+        if (!isPanelShown && !isSending) {
+            updateStopBarsVisibility()
+            return
+        }
+        hideInputKeyboard()
+        if (isSending) {
+            stopAgentExecution()
+        } else {
+            pendingAssistantRow = null
+            updateStopBarsVisibility()
+        }
+        if (isPanelShown) {
+            animatePanelAway()
+        }
+    }
+
+    private fun updateStopBarsVisibility() {
+        val showPanelBar = isSending && isPanelShown
+        val showTopBar = isSending && !isPanelShown
+        panelStopBar?.visibility = if (showPanelBar) View.VISIBLE else View.GONE
+        val bar = runningBanner ?: return
+        if (showTopBar) {
+            ZtAiAgentTopBannerAnimator.show(bar)
+        } else {
+            ZtAiAgentTopBannerAnimator.hide(bar)
+        }
     }
 
     /** 打开 App 页面时仅收起面板，不中断进行中的 AI 对话 */
     fun minimizeForNavigation() {
-        if (!isVisible()) return
-        hideInputKeyboard()
-        animatePanelAway()
+        dismissPanel()
     }
 
     private fun animatePanelAway() {
@@ -438,13 +532,15 @@ class ZtAiAgentPanelHelper(
                 overlay.visibility = View.GONE
                 panelCard.translationX = 0f
                 overlay.alpha = 1f
+                isPanelShown = false
+                updateStopBarsVisibility()
             }
             .start()
     }
 
     fun toggle(selectedText: String?) {
-        if (isVisible()) {
-            hide()
+        if (isPanelShown) {
+            dismissPanel()
         } else {
             show(selectedText)
         }

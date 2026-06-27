@@ -1073,6 +1073,19 @@ Reset successfully</string>
     <string name="zt_install_file">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> (Zero)Utermux File Plug] to install the plug-in</string>
     <string name="zt_volume_function_title">Restore volume +- keys</string>
     <string name="zt_volume_function_summary">Disable the current use of volume +- keys to pop up the left/right panel</string>
+    <string name="zt_ai_agent_panel_title">Enable new agent panel</string>
+    <string name="zt_ai_agent_panel_summary">Wake the right panel as an AI agent; can read/control the terminal and send commands</string>
+    <string name="zt_ai_agent_panel_title_bar">AI Agent</string>
+    <string name="zt_ai_agent_running_banner">AI agent is running…</string>
+    <string name="zt_ai_agent_stop">Stop</string>
+    <string name="zt_ai_agent_stopped">(Stopped)</string>
+    <string name="zt_ai_agent_panel_hint">Chat with AI here…</string>
+    <string name="zt_ai_agent_panel_send">Send</string>
+    <string name="zt_ai_agent_panel_context_label">From terminal selection:</string>
+    <string name="zt_ai_agent_panel_empty">Ask AI a question, or long-press selected text in the terminal and choose Ask AI.</string>
+    <string name="zt_ai_agent_not_configured">Configure API Key and model first in ZeroTermux Settings → Agent AI.</string>
+    <string name="zt_ai_agent_thinking">Thinking…</string>
+    <string name="zt_ai_agent_panel_open_menu">Open right menu</string>
     <string name="zt_moe_remove">MOE is no longer maintained by the author, and unpredictable errors may occur in ZeroTermux.</string>
 
     <string-array name="options_resolution_keys">
@@ -1427,7 +1440,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="menu_package_backup">Backup</string>
     <string name="menu_package_delete">Delete</string>
     <string name="menu_package_delete_confirm">Delete menu package \"%1$s\"?</string>
-    <string name="menu_package_delete_confirm_active">Delete current menu \"%1$s\"? The default menu will be applied afterward.</string>
+    <string name="menu_package_delete_confirm_active">Delete current menu \"%1$s\"? The program menu will be applied afterward.</string>
     <string name="menu_package_delete_success">Menu package deleted</string>
     <string name="menu_package_delete_fail">Failed to delete menu package</string>
     <string name="menu_package_network_update_confirm">Updating will overwrite your current menu options. Continue?</string>
@@ -1439,6 +1452,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="menu_package_install_empty">No zip menu packages in %1$s\n(Installed menus are extracted to app internal menu)</string>
     <string name="menu_package_default_label">Default menu</string>
     <string name="menu_package_program_label">Program menu</string>
+    <string name="menu_package_ai_created_label">AI Created</string>
     <string name="menu_package_network_label">Network menu</string>
     <string name="menu_package_local_label">Local menu</string>
     <string name="left_menu_settings_title">Left menu settings</string>
@@ -1462,6 +1476,76 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="menu_package_backup_success">Backed up to %1$s</string>
     <string name="menu_package_backup_fail">Backup failed</string>
     <string name="menu_package_install_pick">Select menu zip package</string>
+
+    <!-- Agent AI (English) -->
+    <string name="zt_agent_ai_settings_title">Agent AI settings</string>
+    <string name="zt_agent_ai_settings_summary">New interaction model: control/read terminal and all ZeroTermux settings</string>
+    <string name="zt_agent_ai_provider_title">AI provider</string>
+    <string name="zt_agent_ai_provider_deepseek">DeepSeek</string>
+    <string name="zt_agent_ai_provider_openai">ChatGPT</string>
+    <string name="zt_agent_ai_provider_google">Google AI</string>
+    <string name="zt_agent_ai_provider_custom">Custom</string>
+    <string name="zt_agent_ai_api_url">API URL</string>
+    <string name="zt_agent_ai_api_url_hint">OpenAI-compatible API URL</string>
+    <string name="zt_agent_ai_api_url_summary">Default URL is filled when switching provider; you may edit it</string>
+    <string name="zt_agent_ai_api_key">API Key</string>
+    <string name="zt_agent_ai_api_key_hint">Enter API Key</string>
+    <string name="zt_agent_ai_api_key_toggle">Show or hide API Key</string>
+    <string name="zt_agent_ai_api_key_summary">Key is stored locally only, for agent chat and tools</string>
+    <string name="zt_agent_ai_model">Model name</string>
+    <string name="zt_agent_ai_model_hint">e.g. deepseek-chat / gpt-4o-mini / gemini-2.0-flash</string>
+    <string name="zt_agent_ai_system_prompt">System prompt (optional)</string>
+    <string name="zt_agent_ai_system_prompt_hint">Leave empty to use default ZeroTermux agent prompt</string>
+    <string name="zt_agent_ai_status_configured">Configured: %1$s / %2$s</string>
+    <string name="zt_agent_ai_status_incomplete">Provider config incomplete; fill API URL, Key, and model</string>
+    <string name="zt_agent_ai_terminal_enabled">Allow terminal control</string>
+    <string name="zt_agent_ai_terminal_enabled_summary">Agent can read terminal and send commands via tools</string>
+    <string name="zt_agent_ai_zt_control_enabled">Allow ZeroTermux control</string>
+    <string name="zt_agent_ai_zt_control_enabled_summary">Control app via zt commands (pages, drawer, toast, etc.); requires terminal control</string>
+    <string name="zt_agent_ai_zt_control_system_prompt">You can fully control the app via ZeroTermux config tools (no per-item permission prompts; confirm risky actions first):\n1. list_zerotermux_capabilities — list settings, beautify keys, openpage ids, zt commands; call first when unsure.\n2. get_zerotermux_config / set_zerotermux_config — read/write settings and beautify (isInternalPassage, workstation, AI toggles, etc.).\n3. open_zerotermux_page — open settings pages (zt_settings, zero_termux_settings, agent_ai_settings, …).\n4. run_zerotermux_zt — preferred zt via socket (no terminal): help, toast, openleft, openpage, reboot, x11status, …\n5. run_zt_command — fallback via terminal.\n6. get_zerotermux_left_menu / update_zerotermux_left_menu — read xml_rules + catalog before creating menus; click must use java:/ztShell:/jumpUrl: prefixes.\n7. list_zerotermux_pkg_sources / switch_zerotermux_pkg_source — same as Switch Source menu; default tsinghua; list options, user picks, then switch with user_confirmed=true.\nBeautify: blurry text → text_shadow_enabled=false; background blur → blur_enabled/blur_radius.\nEffects: snowflake/snow → isSnowflakeShow; particle/rain → isRainShow (mutually exclusive). Use set_zerotermux_config, not menu XML.\nInternal channel isInternalPassage usually needs reboot; reboot only with explicit user approval. Trust tool JSON; do not invent results.</string>
+    <string name="zt_agent_ai_zt_requires_terminal">ZeroTermux control via terminal zt requires「Allow terminal control」enabled</string>
+    <string name="zt_agent_ai_tool_run_command">Running ZT command…</string>
+    <string name="zt_agent_ai_tool_disabled">Tool disabled; enable the permission in Agent AI settings</string>
+    <string name="zt_agent_ai_reset_dialog_title">Notice</string>
+    <string name="zt_agent_ai_reset_dialog_message">This clears all agent AI data. Use when data is corrupted (agent behaves abnormally).</string>
+    <string name="zt_agent_ai_reset_title">Reset all agent AI data</string>
+    <string name="zt_agent_ai_reset_summary">Use when the agent hallucinates or data is polluted</string>
+    <string name="zt_agent_ai_reset_done">Agent AI data reset</string>
+    <string name="zt_agent_ai_reset_panel_desc">Reset agent AI data</string>
+    <string name="zt_agent_ai_tool_usage_prompt">For general Q&amp;A and chat, reply in the user\'s language without calling tools. Call tools only when the user explicitly asks to open pages, read/control terminal, or run zt commands. After tools, summarize briefly in the user\'s language.</string>
+    <string name="zt_agent_ai_default_system_prompt">You are the built-in ZeroTermux AI agent. Reply concisely in the user\'s language with Markdown when helpful.\n\nImportant: Do not invent terminal output, install state, or files. Without tool results, say you cannot confirm and tell the user how to verify or enable permissions.</string>
+    <string name="zt_agent_ai_terminal_system_prompt">You may use read_terminal, send_terminal_command, send_terminal_key. Each turn includes a terminal snapshot — describe the terminal ONLY from the snapshot, especially the visible screen section:\n1. Welcome to Termux / ~ $ → main Termux shell; do not claim Ubuntu/SSH/root@localhost unless shown.\n2. Shell prompt on last line → command finished; do not say「still installing/wait」.\n3. Status awaiting confirmation or [Y/n], Do you want to continue → explain to the user in their language and wait before sending y/n/Enter; never auto-confirm.\n4. Old terminal descriptions in history may be stale; use latest snapshot.\n5. When asked what the terminal shows, summarize visible text only.\n6. send_terminal_command waits up to ~10 min by default; use max_wait_ms=1800000 for slow pkg/apt. On timeout, read_terminal again.\nConfirm dangerous commands with the user first.</string>
+    <string name="zt_agent_ai_terminal_history_notice">[Important] Terminal descriptions in history below may be outdated. Use the terminal snapshot attached to the latest user message; ignore conflicting history.</string>
+    <string name="zt_agent_ai_terminal_disabled_prompt">[Terminal permission off] You cannot read/control the terminal. Do not claim install state or command output; tell the user to enable「Allow terminal control」in Agent AI settings, or paste command output themselves.</string>
+    <string name="zt_agent_ai_zt_control_disabled_prompt">[ZeroTermux control off] You cannot open pages or run zt commands. Tell the user to enable「Allow ZeroTermux control」in settings.</string>
+    <string name="zt_agent_ai_tool_read_terminal">Reading terminal…</string>
+    <string name="zt_agent_ai_tool_send_command">Sending command…</string>
+    <string name="zt_agent_ai_tool_send_key">Sending key…</string>
+    <string name="zt_agent_ai_tool_read_after_send">Command sent, reading terminal…</string>
+    <string name="zt_agent_ai_tool_running">Calling tool…</string>
+    <string name="zt_agent_ai_tool_limit">Tool call limit reached; simplify and retry</string>
+    <string name="zt_agent_ai_terminal_unavailable">Terminal unavailable; open a session on the main screen first</string>
+
+    <string name="zt_editor_ai_button">Editor AI</string>
+    <string name="zt_editor_ai_empty">Describe the code you want or edits needed; AI will edit the file above.</string>
+    <string name="zt_editor_ai_hint">Ask AI to write code…</string>
+    <string name="zt_editor_ai_unavailable">Editor unavailable (preview mode or no text file open)</string>
+    <string name="zt_editor_ai_terminal_unavailable">Editor terminal unavailable; open a Termux session on the main screen first</string>
+    <string name="zt_editor_ai_system_prompt">You are the built-in AI for the ZeroTermux code editor. You can create/open multiple files and edit the active file; you can also read/write the embedded editor terminal for build, run, and debugging.\n\nRules:\n1. For multiple files: for each file use create_file (or open_file) → read_editor → write content; do not put all code in one file.\n2. Before switching files, save_current_file then open_file the target.\n3. read_editor before edits; list_open_files for open tabs.\n4. Small edits: insert_at_cursor / replace_range; whole file: replace_all.\n5. path may be absolute or relative to the current file directory.\n6. Run button executes build.sh in the current directory (creates if missing); long-press Run opens build.sh. Put build/run logic in build.sh.\n7. Build/run: send_terminal_command for ./build.sh etc.; waits for shell prompt or confirmation (default ~10 min). If snapshot shows awaiting confirmation or [Y/n], tell the user in their language and wait before y/n; never auto-confirm.\n8. On build failure: read_terminal for errors, fix code, retry; ctrl_c to interrupt stuck commands.\n9. Explain briefly in the user\'s language; write code to the editor, do not repeat large blocks in replies.\n10. Trust tool snapshots only; do not invent file content or terminal output.</string>
+    <string name="zt_editor_ai_tool_read">Reading editor…</string>
+    <string name="zt_editor_ai_tool_insert">Inserting text…</string>
+    <string name="zt_editor_ai_tool_replace">Replacing selection…</string>
+    <string name="zt_editor_ai_tool_replace_all">Replacing all content…</string>
+    <string name="zt_editor_ai_tool_create">Creating file…</string>
+    <string name="zt_editor_ai_tool_open">Opening file…</string>
+    <string name="zt_editor_ai_tool_save">Saving file…</string>
+    <string name="zt_editor_ai_tool_list">Listing open files…</string>
+    <string name="zt_editor_ai_reset_dialog_title">Notice</string>
+    <string name="zt_editor_ai_reset_dialog_message">This clears only the code editor AI chat history. Main-screen agent AI settings and chat are not affected.</string>
+    <string name="zt_editor_ai_reset_title">Reset editor AI chat</string>
+    <string name="zt_editor_ai_reset_summary">Clear code editor AI history only; API settings unchanged</string>
+    <string name="zt_editor_ai_reset_done">Editor AI chat reset</string>
+    <string name="zt_editor_ai_reset_panel_desc">Reset editor AI chat</string>
 
     <string name="zt_usage_habits_title">Usage Habits</string>
     <string name="zt_usage_habits_content">Note (Usage habit related options can be re-customized in ZT settings)\n

@@ -3,7 +3,7 @@ package com.termux.zerocore.ai.editor
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.ai.agent.ZtAgentAiChatClient
-import com.termux.zerocore.ai.agent.ZtTerminalAiSnapshot
+import com.termux.zerocore.ai.agent.ZtTerminalWaitHelper
 import org.json.JSONObject
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -24,6 +24,8 @@ object ZtEditorAiTerminalExecutor {
                 "send_terminal_key" -> sendKey(host, args)
                 else -> "Error: unknown tool `${toolCall.name}`"
             }
+        } catch (e: InterruptedException) {
+            throw e
         } catch (e: Exception) {
             "Error: ${e.message ?: "terminal tool failed"}"
         }
@@ -53,13 +55,15 @@ object ZtEditorAiTerminalExecutor {
         } else {
             command
         }
+        val maxWaitMs = ZtTerminalWaitHelper.resolveMaxWaitMs(
+            args.optLong("max_wait_ms").takeIf { args.has("max_wait_ms") },
+            ZtTerminalWaitHelper.DEFAULT_COMMAND_MAX_WAIT_MS
+        )
         runOnUi { host.sendTerminalText(toSend) }
-        val tail = waitForTerminalSettle(host, initialWaitMs = 400, pollIntervalMs = 350, maxWaitMs = 6000)
-        return buildString {
-            appendLine("Command sent: $command")
-            appendLine()
-            append(tail)
-        }.trim()
+        val result = ZtTerminalWaitHelper.waitForTerminalSettle(
+            maxWaitMs = maxWaitMs
+        ) { host.captureTerminalSnapshot(2500) }
+        return ZtTerminalWaitHelper.formatCommandResult("Command sent: $command", result)
     }
 
     private fun sendKey(host: ZtEditorAiHost, args: JSONObject): String {
@@ -68,41 +72,12 @@ object ZtEditorAiTerminalExecutor {
             return "Error: key is required"
         }
         runOnUi { host.sendTerminalKey(key) }
-        val tail = waitForTerminalSettle(host, initialWaitMs = 200, pollIntervalMs = 250, maxWaitMs = 2000)
-        return buildString {
-            appendLine("Key sent: $key")
-            appendLine()
-            append(tail)
-        }.trim()
-    }
-
-    private fun waitForTerminalSettle(
-        host: ZtEditorAiHost,
-        initialWaitMs: Long,
-        pollIntervalMs: Long,
-        maxWaitMs: Long
-    ): String {
-        Thread.sleep(initialWaitMs)
-        var waited = initialWaitMs
-        var lastContent = ""
-        var stableCount = 0
-        while (waited < maxWaitMs) {
-            val snap = host.captureTerminalSnapshot(2500)
-            if (snap == lastContent) {
-                stableCount++
-                if (stableCount >= 2) break
-            } else {
-                stableCount = 0
-                lastContent = snap
-            }
-            val lastLine = snap.lineSequence().lastOrNull { it.isNotBlank() }?.trim().orEmpty()
-            if (ZtTerminalAiSnapshot.isShellPrompt(lastLine) && waited >= initialWaitMs + pollIntervalMs) {
-                break
-            }
-            Thread.sleep(pollIntervalMs)
-            waited += pollIntervalMs
-        }
-        return host.captureTerminalSnapshot(2500)
+        val result = ZtTerminalWaitHelper.waitForTerminalSettle(
+            initialWaitMs = 200,
+            pollIntervalMs = 250,
+            maxWaitMs = ZtTerminalWaitHelper.DEFAULT_KEY_MAX_WAIT_MS
+        ) { host.captureTerminalSnapshot(2500) }
+        return ZtTerminalWaitHelper.formatCommandResult("Key sent: $key", result)
     }
 
     private fun runOnUi(block: () -> Unit) {
@@ -114,6 +89,6 @@ object ZtEditorAiTerminalExecutor {
                 latch.countDown()
             }
         }
-        latch.await(5, TimeUnit.SECONDS)
+        latch.await(10, TimeUnit.SECONDS)
     }
 }

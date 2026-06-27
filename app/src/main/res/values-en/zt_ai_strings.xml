@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zt_ai_hint_beautify">Blurry/hard-to-read terminal text → set text_shadow_enabled=false; background/wallpaper blur → adjust blur_enabled/blur_radius</string>
+    <string name="zt_ai_hint_beautify_ui">Snowflake/snow → set_zerotermux_config key=isSnowflakeShow value=true|false; particle/rain → key=isRainShow (mutually exclusive). Sidebar background → mIsBackMenuVisible. Use set_zerotermux_config, do not edit menu XML</string>
+    <string name="zt_ai_left_menu_rules_summary">Before creating a menu, call get_zerotermux_left_menu and read xml_rules + builtin_menu_catalog. click must use a fixed prefix (java:/ztShell:/jumpUrl: etc.); bare pkg/mc/exit are forbidden. Copy full java: class names from the catalog; tag is a remark—do not change its meaning; write &amp;&amp; as &amp;amp;&amp;&amp; in Shell. Prefer catalog items; never invent Config classes.</string>
+    <string name="zt_ai_left_menu_hint_extra"> Each create_menu_package uses the localized AI menu name (e.g. AI Created) and creates a new package.</string>
+    <string name="zt_ai_left_menu_example_keyword">Example</string>
+    <string name="zt_ai_pkg_source_hint">Default mirror is tsinghua. Call list_zerotermux_pkg_sources first, let the user pick, then switch_zerotermux_pkg_source with user_confirmed=true only after explicit approval. Overwrites sources.list and runs apt update/upgrade.</string>
+
+    <string name="zt_ai_tool_list_capabilities">List ZeroTermux settings, beautify keys, UI effects, openpage ids, and zt commands. Call FIRST when unsure. category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source</string>
+    <string name="zt_ai_tool_get_config">Read ZeroTermux user settings (ZTUserBean), beautify SaveData, and UI effects (isSnowflakeShow/isRainShow).</string>
+    <string name="zt_ai_tool_set_config">Set one ZeroTermux config. Booleans: true/false or 1/0. Snowflake/particle: isSnowflakeShow / isRainShow (mutually exclusive). Confirm risky keys like isInternalPassage first.</string>
+    <string name="zt_ai_tool_open_page">Open an in-app page by page_id (same as zt openpage). Examples: zt_settings, zero_termux_settings, agent_ai_settings, editor</string>
+    <string name="zt_ai_tool_run_zt">Run a zt command via local socket (preferred over terminal). Examples: help, toast hello, openleft, openpage list, reboot, x11status. Confirm reboot/destructive actions.</string>
+    <string name="zt_ai_tool_get_left_menu">Read menu list, xml_rules, and builtin_menu_catalog. Call BEFORE creating menu XML.</string>
+    <string name="zt_ai_tool_update_left_menu">Create/update an AI menu package with valid zt-menu XML. MUST read get_zerotermux_left_menu first. Use java:/ztShell:/jumpUrl: prefixes; never bare pkg/mc/exit.</string>
+    <string name="zt_ai_tool_list_pkg_sources">List Termux APT mirror options (same as left menu Switch Source). Default tsinghua; present options before switching.</string>
+    <string name="zt_ai_tool_switch_pkg_source">Switch APT source after the user picks one. MUST set user_confirmed=true only after explicit approval. Overwrites sources.list and runs apt update.</string>
+    <string name="zt_ai_tool_read_terminal">Read the current terminal screen. ALWAYS call before describing terminal state, install progress, or command output. Do not guess.</string>
+    <string name="zt_ai_tool_send_command">Send a command to the terminal (newline appended by default). Waits for shell prompt (default up to 10 min). Describe results ONLY from the returned snapshot.</string>
+    <string name="zt_ai_tool_send_key">Send a special key or key combination to the terminal.</string>
+    <string name="zt_ai_tool_run_zt_command">Run a zt command through the terminal (same as typing `zt …`). Judge success from terminal snapshot. Examples: help, openleft, openpage zt_settings</string>
+
+    <string name="zt_ai_tool_param_category">Filter: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source</string>
+    <string name="zt_ai_tool_param_group">Optional: settings, beautify, beautify_ui, all</string>
+    <string name="zt_ai_tool_param_keys">Optional list of keys to read</string>
+    <string name="zt_ai_tool_param_config_key">Key from list_zerotermux_capabilities</string>
+    <string name="zt_ai_tool_param_config_value">New value as string</string>
+    <string name="zt_ai_tool_param_page_id">Page id, e.g. zt_settings</string>
+    <string name="zt_ai_tool_param_page_extras">Optional JSON extras for webview url or editor path</string>
+    <string name="zt_ai_tool_param_zt_command">Full zt command WITHOUT the `zt` prefix</string>
+    <string name="zt_ai_tool_param_menu_package_id">Target AI package id (e.g. ai_created_1); default latest</string>
+    <string name="zt_ai_tool_param_xml_content">Full zt-menu XML content</string>
+    <string name="zt_ai_tool_param_append_group">Single group snippet to append before &lt;/zt-menu&gt;</string>
+    <string name="zt_ai_tool_param_create_menu">Localized AI menu create name (e.g. AI Created)</string>
+    <string name="zt_ai_tool_param_switch_menu">Switch active menu to created/updated AI package; default false</string>
+    <string name="zt_ai_tool_param_create_tab_alias">Alias of create_menu_package</string>
+    <string name="zt_ai_tool_param_menu_items">Menu items for create_tab_name</string>
+    <string name="zt_ai_tool_param_switch_tab">Group name to expand after update; default AI menu name; empty/false to skip</string>
+    <string name="zt_ai_tool_param_source_id">tsinghua|bfsu|official|nju|ustc|hit</string>
+    <string name="zt_ai_tool_param_user_confirmed">true only after user explicitly agrees</string>
+    <string name="zt_ai_tool_param_max_chars">Maximum characters to return, default 8000</string>
+    <string name="zt_ai_tool_param_command">Text or shell command to send</string>
+    <string name="zt_ai_tool_param_append_newline">Whether to append newline after command, default true</string>
+    <string name="zt_ai_tool_param_max_wait">Max ms to wait for shell prompt after send; default 600000</string>
+    <string name="zt_ai_tool_param_terminal_key">enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z</string>
+    <string name="zt_ai_tool_param_run_zt_cmd">zt command without `zt` prefix, e.g. help or openpage zt_settings</string>
+
+    <string name="zt_ai_status_list_capabilities">Listing ZeroTermux capabilities</string>
+    <string name="zt_ai_status_get_config">Reading ZeroTermux config</string>
+    <string name="zt_ai_status_set_config">Updating ZeroTermux config</string>
+    <string name="zt_ai_status_open_page">Opening ZeroTermux page</string>
+    <string name="zt_ai_status_run_zt">Running zt command</string>
+    <string name="zt_ai_status_get_left_menu">Reading left menu XML</string>
+    <string name="zt_ai_status_update_left_menu">Updating left menu XML</string>
+    <string name="zt_ai_status_list_pkg_sources">Listing APT mirrors</string>
+    <string name="zt_ai_status_switch_pkg_source">Switching APT mirror</string>
+    <string name="zt_ai_status_config_default">ZeroTermux config</string>
+
+    <string name="zt_ai_terminal_snapshot_header">=== Terminal snapshot (authoritative; do not invent; ignore stale history) ===</string>
+    <string name="zt_ai_terminal_snapshot_last_line">Last line: %1$s</string>
+    <string name="zt_ai_terminal_snapshot_visible_header">--- Visible screen (matches what the user sees) ---</string>
+    <string name="zt_ai_terminal_snapshot_scrollback_header">--- Scrollback tail (reference; prefer visible screen) ---</string>
+    <string name="zt_ai_terminal_status_idle">Status: idle (shell prompt visible)</string>
+    <string name="zt_ai_terminal_status_running">Status: command may still be running, or prompt not yet returned</string>
+    <string name="zt_ai_terminal_status_awaiting_confirmation">Status: awaiting confirmation (y/n or Enter required; tell the user and wait before send_terminal_command)</string>
+    <string name="zt_ai_terminal_snapshot_prefix">=== Terminal snapshot</string>
+    <string name="zt_ai_terminal_empty">(terminal is empty)</string>
+    <string name="zt_ai_terminal_truncated">...(truncated, showing last %1$d chars)\n</string>
+    <string name="zt_ai_terminal_wait_timeout">[Wait timed out (waited %1$ds) — command may still be running. Call read_terminal; if finished, continue from snapshot.]</string>
+    <string name="zt_ai_terminal_wait_confirm">[Terminal awaiting confirmation — explain to the user and wait for approval before send_terminal_command with y/n or Enter.]</string>
+
+    <string name="zt_ai_left_menu_minimal_example"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<zt-menu>
+    <group name="Common">
+        <item tag="ZT Settings"
+            name="Settings"
+            click="java:com.termux.zerocore.config.mainmenu.config.ZTSettingsClickConfig" />
+        <item tag="Update sources"
+            name="Update"
+            click="ztShell:pkg update"
+            autoRunShell="true" />
+    </group>
+</zt-menu>]]></string>
+
+    <string-array name="zt_ai_left_menu_item_notes">
+        <item>tag is a remark; do not change tag meaning for java: items</item>
+        <item>name is display text; java: items may use tag only</item>
+        <item>icon applies to non-java clicks only; icon is ignored for java:</item>
+        <item>dialogConfirm/dialogTitle/dialogMessage apply only to ztShell:</item>
+        <item>intentData format key@@value</item>
+        <item>commands: Name@@cmd,Name@@cmd; write &amp;&amp; as &amp;amp;&amp;&amp;</item>
+    </string-array>
+    <string-array name="zt_ai_left_menu_forbidden">
+        <item>click=\"pkg\" / \"mc\" / \"exit\" bare commands</item>
+        <item>click=\"zt openpage …\" → use java:ZTSettingsClickConfig or startActivity:</item>
+        <item>Inventing nonexistent java:…ClickConfig classes</item>
+        <item>Modifying program menu / default menu / main_menu_path.xml</item>
+    </string-array>
+    <string-array name="zt_ai_left_menu_workflow">
+        <item>1. get_zerotermux_left_menu → xml_rules + builtin_menu_catalog</item>
+        <item>2. Copy group/item from catalog or build from click_types examples</item>
+        <item>3. update_zerotermux_left_menu create_menu_package=localized AI name + xml_content</item>
+        <item>4. Do not switch_to_menu by default; user switches manually</item>
+    </string-array>
+
+    <string name="zt_ai_left_menu_no_package_note">No AI menu package yet; create_menu_package will create one.</string>
+    <string name="zt_ai_left_menu_success_note">AI menu package saved separately; default menu unchanged; repeated create adds numbered packages.</string>
+    <string name="zt_ai_left_menu_err_system_menu">Cannot modify program or default menu; configurable packages only</string>
+    <string name="zt_ai_left_menu_err_create_name">create_menu_package must be the localized AI menu create name</string>
+    <string name="zt_ai_left_menu_err_no_update_target">No AI menu package to update; use create_menu_package first</string>
+    <string name="zt_ai_left_menu_err_need_content">Provide create_menu_package, xml_content, or append_group_xml</string>
+
+    <string name="zt_ai_left_menu_err_need_group">At least one &lt;group name=\"…\"&gt; is required</string>
+    <string name="zt_ai_left_menu_err_group_name">group[%1$d] missing name attribute</string>
+    <string name="zt_ai_left_menu_err_invalid_click">item \"%1$s\" invalid click: \"%2$s\"; use prefix %3$s or empty placeholder</string>
+    <string name="zt_ai_left_menu_err_empty_java">java: click class name cannot be empty</string>
+    <string name="zt_ai_left_menu_err_unknown_java">item \"%1$s\" java class not in catalog: %2$s; copy from builtin_menu_catalog</string>
+    <string name="zt_ai_left_menu_err_java_icon">item \"%1$s\" should not set icon for java: (ignored)</string>
+    <string name="zt_ai_left_menu_err_shell_amp">item \"%1$s\" must write &amp;&amp; as &amp;amp;&amp;&amp; in Shell</string>
+    <string name="zt_ai_left_menu_err_dialog_confirm">item \"%1$s\" dialogConfirm applies only to ztShell:</string>
+    <string name="zt_ai_left_menu_err_need_item">At least one &lt;item click=\"…\"/&gt; is required</string>
+    <string name="zt_ai_left_menu_err_bare_pkg">click=\"pkg\" is forbidden; use ztShell:pkg or java:…ClickConfig</string>
+
+    <string name="zt_ai_pkg_source_menu_equiv">Left menu Common Functions → Switch Source (SwitchSourceClickConfig)</string>
+    <string name="zt_ai_pkg_source_default_note">Default mirror</string>
+    <string-array name="zt_ai_pkg_source_workflow">
+        <item>1. list_zerotermux_pkg_sources</item>
+        <item>2. Explain options to user (default tsinghua)</item>
+        <item>3. switch_zerotermux_pkg_source source_id=… user_confirmed=true after user picks</item>
+    </string-array>
+    <string name="zt_ai_pkg_source_tsinghua_summary">Tsinghua TUNA mirror; recommended default in China</string>
+    <string name="zt_ai_pkg_source_bfsu_summary">BFSU mirror; domestic alternative</string>
+    <string name="zt_ai_pkg_source_official_summary">Official Termux mirror; prefer overseas or official packages</string>
+    <string name="zt_ai_pkg_source_official_note">Restores bundled assets sources/science/game lists</string>
+    <string name="zt_ai_pkg_source_nju_summary">Nanjing University mirror; main + science</string>
+    <string name="zt_ai_pkg_source_ustc_summary">USTC mirror</string>
+    <string name="zt_ai_pkg_source_hit_summary">Harbin Institute of Technology mirror</string>
+    <string name="zt_ai_pkg_source_switched_msg">Switch command sent to terminal; wait for apt to finish</string>
+
+    <string name="zt_ai_click_java_desc">Built-in Java menu item</string>
+    <string name="zt_ai_click_java_note">Copy from builtin_menu_catalog; do not invent classes; icon ignored</string>
+    <string name="zt_ai_click_ztshell_desc">Run shell in terminal</string>
+    <string name="zt_ai_click_ztshell_note">dialog* only for ztShell; use &amp;amp;&amp;&amp; for &amp;&amp;</string>
+    <string name="zt_ai_click_jumpurl_desc">Open URL in browser</string>
+    <string name="zt_ai_click_jumpurl_note">icon may use imgPath:absolute/path</string>
+    <string name="zt_ai_click_ztedittext_desc">Edit a text file</string>
+    <string name="zt_ai_click_ztedittext_note">Edit ai_created package xml; do not change default menu path</string>
+    <string name="zt_ai_click_startactivity_desc">Open in-app Activity</string>
+    <string name="zt_ai_click_startactivity_note">packageName/intentData optional</string>
+    <string name="zt_ai_click_actionactivity_desc">Intent action launch</string>
+    <string name="zt_ai_click_actionactivity_note">intentData format key@@value</string>
+    <string name="zt_ai_click_commands_desc">Pick command from list</string>
+    <string name="zt_ai_click_commands_note">Name@@cmd, comma-separated</string>
+    <string name="zt_ai_click_shellurl_desc">Online script JSON</string>
+    <string name="zt_ai_click_downloadurl_desc">Download site JSON</string>
+    <string name="zt_ai_click_appweburl_desc">In-app WebView</string>
+    <string name="zt_ai_click_empty_desc">Placeholder (no action)</string>
+    <string name="zt_ai_click_empty_note">name may say placeholder menu</string>
+
+    <string name="zt_ai_cfg_font_color_title">Terminal font color</string>
+    <string name="zt_ai_cfg_font_color_desc">SaveData color value</string>
+    <string name="zt_ai_cfg_font_color_progress_title">Font color slider</string>
+    <string name="zt_ai_cfg_back_color_title">Background overlay color</string>
+    <string name="zt_ai_cfg_back_color_progress_title">Background color slider</string>
+    <string name="zt_ai_cfg_change_text_title">Background opacity 0-100</string>
+    <string name="zt_ai_cfg_change_text_show_title">Show double-tap hint</string>
+    <string name="zt_ai_cfg_change_text_show_desc">def/true/false</string>
+    <string name="zt_ai_cfg_blur_enabled_title">Background blur</string>
+    <string name="zt_ai_cfg_blur_enabled_desc">Blurs wallpaper/background only. User says background/wallpaper blur → this key</string>
+    <string name="zt_ai_cfg_blur_radius_title">Background blur radius</string>
+    <string name="zt_ai_cfg_blur_radius_desc">Effective when blur_enabled=true</string>
+    <string name="zt_ai_cfg_text_shadow_enabled_title">Text contrast (actually text blur)</string>
+    <string name="zt_ai_cfg_text_shadow_enabled_desc">Makes terminal text blurry when on. Blurry text → set false</string>
+    <string name="zt_ai_cfg_text_shadow_strength_title">Text blur strength</string>
+    <string name="zt_ai_cfg_text_shadow_strength_desc">When text_shadow_enabled=true; not background blur</string>
+
+    <string name="zt_ai_cfg_download_server_title">ZT download server</string>
+    <string name="zt_ai_cfg_workstation_title">PC workstation</string>
+    <string name="zt_ai_cfg_workstation_autostart_title">Workstation auto-start</string>
+    <string name="zt_ai_cfg_workstation_terminal_title">Workstation web terminal</string>
+    <string name="zt_ai_cfg_workstation_camera_title">Workstation web camera</string>
+    <string name="zt_ai_cfg_workstation_files_title">Workstation web files</string>
+    <string name="zt_ai_cfg_workstation_sms_title">Workstation phone/SMS</string>
+    <string name="zt_ai_cfg_input_method_close_title">Close drawer when IME opens</string>
+    <string name="zt_ai_cfg_style_trigger_off_title">Close menu after beautify</string>
+    <string name="zt_ai_cfg_tool_show_title">Hide toolbox</string>
+    <string name="zt_ai_cfg_force_numpad_title">Force numpad rules</string>
+    <string name="zt_ai_cfg_output_log_title">Output LOG</string>
+    <string name="zt_ai_cfg_snowflake_title">Snowflake effect</string>
+    <string name="zt_ai_cfg_snowflake_desc">Terminal snow animation. Aliases: snowflake/snow/雪花/下雪. Mutually exclusive with isRainShow</string>
+    <string name="zt_ai_cfg_rain_title">Particle/rain effect</string>
+    <string name="zt_ai_cfg_rain_desc">Terminal particle/rain animation. Aliases: particle/rain/粒子/下雨. Mutually exclusive with isSnowflakeShow</string>
+    <string name="zt_ai_cfg_reset_volume_title">Restore volume keys</string>
+    <string name="zt_ai_cfg_ai_panel_title">Right-side AI agent panel</string>
+    <string name="zt_ai_cfg_show_command_title">Show terminal layer</string>
+    <string name="zt_ai_cfg_internal_passage_title">X11 internal channel</string>
+    <string name="zt_ai_cfg_internal_passage_desc">Usually requires app restart; use openpage zero_termux_settings for full setup</string>
+    <string name="zt_ai_cfg_fold_menu_title">Fold menu groups</string>
+    <string name="zt_ai_cfg_disable_main_menu_title">Disable main menu XML</string>
+    <string name="zt_ai_cfg_hide_guide_title">Hide guide overlay</string>
+    <string name="zt_ai_cfg_writer_menu_back_title">Write menu background</string>
+    <string name="zt_ai_cfg_menu_back_visible_title">Sidebar background image</string>
+    <string name="zt_ai_cfg_sdcard_android_title">Write Android/data</string>
+    <string name="zt_ai_cfg_jump_guide_title">Skip setup wizard</string>
+    <string name="zt_ai_cfg_editor_wrap_title">Editor word wrap</string>
+    <string name="zt_ai_cfg_deepseek_terminal_title">DeepSeek visible in terminal</string>
+    <string name="zt_ai_cfg_custom_terminal_title">Custom LLM visible in terminal</string>
+    <string name="zt_ai_cfg_custom_ai_title">Use custom LLM</string>
+    <string name="zt_ai_cfg_agent_terminal_title">Agent controls terminal</string>
+    <string name="zt_ai_cfg_agent_zt_control_title">Agent controls ZeroTermux</string>
+    <string name="zt_ai_cfg_double_click_title">Double-tap terminal action</string>
+    <string name="zt_ai_cfg_double_click_desc">0=custom cmd 1=keyword 2=none 3=SSH</string>
+    <string name="zt_ai_cfg_agent_provider_title">Agent provider</string>
+    <string name="zt_ai_cfg_agent_api_url_title">Agent API URL</string>
+    <string name="zt_ai_cfg_agent_api_key_title">Agent API Key</string>
+    <string name="zt_ai_cfg_agent_model_title">Agent model</string>
+    <string name="zt_ai_cfg_agent_system_prompt_title">Agent system prompt</string>
+    <string name="zt_ai_cfg_deepseek_url_title">DeepSeek URL</string>
+    <string name="zt_ai_cfg_deepseek_key_title">DeepSeek Key</string>
+    <string name="zt_ai_cfg_custom_url_title">Custom LLM URL</string>
+    <string name="zt_ai_cfg_custom_key_title">Custom LLM Key</string>
+    <string name="zt_ai_cfg_custom_prompt_title">Custom LLM prompt</string>
+
+    <string name="zt_ai_zt_cmd_help">Help</string>
+    <string name="zt_ai_zt_cmd_version">Version</string>
+    <string name="zt_ai_zt_cmd_toast">Bottom toast</string>
+    <string name="zt_ai_zt_cmd_openleft">Open left menu</string>
+    <string name="zt_ai_zt_cmd_openright">Open right/AI panel</string>
+    <string name="zt_ai_zt_cmd_reboot">Restart Termux service</string>
+    <string name="zt_ai_zt_cmd_openpage">Open app page; use list for all ids</string>
+    <string name="zt_ai_zt_cmd_menu">Refresh/reset main menu</string>
+    <string name="zt_ai_zt_cmd_background">Set background image</string>
+    <string name="zt_ai_zt_cmd_x11show">Show terminal</string>
+    <string name="zt_ai_zt_cmd_x11hide">Hide terminal</string>
+    <string name="zt_ai_zt_cmd_x11status">X11 connection status</string>
+    <string name="zt_ai_zt_cmd_x11kbshow">Show X11 keyboard</string>
+    <string name="zt_ai_zt_cmd_x11kbhide">Hide X11 keyboard</string>
+    <string name="zt_ai_zt_cmd_dialog">Dialog</string>
+    <string name="zt_ai_zt_cmd_vnc">Open VNC</string>
+    <string name="zt_ai_zt_cmd_ln">Create symlink</string>
+    <string name="zt_ai_zt_cmd_qr">QR scan</string>
+</resources>

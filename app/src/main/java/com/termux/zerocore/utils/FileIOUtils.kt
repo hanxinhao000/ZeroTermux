@@ -40,6 +40,8 @@ object FileIOUtils {
     }
     //ROM信息文件地址
     public const val MAIN_MENU_XML_PATH = "/ZtInfo/main_menu_path.xml"
+    /** AI 追加的左侧菜单分组（不影响程序菜单与 main_menu_path.xml）。 */
+    public const val AI_MENU_OVERLAY_PATH = "/ZtInfo/ai_menu_overlay.xml"
     public const val MAIN_MENU_EDIT_MENU_ICON_PATH = "/ZtInfo/edit_menu.png"
     public const val DATA_MESSAGE_PATH = "/ZtInfo/data.config"
     public const val DATA_MESSAGE_PATH_FOLDER = "/ZtInfo"
@@ -450,25 +452,56 @@ object FileIOUtils {
         return file.absolutePath
     }
 
+    /** 拼接 home 相对路径；child 以 / 开头时 File 会当作绝对路径，必须去掉前导 /。 */
+    private fun homeFile(homePath: String, child: String): File {
+        return File(homePath, child.trimStart('/'))
+    }
+
+    private fun ensureZtInfoDir(homePath: String): File {
+        val dir = homeFile(homePath, DATA_MESSAGE_PATH_FOLDER)
+        if (!dir.exists()) {
+            LogUtils.d(TAG, "folder is create")
+            dir.mkdirs()
+        }
+        return dir
+    }
+
+    /** 旧版 bug：File(home, "/ZtInfo/...") 会写到 /ZtInfo/ 而非 app home 下。 */
+    private fun migrateLegacyMainMenuIfNeeded(homePath: String, target: File) {
+        if (target.exists()) {
+            return
+        }
+        val legacyWrong = File("/ZtInfo/main_menu_path.xml")
+        if (legacyWrong.exists() && legacyWrong.isFile) {
+            target.parentFile?.mkdirs()
+            try {
+                legacyWrong.copyTo(target, overwrite = false)
+                LogUtils.i(TAG, "Migrated legacy main menu xml to ${target.absolutePath}")
+            } catch (e: Exception) {
+                LogUtils.e(TAG, "migrateLegacyMainMenuIfNeeded failed: ${e.message}")
+            }
+        }
+    }
+
     public fun getDataMessagePathFile(): File {
         val homePath = getHomePath(UUtils.getContext())
-        val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)
-        if (!file.exists()) {
-            LogUtils.d(TAG, "folder is create")
-            file.mkdirs()
-        }
+        ensureZtInfoDir(homePath)
         createWebConfig()
-        return File(homePath, DATA_MESSAGE_PATH)
+        return homeFile(homePath, DATA_MESSAGE_PATH)
     }
 
     public fun getMainMenuXmlPathFile(): File {
         val homePath = getHomePath(UUtils.getContext())
-        val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)
-        if (!file.exists()) {
-            LogUtils.d(TAG, "folder is create")
-            file.mkdirs()
-        }
-        return File(homePath, MAIN_MENU_XML_PATH)
+        ensureZtInfoDir(homePath)
+        val target = homeFile(homePath, MAIN_MENU_XML_PATH)
+        migrateLegacyMainMenuIfNeeded(homePath, target)
+        return target
+    }
+
+    public fun getAiMenuOverlayPathFile(): File {
+        val homePath = getHomePath(UUtils.getContext())
+        ensureZtInfoDir(homePath)
+        return homeFile(homePath, AI_MENU_OVERLAY_PATH)
     }
 
     public fun getAndroidDataHome(context: Context): File? {
@@ -482,42 +515,38 @@ object FileIOUtils {
 
     public fun getLeftMenuBackFile(): File {
         val homePath = getHomePath(UUtils.getContext())
-        val file = File(homePath, LEFT_MENU_BACK_FOLDER)
-        if (!file.exists()) {
-            LogUtils.d(TAG, "folder is create")
-            file.mkdirs()
+        ensureZtInfoDir(homePath)
+        val dir = homeFile(homePath, LEFT_MENU_BACK_FOLDER)
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
-        return File(homePath, LEFT_MENU_BACK)
+        return homeFile(homePath, LEFT_MENU_BACK)
     }
 
     public fun getRightMenuBackFile(): File {
         val homePath = getHomePath(UUtils.getContext())
-        val file = File(homePath, LEFT_MENU_BACK_FOLDER)
-        if (!file.exists()) {
-            LogUtils.d(TAG, "folder is create")
-            file.mkdirs()
+        ensureZtInfoDir(homePath)
+        val dir = homeFile(homePath, LEFT_MENU_BACK_FOLDER)
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
-        return File(homePath, RIGHT_MENU_BACK)
+        return homeFile(homePath, RIGHT_MENU_BACK)
     }
 
     public fun getInfoMenuBackFile(): File {
         val homePath = getHomePath(UUtils.getContext())
-        val file = File(homePath, LEFT_MENU_BACK_FOLDER)
-        if (!file.exists()) {
-            LogUtils.d(TAG, "folder is create")
-            file.mkdirs()
+        ensureZtInfoDir(homePath)
+        val dir = homeFile(homePath, LEFT_MENU_BACK_FOLDER)
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
-        return File(homePath, MENU_BACK_INFO)
+        return homeFile(homePath, MENU_BACK_INFO)
     }
 
     public fun getMainEditMenuIconPathFile(): File {
         val homePath = getHomePath(UUtils.getContext())
-        val file = File(homePath, DATA_MESSAGE_PATH_FOLDER)
-        if (!file.exists()) {
-            LogUtils.d(TAG, "folder is create")
-            file.mkdirs()
-        }
-        return File(homePath, MAIN_MENU_EDIT_MENU_ICON_PATH)
+        ensureZtInfoDir(homePath)
+        return homeFile(homePath, MAIN_MENU_EDIT_MENU_ICON_PATH)
     }
 
     public fun createWebConfig() {

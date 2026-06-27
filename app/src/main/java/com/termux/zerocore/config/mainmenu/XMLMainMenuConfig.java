@@ -57,16 +57,27 @@ public class XMLMainMenuConfig {
 
     public static ArrayList<MainMenuCategoryData> getXmlMainMenuCategoryDatas(Context context) {
         MAIN_MENU_CATEGORY_DATAS.clear();
-        initMainMenuCategoryDatas(parseXMLFile(FileIOUtils.INSTANCE.getMainMenuXmlPathFile()), context);
+        MAIN_MENU_CATEGORY_DATAS.addAll(loadCategoryDatasFromGroups(
+            parseXMLFile(FileIOUtils.INSTANCE.getMainMenuXmlPathFile()), context));
         return MAIN_MENU_CATEGORY_DATAS;
+    }
+
+    /** 从任意菜单 XML 文件加载分组（不修改全局缓存）。 */
+    public static ArrayList<MainMenuCategoryData> loadCategoryDatasFromFile(File xmlFile, Context context) {
+        if (xmlFile == null || !xmlFile.exists()) {
+            return new ArrayList<>();
+        }
+        return loadCategoryDatasFromGroups(parseXMLFile(xmlFile), context);
     }
 
     public static void setXMLErrorMessageListener(XMLErrorMessageListener xmlErrorMessageListener) {
         xMLErrorMessageListener = xmlErrorMessageListener;
     }
 
-    private static void initMainMenuCategoryDatas(List<GroupItem> groupItems, Context context) {
-        Log.i(TAG, "getXmlMainMenuCategoryDatas groupItems: " + groupItems);
+    private static ArrayList<MainMenuCategoryData> loadCategoryDatasFromGroups(
+        List<GroupItem> groupItems, Context context) {
+        ArrayList<MainMenuCategoryData> result = new ArrayList<>();
+        Log.i(TAG, "loadCategoryDatasFromGroups groupItems: " + groupItems);
         for (int i = 0; i < groupItems.size(); i++) {
             ArrayList<MainMenuClickConfig> configs = new ArrayList<>();
             GroupItem groupItem = groupItems.get(i);
@@ -84,9 +95,9 @@ public class XMLMainMenuConfig {
 
                 String listTitle = menuItem.getListTitle();
                 String activityTitle = menuItem.getActivityTitle();
-                // 跳转
-                if (menuItem.clickAction.startsWith(START_WITH_JAVA)) {
-                    String clazz = menuItem.clickAction.replace(START_WITH_JAVA, "").trim();
+                final String clickAction = menuItem.clickAction == null ? "" : menuItem.clickAction;
+                if (clickAction.startsWith(START_WITH_JAVA)) {
+                    String clazz = clickAction.replace(START_WITH_JAVA, "").trim();
                     try {
                         Object object = createObject(clazz);
                         if (object instanceof BaseMenuClickConfig) {
@@ -97,16 +108,16 @@ public class XMLMainMenuConfig {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (menuItem.clickAction.startsWith(START_WITH_JUMP_URL)) {
+                } else if (clickAction.startsWith(START_WITH_JUMP_URL)) {
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
-                        String url = menuItem.clickAction.replace(START_WITH_JUMP_URL, "").trim();
+                        String url = clickAction.replace(START_WITH_JUMP_URL, "").trim();
                         Intent intent = new Intent();
                         intent.setData(Uri.parse(url));
                         intent.setAction(Intent.ACTION_VIEW);
                         context.startActivity(intent);
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_ZT_SHELL)) {
-                    String shell = menuItem.clickAction.replace(START_WITH_ZT_SHELL, "").trim();
+                } else if (clickAction.startsWith(START_WITH_ZT_SHELL)) {
+                    String shell = clickAction.replace(START_WITH_ZT_SHELL, "").trim();
                     if (context instanceof TermuxActivity) {
                         TermuxActivity termuxActivity = (TermuxActivity) context;
                         configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
@@ -132,15 +143,15 @@ public class XMLMainMenuConfig {
                             }
                         }));
                     }
-                } else if (menuItem.clickAction.startsWith(START_WITH_ZT_EDIT_TEXT)) {
-                    String path = menuItem.clickAction.replace(START_WITH_ZT_EDIT_TEXT, "").trim();
+                } else if (clickAction.startsWith(START_WITH_ZT_EDIT_TEXT)) {
+                    String path = clickAction.replace(START_WITH_ZT_EDIT_TEXT, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         Intent intent = new Intent(context1, EditTextActivity.class);
                         intent.putExtra("edit_path", path);
                         context1.startActivity(intent);
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_START_ACTIVITY)) {
-                    String className = menuItem.clickAction.replace(START_WITH_START_ACTIVITY, "").trim();
+                } else if (clickAction.startsWith(START_WITH_START_ACTIVITY)) {
+                    String className = clickAction.replace(START_WITH_START_ACTIVITY, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         try {
                             Class<?> clazz = Class.forName(className);
@@ -148,7 +159,7 @@ public class XMLMainMenuConfig {
                             if (!TextUtils.isEmpty(intentData)) {
                                 intent.putExtra(intentData.split("@@")[0], intentData.split("@@")[1]);
                             }
-                            Log.i(TAG, "initMainMenuCategoryDatas packageName: " + packageName);
+                            Log.i(TAG, "loadCategoryDatasFromGroups packageName: " + packageName);
                             if (!TextUtils.isEmpty(packageName)) {
                                 intent.setPackage(packageName);
                             }
@@ -158,8 +169,8 @@ public class XMLMainMenuConfig {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_ACTION_ACTIVITY)) {
-                    String action = menuItem.clickAction.replace(START_WITH_ACTION_ACTIVITY, "").trim();
+                } else if (clickAction.startsWith(START_WITH_ACTION_ACTIVITY)) {
+                    String action = clickAction.replace(START_WITH_ACTION_ACTIVITY, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         try {
                             Intent intent = new Intent(action);
@@ -175,8 +186,8 @@ public class XMLMainMenuConfig {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_COMMANDS)) {
-                    String commands = menuItem.clickAction.replace(START_WITH_COMMANDS, "").trim();
+                } else if (clickAction.startsWith(START_WITH_COMMANDS)) {
+                    String commands = clickAction.replace(START_WITH_COMMANDS, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         try {
                             String[] split = commands.split(",");
@@ -186,8 +197,8 @@ public class XMLMainMenuConfig {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_SHELL_URL)) {
-                    String url = menuItem.clickAction.replace(START_WITH_SHELL_URL, "").trim();
+                } else if (clickAction.startsWith(START_WITH_SHELL_URL)) {
+                    String url = clickAction.replace(START_WITH_SHELL_URL, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         try {
                           new OnLineCommandClickConfig().showOnLineShDialog(url, context);
@@ -196,8 +207,8 @@ public class XMLMainMenuConfig {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_DOWNLOAD_URL)) {
-                    String url = menuItem.clickAction.replace(START_WITH_DOWNLOAD_URL, "").trim();
+                } else if (clickAction.startsWith(START_WITH_DOWNLOAD_URL)) {
+                    String url = clickAction.replace(START_WITH_DOWNLOAD_URL, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         try {
                            TermuxActivity termuxActivity = (TermuxActivity) context;
@@ -207,8 +218,8 @@ public class XMLMainMenuConfig {
                             Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }));
-                } else if (menuItem.clickAction.startsWith(START_WITH_APP_WEB_URL)) {
-                    String url = menuItem.clickAction.replace(START_WITH_APP_WEB_URL, "").trim();
+                } else if (clickAction.startsWith(START_WITH_APP_WEB_URL)) {
+                    String url = clickAction.replace(START_WITH_APP_WEB_URL, "").trim();
                     configs.add(getXmlClickConfig(context, name, icon, (view, context1) -> {
                         try {
                             Intent intent2 = new Intent(context, WebViewActivity.class);
@@ -230,8 +241,9 @@ public class XMLMainMenuConfig {
                     }));
                 }
             }
-            MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(groupItem.groupName, groupItem.id, configs));
+            result.add(new MainMenuCategoryData(groupItem.groupName, groupItem.id, configs));
         }
+        return result;
     }
 
     private static void showListDialog(String listTitle, Context context, String[] commands, boolean autoRunShell) throws Exception {

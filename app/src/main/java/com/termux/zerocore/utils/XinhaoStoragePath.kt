@@ -140,7 +140,6 @@ object XinhaoStoragePath {
         if (!dir.exists()) {
             dir.mkdirs()
         }
-        migrateLegacyMenuInstallIfNeeded(context, dir)
         return dir
     }
 
@@ -157,87 +156,6 @@ object XinhaoStoragePath {
     @JvmStatic @JvmOverloads
     fun getMenuDirDisplayPath(context: Context = UUtils.getContext()): String =
         getMenuBackupDirDisplayPath(context)
-
-    private const val LEGACY_MENU_INSTALL_MIGRATION_DONE = "legacy_install_migrated_v2.done"
-
-    private val MENU_STATE_FILES = arrayOf(
-        "active_package.txt",
-        "active_label.txt",
-        "program_default_v1.done",
-        "menu_update_sources.json",
-        "selected_update_source.txt",
-    )
-
-    private fun migrateLegacyMenuInstallIfNeeded(context: Context, installDir: File) {
-        val marker = File(installDir, LEGACY_MENU_INSTALL_MIGRATION_DONE)
-        if (marker.exists()) {
-            return
-        }
-        try {
-            for (legacyMenuDir in getLegacyExternalMenuDirs(context, installDir)) {
-                for (fileName in MENU_STATE_FILES) {
-                    copyFileIfMissing(File(legacyMenuDir, fileName), File(installDir, fileName))
-                }
-            }
-            migrateInstalledPackageDirs(getMenuBackupDir(context), installDir)
-            marker.writeText("1")
-        } catch (e: Exception) {
-            android.util.Log.e("XinhaoStoragePath", "migrateLegacyMenuInstallIfNeeded failed", e)
-        }
-    }
-
-    private fun getLegacyExternalMenuDirs(context: Context, excludeDir: File): List<File> {
-        val dirs = ArrayList<File>()
-        val sdcardMenu = File(Environment.getExternalStorageDirectory(), "xinhao/menu")
-        if (sdcardMenu.absolutePath != excludeDir.absolutePath) {
-            dirs.add(sdcardMenu)
-        }
-        val externalFiles = context.getExternalFilesDir(null)
-        if (externalFiles != null) {
-            val androidDataMenu = File(externalFiles, "xinhao/menu")
-            if (androidDataMenu.absolutePath != excludeDir.absolutePath) {
-                dirs.add(androidDataMenu)
-            }
-        }
-        return dirs
-    }
-
-    private fun migrateInstalledPackageDirs(sourceDir: File, destDir: File) {
-        if (!sourceDir.exists() || !sourceDir.isDirectory) {
-            return
-        }
-        sourceDir.listFiles()?.forEach { file ->
-            if (file.name.startsWith(".")) {
-                return@forEach
-            }
-            if (file.isDirectory && File(file, "zt_menu_config.xml").exists()) {
-                val target = File(destDir, file.name)
-                if (!target.exists()) {
-                    copyMenuDirContents(file, target)
-                }
-            }
-        }
-    }
-
-    private fun copyFileIfMissing(source: File, dest: File) {
-        if (source.exists() && source.isFile && !dest.exists()) {
-            source.copyTo(dest, overwrite = false)
-        }
-    }
-
-    private fun copyMenuDirContents(sourceDir: File, destDir: File) {
-        sourceDir.listFiles()?.forEach { file ->
-            val target = File(destDir, file.name)
-            if (file.isDirectory) {
-                if (!target.exists()) {
-                    target.mkdirs()
-                }
-                copyMenuDirContents(file, target)
-            } else if (!target.exists()) {
-                file.copyTo(target, overwrite = false)
-            }
-        }
-    }
 
     /** 已安装菜单包解压目录（应用私有 storage）。 */
     @JvmStatic

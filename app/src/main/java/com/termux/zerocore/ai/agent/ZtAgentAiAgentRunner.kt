@@ -3,6 +3,7 @@ package com.termux.zerocore.ai.agent
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.zerocore.ai.config.ZtAiStrings
 import org.json.JSONObject
 
 class ZtAgentAiAgentRunner(
@@ -156,6 +157,42 @@ class ZtAgentAiAgentRunner(
                     val cmd = args.optString("command", "").trim()
                     if (cmd.isEmpty()) "" else "→ zt $cmd"
                 }
+                "run_zerotermux_zt" -> {
+                    val cmd = args.optString("command", "").trim()
+                    if (cmd.isEmpty()) "" else "→ zt $cmd"
+                }
+                "set_zerotermux_config" -> {
+                    val key = args.optString("key", "").trim()
+                    val value = args.optString("value", "").trim()
+                    if (key.isEmpty()) "" else "→ $key = $value"
+                }
+                "open_zerotermux_page" -> {
+                    val page = args.optString("page_id", "").trim()
+                    if (page.isEmpty()) "→ list pages" else "→ open $page"
+                }
+                "list_zerotermux_capabilities" -> {
+                    val cat = args.optString("category", "all").trim()
+                    "→ list $cat"
+                }
+                "get_zerotermux_config" -> {
+                    val group = args.optString("group", "").trim()
+                    if (group.isEmpty()) "→ read config" else "→ read $group"
+                }
+                "get_zerotermux_left_menu" -> "→ read left menu xml"
+                "update_zerotermux_left_menu" -> {
+                    val pkg = args.optString("create_menu_package", args.optString("create_tab_name", "")).trim()
+                    when {
+                        pkg.isNotEmpty() -> "→ Menu 菜单: $pkg"
+                        args.optString("append_group_xml", "").isNotBlank() -> "→ edit AI menu package"
+                        args.optString("xml_content", "").isNotBlank() -> "→ replace AI menu xml"
+                        else -> "→ update Menu 菜单"
+                    }
+                }
+                "list_zerotermux_pkg_sources" -> "→ list APT mirrors"
+                "switch_zerotermux_pkg_source" -> {
+                    val id = args.optString("source_id", "").trim()
+                    if (id.isEmpty()) "→ switch APT source" else "→ switch to $id"
+                }
                 else -> ""
             }
         } catch (_: Exception) {
@@ -190,7 +227,7 @@ class ZtAgentAiAgentRunner(
             list.add(
                 ZtAgentAiChatClient.ChatMessage(
                     role = ROLE_SYSTEM,
-                    content = UUtils.getString(R.string.zt_agent_ai_terminal_history_notice)
+                    content = ZtAiStrings.terminalHistoryNotice()
                 )
             )
             val lastUserIndex = limited.indexOfLast { it.role == ROLE_USER }
@@ -230,9 +267,10 @@ class ZtAgentAiAgentRunner(
 
     companion object {
         private const val TAG = "ZtAgentAiAgentRunner"
-        private const val MAX_TOOL_ROUNDS = 10
+        private const val MAX_TOOL_ROUNDS = 15
         private const val TERMINAL_HISTORY_LIMIT = 6
-        private const val SNAPSHOT_PREFIX = "=== 终端快照"
+        private val SNAPSHOT_PREFIX: String
+            get() = ZtAiStrings.terminalSnapshotPrefix()
         private const val ROLE_SYSTEM = "system"
         private const val ROLE_USER = "user"
         private const val ROLE_ASSISTANT = "assistant"

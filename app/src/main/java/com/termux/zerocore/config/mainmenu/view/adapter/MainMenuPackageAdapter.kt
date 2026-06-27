@@ -66,7 +66,7 @@ class MainMenuPackageAdapter(
             MainMenuPackageInfo.TYPE_PROGRAM -> {
                 holder.content.setOnClickListener { listener.onPackageSelected(info) }
             }
-            MainMenuPackageInfo.TYPE_NETWORK -> {
+            MainMenuPackageInfo.TYPE_DEFAULT, MainMenuPackageInfo.TYPE_NETWORK -> {
                 bindInstallTime(holder, info, UUtils.getString(R.string.menu_package_install_time_prefix))
                 holder.updateWrap.visibility = View.VISIBLE
                 holder.backup.visibility = View.VISIBLE

@@ -10,6 +10,15 @@
         android:fitsSystemWindows="true"
         android:layout_height="match_parent">
 
+        <include
+            android:id="@+id/ai_agent_running_banner"
+            layout="@layout/view_ai_agent_stop_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="2dp"
+            android:visibility="gone" />
+
         <RelativeLayout
             android:id="@+id/activity_termux_root_relative_layout"
             android:layout_width="match_parent"
@@ -80,14 +89,29 @@
                         android:focusableInTouchMode="false"
                         android:visibility="gone">
 
-                        <include
-                            android:id="@+id/ai_agent_panel_root"
-                            layout="@layout/view_ai_agent_panel"
+                        <LinearLayout
                             android:layout_width="320dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="end"
                             android:layout_marginVertical="8dp"
-                            android:layout_marginEnd="4dp" />
+                            android:layout_marginEnd="4dp"
+                            android:orientation="vertical">
+
+                            <include
+                                android:id="@+id/ai_agent_panel_stop_bar"
+                                layout="@layout/view_ai_agent_stop_bar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp"
+                                android:visibility="gone" />
+
+                            <include
+                                android:id="@+id/ai_agent_panel_root"
+                                layout="@layout/view_ai_agent_panel"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" />
+                        </LinearLayout>
                     </FrameLayout>
                 </RelativeLayout>
             </RelativeLayout>

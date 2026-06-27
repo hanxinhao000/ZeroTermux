@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Hints -->
+    <string name="zt_ai_hint_beautify">文字模糊/字糊/看不清字→关闭 text_shadow_enabled；背景模糊/壁纸糊→调整 blur_enabled/blur_radius</string>
+    <string name="zt_ai_hint_beautify_ui">雪花/下雪/snowflake/snow→set_zerotermux_config key=isSnowflakeShow value=true|false；粒子/粒子动画/下雨/particle/rain→key=isRainShow；二者互斥。侧栏背景图→mIsBackMenuVisible。用 set 控制，勿改菜单 XML</string>
+    <string name="zt_ai_left_menu_rules_summary">创建菜单前必须先 get_zerotermux_left_menu 阅读 xml_rules 与 builtin_menu_catalog。click 必须使用固定前缀（java:/ztShell:/jumpUrl: 等），禁止 pkg/mc/exit 等裸命令。java: 项从内置 catalog 复制完整类名；tag 是备注不可删改含义；Shell 中 &amp;&amp; 写 &amp;amp;&amp;&amp;。优先从 catalog 挑选 item 组合，不要编造不存在的 Config 类。</string>
+    <string name="zt_ai_left_menu_hint_extra"> 每次 create_menu_package 使用当前语言的 AI 菜单名（如 AI创建 / AI Created）新建独立包。</string>
+    <string name="zt_ai_left_menu_example_keyword">示例</string>
+    <string name="zt_ai_pkg_source_hint">换源默认清华源(tsinghua)。先 list_zerotermux_pkg_sources 给出方案让用户选，用户明确同意后再 switch_zerotermux_pkg_source 且 user_confirmed=true。会修改 sources.list 并 apt update/upgrade，须告知会覆盖现有源配置。</string>
+
+    <!-- Tool descriptions -->
+    <string name="zt_ai_tool_list_capabilities">列举 ZeroTermux 设置键、美化项、终端特效键、openpage 页面与 zt 命令。不确定时先调用。category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source</string>
+    <string name="zt_ai_tool_get_config">读取 ZeroTermux 用户设置(ZTUserBean)、美化 SaveData 与终端特效(isSnowflakeShow/isRainShow)。</string>
+    <string name="zt_ai_tool_set_config">设置一项 ZeroTermux 配置。布尔值 true/false 或 1/0。雪花/粒子: isSnowflakeShow / isRainShow（互斥）。危险项如 isInternalPassage 须先确认用户。</string>
+    <string name="zt_ai_tool_open_page">按 page_id 打开 App 内页面（同 zt openpage）。示例: zt_settings, zero_termux_settings, agent_ai_settings, editor</string>
+    <string name="zt_ai_tool_run_zt">经本地 Socket 执行 zt 命令（优先于终端）。示例: help, toast hello, openleft, openpage list, reboot, x11status。reboot 等危险操作须用户确认。</string>
+    <string name="zt_ai_tool_get_left_menu">读取 Menu 菜单列表、xml_rules 与 builtin_menu_catalog。创建菜单 XML 前必须先调用。</string>
+    <string name="zt_ai_tool_update_left_menu">创建/更新 AI 菜单包（合法 zt-menu XML）。须先 get_zerotermux_left_menu。click 须用 java:/ztShell:/jumpUrl: 等前缀，禁止裸 pkg/mc/exit。</string>
+    <string name="zt_ai_tool_list_pkg_sources">列举 Termux APT 换源方案（同左侧「切换源」）。默认 tsinghua，先展示选项再切换。</string>
+    <string name="zt_ai_tool_switch_pkg_source">用户选定源并明确同意后切换 APT 源。须 user_confirmed=true。会覆盖 sources.list 并 apt update。</string>
+    <string name="zt_ai_tool_read_terminal">读取当前终端可见屏幕。描述终端状态、安装进度或命令输出前必须先调用，禁止猜测。</string>
+    <string name="zt_ai_tool_send_command">向终端发送命令（默认追加换行）。默认等待 shell 提示符（最长约 10 分钟）。仅依据返回的快照描述结果。</string>
+    <string name="zt_ai_tool_send_key">向终端发送特殊按键或组合键。</string>
+    <string name="zt_ai_tool_run_zt_command">经终端执行 zt 命令（等同输入 zt …）。须依据终端快照判断结果。示例: help, openleft, openpage zt_settings</string>
+
+    <string name="zt_ai_tool_param_category">筛选: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source</string>
+    <string name="zt_ai_tool_param_group">可选: settings, beautify, beautify_ui, all</string>
+    <string name="zt_ai_tool_param_keys">可选，要读取的键名列表</string>
+    <string name="zt_ai_tool_param_config_key">list_zerotermux_capabilities 中的键名</string>
+    <string name="zt_ai_tool_param_config_value">新值（字符串）</string>
+    <string name="zt_ai_tool_param_page_id">页面 id，如 zt_settings</string>
+    <string name="zt_ai_tool_param_page_extras">可选 JSON extras（webview url 或 editor path）</string>
+    <string name="zt_ai_tool_param_zt_command">完整 zt 命令，不含 `zt` 前缀</string>
+    <string name="zt_ai_tool_param_menu_package_id">目标 AI 包 id（如 ai_created_1）；默认最新</string>
+    <string name="zt_ai_tool_param_xml_content">完整 zt-menu XML</string>
+    <string name="zt_ai_tool_param_append_group">追加到 &lt;/zt-menu&gt; 前的 group 片段</string>
+    <string name="zt_ai_tool_param_create_menu">当前语言的 AI 菜单创建名（如 AI创建 / AI Created）</string>
+    <string name="zt_ai_tool_param_switch_menu">是否切换到新建/更新的 AI 包；默认 false</string>
+    <string name="zt_ai_tool_param_create_tab_alias">create_menu_package 的别名</string>
+    <string name="zt_ai_tool_param_menu_items">create_tab_name 的菜单项</string>
+    <string name="zt_ai_tool_param_switch_tab">更新后展开的分组名；默认 AI 菜单名；空或 false 跳过</string>
+    <string name="zt_ai_tool_param_source_id">tsinghua|bfsu|official|nju|ustc|hit</string>
+    <string name="zt_ai_tool_param_user_confirmed">仅用户明确同意后为 true</string>
+    <string name="zt_ai_tool_param_max_chars">返回的最大字符数，默认 8000</string>
+    <string name="zt_ai_tool_param_command">要发送的文本或 shell 命令</string>
+    <string name="zt_ai_tool_param_append_newline">是否在命令后追加换行，默认 true</string>
+    <string name="zt_ai_tool_param_max_wait">发送后等待 shell 提示符的最长时间（毫秒），默认 600000</string>
+    <string name="zt_ai_tool_param_terminal_key">enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z</string>
+    <string name="zt_ai_tool_param_run_zt_cmd">不含 `zt` 前缀的 zt 命令，如 help 或 openpage zt_settings</string>
+
+    <!-- Status labels -->
+    <string name="zt_ai_status_list_capabilities">列举 ZeroTermux 能力</string>
+    <string name="zt_ai_status_get_config">读取 ZeroTermux 配置</string>
+    <string name="zt_ai_status_set_config">修改 ZeroTermux 配置</string>
+    <string name="zt_ai_status_open_page">打开 ZeroTermux 页面</string>
+    <string name="zt_ai_status_run_zt">执行 zt 命令</string>
+    <string name="zt_ai_status_get_left_menu">读取左侧菜单 XML</string>
+    <string name="zt_ai_status_update_left_menu">更新左侧菜单 XML</string>
+    <string name="zt_ai_status_list_pkg_sources">列举 APT 换源方案</string>
+    <string name="zt_ai_status_switch_pkg_source">切换 APT 源</string>
+    <string name="zt_ai_status_config_default">ZeroTermux 配置</string>
+
+    <!-- Terminal snapshot -->
+    <string name="zt_ai_terminal_snapshot_header">=== 终端快照（必须以此为准，禁止编造；忽略对话历史里的旧终端描述） ===</string>
+    <string name="zt_ai_terminal_snapshot_last_line">末行: %1$s</string>
+    <string name="zt_ai_terminal_snapshot_visible_header">--- 当前可见屏幕（与用户肉眼所见一致） ---</string>
+    <string name="zt_ai_terminal_snapshot_scrollback_header">--- scrollback 末尾（参考，以可见屏幕为准） ---</string>
+    <string name="zt_ai_terminal_status_idle">状态: 空闲（shell 提示符已出现）</string>
+    <string name="zt_ai_terminal_status_running">状态: 可能有命令在运行，或尚未回到提示符</string>
+    <string name="zt_ai_terminal_status_awaiting_confirmation">状态: 等待确认（终端需要 y/n 或 Enter；必须告知用户并等待明确同意后再 send_terminal_command 回复）</string>
+    <string name="zt_ai_terminal_snapshot_prefix">=== 终端快照</string>
+    <string name="zt_ai_terminal_empty">(终端为空)</string>
+    <string name="zt_ai_terminal_truncated">...(已截断，显示末尾 %1$d 字符)\n</string>
+    <string name="zt_ai_terminal_wait_timeout">[等待超时（已等待 %1$ds）— 命令可能仍在后台运行。请调用 read_terminal 查看进度；若已结束则根据快照继续分析。]</string>
+    <string name="zt_ai_terminal_wait_confirm">[终端正在等待确认 — 请向用户说明提示内容，征得同意后再 send_terminal_command 发送 y/n 或 Enter。]</string>
+
+    <!-- Left menu JSON / validation -->
+    <string name="zt_ai_left_menu_minimal_example"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<zt-menu>
+    <group name="常用">
+        <item tag="ZT设置"
+            name="设置"
+            click="java:com.termux.zerocore.config.mainmenu.config.ZTSettingsClickConfig" />
+        <item tag="更新软件源"
+            name="更新源"
+            click="ztShell:pkg update"
+            autoRunShell="true" />
+    </group>
+</zt-menu>]]></string>
+
+    <string-array name="zt_ai_left_menu_item_notes">
+        <item>tag 是备注标签，java: 项不要改 tag 含义</item>
+        <item>name 为显示名；java: 项可只写 tag 不写 name</item>
+        <item>icon 仅对非 java: 的 click 生效；java: 项 icon 无效</item>
+        <item>dialogConfirm/dialogTitle/dialogMessage 仅 ztShell: 生效</item>
+        <item>intentData 格式 key@@value</item>
+        <item>commands: 格式 名称@@命令,名称@@命令；&amp;&amp; 写 &amp;amp;&amp;&amp;</item>
+    </string-array>
+    <string-array name="zt_ai_left_menu_forbidden">
+        <item>click=\"pkg\" / \"mc\" / \"exit\" 等裸命令</item>
+        <item>click=\"zt openpage …\" 应改用 java:ZTSettingsClickConfig 或 startActivity:</item>
+        <item>编造不存在的 java:…ClickConfig 类名</item>
+        <item>修改程序菜单/默认菜单/main_menu_path.xml</item>
+    </string-array>
+    <string-array name="zt_ai_left_menu_workflow">
+        <item>1. get_zerotermux_left_menu 读取 xml_rules + builtin_menu_catalog</item>
+        <item>2. 按用户需求从 catalog 复制 group/item，或按 click_types 示例构造</item>
+        <item>3. update_zerotermux_left_menu create_menu_package=当前语言 AI 菜单名 + xml_content</item>
+        <item>4. 默认不 switch_to_menu；用户手动切换查看</item>
+    </string-array>
+
+    <!-- Left menu helper messages -->
+    <string name="zt_ai_left_menu_no_package_note">尚无 AI 菜单包；create_menu_package 将新建 AI 菜单包。</string>
+    <string name="zt_ai_left_menu_success_note">AI 菜单包写入独立目录，不影响默认菜单；再次 create 会生成递增编号包。</string>
+    <string name="zt_ai_left_menu_err_system_menu">不可修改程序菜单或默认菜单，仅可配置包</string>
+    <string name="zt_ai_left_menu_err_create_name">create_menu_package 须为当前语言的 AI 菜单创建名</string>
+    <string name="zt_ai_left_menu_err_no_update_target">没有可更新的 AI 菜单包；请先 create_menu_package</string>
+    <string name="zt_ai_left_menu_err_need_content">请提供 create_menu_package、xml_content 或 append_group_xml</string>
+
+    <string name="zt_ai_left_menu_err_need_group">至少需要一个 &lt;group name=\"…\"&gt;</string>
+    <string name="zt_ai_left_menu_err_group_name">group[%1$d] 缺少 name 属性</string>
+    <string name="zt_ai_left_menu_err_invalid_click">item「%1$s」click 无效: \"%2$s\"；须使用 %3$s 前缀或留空占位</string>
+    <string name="zt_ai_left_menu_err_empty_java">item java: click 类名不能为空</string>
+    <string name="zt_ai_left_menu_err_unknown_java">item「%1$s」java 类不在内置 catalog: %2$s；请从 builtin_menu_catalog 复制</string>
+    <string name="zt_ai_left_menu_err_java_icon">item「%1$s」java: 项不应设置 icon（无效）</string>
+    <string name="zt_ai_left_menu_err_shell_amp">item「%1$s」Shell 中 &amp;&amp; 须写成 &amp;amp;&amp;&amp;</string>
+    <string name="zt_ai_left_menu_err_dialog_confirm">item「%1$s」dialogConfirm 仅对 ztShell: 生效</string>
+    <string name="zt_ai_left_menu_err_need_item">至少需要一个 &lt;item click=\"…\"/&gt;</string>
+    <string name="zt_ai_left_menu_err_bare_pkg">禁止使用 click=\"pkg\"，应使用 ztShell:pkg 或 java:…ClickConfig</string>
+
+    <!-- Pkg source -->
+    <string name="zt_ai_pkg_source_menu_equiv">左侧菜单 常用功能 → 切换源 (SwitchSourceClickConfig)</string>
+    <string name="zt_ai_pkg_source_default_note">默认源</string>
+    <string-array name="zt_ai_pkg_source_workflow">
+        <item>1. list_zerotermux_pkg_sources</item>
+        <item>2. 向用户说明各源特点并推荐（默认清华）</item>
+        <item>3. 用户选定后 switch_zerotermux_pkg_source source_id=… user_confirmed=true</item>
+    </string-array>
+    <string name="zt_ai_pkg_source_tsinghua_summary">清华大学 TUNA 镜像，国内常用，推荐默认</string>
+    <string name="zt_ai_pkg_source_bfsu_summary">北京外国语大学镜像，国内备选</string>
+    <string name="zt_ai_pkg_source_official_summary">Termux 官方源，海外或官方包优先时使用</string>
+    <string name="zt_ai_pkg_source_official_note">恢复 assets 内置 sources/science/game 列表</string>
+    <string name="zt_ai_pkg_source_nju_summary">南京大学镜像，含 main 与 science 源</string>
+    <string name="zt_ai_pkg_source_ustc_summary">中国科学技术大学镜像</string>
+    <string name="zt_ai_pkg_source_hit_summary">哈尔滨工业大学镜像</string>
+    <string name="zt_ai_pkg_source_switched_msg">换源命令已发送到终端，请等待 apt 完成</string>
+
+    <!-- Click type descriptions (left menu guide) -->
+    <string name="zt_ai_click_java_desc">调用内置 Java 菜单项</string>
+    <string name="zt_ai_click_java_note">从 builtin_menu_catalog 复制，勿编造类名；icon 无效</string>
+    <string name="zt_ai_click_ztshell_desc">终端执行 Shell</string>
+    <string name="zt_ai_click_ztshell_note">dialog* 仅 ztShell 生效；&amp;&amp; 用 &amp;amp;&amp;&amp;</string>
+    <string name="zt_ai_click_jumpurl_desc">跳转浏览器 URL</string>
+    <string name="zt_ai_click_jumpurl_note">icon 可设 imgPath:绝对路径</string>
+    <string name="zt_ai_click_ztedittext_desc">编辑文本文件</string>
+    <string name="zt_ai_click_ztedittext_note">AI 包应编辑 ai_created 内 xml，勿改默认菜单路径</string>
+    <string name="zt_ai_click_startactivity_desc">跳转 App 内 Activity</string>
+    <string name="zt_ai_click_startactivity_note">packageName/intentData 可选</string>
+    <string name="zt_ai_click_actionactivity_desc">Intent Action 跳转</string>
+    <string name="zt_ai_click_actionactivity_note">intentData 格式 key@@value</string>
+    <string name="zt_ai_click_commands_desc">列表选命令</string>
+    <string name="zt_ai_click_commands_note">名称@@命令, 逗号分隔</string>
+    <string name="zt_ai_click_shellurl_desc">在线脚本 JSON</string>
+    <string name="zt_ai_click_downloadurl_desc">下载站 JSON</string>
+    <string name="zt_ai_click_appweburl_desc">应用内 WebView</string>
+    <string name="zt_ai_click_empty_desc">占位无操作</string>
+    <string name="zt_ai_click_empty_note">name 可写占位菜单</string>
+
+    <!-- Config registry titles (beautify SaveData) -->
+    <string name="zt_ai_cfg_font_color_title">终端字体颜色</string>
+    <string name="zt_ai_cfg_font_color_desc">SaveData 颜色值</string>
+    <string name="zt_ai_cfg_font_color_progress_title">字体颜色滑块</string>
+    <string name="zt_ai_cfg_back_color_title">背景遮罩颜色</string>
+    <string name="zt_ai_cfg_back_color_progress_title">背景颜色滑块</string>
+    <string name="zt_ai_cfg_change_text_title">背景透明度 0-100</string>
+    <string name="zt_ai_cfg_change_text_show_title">显示双击提示</string>
+    <string name="zt_ai_cfg_change_text_show_desc">def/true/false</string>
+    <string name="zt_ai_cfg_blur_enabled_title">背景模糊</string>
+    <string name="zt_ai_cfg_blur_enabled_desc">仅模糊背景图/壁纸。用户说背景模糊/壁纸糊/wallpaper blur 时调整此项</string>
+    <string name="zt_ai_cfg_blur_radius_title">背景模糊半径</string>
+    <string name="zt_ai_cfg_blur_radius_desc">blur_enabled=true 时生效</string>
+    <string name="zt_ai_cfg_text_shadow_enabled_title">文字对比度(实为文字模糊)</string>
+    <string name="zt_ai_cfg_text_shadow_enabled_desc">开启后终端文字发糊。文字模糊/blurry text→设为 false</string>
+    <string name="zt_ai_cfg_text_shadow_strength_title">文字模糊强度</string>
+    <string name="zt_ai_cfg_text_shadow_strength_desc">text_shadow_enabled=true 时生效；不是背景模糊</string>
+
+    <!-- Config registry titles (settings) -->
+    <string name="zt_ai_cfg_download_server_title">ZT 下载服务器</string>
+    <string name="zt_ai_cfg_workstation_title">电脑工作站</string>
+    <string name="zt_ai_cfg_workstation_autostart_title">工作站自动启动</string>
+    <string name="zt_ai_cfg_workstation_terminal_title">工作站 Web 终端</string>
+    <string name="zt_ai_cfg_workstation_camera_title">工作站 Web 摄像头</string>
+    <string name="zt_ai_cfg_workstation_files_title">工作站 Web 文件</string>
+    <string name="zt_ai_cfg_workstation_sms_title">工作站电话/短信</string>
+    <string name="zt_ai_cfg_input_method_close_title">输入法时关闭侧栏</string>
+    <string name="zt_ai_cfg_style_trigger_off_title">美化后关闭菜单</string>
+    <string name="zt_ai_cfg_tool_show_title">隐藏工具箱</string>
+    <string name="zt_ai_cfg_force_numpad_title">强制小键盘规则</string>
+    <string name="zt_ai_cfg_output_log_title">输出 LOG</string>
+    <string name="zt_ai_cfg_snowflake_title">雪花特效</string>
+    <string name="zt_ai_cfg_snowflake_desc">终端雪花动画。别名: 雪花/下雪/雪花开/snowflake/snow。与 isRainShow 互斥</string>
+    <string name="zt_ai_cfg_rain_title">粒子/雨特效</string>
+    <string name="zt_ai_cfg_rain_desc">终端粒子/雨动画。别名: 粒子/下雨/particle/rain。与 isSnowflakeShow 互斥</string>
+    <string name="zt_ai_cfg_reset_volume_title">还原音量键</string>
+    <string name="zt_ai_cfg_ai_panel_title">右侧 AI 智能体面板</string>
+    <string name="zt_ai_cfg_show_command_title">显示终端层</string>
+    <string name="zt_ai_cfg_internal_passage_title">X11 内部通道</string>
+    <string name="zt_ai_cfg_internal_passage_desc">切换后需重启 App；完整安装请 openpage zero_termux_settings</string>
+    <string name="zt_ai_cfg_fold_menu_title">折叠菜单</string>
+    <string name="zt_ai_cfg_disable_main_menu_title">禁用主菜单 XML</string>
+    <string name="zt_ai_cfg_hide_guide_title">隐藏引导浮层</string>
+    <string name="zt_ai_cfg_writer_menu_back_title">写入菜单背景</string>
+    <string name="zt_ai_cfg_menu_back_visible_title">侧栏背景图</string>
+    <string name="zt_ai_cfg_sdcard_android_title">Android/data 写文件</string>
+    <string name="zt_ai_cfg_jump_guide_title">跳过开机向导</string>
+    <string name="zt_ai_cfg_editor_wrap_title">编辑器自动换行</string>
+    <string name="zt_ai_cfg_deepseek_terminal_title">DeepSeek 可见终端</string>
+    <string name="zt_ai_cfg_custom_terminal_title">自定义 LLM 可见终端</string>
+    <string name="zt_ai_cfg_custom_ai_title">使用自定义 LLM</string>
+    <string name="zt_ai_cfg_agent_terminal_title">智能体控制终端</string>
+    <string name="zt_ai_cfg_agent_zt_control_title">智能体控制 ZeroTermux</string>
+    <string name="zt_ai_cfg_double_click_title">双击终端功能</string>
+    <string name="zt_ai_cfg_double_click_desc">0=自定义命令 1=关键字 2=无 3=SSH</string>
+    <string name="zt_ai_cfg_agent_provider_title">智能体服务商</string>
+    <string name="zt_ai_cfg_agent_api_url_title">智能体 API URL</string>
+    <string name="zt_ai_cfg_agent_api_key_title">智能体 API Key</string>
+    <string name="zt_ai_cfg_agent_model_title">智能体模型</string>
+    <string name="zt_ai_cfg_agent_system_prompt_title">智能体系统提示词</string>
+    <string name="zt_ai_cfg_deepseek_url_title">DeepSeek URL</string>
+    <string name="zt_ai_cfg_deepseek_key_title">DeepSeek Key</string>
+    <string name="zt_ai_cfg_custom_url_title">自定义 LLM URL</string>
+    <string name="zt_ai_cfg_custom_key_title">自定义 LLM Key</string>
+    <string name="zt_ai_cfg_custom_prompt_title">自定义 LLM 提示词</string>
+
+    <!-- zt command descriptions -->
+    <string name="zt_ai_zt_cmd_help">帮助</string>
+    <string name="zt_ai_zt_cmd_version">版本</string>
+    <string name="zt_ai_zt_cmd_toast">底部提示</string>
+    <string name="zt_ai_zt_cmd_openleft">打开左侧菜单</string>
+    <string name="zt_ai_zt_cmd_openright">打开右侧/AI 面板</string>
+    <string name="zt_ai_zt_cmd_reboot">重启 Termux 服务</string>
+    <string name="zt_ai_zt_cmd_openpage">打开 App 页面，list 列出全部</string>
+    <string name="zt_ai_zt_cmd_menu">刷新/重置主菜单</string>
+    <string name="zt_ai_zt_cmd_background">设置背景图</string>
+    <string name="zt_ai_zt_cmd_x11show">显示终端</string>
+    <string name="zt_ai_zt_cmd_x11hide">隐藏终端</string>
+    <string name="zt_ai_zt_cmd_x11status">X11 连接状态</string>
+    <string name="zt_ai_zt_cmd_x11kbshow">显示 X11 键盘</string>
+    <string name="zt_ai_zt_cmd_x11kbhide">隐藏 X11 键盘</string>
+    <string name="zt_ai_zt_cmd_dialog">弹窗</string>
+    <string name="zt_ai_zt_cmd_vnc">打开 VNC</string>
+    <string name="zt_ai_zt_cmd_ln">创建软链接</string>
+    <string name="zt_ai_zt_cmd_qr">二维码扫描</string>
+</resources>

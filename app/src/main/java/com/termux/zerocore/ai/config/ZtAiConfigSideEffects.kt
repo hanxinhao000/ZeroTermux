@@ -1,0 +1,52 @@
+package com.termux.zerocore.ai.config
+
+import com.example.xh_lib.utils.UUtils
+import com.termux.app.TermuxActivity
+import com.termux.zerocore.bean.ZTUserBean
+import com.termux.zerocore.config.mainmenu.MainMenuPackageManager
+import com.termux.zerocore.config.ztcommand.navigation.ZtForegroundActivityHolder
+
+/** 配置写入后的即时副作用（尽量与 UI 设置页行为一致）。 */
+object ZtAiConfigSideEffects {
+
+    fun apply(key: String, bean: ZTUserBean) {
+        when (key) {
+            "isShowCommand" -> {
+                val cmd = if (bean.isShowCommand) "x11commandshow" else "x11commandhide"
+                ZtAiZtSocketClient.send(cmd)
+            }
+            "isInternalPassage" -> {
+                // 完整切换需安装通道文件，提示用户重启；bean 已持久化供下次启动
+            }
+            "isSnowflakeShow", "isRainShow" -> {
+                ZtBeautifyUiEffects.applyUserSetting(key, when (key) {
+                    "isSnowflakeShow" -> bean.isSnowflakeShow
+                    else -> bean.isRainShow
+                })
+            }
+        }
+    }
+
+    fun applyBeautify(key: String) {
+        UUtils.getHandler().post {
+            val activity = ZtForegroundActivityHolder.get()
+            if (activity is TermuxActivity) {
+                activity.initColorConfig()
+                activity.getTerminalView()?.invalidate()
+            }
+        }
+    }
+
+    /** AI 创建/更新可配置菜单包后刷新 Menu 列表；若已切换或正在编辑该包则同步刷新左侧菜单。 */
+    fun refreshMenuPackagesAfterAiUpdate(switched: Boolean, targetPackageId: String? = null) {
+        UUtils.getHandler().post {
+            val activity = ZtForegroundActivityHolder.getTermuxActivity() ?: return@post
+            val activeId = MainMenuPackageManager.getActivePackageId(activity)
+            val refreshMain = switched || (targetPackageId != null && activeId == targetPackageId)
+            if (refreshMain) {
+                activity.refreshMainMenuPublic()
+            }
+            activity.refreshMenuPackageListPublic()
+        }
+    }
+}

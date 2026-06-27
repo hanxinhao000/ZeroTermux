@@ -33,6 +33,11 @@ object MainMenuPackageManager {
     private const val ACTIVE_LABEL_FILE = "active_label.txt"
     private const val PROGRAM_DEFAULT_MIGRATION_FILE = "program_default_v1.done"
     private const val NETWORK_PACKAGE_NAME = "network_latest"
+    /** 默认菜单独立存档（不参与列表展示，切换默认菜单时恢复）。 */
+    private const val DEFAULT_MENU_STORE_DIR = "_default_menu"
+    private const val EMPTY_AI_MENU_XML = """<?xml version="1.0" encoding="utf-8"?>
+<zt-menu>
+</zt-menu>"""
     private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     @JvmStatic
@@ -72,12 +77,13 @@ object MainMenuPackageManager {
             if (!activeFile.exists() || activeFile.readText().trim().isEmpty()) {
                 applyProgramMenu(context)
             }
+            ensureDefaultMenuStore(context)
         } catch (e: Exception) {
             android.util.Log.e("MainMenuPackageManager", "ensureDefaultActiveMenu failed", e)
         }
     }
 
-    /** 构建列表：程序菜单 + 默认菜单 + 历史包 + 安装。 */
+    /** 构建列表：程序菜单 + 默认菜单 + 可配置包 + 安装。 */
     @JvmStatic
     fun buildListItems(context: Context): List<MainMenuPackageInfo> {
         ensureMenuInstallDir(context)
@@ -100,28 +106,23 @@ object MainMenuPackageManager {
                 label = UUtils.getString(R.string.menu_package_default_label),
                 installTime = latestNetworkDir?.lastModified() ?: 0L,
                 packageDir = latestNetworkDir,
-                type = MainMenuPackageInfo.TYPE_NETWORK,
+                type = MainMenuPackageInfo.TYPE_DEFAULT,
                 isActive = isDefaultMenuActive(activeId)
             )
         )
 
-        val menuDir = XinhaoStoragePath.getMenuInstallDir(context)
-        menuDir.listFiles()?.filter { it.isDirectory }?.sortedByDescending { it.lastModified() }
-            ?.forEach { dir ->
-                if (!hasMenuXml(dir) || isNetworkPackageDir(dir)) {
-                    return@forEach
-                }
-                items.add(
-                    MainMenuPackageInfo(
-                        id = dir.name,
-                        label = dir.name,
-                        installTime = dir.lastModified(),
-                        packageDir = dir,
-                        type = MainMenuPackageInfo.TYPE_INSTALLED,
-                        isActive = dir.name == activeId
-                    )
+        listConfigurablePackageDirs(context).forEach { dir ->
+            items.add(
+                MainMenuPackageInfo(
+                    id = dir.name,
+                    label = resolvePackageDisplayLabel(dir.name),
+                    installTime = dir.lastModified(),
+                    packageDir = dir,
+                    type = MainMenuPackageInfo.TYPE_INSTALLED,
+                    isActive = dir.name == activeId
                 )
-            }
+            )
+        }
 
         items.add(
             MainMenuPackageInfo(
@@ -236,18 +237,212 @@ object MainMenuPackageManager {
         if (info.type == MainMenuPackageInfo.TYPE_PROGRAM) {
             return applyProgramMenu(context)
         }
-        if (info.type == MainMenuPackageInfo.TYPE_NETWORK) {
+        if (info.type == MainMenuPackageInfo.TYPE_DEFAULT) {
             return applyDefaultMenu(context)
         }
         return applyPackage(context, info.id, info.label)
     }
 
-    /** 切换到默认菜单模式，保留现有 XML，仅在文件不存在时从 assets 初始化。 */
+    @JvmStatic
+    fun isAiPackageId(packageId: String): Boolean {
+        if (packageId == MainMenuPackageInfo.ID_AI_CREATED) {
+            return true
+        }
+        return packageId.matches(Regex("${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_\\d+"))
+    }
+
+    @JvmStatic
+    fun hasAnyAiMenuPackage(context: Context): Boolean {
+        return listAiPackageDirs(context).isNotEmpty()
+    }
+
+    @JvmStatic
+    fun getLatestAiPackageId(context: Context): String? {
+        return listAiPackageDirs(context).maxByOrNull { it.lastModified() }?.name
+    }
+
+    @JvmStatic
+    fun getAiPackageDir(context: Context, packageId: String): File {
+        return File(ensureMenuInstallDir(context), packageId)
+    }
+
+    /** @deprecated 使用 [getAiPackageDir] */
+    @JvmStatic
+    fun getAiCreatedPackageDir(context: Context): File = getAiPackageDir(context, MainMenuPackageInfo.ID_AI_CREATED)
+
+    /** @deprecated 使用 [hasAnyAiMenuPackage] */
+    @JvmStatic
+    fun hasAiCreatedMenuPackage(context: Context): Boolean = hasAnyAiMenuPackage(context)
+
+    /** 分配下一个 AI 包目录：ai_created → ai_created_1 → ai_created_2 … */
+    @JvmStatic
+    fun allocateNextAiPackageId(context: Context): String {
+        val existing = listAiPackageDirs(context).map { it.name }.toSet()
+        if (!existing.contains(MainMenuPackageInfo.ID_AI_CREATED)) {
+            return MainMenuPackageInfo.ID_AI_CREATED
+        }
+        var index = 1
+        while (existing.contains("${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_$index")) {
+            index++
+        }
+        return "${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_$index"
+    }
+
+    /** 新建 AI 菜单包（独立目录，不改动默认菜单与其它包）。 */
+    @JvmStatic
+    @JvmOverloads
+    fun createAiMenuPackage(context: Context, xmlContent: String? = null): String? {
+        val packageId = allocateNextAiPackageId(context)
+        val dir = getAiPackageDir(context, packageId)
+        if (!dir.exists() && !dir.mkdirs()) {
+            return null
+        }
+        val content = xmlContent?.takeIf { it.isNotBlank() } ?: EMPTY_AI_MENU_XML
+        return try {
+            File(dir, MENU_XML_FILE).writeText(content)
+            packageId
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "createAiMenuPackage failed", e)
+            null
+        }
+    }
+
+    /** 写入 AI 包 XML；仅当该包为当前激活菜单时才同步到左侧展示。 */
+    @JvmStatic
+    @JvmOverloads
+    fun writeAiMenuPackageXml(
+        context: Context,
+        packageId: String,
+        xmlContent: String,
+        applyIfActive: Boolean = true
+    ): Boolean {
+        if (!isAiPackageId(packageId)) {
+            return false
+        }
+        val dir = getAiPackageDir(context, packageId)
+        if (!dir.exists() && !dir.mkdirs()) {
+            return false
+        }
+        return try {
+            File(dir, MENU_XML_FILE).writeText(xmlContent)
+            if (applyIfActive && getActivePackageId(context) == packageId) {
+                applyPackage(context, packageId, resolveAiPackageLabel(packageId))
+            } else {
+                true
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "writeAiMenuPackageXml failed", e)
+            false
+        }
+    }
+
+    @JvmStatic
+    fun applyAiMenuPackage(context: Context, packageId: String): Boolean {
+        if (!isAiPackageId(packageId)) {
+            return false
+        }
+        val dir = getAiPackageDir(context, packageId)
+        if (!hasMenuXml(dir)) {
+            return false
+        }
+        return applyPackage(context, packageId, resolveAiPackageLabel(packageId))
+    }
+
+    /** @deprecated 使用 [applyAiMenuPackage] */
+    @JvmStatic
+    fun applyAiCreatedMenuPackage(context: Context): Boolean {
+        val packageId = getLatestAiPackageId(context) ?: return false
+        return applyAiMenuPackage(context, packageId)
+    }
+
+    @JvmStatic
+    fun resolveAiPackageLabel(packageId: String): String {
+        if (packageId == MainMenuPackageInfo.ID_AI_CREATED) {
+            return UUtils.getString(R.string.menu_package_ai_created_label)
+        }
+        if (packageId.startsWith("${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_")) {
+            val suffix = packageId.removePrefix("${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_")
+            if (suffix.isNotEmpty()) {
+                return UUtils.getString(R.string.menu_package_ai_created_label) + suffix
+            }
+        }
+        return packageId
+    }
+
+    @JvmStatic
+    fun resolvePackageDisplayLabel(packageId: String): String {
+        if (isAiPackageId(packageId)) {
+            return resolveAiPackageLabel(packageId)
+        }
+        return packageId
+    }
+
+    private fun listAiPackageDirs(context: Context): List<File> {
+        return listConfigurablePackageDirs(context).filter { isAiPackageId(it.name) }
+    }
+
+    private fun getDefaultMenuStoreDir(context: Context): File {
+        return File(ensureMenuInstallDir(context), DEFAULT_MENU_STORE_DIR)
+    }
+
+    /** 将当前 main_menu_path 快照到默认菜单独立存档。 */
+    @JvmStatic
+    fun snapshotDefaultMenuStore(context: Context) {
+        try {
+            val activeXml = FileIOUtils.getMainMenuXmlPathFile()
+            if (!activeXml.exists()) {
+                return
+            }
+            val storeDir = getDefaultMenuStoreDir(context)
+            storeDir.mkdirs()
+            copyFile(activeXml, File(storeDir, MENU_XML_FILE))
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "snapshotDefaultMenuStore failed", e)
+        }
+    }
+
+    private fun ensureDefaultMenuStore(context: Context) {
+        val storeXml = File(getDefaultMenuStoreDir(context), MENU_XML_FILE)
+        if (storeXml.exists()) {
+            return
+        }
+        val activeXml = FileIOUtils.getMainMenuXmlPathFile()
+        if (activeXml.exists()) {
+            getDefaultMenuStoreDir(context).mkdirs()
+            copyFile(activeXml, storeXml)
+        }
+    }
+
+    private fun restoreDefaultMenuStore(context: Context): Boolean {
+        ensureDefaultMenuStore(context)
+        val storeXml = File(getDefaultMenuStoreDir(context), MENU_XML_FILE)
+        if (!storeXml.exists()) {
+            return false
+        }
+        val activeXml = FileIOUtils.getMainMenuXmlPathFile()
+        activeXml.parentFile?.mkdirs()
+        copyFile(storeXml, activeXml)
+        return activeXml.exists()
+    }
+
+    /** 切换到用户 XML 菜单（AI/手动编辑 main_menu_path.xml 时使用，不覆盖已有文件）。 */
+    @JvmStatic
+    fun activateUserXmlMenu(context: Context): Boolean {
+        return applyDefaultMenu(context)
+    }
+
+    /** 切换到默认菜单：从独立存档恢复，不读取 AI/其它安装包。 */
     @JvmStatic
     fun applyDefaultMenu(context: Context): Boolean {
-        val activeXml = FileIOUtils.getMainMenuXmlPathFile()
-        if (!activeXml.exists()) {
-            return applyDefaultFromAssets(context)
+        if (!restoreDefaultMenuStore(context)) {
+            val activeXml = FileIOUtils.getMainMenuXmlPathFile()
+            if (!activeXml.exists()) {
+                val applied = applyDefaultFromAssets(context)
+                if (applied) {
+                    snapshotDefaultMenuStore(context)
+                }
+                return applied
+            }
         }
         saveActivePackageId(context, MainMenuPackageInfo.ID_DEFAULT_XML)
         saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_default_label))
@@ -283,6 +478,10 @@ object MainMenuPackageManager {
     @JvmStatic
     @JvmOverloads
     fun applyPackage(context: Context, packageId: String, displayLabel: String? = null): Boolean {
+        val activeId = getActivePackageId(context)
+        if (isDefaultMenuActive(activeId)) {
+            snapshotDefaultMenuStore(context)
+        }
         val packageDir = XinhaoStoragePath.getMenuPackageDir(context, packageId)
         if (!hasMenuXml(packageDir)) {
             return false
@@ -292,9 +491,14 @@ object MainMenuPackageManager {
         activeXml.parentFile?.mkdirs()
         copyFile(menuXml, activeXml)
 
+        if (packageId.startsWith(NETWORK_PACKAGE_NAME)) {
+            snapshotDefaultMenuStore(context)
+        }
+
         val iconDir = File(packageDir, ICON_DIR_NAME)
         if (iconDir.exists() && iconDir.isDirectory) {
-            val ztInfoDir = File(FileIOUtils.getHomePath(context), FileIOUtils.DATA_MESSAGE_PATH_FOLDER)
+            val ztInfoDir = FileIOUtils.getMainMenuXmlPathFile().parentFile
+                ?: File(FileIOUtils.getHomePath(context), "ZtInfo")
             ztInfoDir.mkdirs()
             iconDir.listFiles()?.forEach { icon ->
                 if (icon.isFile) {
@@ -321,17 +525,18 @@ object MainMenuPackageManager {
         UUtils.writerFile(assetPath, activeXml)
         saveActivePackageId(context, "assets_default_$lang")
         saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_default_label))
+        snapshotDefaultMenuStore(context)
         return activeXml.exists()
     }
 
-    /** 删除已安装的本地菜单包（不含默认菜单）。若当前正在使用，会切回默认菜单。 */
+    /** 删除已安装的本地菜单包（含 AI创建，与 zip 安装包同级；不含程序/默认菜单）。 */
     @JvmStatic
     fun deleteInstalledPackage(context: Context, info: MainMenuPackageInfo): Boolean {
         if (info.type != MainMenuPackageInfo.TYPE_INSTALLED) {
             return false
         }
         val packageDir = info.packageDir ?: XinhaoStoragePath.getMenuPackageDir(context, info.id)
-        if (!packageDir.exists()) {
+        if (!packageDir.exists() || !hasMenuXml(packageDir)) {
             return false
         }
         val wasActive = info.isActive
@@ -345,6 +550,11 @@ object MainMenuPackageManager {
             e.printStackTrace()
             false
         }
+    }
+
+    @JvmStatic
+    fun deleteMenuPackage(context: Context, info: MainMenuPackageInfo): Boolean {
+        return deleteInstalledPackage(context, info)
     }
 
     @JvmStatic
@@ -435,6 +645,9 @@ object MainMenuPackageManager {
         if (packageId == MainMenuPackageInfo.ID_PROGRAM) {
             return UUtils.getString(R.string.menu_package_program_label)
         }
+        if (packageId == MainMenuPackageInfo.ID_AI_CREATED) {
+            return UUtils.getString(R.string.menu_package_ai_created_label)
+        }
         if (packageId == MainMenuPackageInfo.ID_DEFAULT_XML) {
             return UUtils.getString(R.string.menu_package_default_label)
         }
@@ -466,6 +679,32 @@ object MainMenuPackageManager {
 
     private fun isNetworkPackageDir(dir: File): Boolean {
         return dir.name.startsWith("${NETWORK_PACKAGE_NAME}_")
+    }
+
+    /** 应用私有 menu 下用户可配置的安装包目录（不含程序/默认/状态文件）。 */
+    @JvmStatic
+    fun listConfigurablePackageDirs(context: Context): List<File> {
+        val menuDir = ensureMenuInstallDir(context)
+        return menuDir.listFiles()
+            ?.filter { it.isDirectory && isConfigurablePackageDir(it) }
+            ?.sortedByDescending { it.lastModified() }
+            ?: emptyList()
+    }
+
+    private fun isConfigurablePackageDir(dir: File): Boolean {
+        if (dir.name.startsWith(".")) {
+            return false
+        }
+        if (!hasMenuXml(dir)) {
+            return false
+        }
+        if (isNetworkPackageDir(dir)) {
+            return false
+        }
+        if (dir.name == DEFAULT_MENU_STORE_DIR) {
+            return false
+        }
+        return true
     }
 
     /** 用户自行安装的本地菜单包（zip 解压目录名），升级时不自动改选程序菜单。 */

@@ -1,5 +1,7 @@
 package com.termux.zerocore.ai.agent
 
+import com.termux.zerocore.ai.config.ZtAiConfigTools
+import com.termux.zerocore.ai.config.ZtAiStrings
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -10,8 +12,11 @@ object ZtAgentAiTools {
         if (terminalEnabled) {
             addTerminalTools(tools)
         }
-        if (ztControlEnabled && terminalEnabled) {
-            addZtControlTools(tools)
+        if (ztControlEnabled) {
+            ZtAiConfigTools.addConfigTools(tools)
+            if (terminalEnabled) {
+                addZtControlTools(tools)
+            }
         }
         return tools
     }
@@ -19,20 +24,20 @@ object ZtAgentAiTools {
     private fun addTerminalTools(tools: JSONArray) {
         tools.put(tool(
             "read_terminal",
-            "Read current terminal screen. ALWAYS call before describing terminal state, install progress, or command output. Do not guess.",
+            ZtAiStrings.toolReadTerminal(),
             JSONObject().put("type", "object").put(
                 "properties",
                 JSONObject().put(
                     "max_chars",
                     JSONObject()
                         .put("type", "integer")
-                        .put("description", "Maximum characters to return, default 8000")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_max_chars))
                 )
             ).put("required", JSONArray())
         ))
         tools.put(tool(
             "send_terminal_command",
-            "Send command to terminal (newline appended by default). Returns updated terminal snapshot — describe results ONLY from that snapshot.",
+            ZtAiStrings.toolSendCommand(),
             JSONObject().put("type", "object").put(
                 "properties",
                 JSONObject()
@@ -40,29 +45,32 @@ object ZtAgentAiTools {
                         "command",
                         JSONObject()
                             .put("type", "string")
-                            .put("description", "Text or shell command to send")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_command))
                     )
                     .put(
                         "append_newline",
                         JSONObject()
                             .put("type", "boolean")
-                            .put("description", "Whether to append newline after command, default true")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_append_newline))
+                    )
+                    .put(
+                        "max_wait_ms",
+                        JSONObject()
+                            .put("type", "integer")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_max_wait))
                     )
             ).put("required", JSONArray().put("command"))
         ))
         tools.put(tool(
             "send_terminal_key",
-            "Send a special key or key combination to the terminal.",
+            ZtAiStrings.toolSendKey(),
             JSONObject().put("type", "object").put(
                 "properties",
                 JSONObject().put(
                     "key",
                     JSONObject()
                         .put("type", "string")
-                        .put(
-                            "description",
-                            "One of: enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z"
-                        )
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_terminal_key))
                         .put(
                             "enum",
                             JSONArray()
@@ -87,18 +95,14 @@ object ZtAgentAiTools {
     private fun addZtControlTools(tools: JSONArray) {
         tools.put(tool(
             "run_zt_command",
-            "Send a ZeroTermux zt command through the terminal (same as typing `zt ...` in shell). " +
-                "Always read the returned terminal snapshot — do not assume success without terminal output. " +
-                "Call command=help first to discover commands. " +
-                "Examples: help, openleft, openright, toast hello, openpage list, openpage zt_settings, openpage guide, version. " +
-                "To open settings use openpage zt_settings. Avoid reboot unless user confirms.",
+            ZtAiStrings.toolRunZtCommand(),
             JSONObject().put("type", "object").put(
                 "properties",
                 JSONObject().put(
                     "command",
                     JSONObject()
                         .put("type", "string")
-                        .put("description", "Full zt command line without the `zt` prefix, e.g. help or openpage zt_settings")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_run_zt_cmd))
                 )
             ).put("required", JSONArray().put("command"))
         ))

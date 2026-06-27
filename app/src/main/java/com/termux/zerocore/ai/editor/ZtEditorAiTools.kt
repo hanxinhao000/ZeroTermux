@@ -122,7 +122,7 @@ object ZtEditorAiTools {
         ))
         tools.put(tool(
             "send_terminal_command",
-            "Send command to editor terminal (newline appended by default). Returns updated terminal snapshot.",
+            "Send command to editor terminal (newline appended by default). Waits until shell prompt returns (default up to 10 minutes). Returns terminal snapshot.",
             JSONObject().put("type", "object").put(
                 "properties",
                 JSONObject()
@@ -137,6 +137,15 @@ object ZtEditorAiTools {
                         JSONObject()
                             .put("type", "boolean")
                             .put("description", "Whether to append newline after command, default true")
+                    )
+                    .put(
+                        "max_wait_ms",
+                        JSONObject()
+                            .put("type", "integer")
+                            .put(
+                                "description",
+                                "Max milliseconds to wait for shell prompt. Default 600000 (10 min)."
+                            )
                     )
             ).put("required", JSONArray().put("command"))
         ))

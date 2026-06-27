@@ -59,6 +59,7 @@
    <!--ZeroTermux add deepseek {@-->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="ai_agent_running_banner_bg">#F9A825</color>
     <color name="main">#FFF4f5f4</color>
     <color name="main_tx">#FFFFFFFF</color>
     <color name="white_100">#11FFFFFF</color>
