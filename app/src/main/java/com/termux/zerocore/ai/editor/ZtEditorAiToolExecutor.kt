@@ -11,8 +11,12 @@ import java.util.concurrent.atomic.AtomicReference
 object ZtEditorAiToolExecutor {
 
     private val editTools = setOf("read_editor", "insert_at_cursor", "replace_range", "replace_all")
+    private val terminalTools = setOf("read_terminal", "send_terminal_command", "send_terminal_key")
 
     fun execute(toolCall: ZtAgentAiChatClient.ToolCall, host: ZtEditorAiHost): String {
+        if (toolCall.name in terminalTools) {
+            return ZtEditorAiTerminalExecutor.execute(toolCall, host)
+        }
         if (toolCall.name in editTools && !host.isEditorReady()) {
             return UUtils.getString(R.string.zt_editor_ai_unavailable)
         }
@@ -32,6 +36,9 @@ object ZtEditorAiToolExecutor {
     }
 
     fun statusLabel(toolName: String): String {
+        if (toolName in terminalTools) {
+            return ZtEditorAiTerminalExecutor.statusLabel(toolName)
+        }
         return when (toolName) {
             "read_editor" -> UUtils.getString(R.string.zt_editor_ai_tool_read)
             "insert_at_cursor" -> UUtils.getString(R.string.zt_editor_ai_tool_insert)

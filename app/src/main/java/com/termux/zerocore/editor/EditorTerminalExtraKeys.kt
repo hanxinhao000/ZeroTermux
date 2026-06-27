@@ -73,6 +73,10 @@ class EditorTerminalExtraKeys(
         }
     }
 
+    fun dispatchKey(key: String) {
+        onTerminalExtraKeyButtonClick(terminalView, key, false, false, false, false)
+    }
+
     override fun onExtraKeyButtonClick(view: View, buttonInfo: ExtraKeyButton, button: MaterialButton) {
         if (buttonInfo.isMacro) {
             super.onExtraKeyButtonClick(view, buttonInfo, button)

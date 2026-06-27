@@ -68,6 +68,7 @@ import com.termux.zerocore.editor.EditorRunLanguage
 import com.termux.shared.termux.extrakeys.ExtraKeysView
 import com.termux.zerocore.editor.EditorTerminalInputView
 import com.termux.zerocore.editor.EditorTerminalPanel
+import com.termux.zerocore.editor.EditorX11Panel
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
@@ -206,6 +207,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var mEditorRunButton: ImageView? = null
     private var mEditorRunLoading: ProgressBar? = null
     private var editorTerminalPanel: EditorTerminalPanel? = null
+    private var editorX11Panel: EditorX11Panel? = null
+    private var mEditorX11Button: TextView? = null
     private var programRunner: EditorProgramRunner? = null
     private var isProgramRunInProgress = false
     private var mEditorAndroidBuildButton: ImageView? = null
@@ -219,6 +222,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var mEditorContentLayout: RelativeLayout? = null
     private var mEditorSymbolBar: LinearLayout? = null
     private var mEditorTerminalPanelView: View? = null
+    private var mEditorX11PanelView: View? = null
     private var mEditorSidebar: LinearLayout? = null
     private var mSidebarFileTab: TextView? = null
     private var mSidebarSearchTab: TextView? = null
@@ -374,6 +378,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         initEditorAiPanel()
         initEditorTopBar()
         initEditorTerminal(savedInstanceState)
+        initEditorX11Panel()
         initSymbolInput()
         configureCodeEditorInput()
         initSidebar()
@@ -396,6 +401,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         mEditorAiButton = findViewById(R.id.editor_action_ai)
         mEditorSidebarAiButton = findViewById(R.id.editor_sidebar_ai)
         mEditorTerminalButton = findViewById(R.id.editor_action_terminal)
+        mEditorX11Button = findViewById(R.id.editor_action_x11)
         mEditorRunButton = findViewById(R.id.editor_action_run)
         mEditorRunLoading = findViewById(R.id.editor_action_run_loading)
         mEditorAndroidBuildButton = findViewById(R.id.editor_action_android_build)
@@ -405,6 +411,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         mEditorContentLayout = findViewById(R.id.editor_content_layout)
         mEditorSymbolBar = findViewById(R.id.editor_symbol_bar)
         mEditorTerminalPanelView = findViewById(R.id.editor_terminal_panel)
+        mEditorX11PanelView = findViewById(R.id.editor_x11_panel)
         mEditorSidebar = findViewById(R.id.editor_sidebar)
         mSidebarFileTab = findViewById(R.id.sidebar_file_tab)
         mSidebarSearchTab = findViewById(R.id.sidebar_search_tab)
@@ -502,12 +509,26 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             onAndroidBuildClicked()
         }
         mEditorTerminalButton?.setOnClickListener {
+            if (editorX11Panel?.isVisible() == true) {
+                editorX11Panel?.setVisible(false)
+            }
             val panel = editorTerminalPanel
             if (panel?.isVisible() == true) {
                 panel.setVisible(false)
             } else {
                 openTerminalAtDirectory(null)
             }
+        }
+        mEditorX11Button?.setOnClickListener {
+            if (editorX11Panel?.isVisible() != true) {
+                editorAiPanel?.hide()
+            }
+            if (editorX11Panel?.isAvailable() != true) {
+                UUtils.showMsg(getString(R.string.editor_x11_internal_required))
+                return@setOnClickListener
+            }
+            editorX11Panel?.toggle()
+            updateEditorX11ButtonState()
         }
         mEditorMoreButton?.setOnClickListener { view ->
             showEditorMoreMenu(view)
@@ -560,8 +581,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view) ?: return
         val inputView = findViewById<EditorTerminalInputView>(R.id.editor_terminal_input) ?: return
         val extraKeysView = findViewById<ExtraKeysView>(R.id.editor_terminal_extra_keys) ?: return
-        val contentLayout = mEditorContentLayout ?: return
-        val symbolBar = mEditorSymbolBar ?: return
+        if (mEditorContentLayout == null || mEditorSymbolBar == null) return
         // 每次进入编辑器默认隐藏终端，仅在配置变更（如旋转屏幕）时恢复状态
         val restoredVisible = savedInstanceState?.getBoolean(EDITOR_STATE_TERMINAL_VISIBLE, false) == true
         editorTerminalPanel = EditorTerminalPanel(
@@ -570,21 +590,99 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             terminalView = terminalView,
             inputView = inputView,
             extraKeysView = extraKeysView,
-            contentLayout = contentLayout,
-            symbolBar = symbolBar,
             onBlurEditor = { blurEditorForTerminal() },
-            onRestoreEditorFocus = { restoreEditorFocusAfterTerminal() }
+            onRestoreEditorFocus = { restoreEditorFocusAfterTerminal() },
+            onLayoutChanged = { updateEditorContentAnchor() }
         ) { visible -> updateTerminalToolbarState(visible) }
         val resizeHandle = findViewById<View>(R.id.editor_terminal_resize_handle) ?: return
         editorTerminalPanel?.init(restoredVisible, resizeHandle)
         findViewById<View>(R.id.editor_terminal_hide)?.setOnClickListener {
             editorTerminalPanel?.setVisible(false)
         }
+        updateEditorContentAnchor()
+    }
+
+    private fun initEditorX11Panel() {
+        val panel = findViewById<View>(R.id.editor_x11_panel) ?: return
+        val surface = findViewById<android.widget.FrameLayout>(R.id.editor_x11_surface) ?: return
+        val status = findViewById<TextView>(R.id.editor_x11_status) ?: return
+        val maximize = findViewById<android.widget.ImageView>(R.id.editor_x11_maximize) ?: return
+        val resizeHandle = findViewById<View>(R.id.editor_x11_resize_handle) ?: return
+        editorX11Panel = EditorX11Panel(
+            activity = this,
+            panelView = panel,
+            surfaceContainer = surface,
+            statusView = status,
+            maximizeButton = maximize,
+            codeEditor = code_editor,
+            onWriteTerminal = { command -> editorTerminalPanel?.writeCommandHidden(command) },
+            onEnsureTerminalVisible = {
+                editorTerminalPanel?.prepareBackgroundSession(resolveTerminalDirectory(null))
+            },
+            onLayoutChanged = { updateEditorContentAnchor() },
+            onVisibilityChanged = { updateEditorX11ButtonState() }
+        ).also { it.init(resizeHandle) }
+        updateEditorX11ButtonVisibility()
+    }
+
+    private fun updateEditorContentAnchor() {
+        val content = mEditorContentLayout ?: return
+        val x11PanelView = mEditorX11PanelView ?: return
+        val terminalVisible = editorTerminalPanel?.isVisible() == true
+        val x11Visible = editorX11Panel?.isVisible() == true
+        val x11Maximized = editorX11Panel?.isMaximized() == true
+
+        content.visibility = if (x11Maximized) View.GONE else View.VISIBLE
+
+        val contentParams = content.layoutParams as? RelativeLayout.LayoutParams ?: return
+        contentParams.removeRule(RelativeLayout.ABOVE)
+        if (!x11Maximized) {
+            val anchorId = when {
+                x11Visible -> R.id.editor_x11_panel
+                terminalVisible -> R.id.editor_terminal_panel
+                else -> R.id.editor_symbol_bar
+            }
+            contentParams.addRule(RelativeLayout.ABOVE, anchorId)
+        }
+        content.layoutParams = contentParams
+
+        val x11Params = x11PanelView.layoutParams as? RelativeLayout.LayoutParams ?: return
+        x11Params.removeRule(RelativeLayout.ABOVE)
+        x11Params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        x11Params.removeRule(RelativeLayout.BELOW)
+        if (!x11Visible) {
+            x11Params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        } else if (x11Maximized) {
+            x11Params.addRule(RelativeLayout.BELOW, R.id.editor_tab_bar)
+            x11Params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            x11Params.height = RelativeLayout.LayoutParams.MATCH_PARENT
+        } else if (terminalVisible) {
+            x11Params.addRule(RelativeLayout.ABOVE, R.id.editor_terminal_panel)
+        } else {
+            x11Params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        }
+        x11PanelView.layoutParams = x11Params
+
+        val bottomPanelVisible = terminalVisible || x11Visible
+        mEditorSymbolBar?.visibility = if (bottomPanelVisible) View.GONE else View.VISIBLE
+        updateTerminalToolbarState(terminalVisible)
+        editorX11Panel?.onHostLayoutChanged()
+        editorTerminalPanel?.onHostLayoutChanged()
+    }
+
+    private fun updateEditorX11ButtonVisibility() {
+        val available = editorX11Panel?.isAvailable() == true
+        mEditorX11Button?.visibility = if (available) View.VISIBLE else View.GONE
+        updateEditorX11ButtonState()
+    }
+
+    private fun updateEditorX11ButtonState() {
+        val visible = editorX11Panel?.isVisible() == true
+        mEditorX11Button?.alpha = if (visible) 1f else 0.7f
     }
 
     private fun updateTerminalToolbarState(visible: Boolean) {
         mEditorTerminalButton?.alpha = if (visible) 1f else 0.65f
-        mEditorSymbolBar?.visibility = if (visible) View.GONE else View.VISIBLE
     }
 
     private fun blurEditorForTerminal() {
@@ -2051,6 +2149,15 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     }
 
     override fun onBackPressed() {
+        if (editorX11Panel?.restoreFromMaximized() == true) {
+            updateEditorX11ButtonState()
+            return
+        }
+        if (editorX11Panel?.isVisible() == true) {
+            editorX11Panel?.setVisible(false)
+            updateEditorX11ButtonState()
+            return
+        }
         val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view)
         if (editorTerminalPanel?.isVisible() == true && terminalView?.isSelectingText == true) {
             terminalView.stopTextSelectionMode()
@@ -2115,6 +2222,25 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun onResume() {
         super.onResume()
         editorTerminalPanel?.onResume()
+        editorX11Panel?.onResume()
+        updateEditorX11ButtonState()
+    }
+
+    override fun onPause() {
+        editorX11Panel?.onPause()
+        super.onPause()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        editorX11Panel?.onWindowFocusChanged(hasFocus)
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        editorX11Panel?.onConfigurationChanged(newConfig)
+        updateEditorContentAnchor()
+        editorTerminalPanel?.onHostLayoutChanged()
     }
 
     override fun onDestroy() {
@@ -2123,6 +2249,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         sidebarAnimator?.cancel()
         cancelSidebarGesture()
         shutdownLspManager()
+        editorX11Panel?.onDestroy()
+        editorX11Panel = null
         editorTerminalPanel?.destroy()
         editorTerminalPanel = null
         editorAiPanel?.destroy()
@@ -2190,6 +2318,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             mEditorTabBar,
             mEditorContentLayout,
             mEditorTerminalPanelView,
+            mEditorX11PanelView,
             mEditorSymbolBar
         ).forEach { view ->
             (view?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
@@ -2200,6 +2329,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             }
         }
         editorTerminalPanel?.onHostLayoutChanged()
+        editorX11Panel?.onHostLayoutChanged()
     }
 
     private fun finishSidebarState(visible: Boolean) {
@@ -3671,5 +3801,71 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
 
     override fun restoreEditorInputAfterAiPanel() {
         code_editor?.setSoftKeyboardEnabled(true)
+    }
+
+    override fun isTerminalAvailable(): Boolean {
+        return editorTerminalPanel != null
+    }
+
+    override fun captureTerminalSnapshot(maxChars: Int): String {
+        val panel = editorTerminalPanel
+            ?: return getString(R.string.zt_editor_ai_terminal_unavailable)
+        return runTerminalOnUiForResult {
+            panel.ensureForAi(resolveTerminalDirectory(currentFile))
+            panel.captureAiSnapshot(maxChars)
+        }
+    }
+
+    override fun sendTerminalText(text: String) {
+        editorTerminalPanel?.let { panel ->
+            runTerminalOnUiAction {
+                panel.ensureForAi(resolveTerminalDirectory(currentFile))
+                panel.sendTextToTerminal(text)
+            }
+        }
+    }
+
+    override fun sendTerminalKey(key: String) {
+        editorTerminalPanel?.let { panel ->
+            runTerminalOnUiAction {
+                panel.ensureForAi(resolveTerminalDirectory(currentFile))
+                panel.sendTerminalKey(key)
+            }
+        }
+    }
+
+    private fun runTerminalOnUiForResult(block: () -> String): String {
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
+            return block()
+        }
+        val result = java.util.concurrent.atomic.AtomicReference<String>()
+        val latch = java.util.concurrent.CountDownLatch(1)
+        runOnUiThread {
+            try {
+                result.set(block())
+            } catch (e: Exception) {
+                result.set("Error: ${e.message ?: "terminal operation failed"}")
+            } finally {
+                latch.countDown()
+            }
+        }
+        latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
+        return result.get() ?: getString(R.string.zt_editor_ai_terminal_unavailable)
+    }
+
+    private fun runTerminalOnUiAction(block: () -> Unit) {
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
+            block()
+            return
+        }
+        val latch = java.util.concurrent.CountDownLatch(1)
+        runOnUiThread {
+            try {
+                block()
+            } finally {
+                latch.countDown()
+            }
+        }
+        latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
     }
 }

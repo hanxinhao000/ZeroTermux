@@ -149,6 +149,21 @@
             android:src="@drawable/ic_editor_terminal"
             android:tint="#F4F4F4" />
 
+        <TextView
+            android:id="@+id/editor_action_x11"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="3dp"
+            android:background="@drawable/shape_editor_toolbar_button"
+            android:contentDescription="@string/editor_x11_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="X11"
+            android:textColor="#FFB74D"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/editor_action_more"
             android:layout_width="32dp"
@@ -279,6 +294,120 @@
             android:layout_height="75dp"
             android:background="#1A1A1A"
             android:orientation="horizontal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/editor_x11_panel"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_alignParentBottom="true"
+        android:background="#141414"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/editor_x11_resize_handle"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="4dp"
+                android:background="#555555" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editor_x11_chrome"
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/editor_x11_button"
+                android:textColor="#B0B0B0"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/editor_x11_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/editor_x11_status_disconnected"
+                android:textColor="#FF8A80"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/editor_x11_display"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="@string/editor_x11_display_env"
+                android:textColor="#B0B0B0"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/editor_x11_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="@string/editor_x11_connect"
+                android:textColor="#48BAF3"
+                android:textSize="11sp" />
+
+            <ImageView
+                android:id="@+id/editor_x11_maximize"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:contentDescription="@string/editor_x11_maximize"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_editor_maximize"
+                android:tint="#CCCCCC" />
+
+            <ImageView
+                android:id="@+id/editor_x11_hide"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:contentDescription="@string/editor_x11_hide"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_editor_hide"
+                android:tint="#CCCCCC" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/editor_x11_surface"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
     </LinearLayout>
 
     <LinearLayout

@@ -102,7 +102,76 @@ object ZtEditorAiTools {
             "List files currently open in editor tabs and which one is active.",
             JSONObject().put("type", "object").put("properties", JSONObject()).put("required", JSONArray())
         ))
+        addTerminalTools(tools)
         return tools
+    }
+
+    private fun addTerminalTools(tools: JSONArray) {
+        tools.put(tool(
+            "read_terminal",
+            "Read editor page embedded terminal screen. ALWAYS call before describing compile output or command results.",
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject().put(
+                    "max_chars",
+                    JSONObject()
+                        .put("type", "integer")
+                        .put("description", "Maximum characters to return, default 8000")
+                )
+            ).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "send_terminal_command",
+            "Send command to editor terminal (newline appended by default). Returns updated terminal snapshot.",
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put(
+                        "command",
+                        JSONObject()
+                            .put("type", "string")
+                            .put("description", "Text or shell command to send")
+                    )
+                    .put(
+                        "append_newline",
+                        JSONObject()
+                            .put("type", "boolean")
+                            .put("description", "Whether to append newline after command, default true")
+                    )
+            ).put("required", JSONArray().put("command"))
+        ))
+        tools.put(tool(
+            "send_terminal_key",
+            "Send a special key or key combination to the editor terminal.",
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject().put(
+                    "key",
+                    JSONObject()
+                        .put("type", "string")
+                        .put(
+                            "description",
+                            "One of: enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z"
+                        )
+                        .put(
+                            "enum",
+                            JSONArray()
+                                .put("enter")
+                                .put("tab")
+                                .put("escape")
+                                .put("backspace")
+                                .put("up")
+                                .put("down")
+                                .put("left")
+                                .put("right")
+                                .put("ctrl_c")
+                                .put("ctrl_d")
+                                .put("ctrl_l")
+                                .put("ctrl_z")
+                        )
+                )
+            ).put("required", JSONArray().put("key"))
+        ))
     }
 
     private fun tool(name: String, description: String, parameters: JSONObject): JSONObject {

@@ -10,8 +10,6 @@ object ZtAgentAiTerminalExecutor {
     private const val DEFAULT_MAX_CHARS = 8000
     private const val MIN_MAX_CHARS = 500
     private const val MAX_MAX_CHARS = 12000
-    private const val SCROLLBACK_TAIL_CHARS = 1800
-    private const val PROMPT_LINE_REGEX = """^[\w@.:~/$\-\[\]()]+[$#]\s*$"""
 
     fun execute(toolCall: ZtAgentAiChatClient.ToolCall): String {
         if (!SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
@@ -47,42 +45,7 @@ object ZtAgentAiTerminalExecutor {
         val listener = SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener()
         val visible = listener.getVisibleTerminalText().trim()
         val full = listener.getTextToTerminal()?.trim().orEmpty()
-        if (visible.isEmpty() && full.isEmpty()) {
-            return "(terminal is empty)"
-        }
-
-        val visibleBlock = if (visible.isNotEmpty()) {
-            trimToMax(visible, maxChars.coerceIn(MIN_MAX_CHARS, MAX_MAX_CHARS) / 2)
-        } else {
-            trimToMax(full, maxChars.coerceIn(MIN_MAX_CHARS, MAX_MAX_CHARS) / 2)
-        }
-        val scrollTail = if (full.isNotEmpty()) {
-            trimToMax(full, SCROLLBACK_TAIL_CHARS)
-        } else {
-            ""
-        }
-
-        val lastLine = visible.lineSequence().lastOrNull { it.isNotBlank() }?.trim()
-            ?: full.lineSequence().lastOrNull { it.isNotBlank() }?.trim().orEmpty()
-        val idle = isShellPrompt(lastLine)
-
-        return buildString {
-            appendLine("=== 终端快照（必须以此为准，禁止编造；忽略对话历史里的旧终端描述） ===")
-            appendLine("末行: $lastLine")
-            appendLine(
-                if (idle) {
-                    "状态: 空闲（shell 提示符已出现；若可见屏幕是 Welcome to Termux，不得说是 Ubuntu/SSH）"
-                } else {
-                    "状态: 可能有命令在运行，或尚未回到提示符"
-                }
-            )
-            appendLine("--- 当前可见屏幕（与用户肉眼所见一致） ---")
-            appendLine(visibleBlock)
-            if (scrollTail.isNotEmpty() && scrollTail != visibleBlock) {
-                appendLine("--- scrollback 末尾（参考，以可见屏幕为准） ---")
-                appendLine(scrollTail)
-            }
-        }.trim()
+        return ZtTerminalAiSnapshot.format(visible, full, maxChars)
     }
 
     fun runZtCommand(command: String): String {
@@ -191,24 +154,12 @@ object ZtAgentAiTerminalExecutor {
                 lastContent = snap
             }
             val lastLine = snap.lineSequence().lastOrNull { it.isNotBlank() }?.trim().orEmpty()
-            if (isShellPrompt(lastLine) && waited >= initialWaitMs + pollIntervalMs) {
+            if (ZtTerminalAiSnapshot.isShellPrompt(lastLine) && waited >= initialWaitMs + pollIntervalMs) {
                 break
             }
             Thread.sleep(pollIntervalMs)
             waited += pollIntervalMs
         }
         return captureSnapshot(2500)
-    }
-
-    private fun isShellPrompt(line: String): Boolean {
-        if (line.isEmpty()) return false
-        if (line.endsWith("$") || line.endsWith("#")) return true
-        return line.matches(Regex(PROMPT_LINE_REGEX))
-    }
-
-    private fun trimToMax(text: String, maxChars: Int): String {
-        if (text.length <= maxChars) return text
-        return "...(truncated, showing last $maxChars chars)\n" +
-            text.substring(text.length - maxChars)
     }
 }

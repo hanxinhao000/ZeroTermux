@@ -54,6 +54,7 @@ class ZtEditorAiAgentRunner(
         while (rounds < MAX_TOOL_ROUNDS) {
             if (callback.isCancelled()) return
             appendFreshEditorSnapshot(workingMessages)
+            appendFreshTerminalSnapshot(workingMessages)
             val result = client.chatCompletionSync(workingMessages, tools)
             if (callback.isCancelled()) return
             if (result.error != null) {
@@ -83,11 +84,22 @@ class ZtEditorAiAgentRunner(
     }
 
     private fun appendFreshEditorSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
-        messages.removeAll { it.role == ROLE_SYSTEM && it.content?.startsWith(SNAPSHOT_PREFIX) == true }
+        messages.removeAll { it.role == ROLE_SYSTEM && it.content?.startsWith(EDITOR_SNAPSHOT_PREFIX) == true }
         messages.add(
             ZtAgentAiChatClient.ChatMessage(
                 role = ROLE_SYSTEM,
                 content = host.captureSnapshot(8000)
+            )
+        )
+    }
+
+    private fun appendFreshTerminalSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
+        if (!host.isTerminalAvailable()) return
+        messages.removeAll { it.role == ROLE_SYSTEM && it.content?.startsWith(TERMINAL_SNAPSHOT_PREFIX) == true }
+        messages.add(
+            ZtAgentAiChatClient.ChatMessage(
+                role = ROLE_SYSTEM,
+                content = host.captureTerminalSnapshot(3000)
             )
         )
     }
@@ -100,12 +112,29 @@ class ZtEditorAiAgentRunner(
         val label = ZtEditorAiToolExecutor.statusLabel(toolCall.name)
         val preview = toolCallPreview(toolCall)
         val toolResult = ZtEditorAiToolExecutor.execute(toolCall, host)
-        val detail = when {
-            preview.isNotBlank() && toolResult.isNotBlank() -> "$preview\n\n$toolResult"
-            toolResult.isNotBlank() -> toolResult
-            else -> preview
+
+        when (toolCall.name) {
+            "send_terminal_command" -> {
+                post { callback.onToolStep(label, preview) }
+                post {
+                    callback.onToolStep(
+                        UUtils.getString(R.string.zt_agent_ai_tool_read_after_send),
+                        ""
+                    )
+                }
+            }
+            "read_terminal", "send_terminal_key" -> {
+                post { callback.onToolStep(label, preview) }
+            }
+            else -> {
+                val detail = when {
+                    preview.isNotBlank() && toolResult.isNotBlank() -> "$preview\n\n$toolResult"
+                    toolResult.isNotBlank() -> toolResult
+                    else -> preview
+                }
+                post { callback.onToolStep(label, detail) }
+            }
         }
-        post { callback.onToolStep(label, detail) }
         workingMessages.add(
             ZtAgentAiChatClient.ChatMessage(
                 role = ROLE_TOOL,
@@ -130,6 +159,11 @@ class ZtEditorAiAgentRunner(
                     val end = args.optInt("end", -1)
                     if (start >= 0 && end >= 0) "→ $start..$end" else ""
                 }
+                "send_terminal_command" -> {
+                    val cmd = args.optString("command", "").trim()
+                    if (cmd.isEmpty()) "" else "→ $cmd"
+                }
+                "send_terminal_key" -> args.optString("key", "").trim()
                 else -> ""
             }
         } catch (_: Exception) {
@@ -163,7 +197,8 @@ class ZtEditorAiAgentRunner(
         private const val TAG = "ZtEditorAiAgentRunner"
         private const val MAX_TOOL_ROUNDS = 15
         private const val HISTORY_LIMIT = 12
-        private const val SNAPSHOT_PREFIX = "=== 编辑器快照"
+        private const val EDITOR_SNAPSHOT_PREFIX = "=== 编辑器快照"
+        private const val TERMINAL_SNAPSHOT_PREFIX = "=== 终端快照"
         private const val ROLE_SYSTEM = "system"
         private const val ROLE_USER = "user"
         private const val ROLE_ASSISTANT = "assistant"

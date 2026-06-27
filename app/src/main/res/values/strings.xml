@@ -822,6 +822,18 @@
     <string name="editor_terminal_title">终端</string>
     <string name="editor_terminal_hide">隐藏终端</string>
     <string name="editor_terminal_ctrl_c">发送 Ctrl+C 中断</string>
+    <string name="editor_x11_button">X11 窗口</string>
+    <string name="editor_x11_hide">隐藏 X11</string>
+    <string name="editor_x11_maximize">最大化 X11</string>
+    <string name="editor_x11_restore">还原 X11</string>
+    <string name="editor_x11_connect">连接</string>
+    <string name="editor_x11_display_env">DISPLAY</string>
+    <string name="editor_x11_display_set">已设置 DISPLAY=:0</string>
+    <string name="editor_x11_status_connected">X11 已连接</string>
+    <string name="editor_x11_status_disconnected">X11 未连接</string>
+    <string name="editor_x11_internal_required">请先在 ZeroTermux 设置中启用 X11 内部通道并重启 App</string>
+    <string name="editor_x11_env_missing">请先安装 X11 环境（主界面侧栏 → X11环境）</string>
+    <string name="editor_x11_init_failed">X11 窗口初始化失败，请检查 libXlorie.so 是否已安装</string>
     <string name="editor_toolbar_run">运行 build.sh</string>
     <string name="editor_build_script_long_press">长按运行按钮可编辑 build.sh</string>
     <string name="editor_java_install_jdk_title">安装 JDK</string>
@@ -1605,7 +1617,8 @@
     <string name="zt_editor_ai_empty">描述你想写的代码或需要的修改，AI 会直接编辑上方文件。</string>
     <string name="zt_editor_ai_hint">让 AI 帮你写代码…</string>
     <string name="zt_editor_ai_unavailable">编辑器不可用（可能处于预览模式或未打开文本文件）</string>
-    <string name="zt_editor_ai_system_prompt">你是 ZeroTermux 代码编辑器内置 AI。你可以创建/打开多个文件，并编辑当前激活的文件。\n\n规则：\n1. 需要多个文件时：对每个文件依次 create_file（或 open_file）→ read_editor → 写入内容；不要在一个文件里写全部代码。\n2. 切换到另一文件前，先 save_current_file 保存当前文件，再 open_file 打开目标文件。\n3. 修改前先 read_editor；可用 list_open_files 查看已打开标签。\n4. 小改动用 insert_at_cursor / replace_range；整文件用 replace_all。\n5. path 可用绝对路径，或相对当前文件所在目录。\n6. 运行按钮会执行当前目录的 build.sh（不存在则自动创建）；长按运行按钮会打开 build.sh。编译/运行逻辑应写入 build.sh，便于用户和 AI 控制。\n7. 用简洁中文说明做了什么；代码写入编辑器，回复里不要重复大段代码。\n8. 必须以工具返回的快照为准，不要编造文件内容。</string>
+    <string name="zt_editor_ai_terminal_unavailable">编辑器终端不可用，请先在主界面打开 Termux 终端会话</string>
+    <string name="zt_editor_ai_system_prompt">你是 ZeroTermux 代码编辑器内置 AI。你可以创建/打开多个文件，并编辑当前激活的文件；也可读写编辑器内嵌终端，用于编译、运行和排查错误。\n\n规则：\n1. 需要多个文件时：对每个文件依次 create_file（或 open_file）→ read_editor → 写入内容；不要在一个文件里写全部代码。\n2. 切换到另一文件前，先 save_current_file 保存当前文件，再 open_file 打开目标文件。\n3. 修改前先 read_editor；可用 list_open_files 查看已打开标签。\n4. 小改动用 insert_at_cursor / replace_range；整文件用 replace_all。\n5. path 可用绝对路径，或相对当前文件所在目录。\n6. 运行按钮会执行当前目录的 build.sh（不存在则自动创建）；长按运行按钮会打开 build.sh。编译/运行逻辑应写入 build.sh，便于用户和 AI 控制。\n7. 编译或运行：用 send_terminal_command 执行 ./build.sh 等命令；执行后必须 read_terminal 或依据工具返回的快照分析输出，禁止编造编译结果。\n8. 编译失败时：先 read_terminal 获取完整错误，再修改代码并重试；可用 ctrl_c 中断卡住的命令。\n9. 用简洁中文说明做了什么；代码写入编辑器，回复里不要重复大段代码。\n10. 必须以工具返回的快照为准，不要编造文件内容或终端输出。</string>
     <string name="zt_editor_ai_tool_read">正在读取编辑器…</string>
     <string name="zt_editor_ai_tool_insert">正在插入文本…</string>
     <string name="zt_editor_ai_tool_replace">正在替换选区…</string>

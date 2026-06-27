@@ -14,4 +14,9 @@ interface ZtEditorAiHost {
     fun releaseEditorInputForAiPanel()
     /** AI 面板关闭后恢复 CodeEditor 软键盘能力 */
     fun restoreEditorInputAfterAiPanel()
+
+    fun isTerminalAvailable(): Boolean
+    fun captureTerminalSnapshot(maxChars: Int): String
+    fun sendTerminalText(text: String)
+    fun sendTerminalKey(key: String)
 }

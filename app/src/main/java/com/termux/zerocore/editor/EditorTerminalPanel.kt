@@ -9,7 +9,6 @@ import android.graphics.Typeface
 import android.os.IBinder
 import android.view.MotionEvent
 import android.view.View
-import android.widget.RelativeLayout
 import com.termux.app.TermuxService
 import com.termux.R
 import com.termux.shared.logger.Logger
@@ -21,6 +20,7 @@ import com.termux.terminal.TerminalColors
 import com.termux.terminal.TerminalSession
 import com.termux.terminal.TextStyle
 import com.termux.view.TerminalView
+import com.termux.zerocore.ai.agent.ZtTerminalAiSnapshot
 import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
@@ -31,10 +31,9 @@ class EditorTerminalPanel(
     private val terminalView: TerminalView,
     private val inputView: EditorTerminalInputView,
     private val extraKeysView: ExtraKeysView,
-    private val contentLayout: RelativeLayout,
-    private val symbolBar: View,
     private val onBlurEditor: () -> Unit,
     private val onRestoreEditorFocus: () -> Unit,
+    private val onLayoutChanged: () -> Unit,
     private val onVisibilityChanged: (Boolean) -> Unit
 ) : ServiceConnection {
 
@@ -73,6 +72,106 @@ class EditorTerminalPanel(
         }
         panelView.findViewById<View>(R.id.editor_terminal_ctrl_c)?.setOnClickListener {
             sendControlCharacter('C'.code)
+        }
+    }
+
+    fun prepareBackgroundSession(workingDirectory: File? = null) {
+        ensureServiceBound()
+        terminalView.post {
+            attachCurrentSession()
+            workingDirectory?.let { dir ->
+                terminalView.postDelayed({
+                    sendCdCommand(dir)
+                }, 120)
+            }
+        }
+    }
+
+    fun writeCommandHidden(command: String) {
+        if (!visible) {
+            prepareBackgroundSession(null)
+        }
+        terminalView.post {
+            attachCurrentSession()
+            terminalView.postDelayed({
+                val session = terminalView.currentSession
+                if (session != null) {
+                    session.write(command)
+                } else {
+                    terminalView.sendTextToTerminal(command)
+                }
+            }, 120)
+        }
+    }
+
+    fun ensureForAi(workingDirectory: File? = null) {
+        if (!visible) {
+            setVisible(true, workingDirectory)
+            return
+        }
+        ensureServiceBound()
+        attachCurrentSession()
+        workingDirectory?.let { sendCdCommand(it) }
+    }
+
+    fun captureAiSnapshot(maxChars: Int): String {
+        val session = terminalView.currentSession
+        if (session == null) {
+            return "(terminal session not attached)"
+        }
+        val visible = terminalView.getVisibleTerminalText().trim()
+        val full = terminalView.getText555()?.trim().orEmpty()
+        return ZtTerminalAiSnapshot.format(visible, full, maxChars)
+    }
+
+    fun sendTextToTerminal(text: String) {
+        attachCurrentSession()
+        val session = terminalView.currentSession
+        if (session != null) {
+            session.write(text)
+            terminalView.onScreenUpdated()
+            return
+        }
+        terminalView.sendTextToTerminal(text)
+        terminalView.onScreenUpdated()
+    }
+
+    fun sendTerminalKey(key: String) {
+        if (terminalView.currentSession == null) {
+            attachCurrentSession()
+        }
+        val keys = terminalExtraKeys ?: return
+        when (key.lowercase()) {
+            "enter" -> keys.dispatchKey("ENTER")
+            "tab" -> keys.dispatchKey("TAB")
+            "escape" -> keys.dispatchKey("ESC")
+            "backspace" -> keys.dispatchKey("BKSP")
+            "up" -> keys.dispatchKey("UP")
+            "down" -> keys.dispatchKey("DOWN")
+            "left" -> keys.dispatchKey("LEFT")
+            "right" -> keys.dispatchKey("RIGHT")
+            "ctrl_c" -> terminalView.sendTextToTerminalCtrl("c", true)
+            "ctrl_d" -> terminalView.sendTextToTerminalCtrl("d", true)
+            "ctrl_l" -> terminalView.sendTextToTerminalCtrl("l", true)
+            "ctrl_z" -> terminalView.sendTextToTerminalCtrl("z", true)
+            else -> throw IllegalArgumentException("unsupported key: $key")
+        }
+        terminalView.onScreenUpdated()
+    }
+
+    fun writeToSession(command: String) {
+        if (!visible) {
+            setVisible(true, null)
+        }
+        terminalView.post {
+            if (!visible) return@post
+            attachCurrentSession()
+            terminalView.postDelayed({
+                if (!visible) return@postDelayed
+                val session = terminalView.currentSession ?: return@postDelayed
+                session.write(command)
+                terminalView.onScreenUpdated()
+            }, 120)
         }
     }
 
@@ -289,13 +388,7 @@ class EditorTerminalPanel(
     }
 
     private fun updateContentAnchor() {
-        val params = contentLayout.layoutParams as? RelativeLayout.LayoutParams ?: return
-        params.removeRule(RelativeLayout.ABOVE)
-        params.addRule(
-            RelativeLayout.ABOVE,
-            if (visible) panelView.id else symbolBar.id
-        )
-        contentLayout.layoutParams = params
+        onLayoutChanged()
     }
 
     private fun setupExtraKeys() {

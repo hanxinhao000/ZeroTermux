@@ -26,6 +26,7 @@ import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.settings.BaseTitleActivity
 
 class ZeroTermuxDeepSeekSettingsActivity : BaseTitleActivity() {
+
     companion object {
         public val TAG = ZeroTermuxDeepSeekSettingsActivity::class.java.simpleName
     }
