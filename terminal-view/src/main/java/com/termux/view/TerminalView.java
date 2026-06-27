@@ -1735,6 +1735,14 @@ public final class TerminalView extends View {
         return  mEmulator.getScreen().getTranscriptText();
     }
 
+    /** 当前可见屏幕文字（不含已滚出屏幕的旧 scrollback） */
+    public String getVisibleTerminalText() {
+        if (mEmulator == null) return "";
+        return mEmulator.getScreen()
+            .getSelectedText(0, 0, mEmulator.mColumns, mEmulator.mRows)
+            .trim();
+    }
+
     private OnLongClickListener mOnLongClickListener;
 
     public void setOnLongClickListener(OnLongClickListener mOnLongClickListener){

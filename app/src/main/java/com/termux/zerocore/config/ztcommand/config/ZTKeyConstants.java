@@ -76,4 +76,9 @@ public class ZTKeyConstants {
     public static final int ZT_ID_MENU = 17;
     public static final String ZT_COMMAND_MENU = "menu";
 
+    // 打开 App 内任意页面
+    public static final int ZT_ID_OPEN_PAGE = 18;
+    public static final String ZT_COMMAND_OPEN_PAGE = "openpage";
+    public static final String ZT_COMMAND_OPEN_PAGE_1 = "op";
+
 }

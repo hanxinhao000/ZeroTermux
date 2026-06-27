@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/editor_ai_panel_card"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="@color/color_ai_panel_bg"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/editor_ai_panel_drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:paddingHorizontal="8dp">
+
+            <ImageView
+                android:id="@+id/editor_ai_panel_reset"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/zt_editor_ai_reset_panel_desc"
+                android:padding="6dp"
+                android:src="@drawable/ic_agent_restore" />
+
+            <View
+                android:id="@+id/editor_ai_panel_drag_bar"
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_centerInParent="true"
+                android:background="#666666"
+                android:importantForAccessibility="no" />
+
+            <ImageView
+                android:id="@+id/editor_ai_panel_close"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/cancel"
+                android:padding="6dp"
+                android:src="@drawable/ic_agent_close" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="12dp">
+
+            <ScrollView
+                android:id="@+id/editor_ai_panel_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/editor_ai_panel_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="8dp"
+                        android:text="@string/zt_editor_ai_empty"
+                        android:textColor="@color/md_grey_500"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:id="@+id/editor_ai_panel_messages"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </ScrollView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.termux.zerocore.ai.agent.ZtAgentSelectableEditText
+                    android:id="@+id/editor_ai_panel_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/shape_ai_agent_input"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/zt_editor_ai_hint"
+                    android:imeOptions="actionSend"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLines="4"
+                    android:minHeight="44dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/color_ffffff"
+                    android:textColorHint="@color/md_grey_500"
+                    android:textCursorDrawable="@drawable/ai_agent_text_cursor"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/editor_ai_panel_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/shape_editor_action_save"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:minWidth="70dp"
+                    android:paddingHorizontal="14dp"
+                    android:text="@string/zt_ai_agent_panel_send"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

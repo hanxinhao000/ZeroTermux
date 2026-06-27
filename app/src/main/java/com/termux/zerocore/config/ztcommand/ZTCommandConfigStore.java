@@ -10,6 +10,7 @@ import com.termux.zerocore.config.ztcommand.config.ForWardOpenRightConfig;
 import com.termux.zerocore.config.ztcommand.config.HelpConfig;
 import com.termux.zerocore.config.ztcommand.config.KnowConfig;
 import com.termux.zerocore.config.ztcommand.config.LnConfig;
+import com.termux.zerocore.config.ztcommand.config.OpenPageConfig;
 import com.termux.zerocore.config.ztcommand.config.QRCodeEncoderConfig;
 import com.termux.zerocore.config.ztcommand.config.RebootConfig;
 import com.termux.zerocore.config.ztcommand.config.ToastConfig;
@@ -73,6 +74,9 @@ public class ZTCommandConfigStore {
 
         map_array_command.put(ZTKeyConstants.ZT_COMMAND_MENU, ZTKeyConstants.ZT_ID_MENU);
 
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_OPEN_PAGE, ZTKeyConstants.ZT_ID_OPEN_PAGE);
+        map_array_command.put(ZTKeyConstants.ZT_COMMAND_OPEN_PAGE_1, ZTKeyConstants.ZT_ID_OPEN_PAGE);
+
         // 需要在此添加你的config，否则找不到config
         register(new ToastConfig());
         register(new HelpConfig());
@@ -92,6 +96,7 @@ public class ZTCommandConfigStore {
         register(new ConfirmedDialogConfig());
         register(new QRCodeEncoderConfig());
         register(new ZTBackgroundImageConfig());
+        register(new OpenPageConfig());
     }
     private static void register(ZTConfig ztConfig) {
         sparse_array_config.append(ztConfig.getId(), ztConfig);

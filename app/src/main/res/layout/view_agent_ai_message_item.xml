@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="4dp">
+
+    <com.termux.zerocore.ai.agent.ZtAgentSelectableTextView
+        android:id="@+id/agent_message_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="260dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:textColor="@color/color_ffffff"
+        android:textIsSelectable="true"
+        android:textSelectHandle="@drawable/ai_agent_text_select_handle_middle"
+        android:textSelectHandleLeft="@drawable/ai_agent_text_select_handle_left"
+        android:textSelectHandleRight="@drawable/ai_agent_text_select_handle_right"
+        android:textSize="14sp" />
+</LinearLayout>

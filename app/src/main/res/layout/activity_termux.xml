@@ -69,6 +69,26 @@
                         android:orientation="vertical"
                         android:layout_height="wrap_content"/>
                     <include layout="@layout/guide_layout"/>
+                    <FrameLayout
+                        android:id="@+id/ai_agent_panel_overlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#40000000"
+                        android:clickable="true"
+                        android:descendantFocusability="afterDescendants"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:visibility="gone">
+
+                        <include
+                            android:id="@+id/ai_agent_panel_root"
+                            layout="@layout/view_ai_agent_panel"
+                            android:layout_width="320dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="end"
+                            android:layout_marginVertical="8dp"
+                            android:layout_marginEnd="4dp" />
+                    </FrameLayout>
                 </RelativeLayout>
             </RelativeLayout>
             <androidx.viewpager.widget.ViewPager

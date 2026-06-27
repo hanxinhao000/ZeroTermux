@@ -11,13 +11,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.RelativeLayout
 import com.termux.app.TermuxService
+import com.termux.R
 import com.termux.shared.logger.Logger
 import com.termux.shared.termux.TermuxConstants
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences
+import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties
+import com.termux.shared.termux.extrakeys.ExtraKeysView
 import com.termux.terminal.TerminalColors
 import com.termux.terminal.TerminalSession
 import com.termux.terminal.TextStyle
 import com.termux.view.TerminalView
+import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -26,6 +30,7 @@ class EditorTerminalPanel(
     private val panelView: View,
     private val terminalView: TerminalView,
     private val inputView: EditorTerminalInputView,
+    private val extraKeysView: ExtraKeysView,
     private val contentLayout: RelativeLayout,
     private val symbolBar: View,
     private val onBlurEditor: () -> Unit,
@@ -37,21 +42,26 @@ class EditorTerminalPanel(
     private var termuxService: TermuxService? = null
     private var serviceBound = false
     private var visible = false
+    private var pendingCdDirectory: File? = null
+    private var terminalExtraKeys: EditorTerminalExtraKeys? = null
 
     private val viewClient = EditorTerminalViewClient(
         activity,
         terminalView,
         inputView,
+        extraKeysView,
         { visible },
         onBlurEditor
     )
 
     fun init(restoredVisible: Boolean, resizeHandle: View) {
         inputView.bindTerminalView(terminalView)
+        inputView.bindViewClient(viewClient)
         setPanelHeight(defaultPanelHeightPx())
         setupResizeHandle(resizeHandle)
         terminalView.setTerminalViewClient(viewClient)
         viewClient.onCreate()
+        setupExtraKeys()
         val prefs = getTermuxPrefs()
         terminalView.setTextSize(prefs?.fontSize ?: DEFAULT_TERMINAL_FONT_SIZE)
         terminalView.setKeepScreenOn(prefs?.shouldKeepScreenOn() == true)
@@ -61,6 +71,20 @@ class EditorTerminalPanel(
         } else {
             ensureHidden()
         }
+        panelView.findViewById<View>(R.id.editor_terminal_ctrl_c)?.setOnClickListener {
+            sendControlCharacter('C'.code)
+        }
+    }
+
+    private fun sendControlCharacter(letterCodePoint: Int) {
+        if (terminalView.currentSession == null) return
+        terminalView.inputCodePoint(
+            TerminalView.KEY_EVENT_SOURCE_VIRTUAL_KEYBOARD,
+            letterCodePoint,
+            true,
+            false
+        )
+        terminalView.onScreenUpdated()
     }
 
     private fun ensureHidden() {
@@ -72,12 +96,33 @@ class EditorTerminalPanel(
 
     fun isVisible(): Boolean = visible
 
-    fun toggle() {
-        setVisible(!visible)
+    fun toggle(workingDirectory: File? = null) {
+        if (visible) {
+            setVisible(false)
+        } else {
+            setVisible(true, workingDirectory)
+        }
+    }
+
+    fun showAtDirectory(directory: File) {
+        if (!visible) {
+            setVisible(true, directory)
+        } else {
+            sendCdCommand(directory)
+        }
     }
 
     fun setVisible(show: Boolean) {
-        if (visible == show) return
+        setVisible(show, null)
+    }
+
+    fun setVisible(show: Boolean, workingDirectory: File?) {
+        if (visible == show && !(show && workingDirectory != null)) {
+            if (show && workingDirectory != null) {
+                sendCdCommand(workingDirectory)
+            }
+            return
+        }
         visible = show
         if (show) {
             onVisibilityChanged(true)
@@ -88,6 +133,7 @@ class EditorTerminalPanel(
             ensureServiceBound()
             registerRelay()
             attachCurrentSession()
+            workingDirectory?.let { scheduleCdCommand(it) }
         } else {
             unregisterRelay()
             onRestoreEditorFocus()
@@ -127,6 +173,7 @@ class EditorTerminalPanel(
         termuxService = TermuxService.fromBinder(service ?: return)
         if (visible) {
             attachCurrentSession()
+            pendingCdDirectory?.let { scheduleCdCommand(it) }
         }
     }
 
@@ -160,6 +207,30 @@ class EditorTerminalPanel(
             terminalView.onScreenUpdated()
         }
         applyFontAndColors()
+    }
+
+    private fun scheduleCdCommand(directory: File) {
+        pendingCdDirectory = directory
+        terminalView.post {
+            if (!visible) return@post
+            attachCurrentSession()
+            terminalView.postDelayed({
+                if (!visible) return@postDelayed
+                sendCdCommand(directory)
+                pendingCdDirectory = null
+            }, 120)
+        }
+    }
+
+    private fun sendCdCommand(directory: File) {
+        if (!directory.isDirectory) return
+        val session = terminalView.currentSession ?: return
+        session.write("cd ${shellQuote(directory.absolutePath)}\n")
+        terminalView.onScreenUpdated()
+    }
+
+    private fun shellQuote(value: String): String {
+        return "'" + value.replace("'", "'\\''") + "'"
     }
 
     private fun resolveCurrentSession(service: TermuxService): TerminalSession? {
@@ -227,6 +298,33 @@ class EditorTerminalPanel(
         contentLayout.layoutParams = params
     }
 
+    private fun setupExtraKeys() {
+        val keys = EditorTerminalExtraKeys(activity, terminalView, extraKeysView, viewClient)
+        terminalExtraKeys = keys
+        extraKeysView.setExtraKeysViewClient(keys)
+        val properties = TermuxAppSharedProperties.getProperties()
+        extraKeysView.setButtonTextAllCaps(properties?.shouldExtraKeysTextBeAllCaps() == true)
+        reloadExtraKeys()
+    }
+
+    private fun reloadExtraKeys() {
+        val info = terminalExtraKeys?.getExtraKeysInfo() ?: run {
+            extraKeysView.visibility = View.GONE
+            return
+        }
+        val rowCount = info.matrix.size.coerceAtLeast(1)
+        val scale = TermuxAppSharedProperties.getProperties()?.terminalToolbarHeightScaleFactor ?: 1f
+        val rowHeightPx = dp(DEFAULT_EXTRA_KEYS_ROW_HEIGHT_DP)
+        val totalHeight = (rowHeightPx * rowCount * scale).toInt().coerceAtLeast(rowHeightPx)
+        val params = extraKeysView.layoutParams
+        if (params != null && params.height != totalHeight) {
+            params.height = totalHeight
+            extraKeysView.layoutParams = params
+        }
+        extraKeysView.visibility = View.VISIBLE
+        extraKeysView.reload(info, rowHeightPx.toFloat())
+    }
+
     private fun applyFontAndColors() {
         try {
             val colorsFile = TermuxConstants.TERMUX_COLOR_PROPERTIES_FILE
@@ -254,8 +352,9 @@ class EditorTerminalPanel(
     companion object {
         private const val LOG_TAG = "EditorTerminalPanel"
         private const val DEFAULT_TERMINAL_FONT_SIZE = 14
-        private const val DEFAULT_PANEL_HEIGHT_DP = 200
+        private const val DEFAULT_PANEL_HEIGHT_DP = 280
         private const val MIN_PANEL_HEIGHT_DP = 120
         private const val MAX_PANEL_HEIGHT_RATIO = 0.7f
+        private const val DEFAULT_EXTRA_KEYS_ROW_HEIGHT_DP = 38
     }
 }

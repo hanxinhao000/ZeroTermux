@@ -310,6 +310,16 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
     /** Handle dedicated volume buttons as virtual keys if applicable. */
     private boolean handleVirtualKeys(int keyCode, KeyEvent event, boolean down) {
+        // ZeroTermux: intercept volume for drawer / AI panel (key-up must not re-trigger)
+        if (down && mActivity.shouldInterceptVolumeKeysForZeroTermux()) {
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                if (mKeyUpDown != null) {
+                    mKeyUpDown.keyDown(keyCode);
+                }
+                return true;
+            }
+        }
+
         InputDevice inputDevice = event.getDevice();
         if (mActivity.getProperties().areVirtualVolumeKeysDisabled()) {
             return false;
@@ -319,7 +329,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             mVirtualControlKeyDown = down;
 			// ZeroTermux add {@
-            if (mKeyUpDown != null) {
+            if (mKeyUpDown != null && down) {
                 mKeyUpDown.keyDown(keyCode);
             }
 			// @}
@@ -327,7 +337,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             mVirtualFnKeyDown = down;
             // ZeroTermux add {@
-            if (mKeyUpDown != null) {
+            if (mKeyUpDown != null && down) {
                 mKeyUpDown.keyDown(keyCode);
             }
 			// @}

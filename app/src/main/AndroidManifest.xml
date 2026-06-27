@@ -127,6 +127,10 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
+        <activity android:name=".zerocore.ai.agent.ZtAgentAiSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity android:name=".zerocore.llm.activity.ZeroTermuxLLMSettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

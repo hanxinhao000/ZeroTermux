@@ -34,6 +34,12 @@ public class SingletonCommunicationUtils {
             notifyTerminalUnavailable("getTextToTerminal", null, R.string.zt_terminal_unavailable_text_not_read);
             return "";
         }
+
+        @Override
+        public String getVisibleTerminalText() {
+            notifyTerminalUnavailable("getVisibleTerminalText", null, R.string.zt_terminal_unavailable_text_not_read);
+            return "";
+        }
     };
     private SingletonCommunicationListener mSingletonCommunicationListener;
     public static SingletonCommunicationUtils getInstance() {
@@ -76,5 +82,6 @@ public class SingletonCommunicationUtils {
         void sendTextToTerminalCtrl(String command, boolean isCtrl);
         void onTerminalExtraKeyButtonClick(String key);
         String getTextToTerminal();
+        String getVisibleTerminalText();
     }
 }

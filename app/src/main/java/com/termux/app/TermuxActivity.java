@@ -142,6 +142,9 @@ import com.termux.zerocore.otg.OTGManager;
 import com.termux.zerocore.settings.ZtSettingsActivity;
 import com.termux.zerocore.config.ztcommand.ZTSocketService;
 import com.termux.zerocore.config.ztcommand.config.ZTKeyConstants;
+import com.termux.zerocore.config.ztcommand.navigation.ZtForegroundActivityHolder;
+import com.termux.zerocore.config.ztcommand.navigation.ZtNavigationHelper;
+import com.termux.zerocore.config.ztcommand.navigation.ZtNavigationHost;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.BitmapUtils;
 import com.termux.zerocore.utils.FileHttpUtils;
@@ -149,6 +152,7 @@ import com.termux.zerocore.utils.FileIOUtils;
 import com.termux.zerocore.utils.IsInstallCommand;
 import com.termux.zerocore.utils.PhoneUtils;
 import com.termux.zerocore.utils.SingletonCommunicationUtils;
+import com.termux.zerocore.ai.agent.ZtAiAgentPanelHelper;
 import com.termux.zerocore.utils.SmsUtils;
 import com.termux.zerocore.utils.UUUtils;
 import com.termux.zerocore.utils.BackgroundBlurUtils;
@@ -195,7 +199,7 @@ import io.noties.markwon.Markwon;
  */
  // ZeroTermux add {@
  //public final class TermuxActivity extends AppCompatActivity implements ServiceConnection {
-public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, TerminalView.DoubleClickListener, SingletonCommunicationUtils.SingletonCommunicationListener {
+public final class TermuxActivity extends AppCompatActivity implements ServiceConnection, View.OnClickListener, TerminalView.DoubleClickListener, SingletonCommunicationUtils.SingletonCommunicationListener, ZtNavigationHost {
  //@}
     /**
      * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
@@ -636,8 +640,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 		// ZeroTermux add {@
         if (mTermuxTerminalViewClient != null) {
             mTermuxTerminalViewClient.setKeyUpDown(key -> {
-                if (UserSetManage.Companion.get()
-                    .getZTUserBean().isResetVolume()) {
+                ZTUserBean bean = UserSetManage.Companion.get().getZTUserBean();
+                if (bean.isResetVolume()) {
                     return;
                 }
                 if (getDrawer().isOpened()) {
@@ -645,13 +649,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                     return;
                 }
                 if (key == KeyEvent.KEYCODE_VOLUME_UP) {
-                    getDrawer().smoothLeftOpen();
+                    if (!bean.isResetVolume()) {
+                        getDrawer().smoothLeftOpen();
+                    }
                     return;
                 }
 
                 if (key == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                    getDrawer().smoothRightOpen();
-                    return;
+                    openRightSideOrAiPanel();
                 }
             });
 			// @}
@@ -1136,6 +1141,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         return this.getTerminalView().getText555();
     }
 
+    // ZeroTermux add {@
+    @Override
+    public String getVisibleTerminalText() {
+        return this.getTerminalView().getVisibleTerminalText();
+    }
+    // @}
+
     class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1266,6 +1278,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private TextView mGuideContent;
     LocalBroadcastManager localBroadcastManager;
     LocalReceiver localReceiver;
+    // ZeroTermux add {@
+    private ZtAiAgentPanelHelper mAiAgentPanelHelper;
+    // @}
 
     private void initZeroView() {
         mMainMenuList = findViewById(R.id.main_menu_list);
@@ -1357,7 +1372,55 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         });
         initDataMsgInfo();
         setEgInstallStatus();
+        // ZeroTermux add {@
+        View aiOverlay = findViewById(R.id.ai_agent_panel_overlay);
+        View aiPanelRoot = findViewById(R.id.ai_agent_panel_root);
+        if (aiOverlay != null && aiPanelRoot != null) {
+            mAiAgentPanelHelper = new ZtAiAgentPanelHelper(aiOverlay, aiPanelRoot, () -> {
+                if (!getDrawer().isOpened()) {
+                    getDrawer().smoothRightOpen();
+                }
+            });
+        }
+        // @}
     }
+
+    // ZeroTermux add {@
+    private void showAiAgentPanel(String selectedText) {
+        if (mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.show(selectedText);
+        }
+    }
+
+    private void openRightSideOrAiPanel() {
+        if (getDrawer().isOpened()) {
+            getDrawer().smoothClose();
+            return;
+        }
+        if (UserSetManage.Companion.get().getZTUserBean().isAiAgentPanelEnabled()) {
+            if (mAiAgentPanelHelper != null) {
+                mAiAgentPanelHelper.toggle(null);
+            }
+            return;
+        }
+        getDrawer().smoothRightOpen();
+    }
+
+    /** Volume-/drawer shortcuts when「还原音量+-键」is off (isResetVolume=false). */
+    public boolean shouldInterceptVolumeKeysForZeroTermux() {
+        return !UserSetManage.Companion.get().getZTUserBean().isResetVolume();
+    }
+
+    @Override
+    public void prepareForPageNavigation() {
+        if (mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.minimizeForNavigation();
+        }
+        if (getDrawer().isOpened()) {
+            getDrawer().smoothClose();
+        }
+    }
+    // @}
 
     private void showKeyBord() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1495,6 +1558,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
         }
         UserSetManage.Companion.get().setZTUserBean(ztUserBeanShow);
+        if (mInternalPassage) {
+            scheduleApplyX11SystemInsets();
+        }
     }
     public void hideTermuxView() {
         ZTUserBean ztUserBeanHide = UserSetManage.Companion.get().getZTUserBean();
@@ -1519,6 +1585,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
 
         UserSetManage.Companion.get().setZTUserBean(ztUserBeanHide);
+        if (mInternalPassage) {
+            scheduleApplyX11SystemInsets();
+        }
     }
 
 
@@ -1552,7 +1621,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return;
         }
         if (x >= width - 100) {
-            getDrawer().smoothRightOpen();
+            openRightSideOrAiPanel();
             return;
         }
         BoomWindow.SWITCH = false;
@@ -1987,19 +2056,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return false;
         }
         ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
-        if (!ztUserBean.isResetVolume() || MainActivity.isConnected()) {
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (!ztUserBean.isResetVolume() || MainActivity.isConnected()) {
+                openRightSideOrAiPanel();
+                return true;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            if (!ztUserBean.isResetVolume() || MainActivity.isConnected()) {
                 if (getDrawer().isOpened()) {
                     getDrawer().smoothClose();
                 } else {
                     getDrawer().smoothLeftOpen();
-                }
-                return true;
-            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                if (getDrawer().isOpened()) {
-                    getDrawer().smoothClose();
-                } else {
-                    getDrawer().smoothRightOpen();
                 }
                 return true;
             }
@@ -2187,6 +2254,12 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             LogUtils.d(TAG, "message：" + message);
             if (TextUtils.isEmpty(message)) {
                 LogUtils.d(TAG, "message is null，return：" + message);
+                return;
+            }
+            if (message.startsWith(ZtNavigationHelper.OPEN_PAGE_MESSAGE_PREFIX)) {
+                String pageId = message.substring(ZtNavigationHelper.OPEN_PAGE_MESSAGE_PREFIX.length()).trim();
+                android.util.Log.i("ZT_NAV", "TermuxActivity dispatch openpage: " + pageId);
+                ZtNavigationHelper.openPageInternal(TermuxActivity.this, pageId, null);
                 return;
             }
             switch (message) {
@@ -2455,6 +2528,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if(mInternalPassage && mMainActivity != null) {
             mMainActivity.init();
             regMainViewKeyDown();
+            scheduleApplyX11SystemInsets();
         }
         try {
             startService(new Intent(this, ZTSocketService.class));
@@ -2469,6 +2543,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         SingletonCommunicationUtils.getInstance().setSingletonCommunicationListener(this);
     }
 	// ZeroTermux add {@
+    private void scheduleApplyX11SystemInsets() {
+        if (!mInternalPassage || mTermuxActivityRootView == null) {
+            return;
+        }
+        Runnable apply = () -> mTermuxActivityRootView.applyX11SystemInsets(TermuxActivity.this);
+        mTermuxActivityRootView.post(apply);
+        mTermuxActivityRootView.postDelayed(apply, 200);
+    }
+
     private void initStatusBarHeight() {
         int statusBarHeight = UUtils.getStatusBarHeight(this);
         int navigationBarHeight = UUtils.getNavigationBarHeight(this);
@@ -2559,6 +2642,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             }
 
         });
+        mTerminalView.getTextSelectionCursorControllerView().setAskAiListener(this::showAiAgentPanel);
 
         mTerminalView.setActionPointer2ClickListener(() -> openToolDialog(true, 0, -1));
     }
@@ -2579,22 +2663,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mMainActivity != null) {
             mMainActivity.setMainActivityOnKeyDown((keyCode, keyEvent) -> {
                 Log.i(TAG, "handleKey keyCode termux: " + keyCode);
-                if (UserSetManage.Companion.get()
-                    .getZTUserBean().isResetVolume()) {
+                ZTUserBean bean = UserSetManage.Companion.get().getZTUserBean();
+                if (bean.isResetVolume()) {
                     return false;
                 }
                 Log.i(TAG, "handleKey keyCode getDrawer().isOpened(): " + getDrawer().isOpened());
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                    if (getDrawer().isOpened()) {
-                        getDrawer().smoothClose();
-                    } else {
-                        getDrawer().smoothRightOpen();
-                    }
+                    openRightSideOrAiPanel();
                 } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                    if (getDrawer().isOpened()) {
-                        getDrawer().smoothClose();
-                    } else {
-                        getDrawer().smoothLeftOpen();
+                    if (!bean.isResetVolume()) {
+                        if (getDrawer().isOpened()) {
+                            getDrawer().smoothClose();
+                        } else {
+                            getDrawer().smoothLeftOpen();
+                        }
                     }
                 } else if (keyCode == KeyEvent.FLAG_KEEP_TOUCH_MODE) {
                     finish();
@@ -2768,11 +2850,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         //初始化ZeroTermux 引擎
         Logger.logVerbose(LOG_TAG, "onResume");
         // ZeroTermux add {@
+        ZtForegroundActivityHolder.set(this);
         VideoUtils.getInstance().onResume();
         initUserData();
         if (mInternalPassage && mMainActivity != null) {
             mMainActivity.onResume();
         }
+        scheduleApplyX11SystemInsets();
         // @}
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
@@ -2809,6 +2893,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 	// @}
 
     private void onDestroyInit() {
+        ZtForegroundActivityHolder.set(null);
         if (SingletonCommunicationUtils.isSingletonCommunicationListenerNull) {
             SingletonCommunicationUtils.getInstance().setSingletonCommunicationListener(null);
         }
@@ -2836,6 +2921,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mInternalPassage && mMainActivity != null) {
             mMainActivity.onWindowFocusChanged(hasFocus);
         }
+        if (hasFocus && mInternalPassage) {
+            scheduleApplyX11SystemInsets();
+        }
     }
 
 
@@ -2845,6 +2933,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         if (mInternalPassage && mMainActivity != null) {
             mMainActivity.onConfigurationChanged(newConfig);
         }
+        scheduleApplyX11SystemInsets();
     }
 
     private void onActivityResultZtInit(int requestCode, int resultCode, @Nullable Intent data) {

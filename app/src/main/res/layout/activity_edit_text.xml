@@ -64,6 +64,18 @@
             android:layout_weight="1" />
 
         <ImageView
+            android:id="@+id/editor_action_ai"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="3dp"
+            android:background="@drawable/shape_editor_toolbar_button"
+            android:contentDescription="@string/zt_editor_ai_button"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_editor_ai"
+            android:tint="#48BAF3" />
+
+        <ImageView
             android:id="@+id/editor_action_files"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -173,7 +185,7 @@
     <LinearLayout
         android:id="@+id/editor_terminal_panel"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="280dp"
         android:layout_alignParentBottom="true"
         android:background="#141414"
         android:orientation="vertical"
@@ -209,6 +221,19 @@
                 android:text="@string/editor_terminal_title"
                 android:textColor="#B0B0B0"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/editor_terminal_ctrl_c"
+                android:layout_width="36dp"
+                android:layout_height="28dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:contentDescription="@string/editor_terminal_ctrl_c"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="^C"
+                android:textColor="#FF8A80"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/editor_terminal_hide"
@@ -246,6 +271,14 @@
                 android:focusableInTouchMode="true"
                 android:importantForAutofill="no" />
         </FrameLayout>
+
+        <com.termux.shared.termux.extrakeys.ExtraKeysView
+            android:id="@+id/editor_terminal_extra_keys"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="#1A1A1A"
+            android:orientation="horizontal" />
     </LinearLayout>
 
     <LinearLayout
@@ -351,6 +384,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/editor_sidebar_ai"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_editor_icon_button"
+                android:contentDescription="@string/zt_editor_ai_button"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="AI"
+                android:textColor="#48BAF3"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/ok"
@@ -824,5 +871,27 @@
                 android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/editor_ai_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#40000000"
+        android:clickable="true"
+        android:descendantFocusability="afterDescendants"
+        android:elevation="16dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="gone">
+
+        <include
+            android:id="@+id/editor_ai_panel_root"
+            layout="@layout/view_editor_ai_panel"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            android:layout_gravity="bottom"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="8dp" />
+    </FrameLayout>
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
 <resources>
   <string name="paste_text">Paste</string>
   <string name="copy_text">copy</string>
+  <string name="ask_ai_text">Ask AI</string>
   <string name="add_text">Add Command</string>
     <string name="enable_toolbox">enable_toolbox</string>
     <string name="text_selection_more">More…</string>

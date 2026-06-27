@@ -8,7 +8,7 @@ import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.app.activities.SettingsActivity
 import com.termux.zerocore.ai.activity.MainAiSettings
-import com.termux.zerocore.ai.deepseek.activity.ZeroTermuxDeepSeekSettingsActivity
+import com.termux.zerocore.ai.agent.ZtAgentAiSettingsActivity
 import com.termux.zerocore.guide.TermuxGuideActivity
 import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_CREATE_FOLDER
 import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_EXTRA
@@ -29,6 +29,9 @@ class ZtSettingsActivity : BaseTitleActivity() {
         }
         findViewById<CardView>(R.id.ai).setOnClickListener {
             startActivity(Intent(this, MainAiSettings::class.java))
+        }
+        findViewById<CardView>(R.id.agent_ai_entry).setOnClickListener {
+            startActivity(Intent(this, ZtAgentAiSettingsActivity::class.java))
         }
         findViewById<CardView>(R.id.online_sh_server).setOnClickListener {
             startActivity(Intent(this, ZTOnlineServerActivity::class.java))

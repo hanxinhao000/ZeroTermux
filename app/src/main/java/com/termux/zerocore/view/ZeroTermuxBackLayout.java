@@ -14,12 +14,16 @@ import android.widget.VideoView;
 
 import androidx.annotation.RequiresApi;
 
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.example.xh_lib.utils.UUtils;
 import com.termux.R;
 import com.termux.x11.MainActivity;
 import com.termux.zerocore.ftp.utils.UserSetManage;
 
 public class ZeroTermuxBackLayout extends RelativeLayout {
+    private View mBackgroundRoot;
     private View back_color;
     private ImageView back_img;
     private CustomerVideoView back_video;
@@ -51,6 +55,7 @@ public class ZeroTermuxBackLayout extends RelativeLayout {
      */
     private void initLayout(Context mContext) {
         View viewLay = UUtils.getViewLay(R.layout.layout_zero_termux);
+        mBackgroundRoot = viewLay;
         back_color = viewLay.findViewById(R.id.back_color);
         back_img = viewLay.findViewById(R.id.back_img);
         back_video = viewLay.findViewById(R.id.back_video);
@@ -67,6 +72,37 @@ public class ZeroTermuxBackLayout extends RelativeLayout {
             }
         }
         addView(viewLay);
+    }
+
+    /** 内部通道 X11 画面需避开状态栏/导航栏，与终端层 fitsSystemWindows 对齐 */
+    public void applyX11SystemInsets(Activity activity) {
+        if (x11_view == null || mMainActivity == null || mBackgroundRoot == null || activity == null) {
+            return;
+        }
+        int top = UUtils.getStatusBarHeight(activity);
+        int bottom = UUtils.getNavigationBarHeight(activity);
+        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(activity.getWindow().getDecorView());
+        if (insets != null) {
+            top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+        }
+
+        // 与终端层一致：整体上移背景层，避免 X11 桌面顶到状态栏区域
+        RelativeLayout.LayoutParams bgLp = (RelativeLayout.LayoutParams) mBackgroundRoot.getLayoutParams();
+        if (bgLp == null) {
+            bgLp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT
+            );
+        }
+        bgLp.topMargin = top;
+        bgLp.bottomMargin = bottom;
+        mBackgroundRoot.setLayoutParams(bgLp);
+
+        x11_view.setPadding(0, 0, 0, 0);
+        x11_view.setClipToPadding(true);
+        mBackgroundRoot.requestLayout();
+        requestLayout();
     }
 
     public View getBackColor() {

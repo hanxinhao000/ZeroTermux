@@ -57,7 +57,12 @@ class TermuxGuideActivity: BaseTitleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        android.util.Log.i(
+            "ZT_NAV",
+            "TermuxGuideActivity onCreate code=${getGuideCode()} jumpOther=${getGuideJumpOther()} isJumpGuide=${UserSetManage.get().getZTUserBean().isJumpGuide}"
+        )
         if (getGuideCode() == GUIDE_TERMUX_MAIN || UserSetManage.get().getZTUserBean().isJumpGuide && !getGuideJumpOther()) {
+            android.util.Log.i("ZT_NAV", "TermuxGuideActivity redirect to TermuxActivity (skip wizard UI)")
             setContentView(R.layout.termux_loading)
             ACTIVITYS?.let {
                 it.forEach {

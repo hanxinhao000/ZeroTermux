@@ -15,6 +15,7 @@ class EditorTerminalInputView @JvmOverloads constructor(
 ) : View(context, attrs) {
 
     private var terminalView: TerminalView? = null
+    private var viewClient: EditorTerminalViewClient? = null
 
     init {
         isFocusable = true
@@ -26,15 +27,18 @@ class EditorTerminalInputView @JvmOverloads constructor(
         terminalView = view
     }
 
+    fun bindViewClient(client: EditorTerminalViewClient) {
+        viewClient = client
+    }
+
     override fun onCheckIsTextEditor(): Boolean = true
 
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
         val session = terminalView?.currentSession ?: return null
-        outAttrs.inputType = InputType.TYPE_CLASS_TEXT or
-            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD or
-            InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        // 与主界面 TerminalView 一致使用 TYPE_NULL，避免输入法对数字键走 sendKeyEvent 却无法送达终端
+        outAttrs.inputType = InputType.TYPE_NULL
         outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_FULLSCREEN or EditorInfo.IME_FLAG_NO_EXTRACT_UI
-        return EditorTerminalInputConnection(this, session, terminalView)
+        return EditorTerminalInputConnection(this, session, terminalView, viewClient)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

@@ -31,6 +31,23 @@ public class ZTUserBean {
     private boolean isSnowflakeShow = false;
     //是否还原音量加减
     private boolean isResetVolume = false;
+    // 新版右侧 AI 智能体窗口（音量- / 双击最右侧触发）
+    private boolean isAiAgentPanelEnabled = false;
+    // 智能体 AI 当前服务商
+    private String agentAiActiveProvider = "deepseek";
+    private String agentAiApiUrl;
+    private String agentAiApiKey;
+    private String agentAiModel;
+    private String agentAiSystemPrompt;
+    private String agentAiProviderCacheJson;
+    // 智能体 AI 对话历史（JSON）
+    private String agentAiChatHistoryJson;
+    // 编辑器 AI 对话历史（JSON，与智能体独立）
+    private String editorAiChatHistoryJson;
+    // 智能体是否可读取/控制终端
+    private boolean agentAiTerminalEnabled = true;
+    // 智能体是否可控制 ZeroTermux（页面跳转、ztcommand）
+    private boolean agentAiZtControlEnabled = true;
     //显示/隐藏终端
     private boolean isShowCommand = false;
     //内部/外部通道
@@ -251,6 +268,94 @@ public class ZTUserBean {
 
     public void setResetVolume(boolean resetVolume) {
         isResetVolume = resetVolume;
+    }
+
+    public boolean isAiAgentPanelEnabled() {
+        return isAiAgentPanelEnabled;
+    }
+
+    public void setAiAgentPanelEnabled(boolean aiAgentPanelEnabled) {
+        isAiAgentPanelEnabled = aiAgentPanelEnabled;
+    }
+
+    public String getAgentAiActiveProvider() {
+        return agentAiActiveProvider;
+    }
+
+    public void setAgentAiActiveProvider(String agentAiActiveProvider) {
+        this.agentAiActiveProvider = agentAiActiveProvider;
+    }
+
+    public String getAgentAiApiUrl() {
+        return agentAiApiUrl;
+    }
+
+    public void setAgentAiApiUrl(String agentAiApiUrl) {
+        this.agentAiApiUrl = agentAiApiUrl;
+    }
+
+    public String getAgentAiApiKey() {
+        return agentAiApiKey;
+    }
+
+    public void setAgentAiApiKey(String agentAiApiKey) {
+        this.agentAiApiKey = agentAiApiKey;
+    }
+
+    public String getAgentAiModel() {
+        return agentAiModel;
+    }
+
+    public void setAgentAiModel(String agentAiModel) {
+        this.agentAiModel = agentAiModel;
+    }
+
+    public String getAgentAiSystemPrompt() {
+        return agentAiSystemPrompt;
+    }
+
+    public void setAgentAiSystemPrompt(String agentAiSystemPrompt) {
+        this.agentAiSystemPrompt = agentAiSystemPrompt;
+    }
+
+    public String getAgentAiProviderCacheJson() {
+        return agentAiProviderCacheJson;
+    }
+
+    public void setAgentAiProviderCacheJson(String agentAiProviderCacheJson) {
+        this.agentAiProviderCacheJson = agentAiProviderCacheJson;
+    }
+
+    public String getAgentAiChatHistoryJson() {
+        return agentAiChatHistoryJson;
+    }
+
+    public void setAgentAiChatHistoryJson(String agentAiChatHistoryJson) {
+        this.agentAiChatHistoryJson = agentAiChatHistoryJson;
+    }
+
+    public String getEditorAiChatHistoryJson() {
+        return editorAiChatHistoryJson;
+    }
+
+    public void setEditorAiChatHistoryJson(String editorAiChatHistoryJson) {
+        this.editorAiChatHistoryJson = editorAiChatHistoryJson;
+    }
+
+    public boolean isAgentAiTerminalEnabled() {
+        return agentAiTerminalEnabled;
+    }
+
+    public void setAgentAiTerminalEnabled(boolean agentAiTerminalEnabled) {
+        this.agentAiTerminalEnabled = agentAiTerminalEnabled;
+    }
+
+    public boolean isAgentAiZtControlEnabled() {
+        return agentAiZtControlEnabled;
+    }
+
+    public void setAgentAiZtControlEnabled(boolean agentAiZtControlEnabled) {
+        this.agentAiZtControlEnabled = agentAiZtControlEnabled;
     }
 
     public boolean isSnowflakeShow() {

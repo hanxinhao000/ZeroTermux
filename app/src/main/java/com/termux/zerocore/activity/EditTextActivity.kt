@@ -49,7 +49,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.dialog.LoadingDialog
+import com.termux.zerocore.ai.editor.ZtEditorAiHost
+import com.termux.zerocore.ai.editor.ZtEditorAiPanelHelper
+import com.termux.zerocore.ai.editor.ZtEditorAiResetHelper
 import com.termux.zerocore.editor.AndroidProjectManager
+import com.termux.zerocore.editor.EditorBuildScriptHelper
 import com.termux.zerocore.editor.EditorAndroidRunner
 import com.termux.zerocore.editor.EditorFileTreeClipboard
 import com.termux.zerocore.editor.EditorFileTreeIcon
@@ -61,6 +65,7 @@ import com.termux.zerocore.editor.EditorHelloProjectType
 import com.termux.zerocore.editor.EditorProgramRunner
 import com.termux.zerocore.editor.EditorRunDetector
 import com.termux.zerocore.editor.EditorRunLanguage
+import com.termux.shared.termux.extrakeys.ExtraKeysView
 import com.termux.zerocore.editor.EditorTerminalInputView
 import com.termux.zerocore.editor.EditorTerminalPanel
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
@@ -100,7 +105,7 @@ import java.util.regex.PatternSyntaxException
 import kotlin.math.abs
 import kotlin.math.max
 
-class EditTextActivity : AppCompatActivity() {
+class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     companion object {
         val TAG = EditTextActivity::class.java.simpleName
         val CODE_JAVA = "source.java"
@@ -194,6 +199,9 @@ class EditTextActivity : AppCompatActivity() {
     private var mEditorUndoButton: ImageView? = null
     private var mEditorRedoButton: ImageView? = null
     private var mEditorMoreButton: ImageView? = null
+    private var mEditorAiButton: ImageView? = null
+    private var mEditorSidebarAiButton: TextView? = null
+    private var editorAiPanel: ZtEditorAiPanelHelper? = null
     private var mEditorTerminalButton: ImageView? = null
     private var mEditorRunButton: ImageView? = null
     private var mEditorRunLoading: ProgressBar? = null
@@ -363,6 +371,7 @@ class EditTextActivity : AppCompatActivity() {
         val ztUserBean = UserSetManage.get().getZTUserBean()
         code_editor?.isWordwrap = ztUserBean.isEditorWordWrap
         applyEditorFont(false)
+        initEditorAiPanel()
         initEditorTopBar()
         initEditorTerminal(savedInstanceState)
         initSymbolInput()
@@ -384,6 +393,8 @@ class EditTextActivity : AppCompatActivity() {
         mEditorUndoButton = findViewById(R.id.editor_action_undo)
         mEditorRedoButton = findViewById(R.id.editor_action_redo)
         mEditorMoreButton = findViewById(R.id.editor_action_more)
+        mEditorAiButton = findViewById(R.id.editor_action_ai)
+        mEditorSidebarAiButton = findViewById(R.id.editor_sidebar_ai)
         mEditorTerminalButton = findViewById(R.id.editor_action_terminal)
         mEditorRunButton = findViewById(R.id.editor_action_run)
         mEditorRunLoading = findViewById(R.id.editor_action_run_loading)
@@ -481,17 +492,29 @@ class EditTextActivity : AppCompatActivity() {
             updateEditorActionButtons()
         }
         mEditorRunButton?.setOnClickListener {
-            onRunProgramClicked()
+            onRunBuildScriptClicked()
+        }
+        mEditorRunButton?.setOnLongClickListener {
+            onOpenBuildScriptClicked()
+            true
         }
         mEditorAndroidBuildButton?.setOnClickListener {
             onAndroidBuildClicked()
         }
         mEditorTerminalButton?.setOnClickListener {
-            editorTerminalPanel?.toggle()
+            val panel = editorTerminalPanel
+            if (panel?.isVisible() == true) {
+                panel.setVisible(false)
+            } else {
+                openTerminalAtDirectory(null)
+            }
         }
         mEditorMoreButton?.setOnClickListener { view ->
             showEditorMoreMenu(view)
         }
+        val editorAiClick = View.OnClickListener { editorAiPanel?.toggle() }
+        mEditorAiButton?.setOnClickListener(editorAiClick)
+        mEditorSidebarAiButton?.setOnClickListener(editorAiClick)
         mCancelText?.setOnClickListener {
             confirmExitIfDirty()
         }
@@ -507,10 +530,36 @@ class EditTextActivity : AppCompatActivity() {
         updateEditorActionButtons()
     }
 
+    private fun initEditorAiPanel() {
+        val overlay = findViewById<View>(R.id.editor_ai_overlay) ?: return
+        // include 根视图 id 为 editor_ai_panel_root（与 TermuxActivity 智能体面板一致）
+        val panelRoot = findViewById<View>(R.id.editor_ai_panel_root) ?: return
+        val applyPanelHeight: () -> Unit = {
+            val hostHeight = overlay.height
+            if (hostHeight > 0) {
+                val targetHeight = (hostHeight * 0.45f).toInt().coerceAtLeast(dp(180))
+                val lp = panelRoot.layoutParams
+                if (lp != null && lp.height != targetHeight) {
+                    lp.height = targetHeight
+                    panelRoot.layoutParams = lp
+                }
+            }
+        }
+        overlay.viewTreeObserver.addOnGlobalLayoutListener { applyPanelHeight() }
+        overlay.setOnClickListener {
+            if (editorAiPanel?.isVisible() == true) {
+                editorAiPanel?.hide()
+            }
+        }
+        panelRoot.setOnClickListener { }
+        editorAiPanel = ZtEditorAiPanelHelper(overlay, panelRoot, this, applyPanelHeight)
+    }
+
     private fun initEditorTerminal(savedInstanceState: Bundle?) {
         val panel = findViewById<View>(R.id.editor_terminal_panel) ?: return
         val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view) ?: return
         val inputView = findViewById<EditorTerminalInputView>(R.id.editor_terminal_input) ?: return
+        val extraKeysView = findViewById<ExtraKeysView>(R.id.editor_terminal_extra_keys) ?: return
         val contentLayout = mEditorContentLayout ?: return
         val symbolBar = mEditorSymbolBar ?: return
         // 每次进入编辑器默认隐藏终端，仅在配置变更（如旋转屏幕）时恢复状态
@@ -520,6 +569,7 @@ class EditTextActivity : AppCompatActivity() {
             panelView = panel,
             terminalView = terminalView,
             inputView = inputView,
+            extraKeysView = extraKeysView,
             contentLayout = contentLayout,
             symbolBar = symbolBar,
             onBlurEditor = { blurEditorForTerminal() },
@@ -546,86 +596,75 @@ class EditTextActivity : AppCompatActivity() {
         currentFocus?.clearFocus()
     }
 
+    private fun resolveTerminalDirectory(target: File? = null): File? {
+        target?.let { file ->
+            if (file.isDirectory) return file
+            return file.parentFile?.takeIf { it.isDirectory }
+        }
+        currentFile?.parentFile?.takeIf { it.isDirectory }?.let { return it }
+        fileTreeCurrentDir?.takeIf { it.isDirectory }?.let { return it }
+        fileTreeRoot?.takeIf { it.isDirectory }?.let { return it }
+        return null
+    }
+
+    private fun openTerminalAtDirectory(target: File?) {
+        val directory = resolveTerminalDirectory(target)
+        if (directory == null) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
+            return
+        }
+        val panel = editorTerminalPanel
+        if (panel == null) {
+            UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
+            return
+        }
+        if (programRunner?.canUseTerminal() != true) {
+            UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
+            return
+        }
+        panel.showAtDirectory(directory)
+    }
+
     private fun restoreEditorFocusAfterTerminal() {
         findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)?.clearFocus()
         code_editor?.setSoftKeyboardEnabled(true)
         code_editor?.requestFocus()
     }
 
-    private fun onRunProgramClicked() {
+    private fun onRunBuildScriptClicked() {
         if (isProgramRunInProgress) return
         val runner = programRunner ?: return
-        val file = currentFile ?: return
-        val content = code_editor?.text?.toString().orEmpty()
-        val language = EditorRunDetector.detect(file.name, content) ?: return
+        val directory = resolveTerminalDirectory(null) ?: return
         if (!runner.canUseTerminal()) {
             UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
             return
         }
-        setRunLoading(true)
-        editorTerminalPanel?.setVisible(true)
-        lifecycleScope.launch(Dispatchers.IO) {
-            val runtimeInstalled = runner.isRuntimeInstalled(language)
-            withContext(Dispatchers.Main) {
-                if (!runtimeInstalled) {
-                    setRunLoading(false)
-                    showInstallRuntimeDialog(runner, language)
-                } else {
-                    runProgramWithRuntime(runner, language, file, content)
-                }
-            }
-        }
-    }
-
-    private fun showInstallRuntimeDialog(runner: EditorProgramRunner, language: EditorRunLanguage) {
-        val titleRes: Int
-        val messageRes: Int
-        when (language) {
-            EditorRunLanguage.JAVA -> {
-                titleRes = R.string.editor_java_install_jdk_title
-                messageRes = R.string.editor_java_install_jdk_message
-            }
-            EditorRunLanguage.C -> {
-                titleRes = R.string.editor_run_install_c_title
-                messageRes = R.string.editor_run_install_c_message
-            }
-            EditorRunLanguage.PYTHON -> {
-                titleRes = R.string.editor_run_install_python_title
-                messageRes = R.string.editor_run_install_python_message
-            }
-            EditorRunLanguage.PHP -> {
-                titleRes = R.string.editor_run_install_php_title
-                messageRes = R.string.editor_run_install_php_message
-            }
-            EditorRunLanguage.NODE -> {
-                titleRes = R.string.editor_run_install_node_title
-                messageRes = R.string.editor_run_install_node_message
-            }
-        }
-        AlertDialog.Builder(this)
-            .setTitle(titleRes)
-            .setMessage(messageRes)
-            .setPositiveButton(R.string.editor_java_install_jdk_confirm) { _, _ ->
-                runner.installRuntimeViaTerminal(language) { }
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
-    private fun runProgramWithRuntime(
-        runner: EditorProgramRunner,
-        language: EditorRunLanguage,
-        file: File,
-        content: String
-    ) {
-        if (!saveCurrentFileForRun()) {
-            setRunLoading(false)
-            UUtils.showMsg(getString(R.string.editor_java_save_failed))
+        val tab = currentTab()
+        if (tab != null && (tab.previewOnly || isTextPreviewMode(tab))) {
+            UUtils.showMsg(getString(R.string.editor_file_not_text))
             return
         }
-        runner.runProgram(language, file, content)
+        setRunLoading(true)
+        saveCurrentTabSilentlyIfNeeded()
+        val contextFile = currentFile
+        val content = code_editor?.text?.toString().orEmpty()
+        EditorBuildScriptHelper.ensureScript(directory, contextFile, content)
+        refreshFileTree()
+        updateSidebarProjectPath()
+        editorTerminalPanel?.setVisible(true, directory)
+        runner.runBuildScript(directory)
         setRunLoading(false)
-        updateRunButton()
+    }
+
+    private fun onOpenBuildScriptClicked() {
+        val directory = resolveTerminalDirectory(null) ?: return
+        saveCurrentTabSilentlyIfNeeded()
+        val contextFile = currentFile
+        val content = code_editor?.text?.toString().orEmpty()
+        val script = EditorBuildScriptHelper.ensureScript(directory, contextFile, content)
+        refreshFileTree()
+        updateSidebarProjectPath()
+        loadFile(script)
     }
 
     private fun saveCurrentFileForRun(): Boolean {
@@ -651,15 +690,14 @@ class EditTextActivity : AppCompatActivity() {
         updateRunButton()
     }
 
-    private fun updateRunButton() {
-        val file = currentFile
+    private fun canShowRunButton(): Boolean {
         val tab = currentTab()
-        val content = code_editor?.text?.toString().orEmpty()
-        val canRun = file != null
-            && tab != null
-            && !tab.previewOnly
-            && !isTextPreviewMode(tab)
-            && EditorRunDetector.detect(file.name, content) != null
+        if (tab != null && (tab.previewOnly || isTextPreviewMode(tab))) return false
+        return resolveTerminalDirectory(null) != null
+    }
+
+    private fun updateRunButton() {
+        val canRun = canShowRunButton()
         if (!canRun) {
             mEditorRunButton?.visibility = View.GONE
             mEditorRunLoading?.visibility = View.GONE
@@ -709,7 +747,7 @@ class EditTextActivity : AppCompatActivity() {
             return
         }
         setAndroidBuildLoading(true)
-        editorTerminalPanel?.setVisible(true)
+        editorTerminalPanel?.setVisible(true, resolveTerminalDirectory(currentFile))
         lifecycleScope.launch(Dispatchers.IO) {
             val envReady = runner.isGradleEnvInstalled()
             withContext(Dispatchers.Main) {
@@ -728,7 +766,7 @@ class EditTextActivity : AppCompatActivity() {
             .setTitle(R.string.editor_android_install_gradle_title)
             .setMessage(R.string.editor_android_install_gradle_message)
             .setPositiveButton(R.string.editor_android_install_gradle_confirm) { _, _ ->
-                editorTerminalPanel?.setVisible(true)
+                editorTerminalPanel?.setVisible(true, resolveTerminalDirectory(currentFile))
                 runner.installGradleEnvViaTerminal { }
             }
             .setNegativeButton(android.R.string.cancel, null)
@@ -791,7 +829,7 @@ class EditTextActivity : AppCompatActivity() {
             .setTitle(R.string.editor_android_install_gradle_title)
             .setMessage(R.string.editor_android_install_gradle_message)
             .setPositiveButton(R.string.editor_android_install_gradle_confirm) { _, _ ->
-                editorTerminalPanel?.setVisible(true)
+                editorTerminalPanel?.setVisible(true, resolveTerminalDirectory(currentFile))
                 runner.installGradleEnvViaTerminal { }
             }
             .setNegativeButton(android.R.string.cancel, null)
@@ -1002,6 +1040,29 @@ class EditTextActivity : AppCompatActivity() {
             }
             setOnClickListener { showLspServersDialog() }
         }
+        val editorAiResetButton = TextView(this).apply {
+            text = getString(R.string.zt_editor_ai_reset_title)
+            setTextColor(0xffd4d4d4.toInt())
+            textSize = 14f
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(dp(14), 0, dp(14), 0)
+            setBackgroundResource(R.drawable.shape_editor_symbol_key)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(40)
+            ).apply {
+                setMargins(0, dp(8), 0, 0)
+            }
+            setOnClickListener {
+                ZtEditorAiResetHelper.showResetConfirmDialog(this@EditTextActivity)
+            }
+        }
+        val editorAiResetSummary = TextView(this).apply {
+            text = getString(R.string.zt_editor_ai_reset_summary)
+            setTextColor(0xff9d9d9d.toInt())
+            textSize = 12f
+            setPadding(0, 0, 0, dp(6))
+        }
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(28), dp(14), dp(28), 0)
@@ -1020,6 +1081,9 @@ class EditTextActivity : AppCompatActivity() {
             addView(lspTimeoutInput)
             addView(lspDescLabel)
             addView(lspManageButton)
+            addView(buildSettingsLabel(getString(R.string.zt_editor_ai_button)))
+            addView(editorAiResetSummary)
+            addView(editorAiResetButton)
         }
         val scrollView = ScrollView(this).apply {
             addView(container)
@@ -2017,6 +2081,26 @@ class EditTextActivity : AppCompatActivity() {
             if (terminalView != null && terminalView.dispatchKeyEvent(event)) {
                 return true
             }
+            if (session != null && event.action == KeyEvent.ACTION_DOWN) {
+                when (event.keyCode) {
+                    in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9 -> {
+                        session.write((event.keyCode - KeyEvent.KEYCODE_0 + '0'.code).toChar().toString())
+                        terminalView?.onScreenUpdated()
+                        return true
+                    }
+                    in KeyEvent.KEYCODE_NUMPAD_0..KeyEvent.KEYCODE_NUMPAD_9 -> {
+                        session.write((event.keyCode - KeyEvent.KEYCODE_NUMPAD_0 + '0'.code).toChar().toString())
+                        terminalView?.onScreenUpdated()
+                        return true
+                    }
+                }
+                val unicode = event.unicodeChar
+                if (unicode != 0) {
+                    session.write(String(Character.toChars(unicode)))
+                    terminalView?.onScreenUpdated()
+                    return true
+                }
+            }
         }
         return super.dispatchKeyEvent(event)
     }
@@ -2041,6 +2125,8 @@ class EditTextActivity : AppCompatActivity() {
         shutdownLspManager()
         editorTerminalPanel?.destroy()
         editorTerminalPanel = null
+        editorAiPanel?.destroy()
+        editorAiPanel = null
         super.onDestroy()
     }
 
@@ -2663,16 +2749,18 @@ class EditTextActivity : AppCompatActivity() {
     private fun showFileTreeItemMenu(node: FileTreeNode, anchor: View) {
         PopupMenu(this, anchor).apply {
             if (node.kind == FileTreeEntryKind.NORMAL) {
-                menu.add(0, 10, 0, getString(R.string.editor_sidebar_copy))
-                menu.add(0, 11, 1, getString(R.string.editor_sidebar_cut))
-                menu.add(0, 13, 2, getString(R.string.editor_sidebar_delete))
+                menu.add(0, 14, 0, getString(R.string.editor_sidebar_open_terminal))
+                menu.add(0, 10, 1, getString(R.string.editor_sidebar_copy))
+                menu.add(0, 11, 2, getString(R.string.editor_sidebar_cut))
+                menu.add(0, 13, 3, getString(R.string.editor_sidebar_delete))
             }
             if (EditorFileTreeClipboard.hasContent()) {
-                menu.add(0, 12, 3, getString(R.string.editor_sidebar_paste))
+                menu.add(0, 12, 4, getString(R.string.editor_sidebar_paste))
             }
             if (menu.size() == 0) return
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
+                    14 -> openTerminalAtDirectory(node.file)
                     10 -> copyFileTreeEntry(node.file)
                     11 -> cutFileTreeEntry(node.file)
                     12 -> pasteFileTreeEntry(resolvePasteTargetDir(node))
@@ -3377,5 +3465,211 @@ class EditTextActivity : AppCompatActivity() {
         }
 
        /* binding.positionDisplay.text = text*/
+    }
+
+    override fun isEditorReady(): Boolean {
+        val tab = currentTab() ?: return false
+        return code_editor != null && !tab.previewOnly && !isTextPreviewMode(tab)
+    }
+
+    override fun captureSnapshot(maxChars: Int): String {
+        val editor = code_editor ?: return "Error: editor unavailable"
+        val tab = currentTab() ?: return "Error: no file open"
+        if (tab.previewOnly || isTextPreviewMode(tab)) {
+            return "Error: preview mode, editing disabled"
+        }
+        val full = editor.text.toString()
+        val cursor = editor.cursor
+        val limit = maxChars.coerceAtLeast(500)
+        val sb = StringBuilder()
+        sb.append("=== 编辑器快照 ===\n")
+        sb.append("当前文件: ").append(tab.file.absolutePath).append('\n')
+        if (editorTabs.size > 1) {
+            sb.append("已打开: ")
+            editorTabs.joinToString(", ") { t ->
+                val name = t.file.name
+                when {
+                    t.file.absolutePath == tab.file.absolutePath -> "$name*"
+                    t.dirty -> "$name(未保存)"
+                    else -> name
+                }
+            }.let { sb.append(it).append('\n') }
+        }
+        sb.append("光标: 行").append(cursor.leftLine + 1)
+            .append(" 列").append(cursor.leftColumn)
+            .append(" 偏移").append(cursor.left).append('\n')
+        if (cursor.isSelected) {
+            sb.append("选区: ").append(cursor.left).append("..").append(cursor.right)
+                .append(" (").append(cursor.right - cursor.left).append(" chars)\n")
+        }
+        sb.append("长度: ").append(full.length).append('\n')
+        sb.append("--- 内容 ---\n")
+        if (full.length > limit) {
+            sb.append(full, 0, limit).append("\n...[truncated, total ").append(full.length).append(" chars]")
+        } else {
+            sb.append(full)
+        }
+        return sb.toString()
+    }
+
+    override fun insertAtCursor(text: String): String {
+        val editor = code_editor ?: return "Error: editor unavailable"
+        if (!isEditorReady()) return getString(R.string.zt_editor_ai_unavailable)
+        val cursor = editor.cursor
+        editor.text.replace(
+            cursor.leftLine,
+            cursor.leftColumn,
+            cursor.rightLine,
+            cursor.rightColumn,
+            text
+        )
+        updateDirtyState()
+        return "Inserted ${text.length} chars at offset ${cursor.left}"
+    }
+
+    override fun replaceRange(start: Int, end: Int, text: String): String {
+        val editor = code_editor ?: return "Error: editor unavailable"
+        if (!isEditorReady()) return getString(R.string.zt_editor_ai_unavailable)
+        val full = editor.text.toString()
+        if (start < 0 || end < start || end > full.length) {
+            return "Error: invalid range $start..$end (length ${full.length})"
+        }
+        val lineStarts = buildLineStarts(full)
+        val startPos = offsetToLineColumn(lineStarts, start)
+        val endPos = offsetToLineColumn(lineStarts, end)
+        val content = editor.text
+        content.replace(startPos.first, startPos.second, endPos.first, endPos.second, text)
+        updateDirtyState()
+        return "Replaced $start..$end with ${text.length} chars"
+    }
+
+    override fun replaceAll(text: String): String {
+        val editor = code_editor ?: return "Error: editor unavailable"
+        if (!isEditorReady()) return getString(R.string.zt_editor_ai_unavailable)
+        editor.setText(text)
+        updateDirtyState()
+        return "Replaced entire content (${text.length} chars)"
+    }
+
+    private fun resolveEditorPath(rawPath: String): File? {
+        val trimmed = rawPath.trim()
+        if (trimmed.isEmpty()) return null
+        return if (File(trimmed).isAbsolute) {
+            File(trimmed).normalize()
+        } else {
+            val base = currentFile?.parentFile ?: fileTreeCurrentDir ?: fileTreeRoot ?: return null
+            File(base, trimmed).normalize()
+        }
+    }
+
+    private fun saveCurrentTabSilentlyIfNeeded() {
+        storeCurrentTabState()
+        val file = currentFile ?: return
+        val tab = currentTab() ?: return
+        if (tab.previewOnly || isTextPreviewMode(tab) || !tab.dirty) return
+        val content = tab.content
+        if (UUtils.setFileString(file, content)) {
+            tab.savedContent = content
+            tab.dirty = false
+            isDirty = false
+            renderEditorTabs()
+        }
+    }
+
+    override fun createEditorFile(path: String, content: String, open: Boolean): String {
+        val target = resolveEditorPath(path) ?: return "Error: invalid path"
+        if (target.name.isEmpty()) return "Error: invalid file name"
+        if (target.exists()) {
+            return "Error: file already exists: ${target.absolutePath}. Use open_file instead."
+        }
+        val parent = target.parentFile
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            return "Error: failed to create directory ${parent.absolutePath}"
+        }
+        if (!runCatching { target.createNewFile() }.getOrDefault(false)) {
+            return "Error: failed to create ${target.absolutePath}"
+        }
+        if (!UUtils.setFileString(target, content)) {
+            target.delete()
+            return "Error: failed to write ${target.absolutePath}"
+        }
+        refreshFileTree()
+        updateSidebarProjectPath()
+        if (!canOpenFile(target)) {
+            return "Created ${target.absolutePath} (${content.length} chars), not editable in editor"
+        }
+        if (open) {
+            saveCurrentTabSilentlyIfNeeded()
+            loadFile(target)
+            return "Created and opened ${target.absolutePath} (${content.length} chars)"
+        }
+        return "Created ${target.absolutePath} (${content.length} chars)"
+    }
+
+    override fun openEditorFile(path: String): String {
+        val target = resolveEditorPath(path) ?: return "Error: invalid path"
+        if (!target.exists()) return "Error: file not found: ${target.absolutePath}"
+        if (!target.isFile) return "Error: not a file: ${target.absolutePath}"
+        if (!canOpenFile(target)) return "Error: cannot open in text editor: ${target.absolutePath}"
+        val previous = currentFile?.absolutePath
+        saveCurrentTabSilentlyIfNeeded()
+        loadFile(target)
+        return buildString {
+            append("Opened ${target.absolutePath}")
+            if (previous != null && previous != target.absolutePath) {
+                append(" (previous: $previous)")
+            }
+        }
+    }
+
+    override fun saveCurrentEditorFile(): String {
+        storeCurrentTabState()
+        val file = currentFile ?: return "Error: no file open"
+        val tab = currentTab() ?: return "Error: no active tab"
+        if (tab.previewOnly || isTextPreviewMode(tab)) {
+            return "Error: preview tab cannot be saved"
+        }
+        val content = tab.content
+        if (!UUtils.setFileString(file, content)) {
+            return "Error: failed to save ${file.absolutePath}"
+        }
+        tab.savedContent = content
+        tab.dirty = false
+        isDirty = false
+        renderEditorTabs()
+        return "Saved ${file.absolutePath} (${content.length} chars)"
+    }
+
+    override fun listOpenEditorFiles(): String {
+        if (editorTabs.isEmpty()) return "No files open"
+        val current = currentFile?.absolutePath
+        val sb = StringBuilder("Open editor tabs:\n")
+        for (tab in editorTabs) {
+            sb.append(if (tab.file.absolutePath == current) "• [active] " else "  ")
+                .append(tab.file.absolutePath)
+            if (tab.dirty) sb.append(" (unsaved)")
+            if (tab.previewOnly) sb.append(" (preview-only)")
+            sb.append('\n')
+        }
+        val base = currentFile?.parentFile?.absolutePath
+            ?: fileTreeCurrentDir?.absolutePath
+            ?: fileTreeRoot?.absolutePath
+        if (base != null) {
+            sb.append("Relative path base: ").append(base)
+        }
+        return sb.toString().trimEnd()
+    }
+
+    override fun releaseEditorInputForAiPanel() {
+        code_editor?.let { editor ->
+            editor.setSoftKeyboardEnabled(false)
+            KeyboardUtils.hideSoftKeyboard(this, editor)
+            editor.clearFocus()
+        }
+        currentFocus?.takeIf { it.id != R.id.editor_ai_panel_input }?.clearFocus()
+    }
+
+    override fun restoreEditorInputAfterAiPanel() {
+        code_editor?.setSoftKeyboardEnabled(true)
     }
 }

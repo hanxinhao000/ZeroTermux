@@ -821,7 +821,9 @@
     <string name="editor_toolbar_terminal">终端</string>
     <string name="editor_terminal_title">终端</string>
     <string name="editor_terminal_hide">隐藏终端</string>
-    <string name="editor_toolbar_run">运行</string>
+    <string name="editor_terminal_ctrl_c">发送 Ctrl+C 中断</string>
+    <string name="editor_toolbar_run">运行 build.sh</string>
+    <string name="editor_build_script_long_press">长按运行按钮可编辑 build.sh</string>
     <string name="editor_java_install_jdk_title">安装 JDK</string>
     <string name="editor_java_install_jdk_message">未检测到 Java 开发环境（JDK）。是否在 Termux 中安装 OpenJDK？</string>
     <string name="editor_java_install_jdk_confirm">安装</string>
@@ -875,6 +877,7 @@
     <string name="editor_sidebar_cut">剪切</string>
     <string name="editor_sidebar_paste">粘贴</string>
     <string name="editor_sidebar_delete">删除</string>
+    <string name="editor_sidebar_open_terminal">打开终端</string>
     <string name="editor_sidebar_delete_confirm_file">确定删除文件「%1$s」吗？此操作不可恢复。</string>
     <string name="editor_sidebar_delete_confirm_folder">确定删除文件夹「%1$s」及其全部内容吗？此操作不可恢复。</string>
     <string name="editor_sidebar_clipboard_copied">已复制：%1$s</string>
@@ -1124,6 +1127,16 @@
     <string name="zt_particle_animation">粒子动画</string>
     <string name="zt_volume_function_title">还原音量+-键</string>
     <string name="zt_volume_function_summary">禁用当前使用音量+-键进行弹出左/右面板</string>
+    <string name="zt_ai_agent_panel_title">打开新版本智能体</string>
+    <string name="zt_ai_agent_panel_summary">将右侧面板调整唤醒为AI智能体，可控制终端自动下发命令</string>
+    <string name="zt_ai_agent_panel_title_bar">AI 智能体</string>
+    <string name="zt_ai_agent_panel_hint">在此与 AI 对话…</string>
+    <string name="zt_ai_agent_panel_send">发送</string>
+    <string name="zt_ai_agent_panel_context_label">来自终端选中：</string>
+    <string name="zt_ai_agent_panel_empty">向 AI 提问，或在终端选中文本后长按「问AI」。</string>
+    <string name="zt_ai_agent_not_configured">请先在 ZeroTermux 设置 → 配置智能体AI 中填写 API Key 与模型。</string>
+    <string name="zt_ai_agent_thinking">思考中…</string>
+    <string name="zt_ai_agent_panel_open_menu">打开右侧菜单</string>
     <string name="zt_moe_remove">MOE目前作者已经不在维护，可能会出现ZeroTermux不可预知的错误结果。</string>
 
     <string-array name="options_resolution_keys">
@@ -1296,6 +1309,17 @@
         ]\n
         \n
          zt qr 打开扫一扫 (扫描二维码或者条形码)\n
+        \n
+        \n
+        页面跳转:\n
+        \n
+        openpage(op) - 打开 App 内页面 \n
+        openpage[\n
+        示例：zt openpage list  列出可打开页面 \n
+        示例：zt openpage zt_settings  打开 ZeroTermux 设置 \n
+        示例：zt openpage guide  打开开机向导 \n
+        示例：zt openpage agent_ai_settings  打开智能体 AI 配置 \n
+        ]\n
         \n
         \n
 
@@ -1528,6 +1552,74 @@
     <string name="ai_dialog_reset">切换成功，需要重启生效</string>
     <string name="ai_settings_other">设置其他AI</string>
     <string name="ai_settings_other_summary">设置其他的 API_KEY 以及接口模型</string>
+
+    <string name="zt_agent_ai_settings_title">配置智能体AI</string>
+    <string name="zt_agent_ai_settings_summary">采用新的交互方式，可完全控制终端、读取终端、控制和读取ZeroTermux的所有设置</string>
+    <string name="zt_agent_ai_provider_title">选择 AI 服务商</string>
+    <string name="zt_agent_ai_provider_deepseek">DeepSeek</string>
+    <string name="zt_agent_ai_provider_openai">ChatGPT</string>
+    <string name="zt_agent_ai_provider_google">Google AI</string>
+    <string name="zt_agent_ai_provider_custom">自定义</string>
+    <string name="zt_agent_ai_api_url">API 地址</string>
+    <string name="zt_agent_ai_api_url_hint">OpenAI 兼容接口地址</string>
+    <string name="zt_agent_ai_api_url_summary">切换服务商时会填入默认地址，也可自行修改</string>
+    <string name="zt_agent_ai_api_key">API Key</string>
+    <string name="zt_agent_ai_api_key_hint">输入 API Key</string>
+    <string name="zt_agent_ai_api_key_toggle">显示或隐藏 API Key</string>
+    <string name="zt_agent_ai_api_key_summary">密钥仅保存在本机，用于智能体对话与工具调用</string>
+    <string name="zt_agent_ai_model">模型名称</string>
+    <string name="zt_agent_ai_model_hint">例如 deepseek-chat / gpt-4o-mini / gemini-2.0-flash</string>
+    <string name="zt_agent_ai_system_prompt">系统提示词（可选）</string>
+    <string name="zt_agent_ai_system_prompt_hint">留空则使用默认 ZeroTermux 智能体提示词</string>
+    <string name="zt_agent_ai_status_configured">已配置：%1$s / %2$s</string>
+    <string name="zt_agent_ai_status_incomplete">当前服务商配置不完整，请填写 API 地址、Key 和模型</string>
+    <string name="zt_agent_ai_terminal_enabled">允许控制终端</string>
+    <string name="zt_agent_ai_terminal_enabled_summary">开启后智能体可通过工具读取终端内容并发送命令</string>
+    <string name="zt_agent_ai_zt_control_enabled">允许控制 ZeroTermux</string>
+    <string name="zt_agent_ai_zt_control_enabled_summary">开启后可通过终端 zt 命令控制 App（打开页面、侧栏、弹窗等），需同时开启「允许控制终端」</string>
+    <string name="zt_agent_ai_zt_control_system_prompt">控制 ZeroTermux 时只能使用 run_zt_command：它会向终端下发 `zt 命令`（与用户手动输入一致），你必须根据返回的终端快照判断结果，禁止假设成功。不确定命令时先 run_zt_command command=help；打开页面前可先 openpage list；ZeroTermux 设置=openpage zt_settings，开机向导=openpage guide。终端输出含 opened=true 且 page_id 才算打开成功；若只有「成功」且无 page_id，不得声称已打开。还可执行 openleft、openright、toast 等 help 中列出的命令。危险命令（reboot）需用户明确确认。</string>
+    <string name="zt_agent_ai_zt_requires_terminal">ZeroTermux 控制需通过终端执行 zt 命令，请同时开启「允许控制终端」</string>
+    <string name="zt_agent_ai_tool_run_command">正在执行 ZT 命令…</string>
+    <string name="zt_agent_ai_tool_disabled">该工具未开启，请在智能体 AI 配置中打开相应权限</string>
+    <string name="zt_agent_ai_reset_dialog_title">注意</string>
+    <string name="zt_agent_ai_reset_dialog_message">此操作会清空你的AI智能体所有数据，推荐数据污染的时候清空(就是AI不正常)</string>
+    <string name="zt_agent_ai_reset_title">还原AI所有数据</string>
+    <string name="zt_agent_ai_reset_summary">如果AI开始胡言乱语数据被污染，就需要执行此操作</string>
+    <string name="zt_agent_ai_reset_done">已还原 AI 智能体数据</string>
+    <string name="zt_agent_ai_reset_panel_desc">还原 AI 智能体数据</string>
+    <string name="zt_agent_ai_tool_usage_prompt">普通问答、解释、闲聊请直接用中文回复，不要调用工具。仅在用户明确要求打开页面、读取/控制终端、或执行 ztcommand 时才调用工具。工具执行完成后必须用中文向用户简要说明结果。</string>
+    <string name="zt_agent_ai_default_system_prompt">你是 ZeroTermux 内置 AI 智能体。请用简洁中文回答，必要时使用 Markdown。\n\n重要：不要编造或猜测终端输出、软件是否已安装、文件是否存在等事实。未经工具返回的结果，必须明确说「无法确认」或「我目前看不到终端」，并告诉用户如何自行验证或开启相应权限。</string>
+    <string name="zt_agent_ai_terminal_system_prompt">你可以使用 read_terminal、send_terminal_command、send_terminal_key。每轮对话会附带【当前可见屏幕】终端快照，描述终端时必须严格依据快照，尤其是「当前可见屏幕」段落：\n1. 可见屏幕显示 Welcome to Termux / ~ $ → 就是 Termux 主环境，禁止说是 Ubuntu、root@localhost、SSH、passwd 等快照中不存在的内容。\n2. 末行是 shell 提示符 → 命令已结束，禁止说「正在安装/请稍等」。\n3. 对话历史里旧的终端描述可能已过期，一律以最新快照为准。\n4. 回答「终端显示什么」时，应概括可见屏幕中的实际文字，不得臆造。\n危险命令需用户确认后再执行。</string>
+    <string name="zt_agent_ai_terminal_history_notice">【重要】下方对话历史中关于终端状态、Ubuntu、SSH、安装进度等描述可能已过期。回答时必须以用户最新消息末尾附带的「终端快照」为准，与快照矛盾的历史内容全部忽略。</string>
+    <string name="zt_agent_ai_terminal_disabled_prompt">【终端权限已关闭】你当前无法读取或控制终端，也没有 read_terminal / send_terminal_command 工具。用户询问 pkg/ssh/安装状态、命令输出、当前目录等时：禁止声称已安装/未安装或描述终端内容；应说明你看不到终端，建议用户在 ZeroTermux 设置 → 配置智能体AI 中开启「允许控制终端」，或让用户自己在终端运行命令（如 `pkg list-installed | grep openssh`）后把结果贴给你。</string>
+    <string name="zt_agent_ai_zt_control_disabled_prompt">【ZeroTermux 控制权限已关闭】你当前无法跳转 App 页面或执行 ztcommand。若用户要求打开设置页、侧栏等，请说明需要在配置中开启「允许控制 ZeroTermux」。</string>
+    <string name="zt_agent_ai_tool_read_terminal">正在读取终端…</string>
+    <string name="zt_agent_ai_tool_send_command">正在发送命令…</string>
+    <string name="zt_agent_ai_tool_send_key">正在发送按键…</string>
+    <string name="zt_agent_ai_tool_read_after_send">命令已发送，读取终端…</string>
+    <string name="zt_agent_ai_tool_running">正在调用工具…</string>
+    <string name="zt_agent_ai_tool_limit">工具调用次数已达上限，请简化问题后重试</string>
+    <string name="zt_agent_ai_terminal_unavailable">终端不可用，请先在主界面打开终端会话</string>
+
+    <string name="zt_editor_ai_button">编辑器 AI</string>
+    <string name="zt_editor_ai_empty">描述你想写的代码或需要的修改，AI 会直接编辑上方文件。</string>
+    <string name="zt_editor_ai_hint">让 AI 帮你写代码…</string>
+    <string name="zt_editor_ai_unavailable">编辑器不可用（可能处于预览模式或未打开文本文件）</string>
+    <string name="zt_editor_ai_system_prompt">你是 ZeroTermux 代码编辑器内置 AI。你可以创建/打开多个文件，并编辑当前激活的文件。\n\n规则：\n1. 需要多个文件时：对每个文件依次 create_file（或 open_file）→ read_editor → 写入内容；不要在一个文件里写全部代码。\n2. 切换到另一文件前，先 save_current_file 保存当前文件，再 open_file 打开目标文件。\n3. 修改前先 read_editor；可用 list_open_files 查看已打开标签。\n4. 小改动用 insert_at_cursor / replace_range；整文件用 replace_all。\n5. path 可用绝对路径，或相对当前文件所在目录。\n6. 运行按钮会执行当前目录的 build.sh（不存在则自动创建）；长按运行按钮会打开 build.sh。编译/运行逻辑应写入 build.sh，便于用户和 AI 控制。\n7. 用简洁中文说明做了什么；代码写入编辑器，回复里不要重复大段代码。\n8. 必须以工具返回的快照为准，不要编造文件内容。</string>
+    <string name="zt_editor_ai_tool_read">正在读取编辑器…</string>
+    <string name="zt_editor_ai_tool_insert">正在插入文本…</string>
+    <string name="zt_editor_ai_tool_replace">正在替换选区…</string>
+    <string name="zt_editor_ai_tool_replace_all">正在替换全部内容…</string>
+    <string name="zt_editor_ai_tool_create">正在创建文件…</string>
+    <string name="zt_editor_ai_tool_open">正在打开文件…</string>
+    <string name="zt_editor_ai_tool_save">正在保存文件…</string>
+    <string name="zt_editor_ai_tool_list">正在列出已打开文件…</string>
+    <string name="zt_editor_ai_reset_dialog_title">注意</string>
+    <string name="zt_editor_ai_reset_dialog_message">此操作仅清空编写代码页面的 AI 对话历史，不会影响主界面智能体 AI 的配置与聊天记录。</string>
+    <string name="zt_editor_ai_reset_title">还原编辑器 AI 对话</string>
+    <string name="zt_editor_ai_reset_summary">仅清空代码编辑器的 AI 历史记录，API 配置不受影响</string>
+    <string name="zt_editor_ai_reset_done">已还原编辑器 AI 对话</string>
+    <string name="zt_editor_ai_reset_panel_desc">还原编辑器 AI 对话</string>
 
     <string name="back_menu_visible">左/右栏目显示背景图片</string>
     <string name="back_menu_visible_summary">你必须确保路径:\n~Ztinfo/menuBack/\n路径下有 left.png 以及 right.png</string>

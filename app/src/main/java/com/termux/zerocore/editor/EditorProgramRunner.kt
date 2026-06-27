@@ -84,6 +84,12 @@ class EditorProgramRunner(private val context: Context) {
         }
     }
 
+    fun runBuildScript(directory: File) {
+        val dir = shellQuote(directory.absolutePath)
+        sendToTerminal("echo '[ZeroTermux Editor] Running ${EditorBuildScriptHelper.SCRIPT_NAME}'\n")
+        sendToTerminal("cd $dir && chmod +x ${EditorBuildScriptHelper.SCRIPT_NAME} && ./${EditorBuildScriptHelper.SCRIPT_NAME}\n")
+    }
+
     private fun sendToTerminal(command: String) {
         SingletonCommunicationUtils.getInstance()
             .getmSingletonCommunicationListener()

@@ -9,7 +9,8 @@ import com.termux.view.TerminalView
 class EditorTerminalInputConnection(
     hostView: View,
     private val session: TerminalSession,
-    private val terminalView: TerminalView?
+    private val terminalView: TerminalView?,
+    private val viewClient: EditorTerminalViewClient?
 ) : BaseInputConnection(hostView, true) {
 
     override fun commitText(text: CharSequence?, newCursorPosition: Int): Boolean {
@@ -41,10 +42,14 @@ class EditorTerminalInputConnection(
     }
 
     override fun sendKeyEvent(event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_DOWN && handleKeyCode(event.keyCode)) {
+        if (event.action != KeyEvent.ACTION_DOWN) return true
+        if (handleKeyCode(event.keyCode)) return true
+        val unicode = event.getUnicodeChar(0)
+        if (unicode != 0) {
+            sendCodePoint(unicode, event.isCtrlPressed(), event.isAltPressed())
             return true
         }
-        return super.sendKeyEvent(event)
+        return terminalView?.dispatchKeyEvent(event) == true
     }
 
     override fun performEditorAction(actionCode: Int): Boolean {
@@ -55,12 +60,24 @@ class EditorTerminalInputConnection(
 
     private fun sendText(text: CharSequence) {
         if (text.isEmpty()) return
-        val builder = StringBuilder(text.length)
-        for (i in text.indices) {
-            val ch = text[i]
-            builder.append(if (ch == '\n') '\r' else ch)
+        text.codePoints().forEach { codePoint ->
+            sendCodePoint(if (codePoint == '\n'.code) '\r'.code else codePoint, false, false)
         }
-        session.write(builder.toString())
+    }
+
+    private fun sendCodePoint(codePoint: Int, ctrlFromEvent: Boolean, altFromEvent: Boolean) {
+        val terminal = terminalView
+        val client = viewClient
+        if (terminal != null && client != null) {
+            terminal.inputCodePoint(
+                TerminalView.KEY_EVENT_SOURCE_SOFT_KEYBOARD,
+                codePoint,
+                ctrlFromEvent || client.readControlKey(),
+                altFromEvent || client.readAltKey()
+            )
+        } else {
+            session.write(String(Character.toChars(codePoint)))
+        }
         invalidateTerminal()
     }
 
@@ -82,6 +99,14 @@ class EditorTerminalInputConnection(
             KeyEvent.KEYCODE_DEL -> {
                 session.write("\u007f")
                 invalidateTerminal()
+                true
+            }
+            in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9 -> {
+                sendCodePoint(keyCode - KeyEvent.KEYCODE_0 + '0'.code, false, false)
+                true
+            }
+            in KeyEvent.KEYCODE_NUMPAD_0..KeyEvent.KEYCODE_NUMPAD_9 -> {
+                sendCodePoint(keyCode - KeyEvent.KEYCODE_NUMPAD_0 + '0'.code, false, false)
                 true
             }
             else -> false

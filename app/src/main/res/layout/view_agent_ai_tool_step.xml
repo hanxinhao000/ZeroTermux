@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/agent_tool_step_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="3dp">
+
+    <TextView
+        android:id="@+id/agent_tool_step_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:background="@drawable/shape_agent_msg_assistant"
+        android:textColor="@color/md_grey_500"
+        android:textSize="12sp" />
+
+    <com.termux.zerocore.ai.agent.ZtAgentSelectableTextView
+        android:id="@+id/agent_tool_step_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/color_331B3650"
+        android:fontFamily="monospace"
+        android:padding="8dp"
+        android:textColor="@color/color_A9B7C6"
+        android:textIsSelectable="true"
+        android:textSelectHandle="@drawable/ai_agent_text_select_handle_middle"
+        android:textSelectHandleLeft="@drawable/ai_agent_text_select_handle_left"
+        android:textSelectHandleRight="@drawable/ai_agent_text_select_handle_right"
+        android:textSize="11sp"
+        android:visibility="gone" />
+</LinearLayout>

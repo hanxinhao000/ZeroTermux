@@ -13,6 +13,9 @@
     <color name="color_aa161823">#dd161823</color>
     <color name="color_312520">#312520</color>
     <color name="color_2b2b2b">#2b2b2b</color>
+    <color name="color_ai_panel_bg">#EE2B2B2B</color>
+    <color name="color_ai_agent_selection_bg">#FFFFFF</color>
+    <color name="color_ai_agent_selection_fg">#000000</color>
     <color name="color_A02b2b2b">#A02b2b2b</color>
     <color name="color_10202f">#10202f</color>
     <color name="color_5510202f">#5510202f</color>

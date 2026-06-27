@@ -5,6 +5,8 @@ import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import com.termux.shared.termux.extrakeys.ExtraKeysView
+import com.termux.shared.termux.extrakeys.SpecialButton
 import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties
 import com.termux.shared.termux.terminal.TermuxTerminalViewClientBase
 import com.termux.shared.view.KeyboardUtils
@@ -15,6 +17,7 @@ class EditorTerminalViewClient(
     private val activity: Activity,
     private val terminalView: TerminalView,
     private val inputView: EditorTerminalInputView,
+    private val extraKeysView: ExtraKeysView,
     private val isPanelVisible: () -> Boolean,
     private val onRequestEditorBlur: () -> Unit
 ) : TermuxTerminalViewClientBase() {
@@ -90,19 +93,30 @@ class EditorTerminalViewClient(
         return TermuxAppSharedProperties.getProperties()?.isBackKeyTheEscapeKey == true
     }
 
+    override fun readControlKey(): Boolean {
+        return readExtraKeysSpecialButton(SpecialButton.CTRL)
+    }
+
+    override fun readAltKey(): Boolean {
+        return readExtraKeysSpecialButton(SpecialButton.ALT)
+    }
+
+    override fun readShiftKey(): Boolean {
+        return readExtraKeysSpecialButton(SpecialButton.SHIFT)
+    }
+
+    override fun readFnKey(): Boolean {
+        return readExtraKeysSpecialButton(SpecialButton.FN)
+    }
+
+    private fun readExtraKeysSpecialButton(specialButton: SpecialButton): Boolean {
+        if (!isPanelVisible()) return false
+        return extraKeysView.readSpecialButton(specialButton, true) == true
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent, session: TerminalSession): Boolean {
-        if (!isPanelVisible() || !inputView.hasFocus() || session.emulator == null) return false
-        return when (keyCode) {
-            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
-                session.write("\r")
-                true
-            }
-            KeyEvent.KEYCODE_DEL -> {
-                session.write("\u007f")
-                true
-            }
-            else -> false
-        }
+        // 与主 Termux 一致：交给 TerminalView 处理，以便 CTRL/ALT 修饰键与方向键等生效
+        return false
     }
 
     private fun restartTerminalInput() {
