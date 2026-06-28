@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.view.animation.DecelerateInterpolator
+import android.view.ViewConfiguration
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -52,6 +53,14 @@ class ZtEditorAiPanelHelper(
     private var dragStartTransX = 0f
     private var dragStartTransY = 0f
     private var dragging = false
+
+    private var bubbleDragStartRawY = 0f
+    private var bubbleDragStartTransY = 0f
+    private var bubbleDragging = false
+    private var bubbleDragMoved = false
+    private val bubbleTouchSlop: Int by lazy {
+        ViewConfiguration.get(panelCard.context).scaledTouchSlop
+    }
 
     private val markwon: Markwon by lazy {
         Markwon.builder(panelCard.context)
@@ -102,12 +111,53 @@ class ZtEditorAiPanelHelper(
 
     private fun setupFloatingBubble() {
         val bubble = floatingBubble ?: return
-        bubble.findViewById<View>(R.id.editor_ai_floating_bubble_open)?.setOnClickListener {
-            show()
+        val openBtn = bubble.findViewById<View>(R.id.editor_ai_floating_bubble_open)
+        val stopBtn = bubble.findViewById<View>(R.id.editor_ai_floating_bubble_stop)
+        openBtn?.setOnClickListener { show() }
+        stopBtn?.setOnClickListener { stopAgentExecution() }
+        bubble.setOnTouchListener { _, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    bubbleDragging = false
+                    bubbleDragMoved = false
+                    bubbleDragStartRawY = event.rawY
+                    bubbleDragStartTransY = bubble.translationY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val dy = event.rawY - bubbleDragStartRawY
+                    if (!bubbleDragging && abs(dy) > bubbleTouchSlop) {
+                        bubbleDragging = true
+                        bubbleDragMoved = true
+                    }
+                    if (bubbleDragging) {
+                        bubble.translationY = clampBubbleTranslationY(bubbleDragStartTransY + dy)
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    if (!bubbleDragMoved) {
+                        when {
+                            openBtn != null && isTouchOnView(event, openBtn) -> openBtn.performClick()
+                            stopBtn != null && isTouchOnView(event, stopBtn) -> stopBtn.performClick()
+                        }
+                    }
+                    bubbleDragging = false
+                    true
+                }
+                else -> false
+            }
         }
-        bubble.findViewById<View>(R.id.editor_ai_floating_bubble_stop)?.setOnClickListener {
-            stopAgentExecution()
-        }
+    }
+
+    private fun clampBubbleTranslationY(targetY: Float): Float {
+        val bubble = floatingBubble ?: return targetY
+        val parent = bubble.parent as? View ?: return targetY
+        if (parent.height <= 0 || bubble.height <= 0) return targetY
+        val minY = -bubble.top.toFloat()
+        val maxY = (parent.height - bubble.top - bubble.height).toFloat()
+        if (maxY < minY) return targetY
+        return targetY.coerceIn(minY, maxY)
     }
 
     /** 打断 AI：停止请求、中断终端、关闭悬浮窗。 */
