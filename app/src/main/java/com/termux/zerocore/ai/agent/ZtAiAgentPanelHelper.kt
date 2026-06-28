@@ -2,7 +2,6 @@ package com.termux.zerocore.ai.agent
 
 import android.content.Context
 import android.text.TextUtils
-import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import com.termux.R
 import com.termux.zerocore.ai.deepseek.markdown.MarkDownAPI
-import com.termux.zerocore.ai.deepseek.utils.SpannableTextUtil
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import io.noties.markwon.Markwon
 
@@ -113,6 +111,35 @@ class ZtAiAgentPanelHelper(
         ZtAgentAiResetHelper.registerUiRefreshCallback { clearUiAfterReset() }
         bindStopBar(panelStopBar)
         bindStopBar(runningBanner, reopenOnLabelClick = true)
+        setupSwipeToDismiss()
+    }
+
+    private fun setupSwipeToDismiss() {
+        val swipePanel = panelCard as? ZtAiAgentPanelCardView ?: return
+        swipePanel.swipeDismissCallback = object : ZtAiAgentPanelCardView.SwipeDismissCallback {
+            override fun onSwipeDrag(translationX: Float, panelWidth: Float) {
+                if (panelWidth <= 0f) return
+                val progress = (translationX / panelWidth).coerceIn(0f, 1f)
+                overlay.alpha = 1f - progress * 0.55f
+            }
+
+            override fun onSwipeRelease(translationX: Float, panelWidth: Float) {
+                if (panelWidth > 0f && translationX > panelWidth * 0.22f) {
+                    dismissPanel()
+                } else {
+                    panelCard.animate().translationX(0f).setDuration(180L).start()
+                    overlay.animate().alpha(1f).setDuration(180L).start()
+                }
+            }
+        }
+    }
+
+    private fun finalizePanelHidden() {
+        overlay.visibility = View.GONE
+        panelCard.translationX = 0f
+        overlay.alpha = 1f
+        isPanelShown = false
+        updateStopBarsVisibility()
     }
 
     private fun bindStopBar(bar: View?, reopenOnLabelClick: Boolean = false) {
@@ -380,9 +407,8 @@ class ZtAiAgentPanelHelper(
 
     private fun renderMarkdown(textView: TextView, markdown: String) {
         val spanned = markwon.toMarkdown(markdown)
-        val finalSpanned = SpannableTextUtil.createClickableSpannableString(spanned, panelCard.context)
-        markwon.setParsedMarkdown(textView, finalSpanned)
-        textView.movementMethod = LinkMovementMethod.getInstance()
+        markwon.setParsedMarkdown(textView, spanned)
+        textView.movementMethod = ZtAgentSelectionLinkMovementMethod
     }
 
     private fun inflateMessageItem(isUser: Boolean): View {
@@ -528,13 +554,7 @@ class ZtAiAgentPanelHelper(
             .translationX(slideDistance)
             .setDuration(PANEL_DURATION_MS)
             .setInterpolator(AccelerateInterpolator())
-            .withEndAction {
-                overlay.visibility = View.GONE
-                panelCard.translationX = 0f
-                overlay.alpha = 1f
-                isPanelShown = false
-                updateStopBarsVisibility()
-            }
+            .withEndAction { finalizePanelHidden() }
             .start()
     }
 

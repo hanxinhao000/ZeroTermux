@@ -55,7 +55,8 @@ class ZtAgentAiAgentRunner(
             null
         }
         var rounds = 0
-        while (rounds < MAX_TOOL_ROUNDS) {
+        val maxToolRounds = ZtAgentAiConfigHelper.maxToolRounds()
+        while (rounds < maxToolRounds) {
             if (callback.isCancelled()) return
             if (terminalEnabled) {
                 appendFreshTerminalSnapshot(workingMessages)
@@ -85,7 +86,14 @@ class ZtAgentAiAgentRunner(
             post { callback.onComplete(reply) }
             return
         }
-        post { callback.onError(UUtils.getString(R.string.zt_agent_ai_tool_limit)) }
+        post {
+            callback.onError(
+                String.format(
+                    UUtils.getString(R.string.zt_agent_ai_tool_limit),
+                    maxToolRounds
+                )
+            )
+        }
     }
 
     private fun appendFreshTerminalSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
@@ -267,7 +275,6 @@ class ZtAgentAiAgentRunner(
 
     companion object {
         private const val TAG = "ZtAgentAiAgentRunner"
-        private const val MAX_TOOL_ROUNDS = 15
         private const val TERMINAL_HISTORY_LIMIT = 6
         private val SNAPSHOT_PREFIX: String
             get() = ZtAiStrings.terminalSnapshotPrefix()

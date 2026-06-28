@@ -30,6 +30,11 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
     private val systemPromptEdit by lazy { findViewById<EditText>(R.id.agent_ai_system_prompt) }
     private val terminalSwitch by lazy { findViewById<SwitchCompat>(R.id.agent_ai_terminal_switch) }
     private val ztControlSwitch by lazy { findViewById<SwitchCompat>(R.id.agent_ai_zt_control_switch) }
+    private val toolRoundCards by lazy {
+        ZtAgentAiConfigHelper.toolRoundOptions().associateWith { rounds ->
+            findViewById<CardView>(toolRoundCardId(rounds))
+        }
+    }
     private val resetCard by lazy { findViewById<CardView>(R.id.agent_ai_reset_card) }
     private val aiAgentPanelSwitch by lazy { findViewById<SwitchCompat>(R.id.ai_agent_panel_switch) }
     private val aiAgentPanelLl by lazy { findViewById<LinearLayout>(R.id.ai_agent_panel_ll) }
@@ -46,6 +51,7 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
         initApiKeyVisibilityToggle()
         initTerminalSwitch()
         initZtControlSwitch()
+        initToolRoundCards()
         initResetEntry()
         loadFieldsFromConfig()
         bindAutoSave()
@@ -113,6 +119,41 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
     private fun initZtControlSwitch() {
         ztControlSwitch.setOnCheckedChangeListener { _, isChecked ->
             ZtAgentAiConfigHelper.saveZtControlEnabled(isChecked)
+        }
+    }
+
+    private fun initToolRoundCards() {
+        toolRoundCards.forEach { (rounds, card) ->
+            card.setOnClickListener { selectToolRounds(rounds) }
+        }
+        refreshToolRoundHighlight()
+    }
+
+    private fun toolRoundCardId(rounds: Int): Int = when (rounds) {
+        10 -> R.id.agent_tool_rounds_10
+        20 -> R.id.agent_tool_rounds_20
+        40 -> R.id.agent_tool_rounds_40
+        60 -> R.id.agent_tool_rounds_60
+        80 -> R.id.agent_tool_rounds_80
+        100 -> R.id.agent_tool_rounds_100
+        else -> R.id.agent_tool_rounds_40
+    }
+
+    private fun selectToolRounds(rounds: Int) {
+        if (rounds == ZtAgentAiConfigHelper.maxToolRounds()) {
+            refreshToolRoundHighlight()
+            return
+        }
+        ZtAgentAiConfigHelper.saveMaxToolRounds(rounds)
+        refreshToolRoundHighlight()
+    }
+
+    private fun refreshToolRoundHighlight() {
+        val active = ZtAgentAiConfigHelper.maxToolRounds()
+        val normal = getColor(R.color.color_55000000)
+        val selected = getColor(R.color.color_5548baf3)
+        toolRoundCards.forEach { (rounds, card) ->
+            card.setCardBackgroundColor(if (active == rounds) selected else normal)
         }
     }
 

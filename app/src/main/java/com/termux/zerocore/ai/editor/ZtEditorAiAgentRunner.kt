@@ -80,7 +80,14 @@ class ZtEditorAiAgentRunner(
             post { callback.onComplete(reply) }
             return
         }
-        post { callback.onError(UUtils.getString(R.string.zt_agent_ai_tool_limit)) }
+        post {
+            callback.onError(
+                String.format(
+                    UUtils.getString(R.string.zt_agent_ai_tool_limit),
+                    MAX_TOOL_ROUNDS
+                )
+            )
+        }
     }
 
     private fun appendFreshEditorSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
@@ -195,7 +202,7 @@ class ZtEditorAiAgentRunner(
 
     companion object {
         private const val TAG = "ZtEditorAiAgentRunner"
-        private const val MAX_TOOL_ROUNDS = 15
+        private const val MAX_TOOL_ROUNDS = 30
         private const val HISTORY_LIMIT = 12
         private const val EDITOR_SNAPSHOT_PREFIX = "=== 编辑器快照"
         private const val TERMINAL_SNAPSHOT_PREFIX = "=== 终端快照"

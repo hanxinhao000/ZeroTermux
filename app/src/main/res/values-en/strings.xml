@@ -1502,6 +1502,10 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_agent_ai_terminal_enabled_summary">Agent can read terminal and send commands via tools</string>
     <string name="zt_agent_ai_zt_control_enabled">Allow ZeroTermux control</string>
     <string name="zt_agent_ai_zt_control_enabled_summary">Control app via zt commands (pages, drawer, toast, etc.); requires terminal control</string>
+    <string name="zt_agent_ai_tool_rounds_title">Max tool call rounds</string>
+    <string name="zt_agent_ai_tool_rounds_definition">1 round = AI reads terminal → decides → sends next command</string>
+    <string name="zt_agent_ai_tool_rounds_summary">Max auto loops per conversation to save tokens; default 40</string>
+    <string name="zt_agent_ai_tool_rounds_warning">Unattended tasks may keep running; higher limits waste more tokens—pick a lower value when needed</string>
     <string name="zt_agent_ai_zt_control_system_prompt">You can fully control the app via ZeroTermux config tools (no per-item permission prompts; confirm risky actions first):\n1. list_zerotermux_capabilities — list settings, beautify keys, openpage ids, zt commands; call first when unsure.\n2. get_zerotermux_config / set_zerotermux_config — read/write settings and beautify (isInternalPassage, workstation, AI toggles, etc.).\n3. open_zerotermux_page — open settings pages (zt_settings, zero_termux_settings, agent_ai_settings, …).\n4. run_zerotermux_zt — preferred zt via socket (no terminal): help, toast, openleft, openpage, reboot, x11status, …\n5. run_zt_command — fallback via terminal.\n6. get_zerotermux_left_menu / update_zerotermux_left_menu — read xml_rules + catalog before creating menus; click must use java:/ztShell:/jumpUrl: prefixes.\n7. list_zerotermux_pkg_sources / switch_zerotermux_pkg_source — same as Switch Source menu; default tsinghua; list options, user picks, then switch with user_confirmed=true.\nBeautify: blurry text → text_shadow_enabled=false; background blur → blur_enabled/blur_radius.\nEffects: snowflake/snow → isSnowflakeShow; particle/rain → isRainShow (mutually exclusive). Use set_zerotermux_config, not menu XML.\nInternal channel isInternalPassage usually needs reboot; reboot only with explicit user approval. Trust tool JSON; do not invent results.</string>
     <string name="zt_agent_ai_zt_requires_terminal">ZeroTermux control via terminal zt requires「Allow terminal control」enabled</string>
     <string name="zt_agent_ai_tool_run_command">Running ZT command…</string>
@@ -1523,7 +1527,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_agent_ai_tool_send_key">Sending key…</string>
     <string name="zt_agent_ai_tool_read_after_send">Command sent, reading terminal…</string>
     <string name="zt_agent_ai_tool_running">Calling tool…</string>
-    <string name="zt_agent_ai_tool_limit">Tool call limit reached; simplify and retry</string>
+    <string name="zt_agent_ai_tool_limit">Agent tool rounds reached the limit (%1$d); this is not a timeout. Send \"continue\" to resume, or split the task and retry</string>
     <string name="zt_agent_ai_terminal_unavailable">Terminal unavailable; open a session on the main screen first</string>
 
     <string name="zt_editor_ai_button">Editor AI</string>

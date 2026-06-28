@@ -56,12 +56,18 @@ public class TextSelectionCursorController implements CursorController {
     @Override
     public void show(MotionEvent event) {
         setInitialTextSelectionPosition(event);
-        mStartHandle.positionAtCursor(mSelX1, mSelY1, true);
-        mEndHandle.positionAtCursor(mSelX2 + 1, mSelY2, true);
-
-        setActionModeCallBacks();
         mShowStartTime = System.currentTimeMillis();
         mIsSelectingText = true;
+        setActionModeCallBacks();
+        // Floating ActionMode can dismiss handle popups if shown too early; refresh after layout.
+        terminalView.post(this::refreshSelectionHandles);
+    }
+
+    private void refreshSelectionHandles() {
+        if (!isActive()) return;
+        mStartHandle.positionAtCursor(mSelX1, mSelY1, true);
+        mEndHandle.positionAtCursor(mSelX2 + 1, mSelY2, true);
+        terminalView.invalidate();
     }
 
     @Override

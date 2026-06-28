@@ -7,6 +7,9 @@ import com.termux.zerocore.ftp.utils.UserSetManage
 
 object ZtAgentAiConfigHelper {
 
+    const val DEFAULT_TOOL_ROUNDS = 40
+    private val TOOL_ROUND_OPTIONS = intArrayOf(10, 20, 40, 60, 80, 100)
+
     private val gson = Gson()
 
     data class ProviderConfig(
@@ -94,6 +97,22 @@ object ZtAgentAiConfigHelper {
         val bean = UserSetManage.get().getZTUserBean()
         bean.setAgentAiZtControlEnabled(enabled)
         UserSetManage.get().setZTUserBean(bean)
+    }
+
+    fun maxToolRounds(): Int {
+        return normalizeToolRounds(UserSetManage.get().getZTUserBean().agentAiMaxToolRounds)
+    }
+
+    fun saveMaxToolRounds(rounds: Int) {
+        val bean = UserSetManage.get().getZTUserBean()
+        bean.agentAiMaxToolRounds = normalizeToolRounds(rounds)
+        UserSetManage.get().setZTUserBean(bean)
+    }
+
+    fun toolRoundOptions(): IntArray = TOOL_ROUND_OPTIONS
+
+    private fun normalizeToolRounds(value: Int): Int {
+        return if (value in TOOL_ROUND_OPTIONS) value else DEFAULT_TOOL_ROUNDS
     }
 
     fun resolveSystemPrompt(

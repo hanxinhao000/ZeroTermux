@@ -48,6 +48,8 @@ public class ZTUserBean {
     private boolean agentAiTerminalEnabled = true;
     // 智能体是否可控制 ZeroTermux（页面跳转、ztcommand）
     private boolean agentAiZtControlEnabled = true;
+    // 单次对话智能体工具调用轮数上限（10/20/40/60/80/100）
+    private int agentAiMaxToolRounds = 40;
     //显示/隐藏终端
     private boolean isShowCommand = false;
     //内部/外部通道
@@ -356,6 +358,14 @@ public class ZTUserBean {
 
     public void setAgentAiZtControlEnabled(boolean agentAiZtControlEnabled) {
         this.agentAiZtControlEnabled = agentAiZtControlEnabled;
+    }
+
+    public int getAgentAiMaxToolRounds() {
+        return agentAiMaxToolRounds;
+    }
+
+    public void setAgentAiMaxToolRounds(int agentAiMaxToolRounds) {
+        this.agentAiMaxToolRounds = agentAiMaxToolRounds;
     }
 
     public boolean isSnowflakeShow() {

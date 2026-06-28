@@ -2,9 +2,6 @@ package com.termux.zerocore.ai.agent
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.ActionMode
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.widget.AppCompatTextView
 
 class ZtAgentSelectableTextView @JvmOverloads constructor(
@@ -15,18 +12,16 @@ class ZtAgentSelectableTextView @JvmOverloads constructor(
 
     init {
         ZtInvertSelectionSpanHelper.applyHighlightStyle(this)
-        customSelectionActionModeCallback = object : ActionMode.Callback {
-            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean = true
-            override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean = false
-            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean = false
-            override fun onDestroyActionMode(mode: ActionMode) {
-                ZtInvertSelectionSpanHelper.clearSelectionSpans(this@ZtAgentSelectableTextView)
-            }
-        }
+        linksClickable = true
+        setLinkTextColor(0xFF4EA1F3.toInt())
     }
 
     override fun onSelectionChanged(selStart: Int, selEnd: Int) {
         super.onSelectionChanged(selStart, selEnd)
-        ZtInvertSelectionSpanHelper.onSelectionChanged(this, selStart, selEnd)
+        if (selStart < 0 || selEnd <= selStart) {
+            ZtInvertSelectionSpanHelper.clearSelectionSpans(this)
+        } else {
+            ZtInvertSelectionSpanHelper.onSelectionChanged(this, selStart, selEnd)
+        }
     }
 }

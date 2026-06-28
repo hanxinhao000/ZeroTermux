@@ -1593,6 +1593,10 @@
     <string name="zt_agent_ai_terminal_enabled_summary">开启后智能体可通过工具读取终端内容并发送命令</string>
     <string name="zt_agent_ai_zt_control_enabled">允许控制 ZeroTermux</string>
     <string name="zt_agent_ai_zt_control_enabled_summary">开启后可通过终端 zt 命令控制 App（打开页面、侧栏、弹窗等），需同时开启「允许控制终端」</string>
+    <string name="zt_agent_ai_tool_rounds_title">工具调用轮数上限</string>
+    <string name="zt_agent_ai_tool_rounds_definition">1 轮 = AI 读终端 → 理解 → 再发下一条命令</string>
+    <string name="zt_agent_ai_tool_rounds_summary">上限为单次对话最多可自动循环的轮数，用于节省 Token，默认 40</string>
+    <string name="zt_agent_ai_tool_rounds_warning">无人看管时任务可能一直跑；上限越大，浪费 Token 越多，请按需选低档位</string>
     <string name="zt_agent_ai_zt_control_system_prompt">你可通过 ZeroTermux 配置工具全面控制 App（无需逐项问用户权限，但危险操作须先确认）：\n1. list_zerotermux_capabilities — 列举全部设置键、美化项、openpage 页面、zt 命令；不确定时先调用。\n2. get_zerotermux_config / set_zerotermux_config — 读写 ZT 设置与美化（含内部/外部通道 isInternalPassage、工作站、AI 开关等）。\n3. open_zerotermux_page — 打开设置页（zt_settings、zero_termux_settings、agent_ai_settings 等）。\n4. run_zerotermux_zt — 优先用此执行 zt 命令（Socket，不依赖终端）：help、toast、openleft、openpage、reboot、x11status 等。\n5. run_zt_command — 备选，经终端执行 zt。\n6. get_zerotermux_left_menu / update_zerotermux_left_menu — 创建菜单前必须先 get 读取 xml_rules 与 builtin_menu_catalog；click 必须用 java:/ztShell:/jumpUrl: 等前缀。\n7. list_zerotermux_pkg_sources / switch_zerotermux_pkg_source — 与左侧「切换源」相同；默认清华源(tsinghua)；先列举方案让用户选，用户明确同意后再 switch 且 user_confirmed=true；会覆盖 sources.list 并 apt update。\n美化歧义：美化里「文字对比度」(text_shadow_enabled) 实际会让终端文字发糊——用户说「文字模糊/字糊/看不清字」应 set text_shadow_enabled=false；用户说「背景模糊/壁纸糊」才调整 blur_enabled/blur_radius。\n终端特效：用户说「雪花/下雪」→ set_zerotermux_config key=isSnowflakeShow value=true|false；「粒子/粒子动画/下雨」→ key=isRainShow；二者互斥，用 set 控制勿改菜单 XML。可 list category=beautify 或 beautify_ui 查看键名。\n内部通道切换 isInternalPassage 后通常需 reboot；reboot/重启 App 必须用户明确同意。根据工具返回 JSON 判断成功与否，禁止编造。</string>
     <string name="zt_agent_ai_zt_requires_terminal">ZeroTermux 控制需通过终端执行 zt 命令，请同时开启「允许控制终端」</string>
     <string name="zt_agent_ai_tool_run_command">正在执行 ZT 命令…</string>
@@ -1614,7 +1618,7 @@
     <string name="zt_agent_ai_tool_send_key">正在发送按键…</string>
     <string name="zt_agent_ai_tool_read_after_send">命令已发送，读取终端…</string>
     <string name="zt_agent_ai_tool_running">正在调用工具…</string>
-    <string name="zt_agent_ai_tool_limit">工具调用次数已达上限，请简化问题后重试</string>
+    <string name="zt_agent_ai_tool_limit">智能体工具调用已达 %1$d 轮上限（与单次命令耗时无关）。任务未完成时可发送「继续」让 AI 接着排查，或拆分问题后重试</string>
     <string name="zt_agent_ai_terminal_unavailable">终端不可用，请先在主界面打开终端会话</string>
 
     <string name="zt_editor_ai_button">编辑器 AI</string>
