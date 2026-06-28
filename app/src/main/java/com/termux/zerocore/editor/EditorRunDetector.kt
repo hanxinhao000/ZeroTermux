@@ -124,6 +124,20 @@ object EditorRunDetector {
 
     fun inferCBinaryName(fileName: String): String = fallbackBaseName(fileName)
 
+    /** Detects Swing/AWT GUI sources for editor VNC debug. */
+    fun isJavaGuiSource(source: String): Boolean {
+        if (source.isBlank()) return false
+        return source.contains("javax.swing", ignoreCase = true)
+            || source.contains("java.awt", ignoreCase = true)
+            || source.contains("JFrame", ignoreCase = false)
+            || source.contains("extends Frame", ignoreCase = true)
+            || source.contains("extends JFrame", ignoreCase = true)
+    }
+
+    fun hasJavaSetVisible(source: String): Boolean {
+        return Regex("""\.setVisible\s*\(\s*true\s*\)""").containsMatchIn(source)
+    }
+
     private fun fallbackBaseName(fileName: String): String {
         val base = fileName.substringBeforeLast('.')
         return base.ifEmpty { "main" }

@@ -161,6 +161,11 @@ object ZtAgentAiConfigHelper {
                 )
             )
         }
+        parts.add(
+            ZtLocaleStrings.getString(
+                com.termux.R.string.zt_agent_ai_gui_compile_prompt
+            )
+        )
         return parts.joinToString("\n\n")
     }
 

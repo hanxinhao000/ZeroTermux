@@ -10,7 +10,7 @@
     <string name="zt_ai_tool_list_capabilities">List ZeroTermux settings, beautify keys, UI effects, openpage ids, and zt commands. Call FIRST when unsure. category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source</string>
     <string name="zt_ai_tool_get_config">Read ZeroTermux user settings (ZTUserBean), beautify SaveData, and UI effects (isSnowflakeShow/isRainShow).</string>
     <string name="zt_ai_tool_set_config">Set one ZeroTermux config. Booleans: true/false or 1/0. Snowflake/particle: isSnowflakeShow / isRainShow (mutually exclusive). Confirm risky keys like isInternalPassage first.</string>
-    <string name="zt_ai_tool_open_page">Open an in-app page by page_id (same as zt openpage). Examples: zt_settings, zero_termux_settings, agent_ai_settings, editor</string>
+    <string name="zt_ai_tool_open_page">Open an in-app page by page_id (same as zt openpage). Examples: zt_settings, zero_termux_settings, agent_ai_settings, editor (extras may include edit_path for file/dir)</string>
     <string name="zt_ai_tool_run_zt">Run a zt command via local socket (preferred over terminal). Examples: help, toast hello, openleft, openpage list, reboot, x11status. Confirm reboot/destructive actions.</string>
     <string name="zt_ai_tool_get_left_menu">Read menu list, xml_rules, and builtin_menu_catalog. Call BEFORE creating menu XML.</string>
     <string name="zt_ai_tool_update_left_menu">Create/update an AI menu package with valid zt-menu XML. MUST read get_zerotermux_left_menu first. Use java:/ztShell:/jumpUrl: prefixes; never bare pkg/mc/exit.</string>

@@ -171,6 +171,11 @@ class ZtEditorAiAgentRunner(
                     if (cmd.isEmpty()) "" else "→ $cmd"
                 }
                 "send_terminal_key" -> args.optString("key", "").trim()
+                "run_build_script" -> "→ ./build.sh"
+                "switch_editor_dock_tab" -> {
+                    val t = args.optString("tab", "").trim()
+                    if (t.isEmpty()) "" else "→ $t"
+                }
                 else -> ""
             }
         } catch (_: Exception) {

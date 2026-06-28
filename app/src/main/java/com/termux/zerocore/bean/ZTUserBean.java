@@ -17,6 +17,12 @@ public class ZTUserBean {
     private boolean isZtWorkstationFilesEnabled = false;
     // 工作站：允许 Web 使用电话/短信
     private boolean isZtWorkstationPhoneSmsEnabled = false;
+    // 外部 AI 调试接口 (HTTP JSON 19998)
+    private boolean isZtAiDebugEnabled = false;
+    // 外部 AI 调试 7 位数字匹配码
+    private String ztAiDebugMatchCode = "";
+    // 外部 AI 调试 Root 完全控制（需 su）
+    private boolean isZtAiDebugRootEnabled = false;
     // 输入法调起侧边栏是否关闭
     private boolean inputMethodTriggerClose = false;
     // 美化设置关闭菜单
@@ -453,6 +459,30 @@ public class ZTUserBean {
 
     public void setZtWorkstationPhoneSmsEnabled(boolean ztWorkstationPhoneSmsEnabled) {
         isZtWorkstationPhoneSmsEnabled = ztWorkstationPhoneSmsEnabled;
+    }
+
+    public boolean isZtAiDebugEnabled() {
+        return isZtAiDebugEnabled;
+    }
+
+    public void setZtAiDebugEnabled(boolean ztAiDebugEnabled) {
+        isZtAiDebugEnabled = ztAiDebugEnabled;
+    }
+
+    public String getZtAiDebugMatchCode() {
+        return ztAiDebugMatchCode;
+    }
+
+    public void setZtAiDebugMatchCode(String ztAiDebugMatchCode) {
+        this.ztAiDebugMatchCode = ztAiDebugMatchCode;
+    }
+
+    public boolean isZtAiDebugRootEnabled() {
+        return isZtAiDebugRootEnabled;
+    }
+
+    public void setZtAiDebugRootEnabled(boolean ztAiDebugRootEnabled) {
+        isZtAiDebugRootEnabled = ztAiDebugRootEnabled;
     }
 
     public boolean isInputMethodTriggerClose() {

@@ -12,7 +12,7 @@
     <string name="zt_ai_tool_list_capabilities">列举 ZeroTermux 设置键、美化项、终端特效键、openpage 页面与 zt 命令。不确定时先调用。category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source</string>
     <string name="zt_ai_tool_get_config">读取 ZeroTermux 用户设置(ZTUserBean)、美化 SaveData 与终端特效(isSnowflakeShow/isRainShow)。</string>
     <string name="zt_ai_tool_set_config">设置一项 ZeroTermux 配置。布尔值 true/false 或 1/0。雪花/粒子: isSnowflakeShow / isRainShow（互斥）。危险项如 isInternalPassage 须先确认用户。</string>
-    <string name="zt_ai_tool_open_page">按 page_id 打开 App 内页面（同 zt openpage）。示例: zt_settings, zero_termux_settings, agent_ai_settings, editor</string>
+    <string name="zt_ai_tool_open_page">按 page_id 打开 App 内页面（同 zt openpage）。示例: zt_settings, zero_termux_settings, agent_ai_settings, editor（extras 可传 edit_path 打开文件/目录）</string>
     <string name="zt_ai_tool_run_zt">经本地 Socket 执行 zt 命令（优先于终端）。示例: help, toast hello, openleft, openpage list, reboot, x11status。reboot 等危险操作须用户确认。</string>
     <string name="zt_ai_tool_get_left_menu">读取 Menu 菜单列表、xml_rules 与 builtin_menu_catalog。创建菜单 XML 前必须先调用。</string>
     <string name="zt_ai_tool_update_left_menu">创建/更新 AI 菜单包（合法 zt-menu XML）。须先 get_zerotermux_left_menu。click 须用 java:/ztShell:/jumpUrl: 等前缀，禁止裸 pkg/mc/exit。</string>

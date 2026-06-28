@@ -63,17 +63,19 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <ImageView
+        <TextView
             android:id="@+id/editor_action_ai"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginLeft="3dp"
             android:background="@drawable/shape_editor_toolbar_button"
             android:contentDescription="@string/zt_editor_ai_button"
-            android:padding="6dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_editor_ai"
-            android:tint="#48BAF3" />
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="AI"
+            android:textColor="#48BAF3"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/editor_action_files"
@@ -158,7 +160,7 @@
             android:contentDescription="@string/editor_x11_button"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:text="X11"
+            android:text="@string/editor_x11_button"
             android:textColor="#FFB74D"
             android:textSize="10sp"
             android:textStyle="bold"
@@ -198,216 +200,296 @@
     </HorizontalScrollView>
 
     <LinearLayout
-        android:id="@+id/editor_terminal_panel"
+        android:id="@+id/editor_bottom_dock"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="240dp"
         android:layout_alignParentBottom="true"
-        android:background="#141414"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/editor_terminal_resize_handle"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp">
-
-            <View
-                android:layout_width="48dp"
-                android:layout_height="4dp"
-                android:background="#555555" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="28dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="4dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/editor_terminal_title"
-                android:textColor="#B0B0B0"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/editor_terminal_ctrl_c"
-                android:layout_width="36dp"
-                android:layout_height="28dp"
-                android:background="@drawable/shape_editor_toolbar_button"
-                android:contentDescription="@string/editor_terminal_ctrl_c"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="^C"
-                android:textColor="#FF8A80"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/editor_terminal_hide"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="@drawable/shape_editor_toolbar_button"
-                android:contentDescription="@string/editor_terminal_hide"
-                android:padding="6dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_editor_hide"
-                android:tint="#CCCCCC" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <com.termux.view.TerminalView
-                android:id="@+id/editor_terminal_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:importantForAutofill="no"
-                android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
-                android:scrollbars="vertical" />
-
-            <com.termux.zerocore.editor.EditorTerminalInputView
-                android:id="@+id/editor_terminal_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:importantForAutofill="no" />
-        </FrameLayout>
-
-        <com.termux.shared.termux.extrakeys.ExtraKeysView
-            android:id="@+id/editor_terminal_extra_keys"
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:background="#1A1A1A"
-            android:orientation="horizontal" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/editor_x11_panel"
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:layout_alignParentBottom="true"
-        android:background="#141414"
+        android:background="@drawable/shape_editor_bottom_panel_bg"
         android:elevation="8dp"
         android:orientation="vertical"
         android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/editor_x11_resize_handle"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp">
-
-            <View
-                android:layout_width="48dp"
-                android:layout_height="4dp"
-                android:background="#555555" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/editor_x11_chrome"
+            android:id="@+id/editor_dock_tab_bar"
             android:layout_width="match_parent"
             android:layout_height="28dp"
+            android:background="@drawable/shape_editor_bottom_toolbar_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="10dp"
+            android:paddingLeft="4dp"
             android:paddingRight="4dp">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/editor_dock_terminal_tab_chip"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/editor_x11_button"
-                android:textColor="#B0B0B0"
-                android:textSize="12sp" />
+                android:layout_height="22dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/shape_editor_bottom_tab_active"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/editor_dock_tab_terminal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="2dp"
+                    android:text="@string/editor_terminal_title"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp" />
+
+                <ImageView
+                    android:id="@+id/editor_dock_close_terminal"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/editor_terminal_hide"
+                    android:padding="3dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_editor_tab_close" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/editor_dock_x11_tab_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:background="@drawable/shape_editor_bottom_tab_inactive"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/editor_dock_tab_x11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="2dp"
+                    android:text="@string/editor_x11_button"
+                    android:textColor="#888888"
+                    android:textSize="11sp" />
+
+                <ImageView
+                    android:id="@+id/editor_dock_close_x11"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/editor_x11_hide"
+                    android:padding="3dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_editor_tab_close" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/editor_dock_tab_spacer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/editor_terminal_ctrl_c"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:contentDescription="@string/editor_terminal_ctrl_c"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:minWidth="32dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="^C"
+                android:textColor="#FF8A80"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/editor_x11_status"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
+                android:layout_marginRight="6dp"
                 android:ellipsize="end"
+                android:maxWidth="120dp"
                 android:singleLine="true"
                 android:text="@string/editor_x11_status_disconnected"
                 android:textColor="#FF8A80"
-                android:textSize="12sp" />
+                android:textSize="10sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/editor_x11_display"
                 android:layout_width="wrap_content"
-                android:layout_height="28dp"
+                android:layout_height="20dp"
                 android:layout_marginRight="4dp"
                 android:background="@drawable/shape_editor_toolbar_button"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/editor_x11_display_env"
                 android:textColor="#B0B0B0"
-                android:textSize="11sp" />
+                android:textSize="10sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/editor_x11_connect"
                 android:layout_width="wrap_content"
-                android:layout_height="28dp"
+                android:layout_height="20dp"
                 android:layout_marginRight="4dp"
                 android:background="@drawable/shape_editor_toolbar_button"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
                 android:text="@string/editor_x11_connect"
                 android:textColor="#48BAF3"
-                android:textSize="11sp" />
+                android:textSize="10sp"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/editor_x11_maximize"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginRight="4dp"
                 android:background="@drawable/shape_editor_toolbar_button"
                 android:contentDescription="@string/editor_x11_maximize"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:padding="6dp"
+                android:padding="4dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_editor_maximize"
-                android:tint="#CCCCCC" />
+                android:tint="#CCCCCC"
+                android:visibility="gone" />
 
             <ImageView
-                android:id="@+id/editor_x11_hide"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:id="@+id/editor_dock_hide"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:background="@drawable/shape_editor_toolbar_button"
-                android:contentDescription="@string/editor_x11_hide"
+                android:contentDescription="@string/editor_dock_hide"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:padding="6dp"
+                android:padding="4dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_editor_hide"
-                android:tint="#CCCCCC" />
+                android:tint="#888888" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1A1A1A" />
+
         <FrameLayout
-            android:id="@+id/editor_x11_surface"
+            android:id="@+id/editor_dock_body"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/editor_dock_terminal_section"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <com.termux.view.TerminalView
+                        android:id="@+id/editor_terminal_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:importantForAutofill="no"
+                        android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
+                        android:scrollbars="vertical" />
+
+                    <com.termux.zerocore.editor.EditorTerminalInputView
+                        android:id="@+id/editor_terminal_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:importantForAutofill="no" />
+                </FrameLayout>
+
+                <com.termux.shared.termux.extrakeys.ExtraKeysView
+                    android:id="@+id/editor_terminal_extra_keys"
+                    style="?android:attr/buttonBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:background="#1E1E1E"
+                    android:orientation="horizontal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/editor_dock_x11_section"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <FrameLayout
+                        android:id="@+id/editor_x11_surface"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <LinearLayout
+                        android:id="@+id/editor_x11_setup_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/editor_x11_setup_message"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lineSpacingExtra="3dp"
+                            android:text="@string/editor_x11_internal_required"
+                            android:textColor="#B0B0B0"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/editor_x11_setup_action"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/shape_editor_bottom_setup_button"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:minWidth="120dp"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:text="@string/editor_x11_setup_open_settings"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <com.termux.shared.termux.extrakeys.ExtraKeysView
+                    android:id="@+id/editor_vnc_extra_keys"
+                    style="?android:attr/buttonBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:background="#1E1E1E"
+                    android:orientation="horizontal" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -1022,5 +1104,16 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginBottom="8dp" />
     </FrameLayout>
+
+    <include
+        android:id="@+id/editor_ai_floating_bubble"
+        layout="@layout/view_editor_ai_floating_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="6dp"
+        android:elevation="24dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -1,17 +1,28 @@
 package com.termux.zerocore.settings
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.dialog.KeyWordFunDialog
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.XXPermissions
+import com.termux.zerocore.aidebug.ZtAiDebugManager
+import com.termux.zerocore.aidebug.ZtAiDebugMatchCodeHelper
+import com.termux.zerocore.aidebug.ZtAiDebugPermissionHelper
 import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.FileHttpUtils.Companion.get
@@ -58,7 +69,17 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
     private val editorWordWrapSwitch by lazy {findViewById<SwitchCompat>(R.id.editor_word_wrap_switch)}
     private val editorWordWrapLl by lazy {findViewById<LinearLayout>(R.id.editor_word_wrap_ll)}
 
+    private val ztAiDebugSwitch by lazy { findViewById<SwitchCompat>(R.id.zt_ai_debug_switch) }
+    private val ztAiDebugLl by lazy { findViewById<LinearLayout>(R.id.zt_ai_debug_ll) }
+    private val ztAiDebugDetailCv by lazy { findViewById<CardView>(R.id.zt_ai_debug_detail_cv) }
+    private val ztAiDebugMatchCodeValue by lazy { findViewById<TextView>(R.id.zt_ai_debug_match_code_value) }
+    private val ztAiDebugMatchCodeReveal by lazy { findViewById<ImageButton>(R.id.zt_ai_debug_match_code_reveal) }
+    private val ztAiDebugRootSwitch by lazy { findViewById<SwitchCompat>(R.id.zt_ai_debug_root_switch) }
+    private val ztAiDebugRootLl by lazy { findViewById<LinearLayout>(R.id.zt_ai_debug_root_ll) }
 
+    private var aiDebugSwitchUpdating = false
+    private var aiDebugRootSwitchUpdating = false
+    private var aiDebugMatchCodeRevealed = false
     private val mSettingsKeywordFunCardViewLayout by lazy {findViewById<CardView>(R.id.settings_keyword_fun_card)}
     private val mExperimentalFeature by lazy {findViewById<CardView>(R.id.experimental_feature)}
     private val mSettingsKeywordFunTextView by lazy {findViewById<TextView>(R.id.settings_keyword_fun_text_summary)}
@@ -87,11 +108,194 @@ class ZeroTermuxSettingsActivity : BaseTitleActivity() {
         setSwitchStatus(foldMenuCloseSwitch, foldMenuCloseLl)
         setSwitchStatus(mainMenuConfigCloseSwitch, mainMenuConfigCloseLl)
 setSwitchStatus(editorWordWrapSwitch, editorWordWrapLl)
+        initAiDebugSwitch()
+    }
+
+    private fun initAiDebugSwitch() {
+        ztAiDebugLl.setOnClickListener {
+            if (!aiDebugSwitchUpdating) {
+                ztAiDebugSwitch.isChecked = !ztAiDebugSwitch.isChecked
+            }
+        }
+        ztAiDebugSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (aiDebugSwitchUpdating) return@setOnCheckedChangeListener
+            if (isChecked) {
+                showAiDebugDisclaimer { setAiDebugEnabled(true) }
+            } else {
+                setAiDebugEnabled(false)
+            }
+        }
+        ztAiDebugMatchCodeReveal.setOnClickListener {
+            if (aiDebugMatchCodeRevealed) {
+                aiDebugMatchCodeRevealed = false
+                refreshAiDebugMatchCodeDisplay()
+                return@setOnClickListener
+            }
+            showMatchCodeRevealDialog()
+        }
+        initAiDebugRootSwitch()
+    }
+
+    private fun initAiDebugRootSwitch() {
+        ztAiDebugRootLl.setOnClickListener {
+            if (!aiDebugRootSwitchUpdating) {
+                ztAiDebugRootSwitch.isChecked = !ztAiDebugRootSwitch.isChecked
+            }
+        }
+        ztAiDebugRootSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (aiDebugRootSwitchUpdating) return@setOnCheckedChangeListener
+            if (isChecked) {
+                showAiDebugRootDisclaimer { setAiDebugRootEnabled(true) }
+            } else {
+                setAiDebugRootEnabled(false)
+            }
+        }
+    }
+
+    private fun showAiDebugRootDisclaimer(onConfirm: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.zt_ai_debug_root_disclaimer_title)
+            .setMessage(R.string.zt_ai_debug_root_disclaimer_message)
+            .setPositiveButton(R.string.zt_workstation_confirm_enable) { _, _ -> onConfirm() }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                aiDebugRootSwitchUpdating = true
+                ztAiDebugRootSwitch.isChecked = false
+                aiDebugRootSwitchUpdating = false
+            }
+            .setOnCancelListener {
+                aiDebugRootSwitchUpdating = true
+                ztAiDebugRootSwitch.isChecked = false
+                aiDebugRootSwitchUpdating = false
+            }
+            .show()
+    }
+
+    private fun setAiDebugRootEnabled(enabled: Boolean) {
+        val bean = UserSetManage.get().getZTUserBean()
+        bean.isZtAiDebugRootEnabled = enabled
+        UserSetManage.get().setZTUserBean(bean)
+        aiDebugRootSwitchUpdating = true
+        ztAiDebugRootSwitch.isChecked = enabled
+        aiDebugRootSwitchUpdating = false
+    }
+
+    private fun showMatchCodeRevealDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.zt_ai_debug_match_code_dialog_title)
+            .setMessage(R.string.zt_ai_debug_match_code_dialog_message)
+            .setPositiveButton(R.string.confirm) { _, _ ->
+                aiDebugMatchCodeRevealed = true
+                refreshAiDebugMatchCodeDisplay()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun refreshAiDebugDetailVisibility() {
+        val enabled = UserSetManage.get().getZTUserBean().isZtAiDebugEnabled
+        ztAiDebugDetailCv.visibility = if (enabled) View.VISIBLE else View.GONE
+        if (!enabled) {
+            aiDebugMatchCodeRevealed = false
+        }
+        refreshAiDebugMatchCodeDisplay()
+    }
+
+    private fun refreshAiDebugMatchCodeDisplay() {
+        if (!UserSetManage.get().getZTUserBean().isZtAiDebugEnabled) {
+            ztAiDebugMatchCodeValue.text = getString(R.string.zt_ai_debug_match_code_hidden)
+            ztAiDebugMatchCodeReveal.setImageResource(android.R.drawable.ic_menu_view)
+            return
+        }
+        ZtAiDebugMatchCodeHelper.ensureCode()
+        ztAiDebugMatchCodeValue.text = if (aiDebugMatchCodeRevealed) {
+            ZtAiDebugMatchCodeHelper.getStoredCode() ?: ZtAiDebugMatchCodeHelper.MASKED_DISPLAY
+        } else {
+            ZtAiDebugMatchCodeHelper.MASKED_DISPLAY
+        }
+        ztAiDebugMatchCodeReveal.setImageResource(
+            if (aiDebugMatchCodeRevealed) android.R.drawable.ic_menu_close_clear_cancel
+            else android.R.drawable.ic_menu_view
+        )
+    }
+
+    private fun showAiDebugDisclaimer(onConfirm: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.zt_ai_debug_disclaimer_title)
+            .setMessage(R.string.zt_ai_debug_disclaimer_message)
+            .setPositiveButton(R.string.zt_workstation_confirm_enable) { _, _ -> onConfirm() }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                aiDebugSwitchUpdating = true
+                ztAiDebugSwitch.isChecked = false
+                aiDebugSwitchUpdating = false
+            }
+            .setOnCancelListener {
+                aiDebugSwitchUpdating = true
+                ztAiDebugSwitch.isChecked = false
+                aiDebugSwitchUpdating = false
+            }
+            .show()
+    }
+
+    private fun setAiDebugEnabled(enabled: Boolean) {
+        val bean = UserSetManage.get().getZTUserBean()
+        bean.isZtAiDebugEnabled = enabled
+        UserSetManage.get().setZTUserBean(bean)
+        aiDebugSwitchUpdating = true
+        ztAiDebugSwitch.isChecked = enabled
+        aiDebugSwitchUpdating = false
+        if (enabled) {
+            ZtAiDebugMatchCodeHelper.rotateCode()
+            aiDebugMatchCodeRevealed = false
+            refreshAiDebugDetailVisibility()
+            requestAiDebugPermissions {
+                ZtAiDebugManager.start(this)
+            }
+        } else {
+            ZtAiDebugMatchCodeHelper.clearCode()
+            aiDebugMatchCodeRevealed = false
+            setAiDebugRootEnabled(false)
+            refreshAiDebugDetailVisibility()
+            ZtAiDebugManager.stop(this)
+        }
+    }
+
+    private fun requestAiDebugPermissions(onFinished: () -> Unit) {
+        requestPostNotificationsIfNeeded()
+        XXPermissions.with(this)
+            .permission(*ZtAiDebugPermissionHelper.allPermissions())
+            .request(object : OnPermissionCallback {
+                override fun onGranted(permissions: MutableList<String>, allGranted: Boolean) {
+                    onFinished()
+                }
+
+                override fun onDenied(permissions: MutableList<String>, doNotAskAgain: Boolean) {
+                    onFinished()
+                }
+            })
+    }
+
+    private fun requestPostNotificationsIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            REQ_AI_DEBUG_NOTIFICATION
+        )
+    }
+
+    companion object {
+        private const val REQ_AI_DEBUG_NOTIFICATION = 19998
     }
 
     override fun onResume() {
         super.onResume()
         refreshWorkstationStatus()
+        refreshAiDebugDetailVisibility()
     }
 
     private fun refreshWorkstationStatus() {
@@ -118,6 +322,13 @@ setSwitchStatus(editorWordWrapSwitch, editorWordWrapLl)
         foldMenuCloseSwitch.isChecked = ztUserBean.isCloseFoldMenu
         mainMenuConfigCloseSwitch.isChecked = ztUserBean.isDisableMainConfigMenu
         editorWordWrapSwitch.isChecked = ztUserBean.isEditorWordWrap
+        aiDebugSwitchUpdating = true
+        ztAiDebugSwitch.isChecked = ztUserBean.isZtAiDebugEnabled
+        aiDebugSwitchUpdating = false
+        aiDebugRootSwitchUpdating = true
+        ztAiDebugRootSwitch.isChecked = ztUserBean.isZtAiDebugRootEnabled
+        aiDebugRootSwitchUpdating = false
+        refreshAiDebugDetailVisibility()
         mSettingsKeywordFunTextView.text =
             "${UUtils.getString(R.string.settings_keyword_summary1)}: " +
                 "${KeyWordFunDialog.getDoubleClickString(ztUserBean.doubleClickFun)}\n" +

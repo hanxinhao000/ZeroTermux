@@ -86,6 +86,14 @@
                 </LinearLayout>
             </ScrollView>
 
+            <include
+                android:id="@+id/editor_ai_panel_stop_bar"
+                layout="@layout/view_ai_agent_stop_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

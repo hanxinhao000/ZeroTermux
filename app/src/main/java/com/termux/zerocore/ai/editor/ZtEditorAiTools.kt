@@ -102,6 +102,25 @@ object ZtEditorAiTools {
             "List files currently open in editor tabs and which one is active.",
             JSONObject().put("type", "object").put("properties", JSONObject()).put("required", JSONArray())
         ))
+        tools.put(tool(
+            "run_build_script",
+            "Same as the editor Run button: ensure build.sh, boot embedded GUI VNC (Xvfb DISPLAY=:99) if needed, then execute ./build.sh in the project directory. Prefer this over raw send_terminal_command for GUI/windowed programs (Java Swing/AWT, etc.).",
+            JSONObject().put("type", "object").put("properties", JSONObject()).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "switch_editor_dock_tab",
+            "Switch the editor bottom dock tab. Use tab=gui to show the embedded VNC viewer after a GUI app starts; use tab=terminal for compile logs.",
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject().put(
+                    "tab",
+                    JSONObject()
+                        .put("type", "string")
+                        .put("description", "gui or terminal")
+                        .put("enum", JSONArray().put("gui").put("terminal"))
+                )
+            ).put("required", JSONArray().put("tab"))
+        ))
         addTerminalTools(tools)
         return tools
     }

@@ -344,6 +344,33 @@ button, .upload-btn {
   color: #888;
   padding: 4px 2px;
 }
+.fb-upload-progress {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.fb-upload-progress.hidden { display: none; }
+.fb-upload-progress-track {
+  height: 8px;
+  background: #2b2b2b;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.fb-upload-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4caf50, #66bb6a);
+  border-radius: 4px;
+  transition: width 0.15s ease;
+}
+.fb-upload-progress-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #bbb;
+  word-break: break-all;
+}
 .fb-context-menu {
   position: fixed;
   z-index: 1200;

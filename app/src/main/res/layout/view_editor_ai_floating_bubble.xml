@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/editor_ai_floating_bubble_card"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/color_ai_panel_bg"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="14dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:id="@+id/editor_ai_floating_bubble_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:minWidth="44dp"
+            android:paddingVertical="4dp"
+            android:text="@string/zt_editor_ai_running_bubble"
+            android:textColor="@color/color_ffffff"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="4dp"
+            android:background="#44FFFFFF" />
+
+        <TextView
+            android:id="@+id/editor_ai_floating_bubble_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_ai_agent_stop_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:minWidth="44dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="@string/zt_ai_agent_stop"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

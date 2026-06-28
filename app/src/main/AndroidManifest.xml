@@ -429,6 +429,10 @@
             android:exported="false"
             android:foregroundServiceType="camera|dataSync" />
         <service
+            android:name=".zerocore.aidebug.ZtAiDebugService"
+            android:exported="false"
+            android:foregroundServiceType="camera|dataSync" />
+        <service
             android:name=".zerocore.ftp.new_ftp.services.FtpService"
             android:exported="true" />
         <service

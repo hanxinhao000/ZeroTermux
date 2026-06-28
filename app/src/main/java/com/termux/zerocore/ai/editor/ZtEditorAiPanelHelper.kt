@@ -23,6 +23,7 @@ import kotlin.math.abs
 class ZtEditorAiPanelHelper(
     private val overlay: View,
     panelRoot: View,
+    private val floatingBubble: View?,
     private val host: ZtEditorAiHost,
     private val applyPanelHeight: (() -> Unit)? = null
 ) {
@@ -35,12 +36,15 @@ class ZtEditorAiPanelHelper(
     private val scrollView: ScrollView = panelRoot.findViewById(R.id.editor_ai_panel_scroll)
     private val input: EditText = panelRoot.findViewById(R.id.editor_ai_panel_input)
     private val sendButton: TextView = panelRoot.findViewById(R.id.editor_ai_panel_send)
+    private val panelStopBar: View? = panelRoot.findViewById(R.id.editor_ai_panel_stop_bar)
 
     private val conversationHistory = ZtEditorAiChatStore.load()
     private var chatClient: ZtAgentAiChatClient? = null
     private var agentRunner: ZtEditorAiAgentRunner? = null
     private var isSending = false
     private var cancelled = false
+    /** 面板是否处于展开状态（overlay 可见且动画结束）。 */
+    private var isPanelShown = false
     private var pendingAssistantRow: View? = null
 
     private var dragStartRawX = 0f
@@ -58,10 +62,10 @@ class ZtEditorAiPanelHelper(
     init {
         panelCard.isFocusable = false
         panelCard.isFocusableInTouchMode = false
-        panelRoot.findViewById<View>(R.id.editor_ai_panel_reset).setOnClickListener {
+        resetButton.setOnClickListener {
             ZtEditorAiResetHelper.showResetConfirmDialog(panelCard.context)
         }
-        panelRoot.findViewById<View>(R.id.editor_ai_panel_close).setOnClickListener { hide() }
+        closeButton.setOnClickListener { dismissPanel() }
         sendButton.setOnClickListener { onSendClicked() }
         input.isFocusableInTouchMode = true
         input.setOnClickListener { showInputKeyboard() }
@@ -74,13 +78,64 @@ class ZtEditorAiPanelHelper(
             }
         }
         input.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && isVisible()) {
+            if (hasFocus && isPanelShown) {
                 scrollToBottom()
             }
         }
         setupDrag()
+        setupFloatingBubble()
+        bindStopBar(panelStopBar)
         restoreConversationUi()
         ZtEditorAiResetHelper.registerUiRefreshCallback { clearUiAfterReset() }
+        updateRunningIndicators()
+    }
+
+    private fun bindStopBar(bar: View?) {
+        bar ?: return
+        bar.findViewById<View>(R.id.ai_agent_stop_button)?.setOnClickListener {
+            stopAgentExecution()
+        }
+        bar.findViewById<View>(R.id.ai_agent_stop_bar_label)?.setOnClickListener {
+            // 面板内仅展示状态，点击标签无操作
+        }
+    }
+
+    private fun setupFloatingBubble() {
+        val bubble = floatingBubble ?: return
+        bubble.findViewById<View>(R.id.editor_ai_floating_bubble_open)?.setOnClickListener {
+            show()
+        }
+        bubble.findViewById<View>(R.id.editor_ai_floating_bubble_stop)?.setOnClickListener {
+            stopAgentExecution()
+        }
+    }
+
+    /** 打断 AI：停止请求、中断终端、关闭悬浮窗。 */
+    fun stopAgentExecution() {
+        if (!isSending) {
+            hideFloatingBubble()
+            updateRunningIndicators()
+            return
+        }
+        cancelled = true
+        chatClient?.cancel()
+        agentRunner?.cancel()
+        sendTerminalInterrupt()
+        setSending(false)
+        pendingAssistantRow?.findViewById<TextView>(R.id.agent_message_content)?.let { content ->
+            renderMarkdown(content, panelCard.context.getString(R.string.zt_ai_agent_stopped))
+        }
+        pendingAssistantRow = null
+        hideFloatingBubble()
+        updateRunningIndicators()
+    }
+
+    private fun sendTerminalInterrupt() {
+        if (!host.isTerminalAvailable()) return
+        try {
+            host.sendTerminalKey("ctrl_c")
+        } catch (_: Exception) {
+        }
     }
 
     private fun clearUiAfterReset() {
@@ -94,6 +149,7 @@ class ZtEditorAiPanelHelper(
         messagesContainer.visibility = View.GONE
         input.setText("")
         setSending(false)
+        hideFloatingBubble()
         scrollToBottom()
     }
 
@@ -143,33 +199,55 @@ class ZtEditorAiPanelHelper(
     }
 
     fun toggle() {
-        if (isVisible()) hide() else show()
+        if (isPanelShown) {
+            dismissPanel()
+        } else {
+            show()
+        }
     }
 
-    fun isVisible(): Boolean = overlay.visibility == View.VISIBLE
+    fun isVisible(): Boolean = isPanelShown && overlay.visibility == View.VISIBLE
 
-    fun hide() {
-        if (!isVisible()) return
+    fun isRunningInBackground(): Boolean = isSending && !isPanelShown
+
+    /** 收起面板；若 AI 仍在运行则显示侧边悬浮窗，不终止任务。 */
+    fun dismissPanel() {
+        if (!isPanelShown) return
         hideInputKeyboard()
         host.restoreEditorInputAfterAiPanel()
-        cancelled = true
-        chatClient?.cancel()
-        agentRunner?.cancel()
-        setSending(false)
-        pendingAssistantRow = null
-        overlay.animate().alpha(0f).setDuration(180).withEndAction {
-            overlay.visibility = View.GONE
-            overlay.alpha = 1f
-        }.start()
-        panelCard.animate()
-            .translationY(panelCard.height.toFloat())
-            .setDuration(220)
-            .start()
+        if (!isSending) {
+            pendingAssistantRow = null
+        }
+        animatePanelAway()
+    }
+
+    /** 强制停止 AI 并关闭面板与悬浮窗（Activity 销毁等场景）。 */
+    fun hide() {
+        hideInputKeyboard()
+        host.restoreEditorInputAfterAiPanel()
+        if (isSending) {
+            stopAgentExecution()
+        } else {
+            pendingAssistantRow = null
+            hideFloatingBubble()
+        }
+        if (isPanelShown) {
+            animatePanelAway()
+        } else {
+            updateRunningIndicators()
+        }
     }
 
     fun show() {
-        if (isVisible()) return
+        if (isPanelShown && overlay.visibility == View.VISIBLE) {
+            updateRunningIndicators()
+            scrollToBottom()
+            return
+        }
+        hideFloatingBubble()
         overlay.visibility = View.VISIBLE
+        isPanelShown = true
+        updateRunningIndicators()
         overlay.alpha = 0f
         overlay.requestLayout()
         panelCard.post {
@@ -190,6 +268,61 @@ class ZtEditorAiPanelHelper(
             .setInterpolator(DecelerateInterpolator())
             .withEndAction { scrollToBottom() }
             .start()
+    }
+
+    private fun animatePanelAway() {
+        panelCard.animate().cancel()
+        overlay.animate().cancel()
+        overlay.animate().alpha(0f).setDuration(180).withEndAction {
+            finalizePanelHidden()
+        }.start()
+        panelCard.animate()
+            .translationY(panelCard.height.toFloat())
+            .setDuration(220)
+            .start()
+    }
+
+    private fun finalizePanelHidden() {
+        overlay.visibility = View.GONE
+        overlay.alpha = 1f
+        isPanelShown = false
+        updateRunningIndicators()
+    }
+
+    private fun updateRunningIndicators() {
+        val showPanelBar = isSending && isPanelShown
+        val showBubble = isSending && !isPanelShown
+        panelStopBar?.visibility = if (showPanelBar) View.VISIBLE else View.GONE
+        if (showBubble) {
+            showFloatingBubble()
+        } else {
+            hideFloatingBubble()
+        }
+    }
+
+    private fun showFloatingBubble() {
+        val bubble = floatingBubble ?: return
+        if (bubble.visibility == View.VISIBLE) return
+        bubble.visibility = View.VISIBLE
+        bubble.alpha = 0f
+        bubble.scaleX = 0.85f
+        bubble.scaleY = 0.85f
+        bubble.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(200)
+            .start()
+    }
+
+    private fun hideFloatingBubble() {
+        val bubble = floatingBubble ?: return
+        if (bubble.visibility != View.VISIBLE) return
+        bubble.animate().cancel()
+        bubble.visibility = View.GONE
+        bubble.alpha = 1f
+        bubble.scaleX = 1f
+        bubble.scaleY = 1f
     }
 
     fun destroy() {
@@ -360,6 +493,7 @@ class ZtEditorAiPanelHelper(
         sendButton.isEnabled = !sending
         sendButton.alpha = if (sending) 0.5f else 1f
         input.isEnabled = !sending
+        updateRunningIndicators()
     }
 
     private fun hideInputKeyboard() {
@@ -370,14 +504,14 @@ class ZtEditorAiPanelHelper(
     }
 
     private fun showInputKeyboard() {
-        if (!isVisible() || !input.isEnabled) return
+        if (!isPanelShown || !input.isEnabled) return
         host.releaseEditorInputForAiPanel()
         val imm = panelCard.context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
             as InputMethodManager
         imm.hideSoftInputFromWindow(panelCard.rootView.windowToken, 0)
         input.requestFocus()
         input.postDelayed({
-            if (!isVisible()) return@postDelayed
+            if (!isPanelShown) return@postDelayed
             imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
         }, 120)
     }

@@ -48,6 +48,8 @@ object ZtEditorAiToolExecutor {
             "open_file" -> UUtils.getString(R.string.zt_editor_ai_tool_open)
             "save_current_file" -> UUtils.getString(R.string.zt_editor_ai_tool_save)
             "list_open_files" -> UUtils.getString(R.string.zt_editor_ai_tool_list)
+            "run_build_script" -> UUtils.getString(R.string.zt_editor_ai_tool_run_build)
+            "switch_editor_dock_tab" -> UUtils.getString(R.string.zt_editor_ai_tool_switch_dock)
             else -> UUtils.getString(R.string.zt_agent_ai_tool_running)
         }
     }
@@ -86,6 +88,12 @@ object ZtEditorAiToolExecutor {
             }
             "save_current_file" -> host.saveCurrentEditorFile()
             "list_open_files" -> host.listOpenEditorFiles()
+            "run_build_script" -> host.runBuildScriptForAi()
+            "switch_editor_dock_tab" -> {
+                val tab = args.optString("tab", "").trim()
+                if (tab.isEmpty()) return "Error: tab is required (gui or terminal)"
+                host.switchEditorDockTab(tab)
+            }
             else -> "Error: unknown tool `${toolCall.name}`"
         }
     }

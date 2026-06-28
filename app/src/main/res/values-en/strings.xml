@@ -1569,7 +1569,19 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_editor_ai_hint">Ask AI to write code…</string>
     <string name="zt_editor_ai_unavailable">Editor unavailable (preview mode or no text file open)</string>
     <string name="zt_editor_ai_terminal_unavailable">Editor terminal unavailable; open a Termux session on the main screen first</string>
-    <string name="zt_editor_ai_system_prompt">You are the built-in AI for the ZeroTermux code editor. You can create/open multiple files and edit the active file; you can also read/write the embedded editor terminal for build, run, and debugging.\n\nRules:\n1. For multiple files: for each file use create_file (or open_file) → read_editor → write content; do not put all code in one file.\n2. Before switching files, save_current_file then open_file the target.\n3. read_editor before edits; list_open_files for open tabs.\n4. Small edits: insert_at_cursor / replace_range; whole file: replace_all.\n5. path may be absolute or relative to the current file directory.\n6. Run button executes build.sh in the current directory (creates if missing); long-press Run opens build.sh. Put build/run logic in build.sh.\n7. Build/run: send_terminal_command for ./build.sh etc.; waits for shell prompt or confirmation (default ~10 min). If snapshot shows awaiting confirmation or [Y/n], tell the user in their language and wait before y/n; never auto-confirm.\n8. On build failure: read_terminal for errors, fix code, retry; ctrl_c to interrupt stuck commands.\n9. Explain briefly in the user\'s language; write code to the editor, do not repeat large blocks in replies.\n10. Trust tool snapshots only; do not invent file content or terminal output.</string>
+    <string name="zt_editor_ai_system_prompt">You are the built-in AI for the ZeroTermux code editor. You can create/open multiple files and edit the active file; you can also read/write the embedded editor terminal for build, run, and debugging.\n\nRules:\n1. For multiple files: for each file use create_file (or open_file) → read_editor → write content; do not put all code in one file.\n2. Before switching files, save_current_file then open_file the target.\n3. read_editor before edits; list_open_files for open tabs.\n4. Small edits: insert_at_cursor / replace_range; whole file: replace_all.\n5. path may be absolute or relative to the current file directory.\n6. Run button executes build.sh in the current directory (creates if missing); long-press Run opens build.sh. Put build/run logic in build.sh.\n7. Build/run: prefer run_build_script (same as Run button); or send_terminal_command for ./build.sh; waits for shell prompt or confirmation (default ~10 min). If snapshot shows awaiting confirmation or [Y/n], tell the user in their language and wait before y/n; never auto-confirm.\n8. On build failure: read_terminal for errors, fix code, retry; ctrl_c to interrupt stuck commands.\n9. Explain briefly in the user\'s language; write code to the editor, do not repeat large blocks in replies.\n10. Trust tool snapshots only; do not invent file content or terminal output.\n11. This editor has a built-in GUI panel (bottom dock \"GUI\" tab, embedded VNC to local Xvfb DISPLAY=:99). For windowed programs here, do NOT tell the user to install sway or use the main-screen X11 environment.\n12. For GUI programs (e.g. Java Swing/AWT): build.sh auto-runs ensure_java_gui; use run_build_script, not sway or external X11.\n13. After a GUI app starts (terminal shows GUI app started), call switch_editor_dock_tab tab=gui so the user sees the window.\n14. CLI-only builds: run_build_script or send_terminal_command ./build.sh; read_editor snapshot includes dock/GUI status.</string>
+    <string name="zt_agent_ai_gui_compile_prompt">[GUI/windowed program builds — apply only for this kind of request]\nWhen the user wants to compile or run programs with a graphical window (Java Swing/AWT, apps needing DISPLAY, etc.):\n1. Do NOT suggest installing sway, the main sidebar X11 environment, or running in an external X11 window.\n2. Use open_zerotermux_page with page_id=\"editor\" and extras {\"edit_path\":\"absolute path to project dir or source file\"} to open the code editor.\n3. Tell the user: the editor has a built-in GUI panel (embedded VNC + Xvfb DISPLAY=:99), used with Run / editor AI run_build_script to build and show the window.\n4. After opening the editor, briefly say they can tap Run or use editor AI to continue build/debug.\n5. If ZeroTermux control is disabled, say they must enable it, or open the project in the editor manually.\nFor normal terminal/config tasks, keep the existing workflow; do not redirect to the editor by mistake.</string>
+    <string name="zt_editor_ai_tool_run_build">Running build.sh…</string>
+    <string name="zt_editor_ai_tool_switch_dock">Switching dock tab…</string>
+    <string name="zt_editor_ai_build_in_progress">Error: build already in progress</string>
+    <string name="zt_editor_ai_build_unavailable">Error: program runner unavailable</string>
+    <string name="zt_editor_ai_build_no_directory">Error: cannot resolve project directory</string>
+    <string name="zt_editor_ai_build_started">run_build_script started: executing ./build.sh; use read_terminal for progress.</string>
+    <string name="zt_editor_ai_build_started_gui">run_build_script started (GUI mode): booting embedded VNC and running ./build.sh; after GUI starts use switch_editor_dock_tab tab=gui and read_terminal for progress.</string>
+    <string name="zt_editor_ai_dock_unavailable">Error: bottom dock unavailable</string>
+    <string name="zt_editor_ai_dock_switched_gui">Switched to GUI panel (embedded VNC)</string>
+    <string name="zt_editor_ai_dock_switched_terminal">Switched to terminal panel</string>
+    <string name="zt_editor_ai_dock_invalid_tab">Error: tab must be gui or terminal</string>
     <string name="zt_editor_ai_tool_read">Reading editor…</string>
     <string name="zt_editor_ai_tool_insert">Inserting text…</string>
     <string name="zt_editor_ai_tool_replace">Replacing selection…</string>
@@ -1584,6 +1596,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_editor_ai_reset_summary">Clear code editor AI history only; API settings unchanged</string>
     <string name="zt_editor_ai_reset_done">Editor AI chat reset</string>
     <string name="zt_editor_ai_reset_panel_desc">Reset editor AI chat</string>
+    <string name="zt_editor_ai_running_bubble">AI\nrunning</string>
 
     <string name="zt_usage_habits_title">Usage Habits</string>
     <string name="zt_usage_habits_content">Note (Usage habit related options can be re-customized in ZT settings)\n
@@ -1712,6 +1725,24 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="guide_zerotermux_create_toast_created">The current feature is not available in this version, so wait for the next version to be tested online</string>
 
     <string name="settings_keyword">Set double-tap function</string>
+    <string name="zt_ai_debug_title">Enable external AI debug API</string>
+    <string name="zt_ai_debug_summary">External AI debug (CRITICAL) terminal/logs/screenshot/automation/system; Root = full control</string>
+    <string name="zt_ai_debug_disclaimer_title">External AI debug — CRITICAL risk</string>
+    <string name="zt_ai_debug_disclaimer_message">When enabled, LAN AI can fully control this device via port 19998:\n\n• Read/run Termux terminal commands\n• logcat / system logs\n• Screenshot, UI tap/swipe automation\n• SMS, contacts, phone/SIM info\n• Read/write files, system status\n\n【With or without Root】A leaked match code lets AI access all data the app can reach.\n\n【Root full debug extra risk】If Root mode is also enabled, AI can run su, modify system partitions, brick the device, cause black screen, permanent data loss — irreversible.\n\nDisable when done. Continuing means you accept ALL consequences including a bricked device.</string>
+    <string name="zt_ai_debug_notification_title">External AI debug</string>
+    <string name="zt_ai_debug_notification_text">AI debug API running on port 19998</string>
+    <string name="zt_ai_debug_match_code_label">Match code</string>
+    <string name="zt_ai_debug_match_code_hidden">•••••••</string>
+    <string name="zt_ai_debug_match_code_warning">【CRITICAL】Match code grants AI full control of accessible data. With Root mode, AI may brick the device or cause black screen. Never share with untrusted parties.</string>
+    <string name="zt_ai_debug_match_code_reveal">Show match code</string>
+    <string name="zt_ai_debug_match_code_dialog_title">CRITICAL — match code</string>
+    <string name="zt_ai_debug_match_code_dialog_message">CRITICAL: With or without Root, the match code lets LAN AI fully control all data this app can access.\n\nIf Root full debug is enabled, AI can run su, modify the system, brick the phone, or cause unrecoverable black screen.\n\nDo not share unless you fully understand this.\n\nShow the match code now?</string>
+    <string name="zt_ai_debug_port_note">Default port: 19998 (LAN only; append ?code= to every request)</string>
+    <string name="zt_ai_debug_root_title">Root full debug</string>
+    <string name="zt_ai_debug_root_summary">su/ADB/system control/UI automation (rooted devices only, CRITICAL)</string>
+    <string name="zt_ai_debug_root_disclaimer_title">Root full debug — fatal risk</string>
+    <string name="zt_ai_debug_root_disclaimer_message">When enabled, AI gets Root-equivalent access via su:\n\n• Arbitrary system commands (rm, dd, etc.)\n• Modify /system, /data, any partition\n• UI automation (tap/swipe/type)\n• Network ADB, read/write any path\n• dumpsys, dmesg, processes, packages\n\nMay cause: permanent brick, black screen, total data loss, account compromise.\n\nIrreversible. Use only on dedicated root test devices. Disable when done.\n\nAccept ALL consequences including brick?</string>
+    <string name="zt_ai_debug_root_warning">【Root warning】AI gets Root-level control; may brick device or cause permanent black screen. The match code above is already CRITICAL with or without Root.</string>
     <string name="settings_keyword_summary">Set double-tap terminal function, choose Custom command, Keyboard, Disable</string>
     <string name="settings_keyword_summary1">Current selection</string>
     <string name="settings_keyword_item1">Keyboard</string>
@@ -1764,16 +1795,46 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="content_ssh_name">SSH</string>
     <string name="deepseek_input_key_error_info_403">Possible issue:\n\nHTTP 403, unknown error</string>
     <string name="editor_build_script_long_press">Long-press the Run button to edit build.sh</string>
+    <string name="editor_build_script_header_note">Editable manually or by AI</string>
+    <string name="editor_build_script_add_commands">Add build/run commands in build.sh</string>
+    <string name="editor_build_script_edit_for_file">Edit build.sh to build/run %1$s</string>
+    <string name="editor_build_script_current_file">Current file: %1$s</string>
+    <string name="editor_build_script_install_java">[ZeroTermux Editor] Installing OpenJDK…</string>
+    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] Failed to install OpenJDK</string>
+    <string name="editor_build_script_install_c">[ZeroTermux Editor] Installing C compiler (clang)…</string>
+    <string name="editor_build_script_install_c_failed">[ZeroTermux Editor] Failed to install C compiler</string>
+    <string name="editor_build_script_install_python">[ZeroTermux Editor] Installing Python…</string>
+    <string name="editor_build_script_install_python_failed">[ZeroTermux Editor] Failed to install Python</string>
+    <string name="editor_build_script_install_php">[ZeroTermux Editor] Installing PHP &amp; Composer…</string>
+    <string name="editor_build_script_install_php_failed">[ZeroTermux Editor] Failed to install PHP</string>
+    <string name="editor_build_script_install_node">[ZeroTermux Editor] Installing Node.js &amp; npm…</string>
+    <string name="editor_build_script_install_node_failed">[ZeroTermux Editor] Failed to install Node.js</string>
+    <string name="editor_build_script_running">[ZeroTermux Editor] Running %1$s</string>
+    <string name="editor_build_script_install_gui_fonts">[ZeroTermux Editor] Installing GUI fonts…</string>
+    <string name="editor_build_script_display_not_ready">[ZeroTermux Editor] DISPLAY not ready — tap Run or open the GUI panel first</string>
+    <string name="editor_build_script_gui_started">[ZeroTermux Editor] GUI app started</string>
+    <string name="editor_build_script_gui_set_visible_hint">[ZeroTermux Editor] Hint: call new Hello().setVisible(true) in main() to show the window</string>
     <string name="editor_sidebar_open_terminal">Open terminal</string>
     <string name="editor_terminal_ctrl_c">Send Ctrl+C to interrupt</string>
-    <string name="editor_x11_button">X11 window</string>
+    <string name="editor_x11_button">GUI</string>
+    <string name="editor_dock_hide">Hide panel</string>
     <string name="editor_x11_connect">Connect</string>
     <string name="editor_x11_display_env">DISPLAY</string>
     <string name="editor_x11_display_set">DISPLAY=:0 set</string>
     <string name="editor_x11_env_missing">Install the X11 environment first (main sidebar → X11 environment)</string>
     <string name="editor_x11_hide">Hide X11</string>
     <string name="editor_x11_init_failed">X11 window init failed; check whether libXlorie.so is installed</string>
+    <string name="editor_vnc_install_repo">Installing x11-repo…</string>
+    <string name="editor_vnc_install_packages">Installing Xvfb and x11vnc…</string>
+    <string name="editor_vnc_env_missing">X11 repo and VNC packages are required. Tap Retry to run pkg install x11-repo xorg-server-xvfb x11vnc.</string>
+    <string name="editor_vnc_start_failed">Failed to start the VNC debug environment. Ensure the terminal can run pkg install, then tap Retry.</string>
+    <string name="editor_vnc_retry">Retry</string>
+    <string name="editor_vnc_init_failed">VNC viewer init failed</string>
+    <string name="editor_vnc_status_connected">VNC connected</string>
+    <string name="editor_vnc_status_connecting">Connecting VNC…</string>
+    <string name="editor_vnc_status_disconnected">VNC disconnected</string>
     <string name="editor_x11_internal_required">Enable the X11 internal channel in ZeroTermux settings and restart the app</string>
+    <string name="editor_x11_setup_open_settings">Open X11 channel settings</string>
     <string name="editor_x11_maximize">Maximize X11</string>
     <string name="editor_x11_restore">Restore X11</string>
     <string name="editor_x11_status_connected">X11 connected</string>

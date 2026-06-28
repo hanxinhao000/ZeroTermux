@@ -2934,6 +2934,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 com.termux.zerocore.workstation.ZtWorkstationManager.ensureRunningForActiveSession(this);
             }
         }
+        if (ztUserBean.isZtAiDebugEnabled()) {
+            com.termux.zerocore.aidebug.ZtAiDebugManager.ensureRunningForActiveSession(this);
+        }
     }
     //@}
 

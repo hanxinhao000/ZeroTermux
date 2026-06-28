@@ -43,6 +43,10 @@ class EditorTerminalPanel(
     private var visible = false
     private var pendingCdDirectory: File? = null
     private var terminalExtraKeys: EditorTerminalExtraKeys? = null
+    private val pendingCommands = ArrayDeque<String>()
+    private var drainingCommands = false
+    /** 已通过命令切换到的目录，避免 AI 每轮快照重复 cd。 */
+    private var lastEnsuredCdPath: String? = null
 
     private val viewClient = EditorTerminalViewClient(
         activity,
@@ -53,11 +57,13 @@ class EditorTerminalPanel(
         onBlurEditor
     )
 
-    fun init(restoredVisible: Boolean, resizeHandle: View) {
+    fun init(restoredVisible: Boolean, resizeHandle: View?) {
         inputView.bindTerminalView(terminalView)
         inputView.bindViewClient(viewClient)
-        setPanelHeight(defaultPanelHeightPx())
-        setupResizeHandle(resizeHandle)
+        if (resizeHandle != null) {
+            setPanelHeight(defaultPanelHeightPx())
+            setupResizeHandle(resizeHandle)
+        }
         terminalView.setTerminalViewClient(viewClient)
         viewClient.onCreate()
         setupExtraKeys()
@@ -70,8 +76,21 @@ class EditorTerminalPanel(
         } else {
             ensureHidden()
         }
-        panelView.findViewById<View>(R.id.editor_terminal_ctrl_c)?.setOnClickListener {
-            sendControlCharacter('C'.code)
+    }
+
+    fun sendCtrlC() {
+        android.util.Log.d(LOG_TAG, "sendCtrlC")
+        ensureServiceBound()
+        terminalView.post {
+            attachCurrentSession()
+            val session = terminalView.currentSession
+            if (session != null) {
+                session.write("\u0003")
+                terminalView.onScreenUpdated()
+            } else {
+                terminalView.sendTextToTerminalCtrl("c", true)
+                terminalView.onScreenUpdated()
+            }
         }
     }
 
@@ -79,29 +98,62 @@ class EditorTerminalPanel(
         ensureServiceBound()
         terminalView.post {
             attachCurrentSession()
-            workingDirectory?.let { dir ->
-                terminalView.postDelayed({
-                    sendCdCommand(dir)
-                }, 120)
-            }
+            workingDirectory?.let { enqueueCd(it) }
         }
+    }
+
+    /** Serializes shell input so concurrent editor commands do not interleave. */
+    fun enqueueTerminalCommand(command: String) {
+        synchronized(pendingCommands) {
+            pendingCommands.addLast(command)
+        }
+        ensureServiceBound()
+        terminalView.post { drainCommandQueue() }
     }
 
     fun writeCommandHidden(command: String) {
         if (!visible) {
-            prepareBackgroundSession(null)
+            ensureServiceBound()
         }
-        terminalView.post {
-            attachCurrentSession()
-            terminalView.postDelayed({
-                val session = terminalView.currentSession
-                if (session != null) {
-                    session.write(command)
-                } else {
-                    terminalView.sendTextToTerminal(command)
-                }
-            }, 120)
+        enqueueTerminalCommand(command)
+    }
+
+    private fun drainCommandQueue() {
+        if (drainingCommands) return
+        val command = synchronized(pendingCommands) {
+            pendingCommands.removeFirstOrNull()
+        } ?: return
+        drainingCommands = true
+        attachCurrentSession()
+        val session = terminalView.currentSession
+        if (session == null) {
+            synchronized(pendingCommands) {
+                pendingCommands.addFirst(command)
+            }
+            drainingCommands = false
+            terminalView.postDelayed({ drainCommandQueue() }, COMMAND_RETRY_MS)
+            return
         }
+        session.write(command)
+        terminalView.onScreenUpdated()
+        drainingCommands = false
+        val hasMore = synchronized(pendingCommands) { pendingCommands.isNotEmpty() }
+        if (hasMore) {
+            terminalView.postDelayed({ drainCommandQueue() }, COMMAND_GAP_MS)
+        }
+    }
+
+    private fun enqueueCd(directory: File) {
+        ensureCd(directory)
+    }
+
+    /**
+     * 绑定终端会话供 AI 使用：不强制展开终端面板，且同一目录只 cd 一次。
+     */
+    fun ensureSessionForAi(workingDirectory: File? = null) {
+        ensureServiceBound()
+        attachCurrentSession()
+        workingDirectory?.let { ensureCd(it) }
     }
 
     fun ensureForAi(workingDirectory: File? = null) {
@@ -109,9 +161,19 @@ class EditorTerminalPanel(
             setVisible(true, workingDirectory)
             return
         }
-        ensureServiceBound()
-        attachCurrentSession()
-        workingDirectory?.let { sendCdCommand(it) }
+        ensureSessionForAi(workingDirectory)
+    }
+
+    fun getRecentTerminalText(): String {
+        return try {
+            if (terminalView.currentSession == null) {
+                return ""
+            }
+            terminalView.getVisibleTerminalText()
+        } catch (e: Exception) {
+            Logger.logStackTraceWithMessage(LOG_TAG, "getRecentTerminalText failed", e)
+            ""
+        }
     }
 
     fun captureAiSnapshot(maxChars: Int): String {
@@ -120,7 +182,11 @@ class EditorTerminalPanel(
             return "(terminal session not attached)"
         }
         val visible = terminalView.getVisibleTerminalText().trim()
-        val full = terminalView.getText555()?.trim().orEmpty()
+        val full = try {
+            terminalView.getText555()?.trim().orEmpty()
+        } catch (e: Exception) {
+            visible
+        }
         return ZtTerminalAiSnapshot.format(visible, full, maxChars)
     }
 
@@ -175,17 +241,6 @@ class EditorTerminalPanel(
         }
     }
 
-    private fun sendControlCharacter(letterCodePoint: Int) {
-        if (terminalView.currentSession == null) return
-        terminalView.inputCodePoint(
-            TerminalView.KEY_EVENT_SOURCE_VIRTUAL_KEYBOARD,
-            letterCodePoint,
-            true,
-            false
-        )
-        terminalView.onScreenUpdated()
-    }
-
     private fun ensureHidden() {
         visible = false
         panelView.visibility = View.GONE
@@ -194,6 +249,12 @@ class EditorTerminalPanel(
     }
 
     fun isVisible(): Boolean = visible
+
+    fun isSessionActive(): Boolean = visible
+
+    fun setContentVisible(show: Boolean) {
+        panelView.visibility = if (show) View.VISIBLE else View.GONE
+    }
 
     fun toggle(workingDirectory: File? = null) {
         if (visible) {
@@ -270,8 +331,8 @@ class EditorTerminalPanel(
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         termuxService = TermuxService.fromBinder(service ?: return)
+        attachCurrentSession()
         if (visible) {
-            attachCurrentSession()
             pendingCdDirectory?.let { scheduleCdCommand(it) }
         }
     }
@@ -322,10 +383,19 @@ class EditorTerminalPanel(
     }
 
     private fun sendCdCommand(directory: File) {
+        ensureCd(directory)
+    }
+
+    private fun ensureCd(directory: File) {
         if (!directory.isDirectory) return
-        val session = terminalView.currentSession ?: return
-        session.write("cd ${shellQuote(directory.absolutePath)}\n")
-        terminalView.onScreenUpdated()
+        val path = try {
+            directory.canonicalPath
+        } catch (_: Exception) {
+            directory.absolutePath
+        }
+        if (path == lastEnsuredCdPath) return
+        lastEnsuredCdPath = path
+        enqueueTerminalCommand("cd ${shellQuote(path)}\n")
     }
 
     private fun shellQuote(value: String): String {
@@ -445,9 +515,11 @@ class EditorTerminalPanel(
     companion object {
         private const val LOG_TAG = "EditorTerminalPanel"
         private const val DEFAULT_TERMINAL_FONT_SIZE = 14
-        private const val DEFAULT_PANEL_HEIGHT_DP = 280
+        private const val DEFAULT_PANEL_HEIGHT_DP = 240
         private const val MIN_PANEL_HEIGHT_DP = 120
         private const val MAX_PANEL_HEIGHT_RATIO = 0.7f
         private const val DEFAULT_EXTRA_KEYS_ROW_HEIGHT_DP = 38
+        private const val COMMAND_GAP_MS = 180L
+        private const val COMMAND_RETRY_MS = 300L
     }
 }

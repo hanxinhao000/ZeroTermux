@@ -11,7 +11,8 @@
     sortAsc: localStorage.getItem('zt-fb-sort-asc') !== 'false',
     search: '',
     clipboard: null,
-    loading: false
+    loading: false,
+    uploading: false
   };
 
   const TEXT_EXT = new Set([
@@ -419,20 +420,104 @@
     });
   }
 
+  function uploadFileWithProgress(file, path, onProgress) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const fd = new FormData();
+      fd.append('path', path);
+      fd.append('file', file);
+      xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable && onProgress) {
+          onProgress(e.loaded, e.total);
+        }
+      });
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+          return;
+        }
+        reject(new Error(xhr.responseText || `上传失败 (${xhr.status})`));
+      });
+      xhr.addEventListener('error', () => reject(new Error('网络错误，上传失败')));
+      xhr.addEventListener('abort', () => reject(new Error('上传已取消')));
+      xhr.open('POST', '/api/files/upload');
+      xhr.send(fd);
+    });
+  }
+
+  function setUploadProgressVisible(visible) {
+    $('fb-upload-progress').classList.toggle('hidden', !visible);
+  }
+
+  function updateUploadProgress(percent, text) {
+    const pct = Math.max(0, Math.min(100, percent));
+    $('fb-upload-progress-fill').style.width = `${pct}%`;
+    $('fb-upload-progress-text').textContent = text;
+    $('fb-status').textContent = text;
+  }
+
   async function uploadFiles(fileList) {
     const files = Array.from(fileList || []);
-    if (!files.length) return;
-    $('fb-status').textContent = `正在上传 0/${files.length}...`;
-    let done = 0;
-    for (const file of files) {
-      const fd = new FormData();
-      fd.append('path', joinPath(fbState.currentPath, file.name));
-      fd.append('file', file);
-      await fetch('/api/files/upload', { method: 'POST', body: fd });
-      done += 1;
-      $('fb-status').textContent = `正在上传 ${done}/${files.length}...`;
+    if (!files.length || fbState.uploading) return;
+
+    fbState.uploading = true;
+    setUploadProgressVisible(true);
+    updateUploadProgress(0, `准备上传 ${files.length} 个文件...`);
+
+    const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+    let completedBytes = 0;
+    let failed = 0;
+
+    try {
+      for (let index = 0; index < files.length; index += 1) {
+        const file = files[index];
+        const targetPath = joinPath(fbState.currentPath, file.name);
+        const fileLabel = `${index + 1}/${files.length} · ${file.name}`;
+
+        try {
+          await uploadFileWithProgress(file, targetPath, (loaded, total) => {
+            const fileTotal = total > 0 ? total : file.size;
+            const currentBytes = completedBytes + Math.min(loaded, fileTotal);
+            const percent = totalBytes > 0
+              ? Math.round(currentBytes * 100 / totalBytes)
+              : Math.round((index + (fileTotal > 0 ? loaded / fileTotal : 1)) * 100 / files.length);
+            updateUploadProgress(
+              percent,
+              `正在上传 ${fileLabel} · ${percent}% (${formatSize(currentBytes)} / ${formatSize(totalBytes)})`
+            );
+          });
+          completedBytes += file.size;
+          updateUploadProgress(
+            totalBytes > 0 ? Math.round(completedBytes * 100 / totalBytes) : Math.round((index + 1) * 100 / files.length),
+            `已完成 ${fileLabel}`
+          );
+        } catch (err) {
+          failed += 1;
+          updateUploadProgress(
+            totalBytes > 0 ? Math.round(completedBytes * 100 / totalBytes) : 0,
+            `上传失败: ${file.name} — ${err.message || err}`
+          );
+        }
+      }
+
+      if (failed === 0) {
+        updateUploadProgress(100, `已上传 ${files.length} 个文件`);
+      } else {
+        updateUploadProgress(
+          totalBytes > 0 ? Math.round(completedBytes * 100 / totalBytes) : 0,
+          `上传完成：成功 ${files.length - failed}，失败 ${failed}`
+        );
+      }
+      await loadFiles(fbState.currentPath);
+    } finally {
+      fbState.uploading = false;
+      window.setTimeout(() => {
+        if (!fbState.uploading) {
+          setUploadProgressVisible(false);
+          $('fb-upload-progress-fill').style.width = '0%';
+        }
+      }, failed > 0 ? 4000 : 1200);
     }
-    await loadFiles(fbState.currentPath);
   }
 
   function openPreview(item) {

@@ -1,8 +1,8 @@
 package com.termux.zerocore.editor
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
-import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -12,121 +12,142 @@ import com.termux.R
 import com.termux.shared.view.KeyboardUtils
 import com.termux.x11.MainActivity
 import com.termux.zerocore.ftp.utils.UserSetManage
+import com.termux.zerocore.settings.ZeroTermuxX11Settings
 import com.termux.zerocore.url.FileUrl
 import io.github.rosemoe.sora.widget.CodeEditor
 import java.io.File
 
 class EditorX11Panel(
     private val activity: Activity,
-    private val panelView: View,
     private val surfaceContainer: FrameLayout,
+    private val setupPanel: View,
+    private val setupMessageView: TextView,
+    private val setupActionView: TextView,
     private val statusView: TextView,
+    private val displayButton: TextView,
+    private val connectButton: TextView,
     private val maximizeButton: ImageView,
     private val codeEditor: CodeEditor?,
+    private val dockHeightController: DockHeightController,
     private val onWriteTerminal: (String) -> Unit,
     private val onEnsureTerminalVisible: () -> Unit,
     private val onLayoutChanged: () -> Unit,
-    private val onVisibilityChanged: (Boolean) -> Unit
+    private val onTabActiveChanged: (Boolean) -> Unit,
+    private val onBarActionsChanged: () -> Unit
 ) {
 
-    private var mainActivity: MainActivity? = null
-    private var visible = false
-    private var maximized = false
-    private var dockedHeightPx = 0
+    interface DockHeightController {
+        fun saveDockedHeight()
+        fun restoreDockedHeight()
+    }
 
-    fun init(resizeHandle: View) {
-        panelView.findViewById<View>(R.id.editor_x11_hide)?.setOnClickListener {
-            setVisible(false)
+    private enum class SetupReason {
+        INTERNAL_REQUIRED,
+        ENV_MISSING
+    }
+
+    private var mainActivity: MainActivity? = null
+    private var tabActive = false
+    private var maximized = false
+    private var setupMode = false
+
+    fun init() {
+        connectButton.setOnClickListener { connectX11() }
+        displayButton.setOnClickListener { exportDisplay() }
+        maximizeButton.setOnClickListener { toggleMaximized() }
+        setupActionView.setOnClickListener {
+            activity.startActivity(Intent(activity, ZeroTermuxX11Settings::class.java))
         }
-        panelView.findViewById<View>(R.id.editor_x11_connect)?.setOnClickListener {
-            connectX11()
-        }
-        panelView.findViewById<View>(R.id.editor_x11_display)?.setOnClickListener {
-            exportDisplay()
-        }
-        maximizeButton.setOnClickListener {
-            toggleMaximized()
-        }
-        dockedHeightPx = defaultPanelHeightPx()
-        setPanelHeight(dockedHeightPx)
-        setupResizeHandle(resizeHandle)
         updateStatus()
         updateMaximizeButton()
     }
 
-    fun isAvailable(): Boolean {
-        return UserSetManage.get().getZTUserBean().isInternalPassage &&
-            File(FileUrl.aislePathAPK).exists()
-    }
+    fun isSetupMode(): Boolean = setupMode
 
-    fun toggle() {
-        if (visible) {
-            setVisible(false)
-        } else {
-            setVisible(true)
-        }
-    }
+    fun isAvailable(): Boolean = resolveSetupReason() == null
 
-    fun setVisible(show: Boolean) {
-        if (visible == show) return
-        if (show) {
-            if (!UserSetManage.get().getZTUserBean().isInternalPassage) {
-                UUtils.showMsg(activity.getString(R.string.editor_x11_internal_required))
-                return
-            }
-            if (!File(FileUrl.aislePathAPK).exists()) {
-                UUtils.showMsg(activity.getString(R.string.editor_x11_env_missing))
-                return
-            }
+    fun onTabShown() {
+        if (tabActive) return
+        tabActive = true
+        blurEditor()
+        onTabActiveChanged(true)
+        refreshPanelMode()
+        if (setupMode) {
+            onLayoutChanged()
+            return
         }
-        visible = show
-        if (show) {
-            blurEditor()
-            panelView.visibility = View.VISIBLE
-            if (!ensureEmbedded()) {
-                panelView.visibility = View.GONE
-                visible = false
-                restoreEditor()
-                UUtils.showMsg(activity.getString(R.string.editor_x11_init_failed))
-                return
-            }
-            onVisibilityChanged(true)
-            onLayoutChanged()
-            mainActivity?.init()
-            mainActivity?.onResume()
-            updateStatus()
-            if (!MainActivity.isConnected()) {
-                connectX11()
-            } else {
-                exportDisplay()
-            }
-        } else {
-            if (maximized) {
-                maximized = false
-                updateMaximizeButton()
-            }
-            panelView.visibility = View.GONE
-            onVisibilityChanged(false)
-            onLayoutChanged()
-            mainActivity?.onPause()
+        if (!ensureEmbedded()) {
+            tabActive = false
+            onTabActiveChanged(false)
             restoreEditor()
+            UUtils.showMsg(activity.getString(R.string.editor_x11_init_failed))
+            return
+        }
+        onLayoutChanged()
+        mainActivity?.init()
+        mainActivity?.onResume()
+        updateStatus()
+        if (!MainActivity.isConnected()) {
+            connectX11()
+        } else {
+            exportDisplay()
         }
     }
 
-    fun isVisible(): Boolean = visible
+    fun onTabHidden() {
+        if (!tabActive) return
+        tabActive = false
+        if (maximized) {
+            maximized = false
+            updateMaximizeButton()
+        }
+        onTabActiveChanged(false)
+        onLayoutChanged()
+        mainActivity?.onPause()
+        restoreEditor()
+    }
 
-    fun isMaximized(): Boolean = maximized
+    fun onDockHidden() {
+        onTabHidden()
+        setupMode = false
+    }
+
+    fun isTabActive(): Boolean = tabActive
+
+    fun isMaximized(): Boolean = maximized && !setupMode
 
     fun restoreFromMaximized(): Boolean {
-        if (!maximized) return false
+        if (!maximized || setupMode) return false
         setMaximized(false)
         return true
     }
 
     fun onResume() {
-        if (!visible) return
-        mainActivity?.onResume()
-        updateStatus()
+        if (!tabActive) return
+        if (setupMode && resolveSetupReason() == null) {
+            refreshPanelMode()
+            if (!setupMode) {
+                if (!ensureEmbedded()) {
+                    showSetupMode(SetupReason.ENV_MISSING)
+                    UUtils.showMsg(activity.getString(R.string.editor_x11_init_failed))
+                    return
+                }
+                onLayoutChanged()
+                mainActivity?.init()
+                mainActivity?.onResume()
+                updateStatus()
+                if (!MainActivity.isConnected()) {
+                    connectX11()
+                } else {
+                    exportDisplay()
+                }
+            }
+            return
+        }
+        if (!setupMode) {
+            mainActivity?.onResume()
+            updateStatus()
+        }
     }
 
     fun onPause() {
@@ -143,34 +164,76 @@ class EditorX11Panel(
     }
 
     fun onWindowFocusChanged(hasFocus: Boolean) {
-        if (!visible) return
+        if (!tabActive || setupMode) return
         mainActivity?.onWindowFocusChanged(hasFocus)
     }
 
     fun onHostLayoutChanged() {
-        if (!visible || maximized) return
-        panelView.post {
+        if (!tabActive || maximized || setupMode) return
+        surfaceContainer.post {
             mainActivity?.requestLayout()
         }
     }
 
+    private fun refreshPanelMode() {
+        val reason = resolveSetupReason()
+        if (reason == null) {
+            showOperationalMode()
+            return
+        }
+        showSetupMode(reason)
+    }
+
+    private fun showSetupMode(reason: SetupReason) {
+        setupMode = true
+        maximized = false
+        setupPanel.visibility = View.VISIBLE
+        surfaceContainer.visibility = View.GONE
+        setupMessageView.text = activity.getString(
+            when (reason) {
+                SetupReason.INTERNAL_REQUIRED -> R.string.editor_x11_internal_required
+                SetupReason.ENV_MISSING -> R.string.editor_x11_env_missing
+            }
+        )
+        setupActionView.text = activity.getString(R.string.editor_x11_setup_open_settings)
+        updateMaximizeButton()
+        onBarActionsChanged()
+    }
+
+    private fun showOperationalMode() {
+        setupMode = false
+        setupPanel.visibility = View.GONE
+        surfaceContainer.visibility = View.VISIBLE
+        updateMaximizeButton()
+        onBarActionsChanged()
+    }
+
+    private fun resolveSetupReason(): SetupReason? {
+        if (!UserSetManage.get().getZTUserBean().isInternalPassage) {
+            return SetupReason.INTERNAL_REQUIRED
+        }
+        if (!File(FileUrl.aislePathAPK).exists()) {
+            return SetupReason.ENV_MISSING
+        }
+        return null
+    }
+
     private fun toggleMaximized() {
+        if (setupMode) return
         setMaximized(!maximized)
     }
 
     private fun setMaximized(maximize: Boolean) {
-        if (maximized == maximize) return
+        if (setupMode || maximized == maximize) return
         maximized = maximize
-        panelView.findViewById<View>(R.id.editor_x11_resize_handle)?.visibility =
-            if (maximize) View.GONE else View.VISIBLE
         if (maximize) {
-            dockedHeightPx = panelView.layoutParams.height.coerceAtLeast(minPanelHeightPx())
+            dockHeightController.saveDockedHeight()
         } else {
-            setPanelHeight(dockedHeightPx.coerceAtLeast(minPanelHeightPx()))
+            dockHeightController.restoreDockedHeight()
         }
         updateMaximizeButton()
         onLayoutChanged()
-        panelView.post {
+        surfaceContainer.post {
             mainActivity?.requestLayout()
             mainActivity?.onResume()
         }
@@ -197,7 +260,7 @@ class EditorX11Panel(
                 append("fi\n")
             }
         )
-        panelView.postDelayed({
+        surfaceContainer.postDelayed({
             exportDisplay()
             updateStatus()
             mainActivity?.onResume()
@@ -231,6 +294,7 @@ class EditorX11Panel(
     }
 
     private fun updateStatus() {
+        if (setupMode) return
         val connected = MainActivity.isConnected()
         statusView.text = activity.getString(
             if (connected) R.string.editor_x11_status_connected else R.string.editor_x11_status_disconnected
@@ -238,50 +302,6 @@ class EditorX11Panel(
         statusView.setTextColor(
             if (connected) 0xFF4CAF50.toInt() else 0xFFFF8A80.toInt()
         )
-    }
-
-    private fun setupResizeHandle(handle: View) {
-        var startY = 0f
-        var startHeight = 0
-        handle.setOnTouchListener { _, event ->
-            if (!visible || maximized) return@setOnTouchListener false
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    startY = event.rawY
-                    startHeight = panelView.layoutParams.height
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val deltaY = startY - event.rawY
-                    val height = (startHeight + deltaY).toInt()
-                        .coerceIn(minPanelHeightPx(), maxPanelHeightPx())
-                    setPanelHeight(height)
-                    dockedHeightPx = height
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
-    private fun setPanelHeight(heightPx: Int) {
-        val params = panelView.layoutParams ?: return
-        if (params.height == heightPx) return
-        params.height = heightPx
-        panelView.layoutParams = params
-        onHostLayoutChanged()
-    }
-
-    private fun defaultPanelHeightPx(): Int = dp(DEFAULT_PANEL_HEIGHT_DP)
-
-    private fun minPanelHeightPx(): Int = dp(MIN_PANEL_HEIGHT_DP)
-
-    private fun maxPanelHeightPx(): Int {
-        return (activity.resources.displayMetrics.heightPixels * MAX_PANEL_HEIGHT_RATIO).toInt()
-    }
-
-    private fun dp(value: Int): Int {
-        return (value * activity.resources.displayMetrics.density).toInt()
     }
 
     private fun blurEditor() {
@@ -303,8 +323,5 @@ class EditorX11Panel(
 
     companion object {
         private const val LOG_TAG = "EditorX11Panel"
-        private const val DEFAULT_PANEL_HEIGHT_DP = 280
-        private const val MIN_PANEL_HEIGHT_DP = 120
-        private const val MAX_PANEL_HEIGHT_RATIO = 0.7f
     }
 }

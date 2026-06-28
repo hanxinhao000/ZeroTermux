@@ -53,6 +53,7 @@ import com.termux.zerocore.ai.editor.ZtEditorAiHost
 import com.termux.zerocore.ai.editor.ZtEditorAiPanelHelper
 import com.termux.zerocore.ai.editor.ZtEditorAiResetHelper
 import com.termux.zerocore.editor.AndroidProjectManager
+import com.termux.zerocore.editor.EditorBottomDockPanel
 import com.termux.zerocore.editor.EditorBuildScriptHelper
 import com.termux.zerocore.editor.EditorAndroidRunner
 import com.termux.zerocore.editor.EditorFileTreeClipboard
@@ -68,7 +69,8 @@ import com.termux.zerocore.editor.EditorRunLanguage
 import com.termux.shared.termux.extrakeys.ExtraKeysView
 import com.termux.zerocore.editor.EditorTerminalInputView
 import com.termux.zerocore.editor.EditorTerminalPanel
-import com.termux.zerocore.editor.EditorX11Panel
+import com.termux.zerocore.editor.EditorVncPanel
+import com.termux.zerocore.editor.EditorVncEnvironment
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
@@ -200,14 +202,24 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var mEditorUndoButton: ImageView? = null
     private var mEditorRedoButton: ImageView? = null
     private var mEditorMoreButton: ImageView? = null
-    private var mEditorAiButton: ImageView? = null
+    private var mEditorAiButton: TextView? = null
     private var mEditorSidebarAiButton: TextView? = null
     private var editorAiPanel: ZtEditorAiPanelHelper? = null
     private var mEditorTerminalButton: ImageView? = null
     private var mEditorRunButton: ImageView? = null
     private var mEditorRunLoading: ProgressBar? = null
     private var editorTerminalPanel: EditorTerminalPanel? = null
-    private var editorX11Panel: EditorX11Panel? = null
+    private var editorVncPanel: EditorVncPanel? = null
+    private var editorBottomDock: EditorBottomDockPanel? = null
+    private val editorDockHeightBridge = object : EditorVncPanel.DockHeightController {
+        override fun saveDockedHeight() {
+            editorBottomDock?.saveDockedHeightBeforeMaximize()
+        }
+
+        override fun restoreDockedHeight() {
+            editorBottomDock?.restoreDockedHeight()
+        }
+    }
     private var mEditorX11Button: TextView? = null
     private var programRunner: EditorProgramRunner? = null
     private var isProgramRunInProgress = false
@@ -221,8 +233,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var mEditorTabsContainer: LinearLayout? = null
     private var mEditorContentLayout: RelativeLayout? = null
     private var mEditorSymbolBar: LinearLayout? = null
-    private var mEditorTerminalPanelView: View? = null
-    private var mEditorX11PanelView: View? = null
+    private var mEditorBottomDockView: View? = null
     private var mEditorSidebar: LinearLayout? = null
     private var mSidebarFileTab: TextView? = null
     private var mSidebarSearchTab: TextView? = null
@@ -364,6 +375,22 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         initializeEditorEnvironment(savedInstanceState) {
             loadFile(file)
             initFileTree(file.parentFile ?: file)
+            handleAiDebugIntentExtras()
+        }
+    }
+
+    private fun handleAiDebugIntentExtras() {
+        val openX11 = intent.getBooleanExtra(com.termux.zerocore.aidebug.ZtAiDebugVncHelper.EXTRA_OPEN_X11_TAB, false)
+        val autoRun = intent.getBooleanExtra(com.termux.zerocore.aidebug.ZtAiDebugVncHelper.EXTRA_AUTO_RUN, false)
+        if (openX11) {
+            code_editor?.postDelayed({
+                editorBottomDock?.openX11Tab()
+            }, 500)
+        }
+        if (autoRun) {
+            code_editor?.postDelayed({
+                onRunBuildScriptClicked()
+            }, if (openX11) 1500 else 800)
         }
     }
 
@@ -377,8 +404,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         applyEditorFont(false)
         initEditorAiPanel()
         initEditorTopBar()
-        initEditorTerminal(savedInstanceState)
-        initEditorX11Panel()
+        initEditorBottomDock(savedInstanceState)
         initSymbolInput()
         configureCodeEditorInput()
         initSidebar()
@@ -410,8 +436,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         mEditorTabsContainer = findViewById(R.id.editor_tabs_container)
         mEditorContentLayout = findViewById(R.id.editor_content_layout)
         mEditorSymbolBar = findViewById(R.id.editor_symbol_bar)
-        mEditorTerminalPanelView = findViewById(R.id.editor_terminal_panel)
-        mEditorX11PanelView = findViewById(R.id.editor_x11_panel)
+        mEditorBottomDockView = findViewById(R.id.editor_bottom_dock)
         mEditorSidebar = findViewById(R.id.editor_sidebar)
         mSidebarFileTab = findViewById(R.id.sidebar_file_tab)
         mSidebarSearchTab = findViewById(R.id.sidebar_search_tab)
@@ -454,7 +479,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             isFocusableInTouchMode = true
             getComponent(EditorAutoCompletion::class.java)?.isEnabled = true
             setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus && editorTerminalPanel?.isVisible() == true) {
+                if (hasFocus && editorBottomDock?.isTerminalTabActive() == true) {
                     findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)?.clearFocus()
                     setSoftKeyboardEnabled(true)
                 }
@@ -509,25 +534,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             onAndroidBuildClicked()
         }
         mEditorTerminalButton?.setOnClickListener {
-            if (editorX11Panel?.isVisible() == true) {
-                editorX11Panel?.setVisible(false)
-            }
-            val panel = editorTerminalPanel
-            if (panel?.isVisible() == true) {
-                panel.setVisible(false)
-            } else {
-                openTerminalAtDirectory(null)
-            }
+            editorBottomDock?.openTerminalTab() ?: openTerminalAtDirectory(null)
         }
         mEditorX11Button?.setOnClickListener {
-            if (editorX11Panel?.isVisible() != true) {
-                editorAiPanel?.hide()
-            }
-            if (editorX11Panel?.isAvailable() != true) {
-                UUtils.showMsg(getString(R.string.editor_x11_internal_required))
-                return@setOnClickListener
-            }
-            editorX11Panel?.toggle()
+            editorAiPanel?.dismissPanel()
+            editorBottomDock?.openX11Tab()
             updateEditorX11ButtonState()
         }
         mEditorMoreButton?.setOnClickListener { view ->
@@ -555,6 +566,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val overlay = findViewById<View>(R.id.editor_ai_overlay) ?: return
         // include 根视图 id 为 editor_ai_panel_root（与 TermuxActivity 智能体面板一致）
         val panelRoot = findViewById<View>(R.id.editor_ai_panel_root) ?: return
+        val floatingBubble = findViewById<View>(R.id.editor_ai_floating_bubble)
         val applyPanelHeight: () -> Unit = {
             val hostHeight = overlay.height
             if (hostHeight > 0) {
@@ -569,116 +581,196 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         overlay.viewTreeObserver.addOnGlobalLayoutListener { applyPanelHeight() }
         overlay.setOnClickListener {
             if (editorAiPanel?.isVisible() == true) {
-                editorAiPanel?.hide()
+                editorAiPanel?.dismissPanel()
             }
         }
         panelRoot.setOnClickListener { }
-        editorAiPanel = ZtEditorAiPanelHelper(overlay, panelRoot, this, applyPanelHeight)
+        editorAiPanel = ZtEditorAiPanelHelper(overlay, panelRoot, floatingBubble, this, applyPanelHeight)
     }
 
-    private fun initEditorTerminal(savedInstanceState: Bundle?) {
-        val panel = findViewById<View>(R.id.editor_terminal_panel) ?: return
+    private fun initEditorBottomDock(savedInstanceState: Bundle?) {
+        val dockView = findViewById<View>(R.id.editor_bottom_dock) ?: return
+        val terminalSection = findViewById<View>(R.id.editor_dock_terminal_section) ?: return
+        val x11Section = findViewById<View>(R.id.editor_dock_x11_section) ?: return
         val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view) ?: return
         val inputView = findViewById<EditorTerminalInputView>(R.id.editor_terminal_input) ?: return
         val extraKeysView = findViewById<ExtraKeysView>(R.id.editor_terminal_extra_keys) ?: return
         if (mEditorContentLayout == null || mEditorSymbolBar == null) return
-        // 每次进入编辑器默认隐藏终端，仅在配置变更（如旋转屏幕）时恢复状态
-        val restoredVisible = savedInstanceState?.getBoolean(EDITOR_STATE_TERMINAL_VISIBLE, false) == true
+
+        val restoredTerminalOpen = savedInstanceState?.getBoolean(
+            EditorBottomDockPanel.STATE_TERMINAL_OPEN,
+            savedInstanceState?.getBoolean(EDITOR_STATE_TERMINAL_VISIBLE, false) == true
+        ) == true
+        val restoredX11Open = savedInstanceState?.getBoolean(EditorBottomDockPanel.STATE_X11_OPEN, false) == true
+        val restoredDockPanelVisible = savedInstanceState?.getBoolean(
+            EditorBottomDockPanel.STATE_DOCK_PANEL_VISIBLE,
+            savedInstanceState?.getBoolean(EDITOR_STATE_TERMINAL_VISIBLE, false) == true
+        ) == true
+        val restoredTabName = savedInstanceState?.getString(EditorBottomDockPanel.STATE_TAB)
+        val restoredTab = when (restoredTabName) {
+            EditorBottomDockPanel.Tab.X11.name -> EditorBottomDockPanel.Tab.X11
+            else -> EditorBottomDockPanel.Tab.TERMINAL
+        }
+
         editorTerminalPanel = EditorTerminalPanel(
             activity = this,
-            panelView = panel,
+            panelView = terminalSection,
             terminalView = terminalView,
             inputView = inputView,
             extraKeysView = extraKeysView,
             onBlurEditor = { blurEditorForTerminal() },
             onRestoreEditorFocus = { restoreEditorFocusAfterTerminal() },
             onLayoutChanged = { updateEditorContentAnchor() }
-        ) { visible -> updateTerminalToolbarState(visible) }
-        val resizeHandle = findViewById<View>(R.id.editor_terminal_resize_handle) ?: return
-        editorTerminalPanel?.init(restoredVisible, resizeHandle)
-        findViewById<View>(R.id.editor_terminal_hide)?.setOnClickListener {
-            editorTerminalPanel?.setVisible(false)
+        ) { updateDockToolbarState() }
+        editorTerminalPanel?.init(false, null)
+
+        val surface = findViewById<android.widget.FrameLayout>(R.id.editor_x11_surface) ?: return
+        val setupPanel = findViewById<View>(R.id.editor_x11_setup_panel) ?: return
+        val setupMessage = findViewById<TextView>(R.id.editor_x11_setup_message) ?: return
+        val setupAction = findViewById<TextView>(R.id.editor_x11_setup_action) ?: return
+        val status = findViewById<TextView>(R.id.editor_x11_status) ?: return
+        val maximize = findViewById<android.widget.ImageView>(R.id.editor_x11_maximize) ?: return
+        val vncExtraKeysView = findViewById<com.termux.shared.termux.extrakeys.ExtraKeysView>(
+            R.id.editor_vnc_extra_keys
+        ) ?: return
+
+        editorVncPanel = EditorVncPanel(
+            activity = this,
+            surfaceContainer = surface,
+            setupPanel = setupPanel,
+            setupMessageView = setupMessage,
+            setupActionView = setupAction,
+            statusView = status,
+            maximizeButton = maximize,
+            extraKeysView = vncExtraKeysView,
+            codeEditor = code_editor,
+            dockHeightController = editorDockHeightBridge,
+            onWriteTerminal = { command -> editorTerminalPanel?.writeCommandHidden(command) },
+            onEnsureTerminal = {
+                editorTerminalPanel?.prepareBackgroundSession(resolveTerminalDirectory(null))
+            },
+            isShellVncReady = {
+                editorTerminalPanel?.getRecentTerminalText()?.contains("VNC ready on") == true
+            },
+            isGuiProcessStartedInTerminal = {
+                editorTerminalPanel?.getRecentTerminalText()?.let { text ->
+                    text.contains("GUI 程序已启动") || text.contains("GUI app started")
+                } == true
+            },
+            onLayoutChanged = { updateEditorContentAnchor() },
+            onTabActiveChanged = { updateEditorX11ButtonState() },
+            onBarActionsChanged = { editorBottomDock?.refreshBarActions() }
+        ).also { it.init() }
+
+        programRunner?.setCommandSink { command ->
+            editorTerminalPanel?.enqueueTerminalCommand(command)
         }
+
+        val terminalPanel = editorTerminalPanel ?: return
+        val vncPanel = editorVncPanel ?: return
+        editorBottomDock = EditorBottomDockPanel(
+            activity = this,
+            dockView = dockView,
+            terminalTabChip = findViewById(R.id.editor_dock_terminal_tab_chip) ?: return,
+            tabTerminal = findViewById(R.id.editor_dock_tab_terminal) ?: return,
+            closeTerminal = findViewById(R.id.editor_dock_close_terminal) ?: return,
+            x11TabChip = findViewById(R.id.editor_dock_x11_tab_chip) ?: return,
+            tabX11 = findViewById(R.id.editor_dock_tab_x11) ?: return,
+            closeX11 = findViewById(R.id.editor_dock_close_x11) ?: return,
+            tabSpacer = findViewById(R.id.editor_dock_tab_spacer) ?: return,
+            ctrlCButton = findViewById(R.id.editor_terminal_ctrl_c) ?: return,
+            x11StatusView = status,
+            x11MaximizeButton = maximize,
+            hideDockButton = findViewById(R.id.editor_dock_hide) ?: return,
+            terminalSection = terminalSection,
+            x11Section = x11Section,
+            terminalPanel = terminalPanel,
+            x11Panel = vncPanel,
+            onLayoutChanged = { updateEditorContentAnchor() },
+            onDockVisibilityChanged = { updateDockToolbarState() },
+            onOpenTerminalAtDirectory = { ensureTerminalSessionForDock() }
+        ).also {
+            it.init(restoredTerminalOpen, restoredX11Open, restoredDockPanelVisible, restoredTab)
+        }
+        updateEditorX11ButtonVisibility()
         updateEditorContentAnchor()
     }
 
-    private fun initEditorX11Panel() {
-        val panel = findViewById<View>(R.id.editor_x11_panel) ?: return
-        val surface = findViewById<android.widget.FrameLayout>(R.id.editor_x11_surface) ?: return
-        val status = findViewById<TextView>(R.id.editor_x11_status) ?: return
-        val maximize = findViewById<android.widget.ImageView>(R.id.editor_x11_maximize) ?: return
-        val resizeHandle = findViewById<View>(R.id.editor_x11_resize_handle) ?: return
-        editorX11Panel = EditorX11Panel(
-            activity = this,
-            panelView = panel,
-            surfaceContainer = surface,
-            statusView = status,
-            maximizeButton = maximize,
-            codeEditor = code_editor,
-            onWriteTerminal = { command -> editorTerminalPanel?.writeCommandHidden(command) },
-            onEnsureTerminalVisible = {
-                editorTerminalPanel?.prepareBackgroundSession(resolveTerminalDirectory(null))
-            },
-            onLayoutChanged = { updateEditorContentAnchor() },
-            onVisibilityChanged = { updateEditorX11ButtonState() }
-        ).also { it.init(resizeHandle) }
-        updateEditorX11ButtonVisibility()
+    private fun ensureTerminalSessionForDock() {
+        val directory = resolveTerminalDirectory(null)
+        if (directory == null) {
+            UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
+            editorBottomDock?.onTerminalSessionFailed()
+            return
+        }
+        if (programRunner?.canUseTerminal() != true) {
+            UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
+            editorBottomDock?.onTerminalSessionFailed()
+            return
+        }
+        editorTerminalPanel?.setVisible(true, directory)
+    }
+
+    private fun updateDockToolbarState() {
+        val dock = editorBottomDock
+        val terminalHighlighted = dock != null && dock.isTerminalOpen() &&
+            (dock.isTerminalTabActive() ||
+                (!dock.isVisible() && dock.getActiveTab() == EditorBottomDockPanel.Tab.TERMINAL))
+        updateTerminalToolbarState(terminalHighlighted)
+        updateEditorX11ButtonState()
     }
 
     private fun updateEditorContentAnchor() {
         val content = mEditorContentLayout ?: return
-        val x11PanelView = mEditorX11PanelView ?: return
-        val terminalVisible = editorTerminalPanel?.isVisible() == true
-        val x11Visible = editorX11Panel?.isVisible() == true
-        val x11Maximized = editorX11Panel?.isMaximized() == true
+        val dockView = mEditorBottomDockView ?: return
+        val dockVisible = editorBottomDock?.isVisible() == true
+        val x11Maximized = editorBottomDock?.isX11Maximized() == true
 
         content.visibility = if (x11Maximized) View.GONE else View.VISIBLE
 
         val contentParams = content.layoutParams as? RelativeLayout.LayoutParams ?: return
         contentParams.removeRule(RelativeLayout.ABOVE)
         if (!x11Maximized) {
-            val anchorId = when {
-                x11Visible -> R.id.editor_x11_panel
-                terminalVisible -> R.id.editor_terminal_panel
-                else -> R.id.editor_symbol_bar
+            val anchorId = if (dockVisible) {
+                R.id.editor_bottom_dock
+            } else {
+                R.id.editor_symbol_bar
             }
             contentParams.addRule(RelativeLayout.ABOVE, anchorId)
         }
         content.layoutParams = contentParams
 
-        val x11Params = x11PanelView.layoutParams as? RelativeLayout.LayoutParams ?: return
-        x11Params.removeRule(RelativeLayout.ABOVE)
-        x11Params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-        x11Params.removeRule(RelativeLayout.BELOW)
-        if (!x11Visible) {
-            x11Params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        val dockParams = dockView.layoutParams as? RelativeLayout.LayoutParams ?: return
+        dockParams.removeRule(RelativeLayout.ABOVE)
+        dockParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        dockParams.removeRule(RelativeLayout.BELOW)
+        if (!dockVisible) {
+            dockParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         } else if (x11Maximized) {
-            x11Params.addRule(RelativeLayout.BELOW, R.id.editor_tab_bar)
-            x11Params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-            x11Params.height = RelativeLayout.LayoutParams.MATCH_PARENT
-        } else if (terminalVisible) {
-            x11Params.addRule(RelativeLayout.ABOVE, R.id.editor_terminal_panel)
+            dockParams.addRule(RelativeLayout.BELOW, R.id.editor_tab_bar)
+            dockParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            dockParams.height = RelativeLayout.LayoutParams.MATCH_PARENT
         } else {
-            x11Params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            dockParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
         }
-        x11PanelView.layoutParams = x11Params
+        dockView.layoutParams = dockParams
 
-        val bottomPanelVisible = terminalVisible || x11Visible
-        mEditorSymbolBar?.visibility = if (bottomPanelVisible) View.GONE else View.VISIBLE
-        updateTerminalToolbarState(terminalVisible)
-        editorX11Panel?.onHostLayoutChanged()
-        editorTerminalPanel?.onHostLayoutChanged()
+        mEditorSymbolBar?.visibility = if (dockVisible) View.GONE else View.VISIBLE
+        updateDockToolbarState()
+        editorBottomDock?.onHostLayoutChanged()
     }
 
     private fun updateEditorX11ButtonVisibility() {
-        val available = editorX11Panel?.isAvailable() == true
-        mEditorX11Button?.visibility = if (available) View.VISIBLE else View.GONE
+        mEditorX11Button?.visibility = View.VISIBLE
         updateEditorX11ButtonState()
     }
 
     private fun updateEditorX11ButtonState() {
-        val visible = editorX11Panel?.isVisible() == true
-        mEditorX11Button?.alpha = if (visible) 1f else 0.7f
+        val dock = editorBottomDock
+        val highlighted = dock != null && dock.isX11Open() &&
+            (dock.isX11TabActive() ||
+                (!dock.isVisible() && dock.getActiveTab() == EditorBottomDockPanel.Tab.X11))
+        mEditorX11Button?.alpha = if (highlighted) 1f else 0.7f
     }
 
     private fun updateTerminalToolbarState(visible: Boolean) {
@@ -711,8 +803,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             UUtils.showMsg(getString(R.string.editor_sidebar_project_dir_invalid))
             return
         }
-        val panel = editorTerminalPanel
-        if (panel == null) {
+        if (editorBottomDock == null) {
             UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
             return
         }
@@ -720,7 +811,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             UUtils.showMsg(getString(R.string.editor_java_terminal_unavailable))
             return
         }
-        panel.showAtDirectory(directory)
+        editorBottomDock?.showTerminalAtDirectory(directory)
     }
 
     private fun restoreEditorFocusAfterTerminal() {
@@ -746,12 +837,28 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         saveCurrentTabSilentlyIfNeeded()
         val contextFile = currentFile
         val content = code_editor?.text?.toString().orEmpty()
-        EditorBuildScriptHelper.ensureScript(directory, contextFile, content)
+        EditorBuildScriptHelper.ensureScript(this, directory, contextFile, content)
         refreshFileTree()
         updateSidebarProjectPath()
-        editorTerminalPanel?.setVisible(true, directory)
-        runner.runBuildScript(directory)
-        setRunLoading(false)
+        val dock = editorBottomDock
+        if (dock != null) {
+            val isGuiRun = contextFile != null &&
+                EditorRunLanguage.JAVA.matchesExtension(contextFile.name) &&
+                EditorRunDetector.isJavaGuiSource(content)
+            dock.openGuiThenRun(directory) {
+                runner.runBuildScript(directory)
+                if (isGuiRun) {
+                    dock.openX11Tab()
+                    editorVncPanel?.onGuiAppStarted()
+                } else {
+                    dock.openTerminalTab()
+                }
+                setRunLoading(false)
+            }
+        } else {
+            runner.runBuildScript(directory)
+            setRunLoading(false)
+        }
     }
 
     private fun onOpenBuildScriptClicked() {
@@ -759,7 +866,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         saveCurrentTabSilentlyIfNeeded()
         val contextFile = currentFile
         val content = code_editor?.text?.toString().orEmpty()
-        val script = EditorBuildScriptHelper.ensureScript(directory, contextFile, content)
+        val script = EditorBuildScriptHelper.ensureScript(this, directory, contextFile, content)
         refreshFileTree()
         updateSidebarProjectPath()
         loadFile(script)
@@ -845,7 +952,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             return
         }
         setAndroidBuildLoading(true)
-        editorTerminalPanel?.setVisible(true, resolveTerminalDirectory(currentFile))
+        resolveTerminalDirectory(currentFile)?.let { editorBottomDock?.showTerminalAtDirectory(it) }
         lifecycleScope.launch(Dispatchers.IO) {
             val envReady = runner.isGradleEnvInstalled()
             withContext(Dispatchers.Main) {
@@ -864,7 +971,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             .setTitle(R.string.editor_android_install_gradle_title)
             .setMessage(R.string.editor_android_install_gradle_message)
             .setPositiveButton(R.string.editor_android_install_gradle_confirm) { _, _ ->
-                editorTerminalPanel?.setVisible(true, resolveTerminalDirectory(currentFile))
+                resolveTerminalDirectory(currentFile)?.let { editorBottomDock?.showTerminalAtDirectory(it) }
                 runner.installGradleEnvViaTerminal { }
             }
             .setNegativeButton(android.R.string.cancel, null)
@@ -927,7 +1034,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             .setTitle(R.string.editor_android_install_gradle_title)
             .setMessage(R.string.editor_android_install_gradle_message)
             .setPositiveButton(R.string.editor_android_install_gradle_confirm) { _, _ ->
-                editorTerminalPanel?.setVisible(true, resolveTerminalDirectory(currentFile))
+                resolveTerminalDirectory(currentFile)?.let { editorBottomDock?.showTerminalAtDirectory(it) }
                 runner.installGradleEnvViaTerminal { }
             }
             .setNegativeButton(android.R.string.cancel, null)
@@ -2144,22 +2251,33 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         outState.putBoolean(EDITOR_STATE_SIDEBAR_MATCH_CASE, isMatchCase)
         outState.putBoolean(
             EDITOR_STATE_TERMINAL_VISIBLE,
-            editorTerminalPanel?.isVisible() == true
+            editorBottomDock?.isVisible() == true
+        )
+        outState.putBoolean(
+            EditorBottomDockPanel.STATE_DOCK_PANEL_VISIBLE,
+            editorBottomDock?.isVisible() == true
+        )
+        outState.putBoolean(
+            EditorBottomDockPanel.STATE_TERMINAL_OPEN,
+            editorBottomDock?.isTerminalOpen() == true
+        )
+        outState.putBoolean(
+            EditorBottomDockPanel.STATE_X11_OPEN,
+            editorBottomDock?.isX11Open() == true
+        )
+        outState.putString(
+            EditorBottomDockPanel.STATE_TAB,
+            editorBottomDock?.getActiveTab()?.name
         )
     }
 
     override fun onBackPressed() {
-        if (editorX11Panel?.restoreFromMaximized() == true) {
-            updateEditorX11ButtonState()
-            return
-        }
-        if (editorX11Panel?.isVisible() == true) {
-            editorX11Panel?.setVisible(false)
+        if (editorBottomDock?.handleBackPressed() == true) {
             updateEditorX11ButtonState()
             return
         }
         val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view)
-        if (editorTerminalPanel?.isVisible() == true && terminalView?.isSelectingText == true) {
+        if (editorBottomDock?.isTerminalTabActive() == true && terminalView?.isSelectingText == true) {
             terminalView.stopTextSelectionMode()
             return
         }
@@ -2169,7 +2287,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val inputView = findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)
         val terminalView = findViewById<TerminalView>(R.id.editor_terminal_view)
-        if (editorTerminalPanel?.isVisible() == true && inputView != null && inputView.hasFocus()) {
+        if (editorBottomDock?.isTerminalTabActive() == true && inputView != null && inputView.hasFocus()) {
             val session = terminalView?.currentSession
             if (session != null && event.action == KeyEvent.ACTION_DOWN) {
                 when (event.keyCode) {
@@ -2222,35 +2340,36 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun onResume() {
         super.onResume()
         editorTerminalPanel?.onResume()
-        editorX11Panel?.onResume()
+        editorVncPanel?.onResume()
         updateEditorX11ButtonState()
     }
 
     override fun onPause() {
-        editorX11Panel?.onPause()
+        editorVncPanel?.onPause()
         super.onPause()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        editorX11Panel?.onWindowFocusChanged(hasFocus)
+        editorVncPanel?.onWindowFocusChanged(hasFocus)
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        editorX11Panel?.onConfigurationChanged(newConfig)
+        editorVncPanel?.onConfigurationChanged(newConfig)
         updateEditorContentAnchor()
-        editorTerminalPanel?.onHostLayoutChanged()
+        editorBottomDock?.onHostLayoutChanged()
     }
 
     override fun onDestroy() {
         dirtyCheckHandler.removeCallbacks(dirtyCheckRunnable)
         stopLspInstallRefresh()
+        editorBottomDock = null
         sidebarAnimator?.cancel()
         cancelSidebarGesture()
         shutdownLspManager()
-        editorX11Panel?.onDestroy()
-        editorX11Panel = null
+        editorVncPanel?.onDestroy()
+        editorVncPanel = null
         editorTerminalPanel?.destroy()
         editorTerminalPanel = null
         editorAiPanel?.destroy()
@@ -2317,8 +2436,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             mEditorToolbar,
             mEditorTabBar,
             mEditorContentLayout,
-            mEditorTerminalPanelView,
-            mEditorX11PanelView,
+            mEditorBottomDockView,
             mEditorSymbolBar
         ).forEach { view ->
             (view?.layoutParams as? RelativeLayout.LayoutParams)?.apply {
@@ -2328,8 +2446,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 }
             }
         }
-        editorTerminalPanel?.onHostLayoutChanged()
-        editorX11Panel?.onHostLayoutChanged()
+        editorBottomDock?.onHostLayoutChanged()
     }
 
     private fun finishSidebarState(visible: Boolean) {
@@ -3633,6 +3750,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 .append(" (").append(cursor.right - cursor.left).append(" chars)\n")
         }
         sb.append("长度: ").append(full.length).append('\n')
+        appendDockSnapshot(sb)
         sb.append("--- 内容 ---\n")
         if (full.length > limit) {
             sb.append(full, 0, limit).append("\n...[truncated, total ").append(full.length).append(" chars]")
@@ -3811,7 +3929,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val panel = editorTerminalPanel
             ?: return getString(R.string.zt_editor_ai_terminal_unavailable)
         return runTerminalOnUiForResult {
-            panel.ensureForAi(resolveTerminalDirectory(currentFile))
+            panel.ensureSessionForAi(resolveTerminalDirectory(currentFile))
             panel.captureAiSnapshot(maxChars)
         }
     }
@@ -3819,7 +3937,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun sendTerminalText(text: String) {
         editorTerminalPanel?.let { panel ->
             runTerminalOnUiAction {
-                panel.ensureForAi(resolveTerminalDirectory(currentFile))
+                panel.ensureSessionForAi(resolveTerminalDirectory(currentFile))
                 panel.sendTextToTerminal(text)
             }
         }
@@ -3828,10 +3946,77 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun sendTerminalKey(key: String) {
         editorTerminalPanel?.let { panel ->
             runTerminalOnUiAction {
-                panel.ensureForAi(resolveTerminalDirectory(currentFile))
+                panel.ensureSessionForAi(resolveTerminalDirectory(currentFile))
                 panel.sendTerminalKey(key)
             }
         }
+    }
+
+    override fun runBuildScriptForAi(): String {
+        if (isProgramRunInProgress) {
+            return getString(R.string.zt_editor_ai_build_in_progress)
+        }
+        val runner = programRunner ?: return getString(R.string.zt_editor_ai_build_unavailable)
+        if (resolveTerminalDirectory(null) == null) {
+            return getString(R.string.zt_editor_ai_build_no_directory)
+        }
+        if (!runner.canUseTerminal()) {
+            return getString(R.string.zt_editor_ai_terminal_unavailable)
+        }
+        val tab = currentTab()
+        if (tab != null && (tab.previewOnly || isTextPreviewMode(tab))) {
+            return getString(R.string.zt_editor_ai_unavailable)
+        }
+        val contextFile = currentFile
+        val content = code_editor?.text?.toString().orEmpty()
+        val isGuiRun = contextFile != null &&
+            EditorRunLanguage.JAVA.matchesExtension(contextFile.name) &&
+            EditorRunDetector.isJavaGuiSource(content)
+        onRunBuildScriptClicked()
+        return if (isGuiRun) {
+            getString(R.string.zt_editor_ai_build_started_gui)
+        } else {
+            getString(R.string.zt_editor_ai_build_started)
+        }
+    }
+
+    override fun switchEditorDockTab(tab: String): String {
+        val dock = editorBottomDock
+            ?: return getString(R.string.zt_editor_ai_dock_unavailable)
+        return when (tab.trim().lowercase(Locale.ROOT)) {
+            "gui", "x11" -> {
+                dock.openX11Tab()
+                getString(R.string.zt_editor_ai_dock_switched_gui)
+            }
+            "terminal", "term" -> {
+                dock.openTerminalTab()
+                getString(R.string.zt_editor_ai_dock_switched_terminal)
+            }
+            else -> getString(R.string.zt_editor_ai_dock_invalid_tab)
+        }
+    }
+
+    private fun appendDockSnapshot(sb: StringBuilder) {
+        val dock = editorBottomDock ?: return
+        sb.append("底部面板: ")
+            .append(if (dock.isVisible()) "展开" else "收起")
+            .append(", 终端标签=")
+            .append(if (dock.isTerminalOpen()) "开" else "关")
+            .append(", GUI标签=")
+            .append(if (dock.isX11Open()) "开" else "关")
+            .append(", 当前=")
+            .append(
+                when (dock.getActiveTab()) {
+                    EditorBottomDockPanel.Tab.X11 -> "GUI"
+                    EditorBottomDockPanel.Tab.TERMINAL -> "terminal"
+                }
+            )
+            .append('\n')
+        sb.append("GUI说明: 内置 VNC 连接 DISPLAY=")
+            .append(EditorVncEnvironment.DISPLAY)
+            .append(" 端口 ")
+            .append(EditorVncEnvironment.VNC_PORT)
+            .append("，无需 sway 或主界面 X11 环境\n")
     }
 
     private fun runTerminalOnUiForResult(block: () -> String): String {

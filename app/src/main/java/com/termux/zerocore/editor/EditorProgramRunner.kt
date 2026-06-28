@@ -3,16 +3,25 @@ package com.termux.zerocore.editor
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import com.termux.R
 import com.termux.shared.termux.TermuxConstants
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import java.io.File
 
-class EditorProgramRunner(private val context: Context) {
+class EditorProgramRunner(
+    private val context: Context,
+    private var commandSink: ((String) -> Unit)? = null
+) {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
+    fun setCommandSink(sink: ((String) -> Unit)?) {
+        commandSink = sink
+    }
+
     fun canUseTerminal(): Boolean {
-        return SingletonCommunicationUtils.getInstance().hasTerminalListener()
+        return commandSink != null ||
+            SingletonCommunicationUtils.getInstance().hasTerminalListener()
     }
 
     fun isRuntimeInstalled(language: EditorRunLanguage): Boolean {
@@ -86,11 +95,20 @@ class EditorProgramRunner(private val context: Context) {
 
     fun runBuildScript(directory: File) {
         val dir = shellQuote(directory.absolutePath)
-        sendToTerminal("echo '[ZeroTermux Editor] Running ${EditorBuildScriptHelper.SCRIPT_NAME}'\n")
-        sendToTerminal("cd $dir && chmod +x ${EditorBuildScriptHelper.SCRIPT_NAME} && ./${EditorBuildScriptHelper.SCRIPT_NAME}\n")
+        val runningMsg = shellQuote(
+            context.getString(R.string.editor_build_script_running, EditorBuildScriptHelper.SCRIPT_NAME)
+        )
+        sendToTerminal(
+            "echo $runningMsg && cd $dir && chmod +x ${EditorBuildScriptHelper.SCRIPT_NAME} && ./${EditorBuildScriptHelper.SCRIPT_NAME}\n"
+        )
     }
 
     private fun sendToTerminal(command: String) {
+        val sink = commandSink
+        if (sink != null) {
+            sink(command)
+            return
+        }
         SingletonCommunicationUtils.getInstance()
             .getmSingletonCommunicationListener()
             .sendTextToTerminal(command)
