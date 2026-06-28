@@ -1818,12 +1818,16 @@
     <string name="editor_x11_init_failed">X11 窗口初始化失败，请检查 libXlorie.so 是否已安装</string>
     <string name="editor_vnc_install_repo">正在安装 x11-repo…</string>
     <string name="editor_vnc_install_packages">正在安装 Xvfb 与 x11vnc…</string>
-    <string name="editor_vnc_env_missing">需要 X11 软件源与 VNC 组件。点击重试将自动 pkg install x11-repo xorg-server-xvfb x11vnc。</string>
+    <string name="editor_vnc_installing_env">正在安装 GUI/VNC 环境（x11-repo、Xvfb、x11vnc），请稍候…</string>
+    <string name="editor_vnc_starting_env">正在启动 VNC 服务，请稍候…</string>
+    <string name="editor_vnc_env_missing">缺少 X11/VNC 组件。打开 GUI 标签将自动安装；也可点击重试。</string>
     <string name="editor_vnc_start_failed">VNC 调试环境启动失败。请确认终端可执行 pkg install，然后点击重试。</string>
     <string name="editor_vnc_retry">重试</string>
     <string name="editor_vnc_init_failed">VNC 窗口初始化失败</string>
     <string name="editor_vnc_status_connected">VNC 已连接</string>
     <string name="editor_vnc_status_connecting">VNC 连接中…</string>
+    <string name="editor_vnc_status_installing">正在安装环境…</string>
+    <string name="editor_vnc_status_starting">正在启动 VNC…</string>
     <string name="editor_vnc_status_disconnected">VNC 未连接</string>
     <string name="editor_x11_internal_required">请先在 ZeroTermux 设置中启用 X11 内部通道并重启 App</string>
     <string name="editor_x11_setup_open_settings">打开 X11 通道设置</string>

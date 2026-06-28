@@ -1,5 +1,8 @@
 package com.termux.zerocore.editor
 
+import com.termux.shared.termux.TermuxConstants
+import java.io.File
+
 object EditorVncEnvironment {
 
     const val DISPLAY = ":99"
@@ -10,6 +13,7 @@ object EditorVncEnvironment {
     const val PID_FILE = "\${HOME}/.zerotermux/editor-vnc.pid"
     const val LOG_FILE = "\${HOME}/.zerotermux/x11vnc.log"
     const val SCRIPT_VNC_MARKER = "vnc-gui-v5"
+    const val VNC_READY_MARKER = "[ZeroTermux Editor] VNC ready on"
 
     /** Shared bash helpers for boot script and build.sh */
     fun coreVncShellFunctions(): String {
@@ -91,6 +95,21 @@ object EditorVncEnvironment {
         }
     }
 
+    /** Xvfb + x11vnc binaries present in Termux prefix (does not imply server is running). */
+    fun isPackagesInstalled(): Boolean {
+        val binDir = TermuxConstants.TERMUX_BIN_PREFIX_DIR
+        return File(binDir, "Xvfb").canExecute() && File(binDir, "x11vnc").canExecute()
+    }
+
+    /** Start Xvfb/x11vnc when packages are already installed (no pkg install). */
+    fun startServerOnlyScript(): String {
+        return buildString {
+            append("mkdir -p \"\${HOME}/.zerotermux\"\n")
+            append(coreVncShellFunctions())
+            append(startServerTail())
+        }
+    }
+
     fun ensureAndStartScript(
         installRepoEcho: String,
         installPackagesEcho: String
@@ -108,15 +127,34 @@ object EditorVncEnvironment {
             append("  echo ")
             append(shellQuote(installPackagesEcho))
             append("\n")
-            append("  pkg install -y xorg-server-xvfb x11vnc xorg-fonts-dejavu\n")
+            append("  pkg install -y xorg-server-xvfb x11vnc\n")
+            append("  pkg install -y ttf-dejavu 2>/dev/null || true\n")
             append("  command -v Xvfb >/dev/null 2>&1 && command -v x11vnc >/dev/null 2>&1\n")
             append("}\n")
             append(coreVncShellFunctions())
-            append("ensure_editor_vnc || exit 1\n")
-            append("start_editor_vnc || exit 1\n")
-            append("wait_for_editor_vnc || { echo '[ZeroTermux Editor] VNC server failed to start'; exit 1; }\n")
-            append("echo '[ZeroTermux Editor] VNC ready on ${DISPLAY} port ${VNC_PORT}'\n")
-            append("export DISPLAY=${DISPLAY}\n")
+            append(bootstrapTail())
+        }
+    }
+
+    private fun bootstrapTail(): String {
+        return buildString {
+            append("if ensure_editor_vnc && start_editor_vnc && wait_for_editor_vnc; then\n")
+            append("  echo '$VNC_READY_MARKER ${DISPLAY} port ${VNC_PORT}'\n")
+            append("  export DISPLAY=${DISPLAY}\n")
+            append("else\n")
+            append("  echo '[ZeroTermux Editor] VNC bootstrap failed (shell kept open — fix pkg/network and tap GUI Retry)'\n")
+            append("fi\n")
+        }
+    }
+
+    private fun startServerTail(): String {
+        return buildString {
+            append("if start_editor_vnc && wait_for_editor_vnc; then\n")
+            append("  echo '$VNC_READY_MARKER ${DISPLAY} port ${VNC_PORT}'\n")
+            append("  export DISPLAY=${DISPLAY}\n")
+            append("else\n")
+            append("  echo '[ZeroTermux Editor] VNC start failed (shell kept open — tap GUI Retry)'\n")
+            append("fi\n")
         }
     }
 

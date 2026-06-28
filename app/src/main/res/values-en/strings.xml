@@ -1826,12 +1826,16 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="editor_x11_init_failed">X11 window init failed; check whether libXlorie.so is installed</string>
     <string name="editor_vnc_install_repo">Installing x11-repo…</string>
     <string name="editor_vnc_install_packages">Installing Xvfb and x11vnc…</string>
-    <string name="editor_vnc_env_missing">X11 repo and VNC packages are required. Tap Retry to run pkg install x11-repo xorg-server-xvfb x11vnc.</string>
+    <string name="editor_vnc_installing_env">Installing GUI/VNC environment (x11-repo, Xvfb, x11vnc)…</string>
+    <string name="editor_vnc_starting_env">Starting VNC server…</string>
+    <string name="editor_vnc_env_missing">X11/VNC packages are missing. Opening the GUI tab installs them automatically; tap Retry if needed.</string>
     <string name="editor_vnc_start_failed">Failed to start the VNC debug environment. Ensure the terminal can run pkg install, then tap Retry.</string>
     <string name="editor_vnc_retry">Retry</string>
     <string name="editor_vnc_init_failed">VNC viewer init failed</string>
     <string name="editor_vnc_status_connected">VNC connected</string>
     <string name="editor_vnc_status_connecting">Connecting VNC…</string>
+    <string name="editor_vnc_status_installing">Installing environment…</string>
+    <string name="editor_vnc_status_starting">Starting VNC…</string>
     <string name="editor_vnc_status_disconnected">VNC disconnected</string>
     <string name="editor_x11_internal_required">Enable the X11 internal channel in ZeroTermux settings and restart the app</string>
     <string name="editor_x11_setup_open_settings">Open X11 channel settings</string>

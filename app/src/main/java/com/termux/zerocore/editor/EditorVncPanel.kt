@@ -47,6 +47,7 @@ class EditorVncPanel(
     }
 
     private enum class SetupReason {
+        INSTALLING,
         ENV_MISSING,
         START_FAILED
     }
@@ -55,6 +56,11 @@ class EditorVncPanel(
     private var maximized = false
     private var setupMode = false
     private var serverBootRequested = false
+    private var bootstrapInProgress = false
+    private var bootstrapPollToken = 0
+    private var installingPackages = false
+    private var disconnectedStreak = 0
+    private var lastAutoReconnectMs = 0L
     private var runReadyCallback: (() -> Unit)? = null
     private var runReadyDelivered = false
     private var waitForConnection = false
@@ -77,6 +83,8 @@ class EditorVncPanel(
 
     fun isSetupMode(): Boolean = setupMode
 
+    fun isBootstrapInProgress(): Boolean = bootstrapInProgress
+
     fun isAvailable(): Boolean = true
 
     fun prepareForProgramRun(onReady: () -> Unit) {
@@ -95,7 +103,7 @@ class EditorVncPanel(
         if (fragment != null) {
             waitForVncConnection()
         } else {
-            bootServerAndConnect()
+            runVncBootstrap()
         }
     }
 
@@ -214,9 +222,20 @@ class EditorVncPanel(
         tabActive = true
         blurEditor()
         onTabActiveChanged(true)
-        showOperationalMode()
         onLayoutChanged()
-        if (serverBootRequested) {
+        val fragment = findEmbeddedFragment()
+        val connected = fragment?.isConnected() == true
+        val shellReady = isShellVncReadySafe()
+        if (connected && shellReady) {
+            showOperationalMode()
+            scheduleStatusRefresh()
+            if (waitForConnection) {
+                waitForVncConnection()
+            }
+            return
+        }
+        if (serverBootRequested && shellReady) {
+            showOperationalMode()
             ensureViewerPresent()
             scheduleViewerReconnectIfNeeded()
             if (waitForConnection) {
@@ -226,7 +245,7 @@ class EditorVncPanel(
             }
             return
         }
-        bootServerAndConnect()
+        runVncBootstrap()
     }
 
     private fun ensureViewerPresent() {
@@ -245,6 +264,9 @@ class EditorVncPanel(
         if (!tabActive) return
         tabActive = false
         guiRefreshPollToken++
+        if (!waitForConnection) {
+            bootstrapPollToken++
+        }
         surfaceContainer.removeCallbacks(statusRefreshRunnable)
         if (maximized) {
             maximized = false
@@ -301,26 +323,101 @@ class EditorVncPanel(
         }
     }
 
-    private fun bootServerAndConnect() {
-        Log.i(LOG_TAG, "bootServerAndConnect waitForConnection=$waitForConnection")
+    private fun runVncBootstrap(forceInstall: Boolean = false) {
+        val packagesInstalled = EditorVncEnvironment.isPackagesInstalled()
+        val needInstall = forceInstall || !packagesInstalled
+        val shellReady = isShellVncReadySafe()
+        if (!needInstall && shellReady) {
+            serverBootRequested = true
+            bootstrapInProgress = false
+            showOperationalMode()
+            embedViewerIfNeeded()
+            scheduleStatusRefresh()
+            if (waitForConnection) {
+                waitForVncConnection()
+            }
+            return
+        }
+        Log.i(
+            LOG_TAG,
+            "runVncBootstrap needInstall=$needInstall shellReady=$shellReady forceInstall=$forceInstall"
+        )
+        bootstrapInProgress = true
+        installingPackages = needInstall
+        bootstrapPollToken++
+        val token = bootstrapPollToken
+        showSetupMode(SetupReason.INSTALLING)
         onEnsureTerminal()
-        onWriteTerminal(
+        val script = if (needInstall) {
             EditorVncEnvironment.ensureAndStartScript(
                 installRepoEcho = activity.getString(R.string.editor_vnc_install_repo),
                 installPackagesEcho = activity.getString(R.string.editor_vnc_install_packages)
             )
-        )
+        } else {
+            EditorVncEnvironment.startServerOnlyScript()
+        }
+        onWriteTerminal(script)
         serverBootRequested = true
-        val embedDelayMs = if (waitForConnection) 4500L else 2000L
-        surfaceContainer.postDelayed({
-            if (!tabActive && !waitForConnection) return@postDelayed
+        scheduleStatusRefresh()
+        surfaceContainer.postDelayed({ pollBootstrapReady(token, attempt = 0) }, BOOTSTRAP_INITIAL_DELAY_MS)
+    }
+
+    private fun pollBootstrapReady(token: Int, attempt: Int) {
+        if (token != bootstrapPollToken) return
+        if (!tabActive && runReadyCallback == null) return
+        val shellReady = isShellVncReadySafe()
+        if (shellReady) {
+            finishBootstrapSuccess(token)
+            return
+        }
+        if (installingPackages && EditorVncEnvironment.isPackagesInstalled()) {
+            installingPackages = false
+            updateInstallingSetupMessage(starting = true)
+        }
+        if (attempt >= BOOTSTRAP_MAX_ATTEMPTS) {
+            bootstrapInProgress = false
+            showSetupMode(SetupReason.START_FAILED)
+            Log.w(LOG_TAG, "VNC bootstrap timed out after $attempt polls")
+            return
+        }
+        surfaceContainer.postDelayed({ pollBootstrapReady(token, attempt + 1) }, BOOTSTRAP_POLL_MS)
+    }
+
+    private fun finishBootstrapSuccess(token: Int) {
+        if (token != bootstrapPollToken) return
+        bootstrapInProgress = false
+        installingPackages = false
+        showOperationalMode()
+        embedViewerIfNeeded()
+        if (waitForConnection) {
+            waitForVncConnection()
+        } else {
+            scheduleStatusRefresh()
+        }
+    }
+
+    private fun embedViewerIfNeeded() {
+        if (findEmbeddedFragment() == null) {
             embedViewer()
-            if (waitForConnection) {
-                waitForVncConnection()
-            } else {
-                surfaceContainer.postDelayed({ updateConnectionStatus() }, 1200)
-            }
-        }, embedDelayMs)
+        } else {
+            scheduleStatusRefresh()
+        }
+    }
+
+    private fun updateInstallingSetupMessage(starting: Boolean) {
+        if (!setupMode) return
+        setupMessageView.text = activity.getString(
+            if (starting) R.string.editor_vnc_starting_env
+            else R.string.editor_vnc_installing_env
+        )
+        statusView.text = activity.getString(
+            if (starting) R.string.editor_vnc_status_starting
+            else R.string.editor_vnc_status_installing
+        )
+    }
+
+    private fun bootServerAndConnect() {
+        runVncBootstrap()
     }
 
     private fun waitForVncConnection(attempt: Int = 0) {
@@ -439,26 +536,46 @@ class EditorVncPanel(
 
     private val statusRefreshRunnable = object : Runnable {
         override fun run() {
-            if (!tabActive || setupMode) return
+            if (!tabActive && runReadyCallback == null) return
             refreshStatusOnce()
-            surfaceContainer.postDelayed(this, 1000)
+            if ((tabActive && !setupMode) || bootstrapInProgress) {
+                surfaceContainer.postDelayed(this, STATUS_REFRESH_MS)
+            }
         }
     }
 
     private fun refreshStatusOnce() {
         val fragmentActivity = activity as? FragmentActivity ?: return
         val fragment = fragmentActivity.supportFragmentManager
-            .findFragmentByTag(VNC_FRAGMENT_TAG) as? EmbeddedVncFragment ?: return
+            .findFragmentByTag(VNC_FRAGMENT_TAG) as? EmbeddedVncFragment
+        if (fragment == null) {
+            if (bootstrapInProgress) {
+                statusView.text = activity.getString(
+                    if (installingPackages) R.string.editor_vnc_status_installing
+                    else R.string.editor_vnc_status_starting
+                )
+                statusView.setTextColor(0xFFFF8A80.toInt())
+            }
+            return
+        }
         val connected = fragment.isConnected()
         if (connected) {
             syncEmbeddedViewport(fragment)
-        }
-        if (!connected) {
+            disconnectedStreak = 0
+            if (bootstrapInProgress && isShellVncReadySafe()) {
+                finishBootstrapSuccess(bootstrapPollToken)
+            }
+        } else {
             Log.w(LOG_TAG, "VNC viewer disconnected: ${readDisconnectReason(fragment)}")
+            maybeAutoReconnect(connected)
         }
         statusView.text = activity.getString(
             when {
                 connected -> R.string.editor_vnc_status_connected
+                bootstrapInProgress -> {
+                    if (installingPackages) R.string.editor_vnc_status_installing
+                    else R.string.editor_vnc_status_starting
+                }
                 serverBootRequested -> R.string.editor_vnc_status_connecting
                 else -> R.string.editor_vnc_status_disconnected
             }
@@ -466,10 +583,26 @@ class EditorVncPanel(
         statusView.setTextColor(
             when {
                 connected -> 0xFF4CAF50.toInt()
-                serverBootRequested -> 0xFFFF8A80.toInt()
+                bootstrapInProgress || serverBootRequested -> 0xFFFF8A80.toInt()
                 else -> 0xFFFF5252.toInt()
             }
         )
+    }
+
+    private fun maybeAutoReconnect(connected: Boolean) {
+        if (connected || !tabActive || setupMode || bootstrapInProgress) return
+        disconnectedStreak++
+        if (disconnectedStreak < DISCONNECT_RECONNECT_THRESHOLD) return
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (now - lastAutoReconnectMs < AUTO_RECONNECT_DEBOUNCE_MS) return
+        lastAutoReconnectMs = now
+        disconnectedStreak = 0
+        Log.i(LOG_TAG, "Auto reconnect VNC (viewer disconnected)")
+        if (!isShellVncReadySafe()) {
+            runVncBootstrap(forceInstall = !EditorVncEnvironment.isPackagesInstalled())
+        } else {
+            recoverViewerOnce("auto reconnect")
+        }
     }
 
     private fun createEmbeddedVncFragment(): EmbeddedVncFragment {
@@ -495,10 +628,13 @@ class EditorVncPanel(
     private fun retryFromSetup() {
         setupMode = false
         serverBootRequested = false
+        bootstrapInProgress = false
+        bootstrapPollToken++
+        disconnectedStreak = 0
         surfaceContainer.removeCallbacks(statusRefreshRunnable)
         removeEmbeddedFragment()
         onBarActionsChanged()
-        bootServerAndConnect()
+        runVncBootstrap(forceInstall = true)
     }
 
     private fun removeEmbeddedFragment() {
@@ -519,10 +655,15 @@ class EditorVncPanel(
         extraKeysView.visibility = View.GONE
         setupMessageView.text = activity.getString(
             when (reason) {
+                SetupReason.INSTALLING -> {
+                    if (installingPackages) R.string.editor_vnc_installing_env
+                    else R.string.editor_vnc_starting_env
+                }
                 SetupReason.ENV_MISSING -> R.string.editor_vnc_env_missing
                 SetupReason.START_FAILED -> R.string.editor_vnc_start_failed
             }
         )
+        setupActionView.visibility = if (reason == SetupReason.INSTALLING) View.GONE else View.VISIBLE
         setupActionView.text = activity.getString(R.string.editor_vnc_retry)
         updateMaximizeButton()
         onBarActionsChanged()
@@ -536,6 +677,7 @@ class EditorVncPanel(
         extraKeysView.visibility = View.VISIBLE
         updateMaximizeButton()
         onBarActionsChanged()
+        scheduleStatusRefresh()
     }
 
     private fun toggleMaximized() {
@@ -621,5 +763,11 @@ class EditorVncPanel(
         private const val VNC_PROFILE_ARG = "com.gaurav.avnc.embedded_profile"
         private const val RUN_READY_POLL_MS = 500L
         private const val RUN_READY_MAX_ATTEMPTS = 40
+        private const val BOOTSTRAP_POLL_MS = 500L
+        private const val BOOTSTRAP_INITIAL_DELAY_MS = 800L
+        private const val BOOTSTRAP_MAX_ATTEMPTS = 180
+        private const val STATUS_REFRESH_MS = 1000L
+        private const val DISCONNECT_RECONNECT_THRESHOLD = 3
+        private const val AUTO_RECONNECT_DEBOUNCE_MS = 6000L
     }
 }

@@ -330,7 +330,7 @@ class EditorBottomDockPanel(
         val terminalActive = terminalOpen && activeTab == Tab.TERMINAL
         val x11Active = x11Open && activeTab == Tab.X11
         ctrlCButton.visibility = if (terminalActive) View.VISIBLE else View.GONE
-        val showGuiOps = x11Active && !x11Panel.isSetupMode()
+        val showGuiOps = x11Active && (!x11Panel.isSetupMode() || x11Panel.isBootstrapInProgress())
         x11StatusView.visibility = if (showGuiOps) View.VISIBLE else View.GONE
         x11MaximizeButton.visibility = if (showGuiOps) View.VISIBLE else View.GONE
     }

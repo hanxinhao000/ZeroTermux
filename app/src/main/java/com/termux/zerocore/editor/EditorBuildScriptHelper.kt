@@ -50,6 +50,7 @@ object EditorBuildScriptHelper {
             && !content.contains("ensure_python()")
             && !content.contains("ensure_php()")
             && !content.contains("ensure_node()")
+            || content.contains("xorg-fonts-dejavu")
     }
 
     fun defaultScript(context: Context, contextFile: File?, source: String?): String {
@@ -196,10 +197,9 @@ object EditorBuildScriptHelper {
                   export DISPLAY=${EditorVncEnvironment.DISPLAY}
                   ensure_editor_xvfb || exit 1
                   ensure_editor_x11vnc || exit 1
-                  if ! pkg list-installed 2>/dev/null | grep -q xorg-fonts-dejavu; then
+                  if ! pkg list-installed 2>/dev/null | grep -q ttf-dejavu; then
                     echo $installGuiFonts
-                    pkg install -y x11-repo 2>/dev/null || true
-                    pkg install -y xorg-fonts-dejavu 2>/dev/null || true
+                    pkg install -y ttf-dejavu 2>/dev/null || true
                   fi
                 }
             """.trimIndent()

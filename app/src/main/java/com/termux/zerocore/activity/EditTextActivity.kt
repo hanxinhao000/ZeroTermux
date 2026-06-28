@@ -650,7 +650,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 editorTerminalPanel?.prepareBackgroundSession(resolveTerminalDirectory(null))
             },
             isShellVncReady = {
-                editorTerminalPanel?.getRecentTerminalText()?.contains("VNC ready on") == true
+                editorTerminalPanel?.getRecentTerminalText()?.contains(EditorVncEnvironment.VNC_READY_MARKER) == true
             },
             isGuiProcessStartedInTerminal = {
                 editorTerminalPanel?.getRecentTerminalText()?.let { text ->
