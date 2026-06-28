@@ -4,6 +4,7 @@ import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.ai.config.ZtAiStrings
+import com.termux.zerocore.utils.ZtLocaleStrings
 import org.json.JSONObject
 
 class ZtAgentAiAgentRunner(
@@ -88,8 +89,8 @@ class ZtAgentAiAgentRunner(
         }
         post {
             callback.onError(
-                String.format(
-                    UUtils.getString(R.string.zt_agent_ai_tool_limit),
+                ZtLocaleStrings.format(
+                    R.string.zt_agent_ai_tool_limit,
                     maxToolRounds
                 )
             )
@@ -125,7 +126,7 @@ class ZtAgentAiAgentRunner(
                 post { callback.onToolStep(label, preview) }
                 post {
                     callback.onToolStep(
-                        UUtils.getString(R.string.zt_agent_ai_tool_read_after_send),
+                        ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_read_after_send),
                         ""
                     )
                 }

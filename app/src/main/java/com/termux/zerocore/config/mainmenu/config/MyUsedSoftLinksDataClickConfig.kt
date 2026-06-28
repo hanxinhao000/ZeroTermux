@@ -22,7 +22,7 @@ class MyUsedSoftLinksDataClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.my_commonly_used_soft_links)
+        return context?.getString(R.string.my_commonly_used_soft_links)
     }
 
     override fun onClick(view: View?, context: Context?) {

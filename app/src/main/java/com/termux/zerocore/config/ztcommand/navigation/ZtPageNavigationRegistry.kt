@@ -1,6 +1,9 @@
 package com.termux.zerocore.config.ztcommand.navigation
 
 import android.content.Intent
+import androidx.annotation.StringRes
+import com.termux.R
+import com.termux.zerocore.utils.ZtLocaleStrings
 import com.termux.app.TermuxActivity
 import com.termux.app.activities.HelpActivity
 import com.termux.app.activities.SettingsActivity
@@ -34,10 +37,16 @@ object ZtPageNavigationRegistry {
 
     data class PageEntry(
         val id: String,
-        val title: String,
+        @StringRes val titleRes: Int?,
         val activityClass: Class<*>,
-        val applyExtras: ((Intent) -> Unit)? = null
-    )
+        val applyExtras: ((Intent) -> Unit)? = null,
+        private val fallbackTitle: String? = null
+    ) {
+        fun localizedTitle(): String {
+            if (!fallbackTitle.isNullOrBlank()) return fallbackTitle
+            return if (titleRes != null) ZtLocaleStrings.getString(titleRes) else id
+        }
+    }
 
     private val aliases: Map<String, String> = mapOf(
         "boot_wizard" to "guide",
@@ -103,54 +112,57 @@ object ZtPageNavigationRegistry {
     }
 
     private val pages: List<PageEntry> = listOf(
-        PageEntry("termux", "主终端", TermuxActivity::class.java),
-        PageEntry("zt_settings", "ZeroTermux 设置", ZtSettingsActivity::class.java),
-        PageEntry("zero_termux_settings", "ZeroTermux 功能设置", ZeroTermuxSettingsActivity::class.java),
-        PageEntry("left_menu_settings", "左侧菜单设置", LeftMenuSettingsActivity::class.java),
-        PageEntry("menu_update_source", "菜单更新源", MenuUpdateSourceActivity::class.java),
-        PageEntry("ai_settings", "AI 设置", MainAiSettings::class.java),
-        PageEntry("agent_ai_settings", "智能体 AI 配置", ZtAgentAiSettingsActivity::class.java),
-        PageEntry("deepseek_settings", "DeepSeek 设置", ZeroTermuxDeepSeekSettingsActivity::class.java),
-        PageEntry("deepseek_key", "DeepSeek Key", ZeroTermuxDeepSeekKeyActivity::class.java),
-        PageEntry("llm_settings", "自定义 LLM 设置", ZeroTermuxLLMSettingsActivity::class.java),
-        PageEntry("termux_settings", "Termux 原生设置", SettingsActivity::class.java),
-        PageEntry("zt_about", "关于 ZeroTermux", ZTAboutActivity::class.java),
-        PageEntry("zt_install", "安装 Termux 软件", ZTInstallActivity::class.java),
-        PageEntry("zt_online_server", "在线服务器", ZTOnlineServerActivity::class.java),
-        PageEntry("timer", "定时任务", TimerActivity::class.java),
-        PageEntry("container_settings", "容器设置", ContainerSettingsMainActivity::class.java),
-        PageEntry("workstation_settings", "ZT 电脑工作站", ZtWorkstationSettingsActivity::class.java),
-        PageEntry("developer", "开发者选项", DeveloperActivity::class.java),
+        PageEntry("termux", R.string.zt_nav_page_termux, TermuxActivity::class.java),
+        PageEntry("zt_settings", R.string.zt_nav_page_zt_settings, ZtSettingsActivity::class.java),
+        PageEntry("zero_termux_settings", R.string.zt_nav_page_zero_termux_settings, ZeroTermuxSettingsActivity::class.java),
+        PageEntry("left_menu_settings", R.string.zt_nav_page_left_menu_settings, LeftMenuSettingsActivity::class.java),
+        PageEntry("menu_update_source", R.string.zt_nav_page_menu_update_source, MenuUpdateSourceActivity::class.java),
+        PageEntry("ai_settings", R.string.zt_nav_page_ai_settings, MainAiSettings::class.java),
+        PageEntry("agent_ai_settings", R.string.zt_nav_page_agent_ai_settings, ZtAgentAiSettingsActivity::class.java),
+        PageEntry("deepseek_settings", R.string.zt_nav_page_deepseek_settings, ZeroTermuxDeepSeekSettingsActivity::class.java),
+        PageEntry("deepseek_key", R.string.zt_nav_page_deepseek_key, ZeroTermuxDeepSeekKeyActivity::class.java),
+        PageEntry("llm_settings", R.string.zt_nav_page_llm_settings, ZeroTermuxLLMSettingsActivity::class.java),
+        PageEntry("termux_settings", R.string.zt_nav_page_termux_settings, SettingsActivity::class.java),
+        PageEntry("zt_about", R.string.zt_nav_page_zt_about, ZTAboutActivity::class.java),
+        PageEntry("zt_install", R.string.zt_nav_page_zt_install, ZTInstallActivity::class.java),
+        PageEntry("zt_online_server", R.string.zt_nav_page_zt_online_server, ZTOnlineServerActivity::class.java),
+        PageEntry("timer", R.string.zt_nav_page_timer, TimerActivity::class.java),
+        PageEntry("container_settings", R.string.zt_nav_page_container_settings, ContainerSettingsMainActivity::class.java),
+        PageEntry("workstation_settings", R.string.zt_nav_page_workstation_settings, ZtWorkstationSettingsActivity::class.java),
+        PageEntry("developer", R.string.zt_nav_page_developer, DeveloperActivity::class.java),
         PageEntry(
             "guide",
-            "开机向导（协议页）",
-            TermuxGuideActivity::class.java
-        ) { intent ->
-            applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_AGREEMENT)
-        },
+            R.string.zt_nav_page_guide,
+            TermuxGuideActivity::class.java,
+            applyExtras = { intent ->
+                applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_AGREEMENT)
+            }
+        ),
         PageEntry(
             "guide_usage",
-            "开机向导（使用习惯）",
-            TermuxGuideActivity::class.java
-        ) { intent ->
-            applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_USAGE_HABITS)
-        },
+            R.string.zt_nav_page_guide_usage,
+            TermuxGuideActivity::class.java,
+            applyExtras = { intent ->
+                applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_USAGE_HABITS)
+            }
+        ),
         PageEntry(
             "save_path",
-            "开机向导（创建文件夹）",
-            TermuxGuideActivity::class.java
-        ) { intent ->
-            applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_CREATE_FOLDER)
-        },
-        PageEntry("backup", "备份恢复", BackNewActivity::class.java),
-        PageEntry("font", "字体设置", FontActivity::class.java),
-        PageEntry("switch_system", "切换系统", SwitchActivity::class.java),
-        PageEntry("scrcpy", "Scrcpy 投屏", MainActivity::class.java),
-        PageEntry("qemu_run", "QEMU 运行窗口", RunWindowActivity::class.java),
-        PageEntry("webview", "内置浏览器", WebViewActivity::class.java),
-        PageEntry("help", "帮助", HelpActivity::class.java),
-        PageEntry("zt_command_socket", "ZT 命令调试", SocketBaseActivity::class.java),
-        PageEntry("editor", "文本编辑器", EditTextActivity::class.java)
+            R.string.zt_nav_page_save_path,
+            TermuxGuideActivity::class.java,
+            applyExtras = { intent ->
+                applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_CREATE_FOLDER)
+            }
+        ),
+        PageEntry("backup", R.string.zt_nav_page_backup, BackNewActivity::class.java),
+        PageEntry("font", R.string.zt_nav_page_font, FontActivity::class.java),
+        PageEntry("switch_system", R.string.zt_nav_page_switch_system, SwitchActivity::class.java),
+        PageEntry("scrcpy", R.string.zt_nav_page_scrcpy, MainActivity::class.java),
+        PageEntry("qemu_run", R.string.zt_nav_page_qemu_run, RunWindowActivity::class.java),
+        PageEntry("webview", R.string.zt_nav_page_webview, WebViewActivity::class.java),
+        PageEntry("help", R.string.zt_nav_page_help, HelpActivity::class.java),
+        PageEntry("zt_command_socket", R.string.zt_nav_page_zt_command_socket, SocketBaseActivity::class.java),
+        PageEntry("editor", R.string.zt_nav_page_editor, EditTextActivity::class.java)
     )
 
     private val keywordRules: List<Pair<List<String>, String>> = listOf(
@@ -239,13 +251,13 @@ object ZtPageNavigationRegistry {
     }
 
     private fun pageByExactTitle(query: String): PageEntry? {
-        return pages.firstOrNull { it.title.equals(query, ignoreCase = true) }
+        return pages.firstOrNull { it.localizedTitle().equals(query, ignoreCase = true) }
     }
 
     private fun pageByBestTitleMatch(query: String): PageEntry? {
         val lower = query.lowercase()
         val matches = pages.mapNotNull { page ->
-            val titleLower = page.title.lowercase()
+            val titleLower = page.localizedTitle().lowercase()
             val score = when {
                 titleLower == lower -> 100
                 titleLower.contains(lower) -> 60 + lower.length
@@ -263,16 +275,19 @@ object ZtPageNavigationRegistry {
             if (TermuxGuideActivity::class.java.isAssignableFrom(clazz)) {
                 return PageEntry(
                     id = className.substringAfterLast('.').lowercase(),
-                    title = className,
-                    activityClass = clazz
-                ) { intent ->
-                    applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_AGREEMENT)
-                }
+                    titleRes = null,
+                    activityClass = clazz,
+                    applyExtras = { intent ->
+                        applyBootWizardExtras(intent, TermuxGuideActivity.GUIDE_AGREEMENT)
+                    },
+                    fallbackTitle = className
+                )
             }
             PageEntry(
                 id = className.substringAfterLast('.').lowercase(),
-                title = className,
-                activityClass = clazz
+                titleRes = null,
+                activityClass = clazz,
+                fallbackTitle = className
             )
         } catch (_: Exception) {
             null

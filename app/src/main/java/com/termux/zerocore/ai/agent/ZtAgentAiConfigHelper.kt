@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.termux.zerocore.bean.ZTUserBean
 import com.termux.zerocore.ftp.utils.UserSetManage
+import com.termux.zerocore.utils.ZtLocaleStrings
 
 object ZtAgentAiConfigHelper {
 
@@ -121,38 +122,41 @@ object ZtAgentAiConfigHelper {
         ztControlEnabled: Boolean = isZtControlEnabled()
     ): String {
         val base = rawPrompt.trim().ifBlank {
-            com.example.xh_lib.utils.UUtils.getString(com.termux.R.string.zt_agent_ai_default_system_prompt)
+            ZtLocaleStrings.getString(com.termux.R.string.zt_agent_ai_default_system_prompt)
         }
-        val parts = mutableListOf(base)
+        val parts = mutableListOf(
+            ZtLocaleStrings.getString(com.termux.R.string.zt_agent_ai_locale_reply_prompt),
+            base
+        )
         if (terminalEnabled) {
             parts.add(
-                com.example.xh_lib.utils.UUtils.getString(
+                ZtLocaleStrings.getString(
                     com.termux.R.string.zt_agent_ai_terminal_system_prompt
                 )
             )
         } else {
             parts.add(
-                com.example.xh_lib.utils.UUtils.getString(
+                ZtLocaleStrings.getString(
                     com.termux.R.string.zt_agent_ai_terminal_disabled_prompt
                 )
             )
         }
         if (ztControlEnabled) {
             parts.add(
-                com.example.xh_lib.utils.UUtils.getString(
+                ZtLocaleStrings.getString(
                     com.termux.R.string.zt_agent_ai_zt_control_system_prompt
                 )
             )
         } else {
             parts.add(
-                com.example.xh_lib.utils.UUtils.getString(
+                ZtLocaleStrings.getString(
                     com.termux.R.string.zt_agent_ai_zt_control_disabled_prompt
                 )
             )
         }
         if (terminalEnabled || ztControlEnabled) {
             parts.add(
-                com.example.xh_lib.utils.UUtils.getString(
+                ZtLocaleStrings.getString(
                     com.termux.R.string.zt_agent_ai_tool_usage_prompt
                 )
             )

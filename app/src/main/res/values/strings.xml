@@ -1139,6 +1139,40 @@
     <string name="zt_particle_animation">粒子动画</string>
     <string name="zt_volume_function_title">还原音量+-键</string>
     <string name="zt_volume_function_summary">禁用当前使用音量+-键进行弹出左/右面板</string>
+
+    <string name="zt_nav_page_opened">已打开：%1$s</string>
+    <string name="zt_nav_page_termux">主终端</string>
+    <string name="zt_nav_page_zt_settings">ZeroTermux 设置</string>
+    <string name="zt_nav_page_zero_termux_settings">ZeroTermux 功能设置</string>
+    <string name="zt_nav_page_left_menu_settings">左侧菜单设置</string>
+    <string name="zt_nav_page_menu_update_source">菜单更新源</string>
+    <string name="zt_nav_page_ai_settings">AI 设置</string>
+    <string name="zt_nav_page_agent_ai_settings">智能体 AI 配置</string>
+    <string name="zt_nav_page_deepseek_settings">DeepSeek 设置</string>
+    <string name="zt_nav_page_deepseek_key">DeepSeek Key</string>
+    <string name="zt_nav_page_llm_settings">自定义 LLM 设置</string>
+    <string name="zt_nav_page_termux_settings">Termux 原生设置</string>
+    <string name="zt_nav_page_zt_about">关于 ZeroTermux</string>
+    <string name="zt_nav_page_zt_install">安装 Termux 软件</string>
+    <string name="zt_nav_page_zt_online_server">在线服务器</string>
+    <string name="zt_nav_page_timer">定时任务</string>
+    <string name="zt_nav_page_container_settings">容器设置</string>
+    <string name="zt_nav_page_workstation_settings">ZT 电脑工作站</string>
+    <string name="zt_nav_page_developer">开发者选项</string>
+    <string name="zt_nav_page_guide">开机向导（协议页）</string>
+    <string name="zt_nav_page_guide_usage">开机向导（使用习惯）</string>
+    <string name="zt_nav_page_save_path">开机向导（创建文件夹）</string>
+    <string name="zt_nav_page_backup">备份恢复</string>
+    <string name="zt_nav_page_font">字体设置</string>
+    <string name="zt_nav_page_switch_system">切换系统</string>
+    <string name="zt_nav_page_scrcpy">Scrcpy 投屏</string>
+    <string name="zt_nav_page_qemu_run">QEMU 运行窗口</string>
+    <string name="zt_nav_page_webview">内置浏览器</string>
+    <string name="zt_nav_page_help">帮助</string>
+    <string name="zt_nav_page_zt_command_socket">ZT 命令调试</string>
+    <string name="zt_nav_page_editor">文本编辑器</string>
+    <string name="zt_agent_ai_locale_reply_prompt">重要：请始终使用与用户相同的语言回复。用户用英文则用英文，用中文则用中文。工具返回的 JSON 仅作状态参考，向用户说明时须用用户语言概括，勿逐字复述界面文案。</string>
+
     <string name="zt_ai_agent_panel_title">打开新版本智能体</string>
     <string name="zt_ai_agent_panel_summary">将右侧面板调整唤醒为AI智能体，可控制终端自动下发命令</string>
     <string name="zt_ai_agent_panel_title_bar">AI 智能体</string>
@@ -1608,7 +1642,7 @@
     <string name="zt_agent_ai_reset_done">已还原 AI 智能体数据</string>
     <string name="zt_agent_ai_reset_panel_desc">还原 AI 智能体数据</string>
     <string name="zt_agent_ai_tool_usage_prompt">普通问答、解释、闲聊请用与用户相同的语言回复，不要调用工具。仅在用户明确要求打开页面、读取/控制终端、或执行 zt 命令时才调用工具。工具执行完成后用与用户相同的语言简要说明结果。</string>
-    <string name="zt_agent_ai_default_system_prompt">你是 ZeroTermux 内置 AI 智能体。请用简洁的中文或与用户相同的语言回答，必要时使用 Markdown。\n\n重要：不要编造或猜测终端输出、软件是否已安装、文件是否存在等事实。未经工具返回的结果，必须明确说「无法确认」或「我目前看不到终端」，并告诉用户如何自行验证或开启相应权限。</string>
+    <string name="zt_agent_ai_default_system_prompt">你是 ZeroTermux 内置 AI 智能体。请用与用户相同的语言简洁回答，必要时使用 Markdown。\n\n重要：不要编造或猜测终端输出、软件是否已安装、文件是否存在等事实。未经工具返回的结果，必须明确说「无法确认」或「我目前看不到终端」，并告诉用户如何自行验证或开启相应权限。</string>
     <string name="zt_agent_ai_terminal_system_prompt">你可以使用 read_terminal、send_terminal_command、send_terminal_key。每轮对话会附带【当前可见屏幕】终端快照，描述终端时必须严格依据快照，尤其是「当前可见屏幕」段落：\n1. 可见屏幕显示 Welcome to Termux / ~ $ → 就是 Termux 主环境，禁止说是 Ubuntu、root@localhost、SSH、passwd 等快照中不存在的内容。\n2. 末行是 shell 提示符 → 命令已结束，禁止说「正在安装/请稍等」。\n3. 快照状态为「等待确认」或末行含 [Y/n]、(y/N)、Do you want to continue 等 → 必须立刻用与用户相同的语言向用户说明终端在问什么，等待用户明确回复后再 send_terminal_command 发送 y/n/Enter；禁止自动替用户确认。\n4. 对话历史里旧的终端描述可能已过期，一律以最新快照为准。\n5. 回答「终端显示什么」时，应概括可见屏幕中的实际文字，不得臆造。\n6. send_terminal_command 默认会等待命令结束（最长约 10 分钟）；pkg/apt 安装很慢时可传 max_wait_ms=1800000（30 分钟）。若返回「等待超时」且快照仍无提示符，应调用 read_terminal 继续查看，不要假设安装失败。\n危险命令需用户确认后再执行。</string>
     <string name="zt_agent_ai_terminal_history_notice">【重要】下方对话历史中关于终端状态、Ubuntu、SSH、安装进度等描述可能已过期。回答时必须以用户最新消息末尾附带的「终端快照」为准，与快照矛盾的历史内容全部忽略。</string>
     <string name="zt_agent_ai_terminal_disabled_prompt">【终端权限已关闭】你当前无法读取或控制终端，也没有 read_terminal / send_terminal_command 工具。用户询问 pkg/ssh/安装状态、命令输出、当前目录等时：禁止声称已安装/未安装或描述终端内容；应说明你看不到终端，建议用户在 ZeroTermux 设置 → 配置智能体AI 中开启「允许控制终端」，或让用户自己在终端运行命令（如 `pkg list-installed | grep openssh`）后把结果贴给你。</string>

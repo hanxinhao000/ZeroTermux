@@ -7,7 +7,9 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.example.xh_lib.utils.UUtils
+import com.termux.R
 import com.termux.zerocore.guide.TermuxGuideActivity
+import com.termux.zerocore.utils.ZtLocaleStrings
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.CountDownLatch
@@ -26,7 +28,7 @@ object ZtNavigationHelper {
             arr.put(
                 JSONObject()
                     .put("id", page.id)
-                    .put("title", page.title)
+                    .put("title", page.localizedTitle())
                     .put("activity", page.activityClass.name)
             )
         }
@@ -43,7 +45,7 @@ object ZtNavigationHelper {
     fun listPagesText(): String {
         val sb = StringBuilder("Use zt openpage <page_id> to open a page:\n\n")
         ZtPageNavigationRegistry.allPages().forEach { page ->
-            sb.append("- ").append(page.id).append(": ").append(page.title).append('\n')
+            sb.append("- ").append(page.id).append(": ").append(page.localizedTitle()).append('\n')
         }
         sb.append("\nCommon aliases (also accepted by openpage):\n")
         ZtPageNavigationRegistry.aliasLines().forEach { sb.append("  ").append(it).append('\n') }
@@ -107,7 +109,11 @@ object ZtNavigationHelper {
             )
             context.startActivity(intent)
             if (context is Activity) {
-                Toast.makeText(context, "已打开: ${resolved.title}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    ZtLocaleStrings.getString(R.string.zt_nav_page_opened, resolved.localizedTitle()),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } catch (e: Exception) {
             Log.e(TAG, "startActivity failed page=${resolved.id}", e)
@@ -119,15 +125,16 @@ object ZtNavigationHelper {
                 code = 1,
                 message = "Failed to open ${resolved.id}: $err",
                 pageId = resolved.id,
-                title = resolved.title,
+                title = resolved.localizedTitle(),
                 opened = false
             )
         }
+        val pageTitle = resolved.localizedTitle()
         return buildResult(
             code = 0,
-            message = "已打开: ${resolved.title}",
+            message = ZtLocaleStrings.getString(R.string.zt_nav_page_opened, pageTitle),
             pageId = resolved.id,
-            title = resolved.title,
+            title = pageTitle,
             opened = true
         )
     }

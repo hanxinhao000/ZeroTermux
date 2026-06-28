@@ -14,7 +14,7 @@ class RemoteConnectionClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.remote_connection)
+        return context?.getString(R.string.remote_connection)
     }
 
     override fun onClick(view: View?, context: Context?) {

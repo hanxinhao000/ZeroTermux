@@ -38,8 +38,8 @@ class SwitchDialog : BaseDialogCentre {
        // title?.visibility = View.INVISIBLE
         title?.text = UUtils.getString(R.string.提示)
         other?.visibility = View.GONE
-        ok?.text = UUtils.getString(R.string.确定)
-        cancel?.text = UUtils.getString(R.string.取消)
+        ok?.text = context.getString(R.string.confirm)
+        cancel?.text = context.getString(R.string.cancel)
         cancel?.setOnClickListener {
             dismiss()
         }

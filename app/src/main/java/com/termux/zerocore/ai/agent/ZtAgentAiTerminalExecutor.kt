@@ -1,8 +1,8 @@
 package com.termux.zerocore.ai.agent
 
-import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.utils.SingletonCommunicationUtils
+import com.termux.zerocore.utils.ZtLocaleStrings
 import org.json.JSONObject
 
 object ZtAgentAiTerminalExecutor {
@@ -11,7 +11,7 @@ object ZtAgentAiTerminalExecutor {
 
     fun execute(toolCall: ZtAgentAiChatClient.ToolCall): String {
         if (!SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
-            return UUtils.getString(R.string.zt_agent_ai_terminal_unavailable)
+            return ZtLocaleStrings.getString(R.string.zt_agent_ai_terminal_unavailable)
         }
         val listener = SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener()
         return try {
@@ -31,16 +31,16 @@ object ZtAgentAiTerminalExecutor {
 
     fun statusLabel(toolName: String): String {
         return when (toolName) {
-            "read_terminal" -> UUtils.getString(R.string.zt_agent_ai_tool_read_terminal)
-            "send_terminal_command" -> UUtils.getString(R.string.zt_agent_ai_tool_send_command)
-            "send_terminal_key" -> UUtils.getString(R.string.zt_agent_ai_tool_send_key)
-            else -> UUtils.getString(R.string.zt_agent_ai_tool_running)
+            "read_terminal" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_read_terminal)
+            "send_terminal_command" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_send_command)
+            "send_terminal_key" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_send_key)
+            else -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_running)
         }
     }
 
     fun captureSnapshot(maxChars: Int = DEFAULT_MAX_CHARS): String {
         if (!SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
-            return UUtils.getString(R.string.zt_agent_ai_terminal_unavailable)
+            return ZtLocaleStrings.getString(R.string.zt_agent_ai_terminal_unavailable)
         }
         val listener = SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener()
         val visible = listener.getVisibleTerminalText().trim()
@@ -50,7 +50,7 @@ object ZtAgentAiTerminalExecutor {
 
     fun runZtCommand(command: String): String {
         if (!SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
-            return UUtils.getString(R.string.zt_agent_ai_terminal_unavailable)
+            return ZtLocaleStrings.getString(R.string.zt_agent_ai_terminal_unavailable)
         }
         val trimmed = command.trim()
         if (trimmed.isEmpty()) {

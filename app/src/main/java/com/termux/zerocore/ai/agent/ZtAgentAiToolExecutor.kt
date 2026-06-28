@@ -1,8 +1,8 @@
 package com.termux.zerocore.ai.agent
 
-import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.ai.config.ZtAiConfigExecutor
+import com.termux.zerocore.utils.ZtLocaleStrings
 import org.json.JSONObject
 
 object ZtAgentAiToolExecutor {
@@ -26,23 +26,23 @@ object ZtAgentAiToolExecutor {
     ): String {
         if (toolCall.name in configToolNames) {
             if (!ztControlEnabled) {
-                return UUtils.getString(R.string.zt_agent_ai_tool_disabled)
+                return ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_disabled)
             }
             return ZtAiConfigExecutor.execute(toolCall)
         }
         return when (toolCall.name) {
             "read_terminal", "send_terminal_command", "send_terminal_key" -> {
                 if (!terminalEnabled) {
-                    return UUtils.getString(R.string.zt_agent_ai_tool_disabled)
+                    return ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_disabled)
                 }
                 ZtAgentAiTerminalExecutor.execute(toolCall)
             }
             "run_zt_command" -> {
                 if (!ztControlEnabled) {
-                    return UUtils.getString(R.string.zt_agent_ai_tool_disabled)
+                    return ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_disabled)
                 }
                 if (!terminalEnabled) {
-                    return UUtils.getString(R.string.zt_agent_ai_zt_requires_terminal)
+                    return ZtLocaleStrings.getString(R.string.zt_agent_ai_zt_requires_terminal)
                 }
                 runZtCommand(toolCall)
             }
@@ -55,11 +55,11 @@ object ZtAgentAiToolExecutor {
             return ZtAiConfigExecutor.statusLabel(toolName)
         }
         return when (toolName) {
-            "read_terminal" -> UUtils.getString(R.string.zt_agent_ai_tool_read_terminal)
-            "send_terminal_command" -> UUtils.getString(R.string.zt_agent_ai_tool_send_command)
-            "send_terminal_key" -> UUtils.getString(R.string.zt_agent_ai_tool_send_key)
-            "run_zt_command" -> UUtils.getString(R.string.zt_agent_ai_tool_run_command)
-            else -> UUtils.getString(R.string.zt_agent_ai_tool_running)
+            "read_terminal" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_read_terminal)
+            "send_terminal_command" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_send_command)
+            "send_terminal_key" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_send_key)
+            "run_zt_command" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_run_command)
+            else -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_running)
         }
     }
 

@@ -13,7 +13,7 @@ class FtpDataClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.ftp)
+        return context?.getString(R.string.ftp)
     }
 
     override fun onClick(view: View?, context: Context?) {

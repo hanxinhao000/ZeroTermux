@@ -29,7 +29,7 @@ class FileBrowserClickConfig : BaseMenuClickConfig(){
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.网络访问linux目录)
+        return context?.getString(R.string.网络访问linux目录)
     }
 
     override fun onClick(view: View?, context: Context?) {

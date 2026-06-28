@@ -24,7 +24,7 @@ class DataMessageClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-       return  UUtils.getString(R.string.create_data_message)
+       return context?.getString(R.string.create_data_message)
     }
 
     override fun onClick(view: View?, context: Context?) {

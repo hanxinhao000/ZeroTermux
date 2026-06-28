@@ -14,7 +14,7 @@ class ClearStyleClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.clear_style_dialog)
+        return context?.getString(R.string.clear_style_dialog)
     }
 
     override fun onClick(view: View?, context: Context?) {

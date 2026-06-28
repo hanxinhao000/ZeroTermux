@@ -15,7 +15,7 @@ class ChangBashClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.changed_bash)
+        return context?.getString(R.string.changed_bash)
     }
 
     override fun onClick(view: View?, context: Context?) {

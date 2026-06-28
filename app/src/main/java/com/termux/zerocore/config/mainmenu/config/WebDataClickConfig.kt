@@ -17,7 +17,7 @@ class WebDataClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.web_linux)
+        return context?.getString(R.string.web_linux)
     }
 
     override fun onClick(view: View?, context: Context?) {

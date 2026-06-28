@@ -14,7 +14,7 @@ class UnInstallClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.zero_uninstall)
+        return context?.getString(R.string.zero_uninstall)
     }
 
     override fun onClick(view: View?, context: Context?) {

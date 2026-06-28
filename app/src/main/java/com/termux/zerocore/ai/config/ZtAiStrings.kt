@@ -4,19 +4,19 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import com.example.xh_lib.utils.UUtils
 import com.termux.R
+import com.termux.zerocore.utils.ZtLocaleStrings
 
 /** AI 能力文案：随系统语言切换（values / values-en）。 */
 object ZtAiStrings {
 
-    fun str(@StringRes id: Int): String = UUtils.getString(id)
+    fun str(@StringRes id: Int): String = ZtLocaleStrings.getString(id)
 
-    fun strArray(@ArrayRes id: Int): Array<String> =
-        UUtils.getContext().resources.getStringArray(id)
+    fun strArray(@ArrayRes id: Int): Array<String> = ZtLocaleStrings.getStringArray(id)
 
     fun aiMenuCreateLabel(): String = str(R.string.menu_package_ai_created_label)
 
     fun menuAssetSubdir(): String {
-        val lang = UUtils.getContext().resources.configuration.locales[0].language
+        val lang = ZtLocaleStrings.context().resources.configuration.locales[0].language
         return if (lang.equals("en", ignoreCase = true)) "en" else "cn"
     }
 
@@ -91,7 +91,7 @@ object ZtAiStrings {
     fun terminalSnapshotHeader(): String = str(R.string.zt_ai_terminal_snapshot_header)
 
     fun terminalSnapshotLastLine(label: String): String =
-        str(R.string.zt_ai_terminal_snapshot_last_line).format(label)
+        ZtLocaleStrings.format(R.string.zt_ai_terminal_snapshot_last_line, label)
 
     fun terminalSnapshotVisibleHeader(): String = str(R.string.zt_ai_terminal_snapshot_visible_header)
 

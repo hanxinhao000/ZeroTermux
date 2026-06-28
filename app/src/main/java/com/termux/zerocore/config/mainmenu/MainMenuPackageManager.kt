@@ -462,6 +462,11 @@ object MainMenuPackageManager {
     }
 
     @JvmStatic
+    fun isDefaultMenuActive(context: Context): Boolean {
+        return isDefaultMenuActive(getActivePackageId(context))
+    }
+
+    @JvmStatic
     fun applyLatestNetworkPackage(context: Context): Boolean {
         val latestId = getLatestNetworkPackageId(context)
         if (latestId != null) {

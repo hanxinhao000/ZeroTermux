@@ -18,7 +18,7 @@ class ChangStartMsgClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.start_msg)
+        return context?.getString(R.string.start_msg)
     }
 
     override fun onClick(view: View?, context: Context?) {

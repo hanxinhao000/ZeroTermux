@@ -24,7 +24,7 @@ class KeyDataClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.keyboard_select_name)
+        return context?.getString(R.string.keyboard_select_name)
     }
 
     override fun onClick(view: View?, context: Context?) {

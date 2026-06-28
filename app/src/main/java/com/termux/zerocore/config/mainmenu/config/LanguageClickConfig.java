@@ -12,6 +12,7 @@ import com.example.xh_lib.utils.UUtils;
 import com.mallotec.reb.localeplugin.utils.LocaleHelper;
 import com.termux.R;
 import com.termux.app.TermuxActivity;
+import com.termux.zerocore.config.mainmenu.MainMenuPackageManager;
 import com.termux.zerocore.popuwindow.MenuLeftPopuListWindow;
 
 import org.jetbrains.annotations.Nullable;
@@ -40,9 +41,9 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
     public void onClick(View view, Context context) {
         LogUtils.e(TAG, "onClick Language.");
         ArrayList<MenuLeftPopuListWindow.MenuLeftPopuListData> yuyan_list = new ArrayList<>();
-        MenuLeftPopuListWindow.MenuLeftPopuListData msg_zh = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.zhongwen, UUtils.getString(R.string.中文), 30);
+        MenuLeftPopuListWindow.MenuLeftPopuListData msg_zh = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.zhongwen, context.getString(R.string.中文), 30);
         yuyan_list.add(msg_zh);
-        MenuLeftPopuListWindow.MenuLeftPopuListData msg_en = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.yingwen_ico, UUtils.getString(R.string.English), 31);
+        MenuLeftPopuListWindow.MenuLeftPopuListData msg_en = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.yingwen_ico, context.getString(R.string.English), 31);
         yuyan_list.add(msg_en);
         showMenuDialog(yuyan_list, view);
     }
@@ -59,16 +60,18 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
         switch (id) {
             // 中文
             case 30:
-                //  Intent intent = new Intent(this, TermuxActivity.class);
                 LocaleHelper.Companion.getInstance()
                     .language(getLocale("2")).apply(mContext);
-                // startActivity(intent);
                 break;
             // 英文
             case 31:
                 LocaleHelper.Companion.getInstance()
                     .language(getLocale("1")).apply(mContext);
                 break;
+        }
+
+        if (MainMenuPackageManager.isDefaultMenuActive(mContext)) {
+            MainMenuPackageManager.applyDefaultFromAssets(mContext);
         }
 
         if (mContext instanceof TermuxActivity) {

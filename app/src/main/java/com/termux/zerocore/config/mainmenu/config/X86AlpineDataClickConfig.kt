@@ -27,7 +27,7 @@ class X86AlpineDataClickConfig: BaseMenuClickConfig() {
     }
 
     override fun getString(context: Context?): String? {
-        return UUtils.getString(R.string.x86_alpine_run)
+        return context?.getString(R.string.x86_alpine_run)
     }
 
     override fun onClick(view: View?, context: Context?) {

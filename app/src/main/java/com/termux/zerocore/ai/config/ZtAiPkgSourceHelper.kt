@@ -2,6 +2,7 @@ package com.termux.zerocore.ai.config
 
 import android.content.Context
 import com.example.xh_lib.utils.UUtils
+import com.termux.zerocore.utils.ZtLocaleStrings
 import com.termux.R
 import com.termux.zerocore.code.CodeString
 import com.termux.zerocore.url.FileUrl
@@ -40,7 +41,7 @@ object ZtAiPkgSourceHelper {
             .put("ok", true)
             .put("hint", ZtAiStrings.pkgSourceHint())
             .put("default_source_id", DEFAULT_SOURCE_ID)
-            .put("warning", UUtils.getString(R.string.该操作会覆盖您的文件记录))
+            .put("warning", ZtLocaleStrings.getString(R.string.该操作会覆盖您的文件记录))
             .put("menu_equivalent", ZtAiStrings.str(R.string.zt_ai_pkg_source_menu_equiv))
             .put("sources", JSONArray().apply {
                 SOURCES.forEach { def ->
@@ -77,8 +78,8 @@ object ZtAiPkgSourceHelper {
                 .put("error", "user confirmation required")
                 .put("hint", "Present options to user first; set user_confirmed=true only after explicit approval")
                 .put("pending_source_id", sourceId)
-                .put("pending_source_label", UUtils.getContext().getString(def.labelRes))
-                .put("warning", UUtils.getString(R.string.该操作会覆盖您的文件记录))
+                .put("pending_source_label", ZtLocaleStrings.getString(def.labelRes))
+                .put("warning", ZtLocaleStrings.getString(R.string.该操作会覆盖您的文件记录))
                 .toString(2)
         }
 
@@ -91,9 +92,9 @@ object ZtAiPkgSourceHelper {
             JSONObject()
                 .put("ok", true)
                 .put("source_id", sourceId)
-                .put("source_label", UUtils.getContext().getString(def.labelRes))
+                .put("source_label", ZtLocaleStrings.getString(def.labelRes))
                 .put("message", ZtAiStrings.str(R.string.zt_ai_pkg_source_switched_msg))
-                .put("warning", UUtils.getString(R.string.该操作会覆盖您的文件记录))
+                .put("warning", ZtLocaleStrings.getString(R.string.该操作会覆盖您的文件记录))
                 .toString(2)
         } else {
             errorJson("failed to send switch command (terminal not ready?)")

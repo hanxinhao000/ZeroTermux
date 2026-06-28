@@ -74,8 +74,8 @@ public abstract class BaseMenuClickConfig implements MainMenuClickConfig {
         switchDialog.getTitle().setText(title);
         switchDialog.getMsg().setText(msg);
         switchDialog.getOther().setVisibility(View.GONE);
-        switchDialog.getOk().setText(UUtils.getString(R.string.确定));
-        switchDialog.getCancel().setText(UUtils.getString(R.string.取消));
+        switchDialog.getOk().setText(context.getString(R.string.confirm));
+        switchDialog.getCancel().setText(context.getString(R.string.cancel));
         switchDialog.show();
         return switchDialog;
     }

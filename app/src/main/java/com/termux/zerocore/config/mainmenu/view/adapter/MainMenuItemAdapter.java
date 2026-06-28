@@ -36,11 +36,12 @@ public class MainMenuItemAdapter extends RecyclerView.Adapter<MainMenuItemViewHo
     public void onBindViewHolder(@NonNull MainMenuItemViewHolder holder, int position) {
         MainMenuClickConfig mainMenuClickConfig = mMainMenuClickConfigs.get(position);
         holder.mCodeImage.setImageDrawable(mainMenuClickConfig.getIcon(mContext));
-        String xmlString = mainMenuClickConfig.getXmlString(mContext);
-        if (!TextUtils.isEmpty(xmlString)) {
-            holder.mCodeTitle.setText(xmlString);
+        String localized = mainMenuClickConfig.getString(mContext);
+        if (!TextUtils.isEmpty(localized)) {
+            holder.mCodeTitle.setText(localized);
         } else {
-            holder.mCodeTitle.setText(mainMenuClickConfig.getString(mContext));
+            String xmlString = mainMenuClickConfig.getXmlString(mContext);
+            holder.mCodeTitle.setText(xmlString);
         }
 
         holder.mDisableIco.setVisibility(mainMenuClickConfig.isShowDisableIco() ? View.VISIBLE : View.INVISIBLE);

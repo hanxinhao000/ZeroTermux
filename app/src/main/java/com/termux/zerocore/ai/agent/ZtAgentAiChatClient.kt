@@ -2,6 +2,7 @@ package com.termux.zerocore.ai.agent
 
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
+import com.termux.zerocore.utils.ZtLocaleStrings
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -63,7 +64,7 @@ class ZtAgentAiChatClient(
             return CompletionResult(
                 content = null,
                 toolCalls = emptyList(),
-                error = UUtils.getString(com.termux.R.string.zt_ai_agent_not_configured)
+                error = ZtLocaleStrings.getString(com.termux.R.string.zt_ai_agent_not_configured)
             )
         }
         return try {
@@ -99,7 +100,7 @@ class ZtAgentAiChatClient(
     fun chat(messages: List<ChatMessage>, stream: Boolean, listener: Listener) {
         if (config.apiUrl.isBlank() || config.apiKey.isBlank() || config.model.isBlank()) {
             UUtils.getHandler().post {
-                listener.onError(UUtils.getString(com.termux.R.string.zt_ai_agent_not_configured))
+                listener.onError(ZtLocaleStrings.getString(com.termux.R.string.zt_ai_agent_not_configured))
                 listener.onComplete("")
             }
             return
