@@ -6,7 +6,7 @@ package com.termux.zerocore.aidebug
  */
 object ZtAiDebugApiDocs {
 
-    const val DOCS_VERSION = 2
+    const val DOCS_VERSION = 4
     val LANGUAGES = listOf("zh", "en")
 
     data class DocLocale(
@@ -79,6 +79,13 @@ object ZtAiDebugApiDocs {
                     "POST $base/api/input/tap$q — UI 点击 {x,y}（需 Root）",
                     "GET $base/api/system/status$q — 系统状态快照",
                     "GET $base/api/files/read$q&path=相对路径 — 读 Termux \$HOME 下文件",
+                    "GET $base/api/llm/tools$q — 列出智能体全部工具",
+                    "POST $base/api/beautify/colors$q — 设终端字体/背景色 {\"font_color\":\"#00FF00\"}",
+                    "POST $base/api/beautify/clear$q — 清空美化（等同菜单「清空美化」）",
+                    "GET $base/api/containers$q — 列出多容器",
+                    "POST $base/api/containers/switch$q — 切换容器 {container_id, restart_app?}",
+                    "POST $base/api/containers/delete$q — 删除容器 {container_id, user_confirmed}",
+                    "POST $base/api/llm/tool$q — 等价 reset: {\"tool\":\"reset_zerotermux_beautify\",\"arguments\":{}}",
                     "权限被拒时：将响应中 hint_for_user_zh 转述用户，授权后重试 GET /api/permissions"
                 ),
                 endpointsTitle = "端点速查（均需 ?code=匹配码）",
@@ -133,6 +140,13 @@ object ZtAiDebugApiDocs {
                     "GET $base/api/logs/logcat$q&lines=300 — logcat",
                     "GET $base/api/screenshot$q — PNG screenshot (ZeroTermux should be foreground)",
                     "GET $base/api/files/read$q&path=relative — read file under Termux \$HOME",
+                    "GET $base/api/llm/tools$q — list all agent tools",
+                    "POST $base/api/beautify/colors$q — set colors {\"font_color\":\"#00FF00\"}",
+                    "POST $base/api/beautify/clear$q — clear beautify (same as menu Clear Style)",
+                    "GET $base/api/containers$q — list multi-containers",
+                    "POST $base/api/containers/switch$q — switch container {container_id, restart_app?}",
+                    "POST $base/api/containers/delete$q — delete container {container_id, user_confirmed}",
+                    "POST $base/api/llm/tool$q — reset: {\"tool\":\"reset_zerotermux_beautify\",\"arguments\":{}}",
                     "On permission denied: relay hint_for_user_zh / hint_for_user_en, then retry GET /api/permissions"
                 ),
                 endpointsTitle = "Endpoints (append ?code=match-code to all)",
@@ -189,6 +203,17 @@ object ZtAiDebugApiDocs {
             mapOf("method" to "GET", "path" to "/api/vnc/status", "desc" to if (lang == "zh") "编辑器 VNC 诊断（Xvfb/x11vnc/端口/日志）" else "Editor VNC diagnostics (Xvfb/x11vnc/port/log)"),
             mapOf("method" to "POST", "path" to "/api/vnc/start", "desc" to if (lang == "zh") "启动 Xvfb + x11vnc（:99 端口 15901）" else "Start Xvfb + x11vnc (:99 port 15901)"),
             mapOf("method" to "POST", "path" to "/api/editor/open", "desc" to if (lang == "zh") "JSON {path} 打开 EditTextActivity" else "JSON {path} open EditTextActivity"),
+            mapOf("method" to "GET", "path" to "/api/llm/tools", "desc" to if (lang == "zh") "列出全部 LLM/智能体工具名" else "List all LLM agent tool names"),
+            mapOf("method" to "POST", "path" to "/api/llm/tool", "desc" to if (lang == "zh") "执行 LLM 工具 {tool, arguments}" else "Run LLM tool {tool, arguments}"),
+            mapOf("method" to "POST", "path" to "/api/config/get", "desc" to if (lang == "zh") "读 ZeroTermux 配置 {group?, keys?}" else "Get ZT config {group?, keys?}"),
+            mapOf("method" to "POST", "path" to "/api/config/set", "desc" to if (lang == "zh") "写配置 {key,value}（含 font_color/back_color #RRGGBB）" else "Set config {key,value} incl. font_color/back_color"),
+            mapOf("method" to "POST", "path" to "/api/config/zt", "desc" to if (lang == "zh") "执行 zt 命令 {command}" else "Run zt command {command}"),
+            mapOf("method" to "GET", "path" to "/api/beautify/colors", "desc" to if (lang == "zh") "读取字体/背景遮罩颜色" else "Get font & overlay colors"),
+            mapOf("method" to "POST", "path" to "/api/beautify/colors", "desc" to if (lang == "zh") "设颜色 {font_color,back_color} #RRGGBB" else "Set colors {font_color,back_color}"),
+            mapOf("method" to "POST", "path" to "/api/beautify/clear", "desc" to if (lang == "zh") "清空美化（等同菜单）" else "Clear beautify (menu Clear Style)"),
+            mapOf("method" to "GET", "path" to "/api/containers", "desc" to if (lang == "zh") "列出 Termux 多容器" else "List Termux multi-containers"),
+            mapOf("method" to "POST", "path" to "/api/containers/switch", "desc" to if (lang == "zh") "切换容器 {container_id,restart_app?}" else "Switch container {container_id,restart_app?}"),
+            mapOf("method" to "POST", "path" to "/api/containers/delete", "desc" to if (lang == "zh") "删除容器 {container_id,user_confirmed}" else "Delete container {container_id,user_confirmed}"),
         )
     }
 
@@ -262,6 +287,34 @@ object ZtAiDebugApiDocs {
             mapOf(
                 "name" to if (lang == "zh") "VNC 黑屏排查" else "VNC black screen",
                 "cmd" to "curl -s -X POST \"$base/api/terminal/exec$q\" -H \"Content-Type: application/json\" -d '{\"command\":\"export DISPLAY=:99; pgrep -af x11vnc\",\"waitMs\":4000}'"
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "美化颜色" else "Beautify colors",
+                "cmd" to "curl -s -X POST \"$base/api/beautify/colors$q\" -H \"Content-Type: application/json\" -d '{\"font_color\":\"#00FF00\",\"back_color\":\"#000000\"}'"
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "LLM 设配置" else "LLM set config",
+                "cmd" to "curl -s -X POST \"$base/api/llm/tool$q\" -H \"Content-Type: application/json\" -d '{\"tool\":\"set_zerotermux_config\",\"arguments\":{\"key\":\"font_color\",\"value\":\"#FF0000\"}}'"
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "读美化颜色" else "Get beautify colors",
+                "cmd" to "curl -s \"$base/api/beautify/colors$q\""
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "清空美化" else "Clear beautify",
+                "cmd" to "curl -s -X POST \"$base/api/beautify/clear$q\""
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "LLM 清空美化" else "LLM reset beautify",
+                "cmd" to "curl -s -X POST \"$base/api/llm/tool$q\" -H \"Content-Type: application/json\" -d '{\"tool\":\"reset_zerotermux_beautify\",\"arguments\":{}}'"
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "容器列表" else "List containers",
+                "cmd" to "curl -s \"$base/api/containers$q\""
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "切换容器" else "Switch container",
+                "cmd" to "curl -s -X POST \"$base/api/containers/switch$q\" -H \"Content-Type: application/json\" -d '{\"container_id\":\"files1\",\"restart_app\":\"true\"}'"
             )
         )
     }

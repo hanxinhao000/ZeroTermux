@@ -17,7 +17,6 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import com.termux.R
-import com.termux.zerocore.ai.deepseek.markdown.MarkDownAPI
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import io.noties.markwon.Markwon
 
@@ -54,11 +53,7 @@ class ZtAiAgentPanelHelper(
         onPanelLayoutChanged()
     }
 
-    private val markwon: Markwon by lazy {
-        Markwon.builder(panelCard.context)
-            .usePlugin(MarkDownAPI.create(panelCard.context))
-            .build()
-    }
+    private val markwon: Markwon by lazy { ZtAgentMarkwon.get(panelCard.context) }
 
     private val runningBanner: View? by lazy {
         findRunningBannerView()
@@ -422,6 +417,8 @@ class ZtAiAgentPanelHelper(
         } else {
             content.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
             lp.gravity = Gravity.START
+            lp.width = LinearLayout.LayoutParams.MATCH_PARENT
+            content.maxWidth = Int.MAX_VALUE
         }
         content.layoutParams = lp
         return itemView

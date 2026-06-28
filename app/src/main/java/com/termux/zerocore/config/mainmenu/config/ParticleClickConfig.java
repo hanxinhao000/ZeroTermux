@@ -35,9 +35,11 @@ public class ParticleClickConfig extends BaseMenuClickConfig {
         termuxActivity.xue_fragment.removeAllViews();
         if (!ztRainUserBean.isRainShow()) {
             termuxActivity.firework_view.setVisibility(View.VISIBLE);
+            termuxActivity.firework_view.onResume();
             ztRainUserBean.setRainShow(true);
             UserSetManage.Companion.get().setZTUserBean(ztRainUserBean);
         } else {
+            termuxActivity.firework_view.onPause();
             termuxActivity.firework_view.setVisibility(View.GONE);
             ztRainUserBean.setRainShow(false);
             UserSetManage.Companion.get().setZTUserBean(ztRainUserBean);
@@ -51,7 +53,9 @@ public class ParticleClickConfig extends BaseMenuClickConfig {
         termuxActivity.xue_fragment.removeAllViews();
         if (ztRainUserBean.isRainShow()) {
             termuxActivity.firework_view.setVisibility(View.VISIBLE);
+            termuxActivity.firework_view.onResume();
         } else {
+            termuxActivity.firework_view.onPause();
             termuxActivity.firework_view.setVisibility(View.GONE);
         }
     }

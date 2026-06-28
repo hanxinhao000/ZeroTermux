@@ -138,6 +138,40 @@ class ZtAiDebugHttpServer(
                     handleFilesList(session)
                 uri == "/api/files/write" && method == Method.POST ->
                     handleFilesWrite(session)
+                uri == "/api/llm/tools" && method == Method.GET ->
+                    textResponse(ZtAiDebugLlmHelper.listToolsJson(), MIME_JSON)
+                uri == "/api/llm/tool" && method == Method.POST ->
+                    handleLlmTool(session)
+                uri == "/api/config/get" && method == Method.POST ->
+                    handleConfigGet(session)
+                uri == "/api/config/set" && method == Method.POST ->
+                    handleConfigSet(session)
+                uri == "/api/config/zt" && method == Method.POST ->
+                    handleConfigZt(session)
+                uri == "/api/beautify/colors" && method == Method.GET ->
+                    textResponse(ZtAiDebugLlmHelper.getBeautifyColorsJson(), MIME_JSON)
+                uri == "/api/beautify/colors" && method == Method.POST ->
+                    handleBeautifyColors(session)
+                uri == "/api/beautify/clear" && method == Method.POST ->
+                    handleBeautifyClear(session)
+                uri == "/api/containers" && method == Method.GET ->
+                    textResponse(ZtAiDebugLlmHelper.listContainersJson(), MIME_JSON)
+                uri == "/api/containers/create" && method == Method.POST ->
+                    handleContainerCreate(session)
+                uri == "/api/containers/switch" && method == Method.POST ->
+                    handleContainerSwitch(session)
+                uri == "/api/containers/delete" && method == Method.POST ->
+                    handleContainerDelete(session)
+                uri == "/api/commands" && method == Method.GET ->
+                    textResponse(ZtAiDebugLlmHelper.listCommandDefsJson(), MIME_JSON)
+                uri == "/api/commands/add" && method == Method.POST ->
+                    handleCommandDefAdd(session)
+                uri == "/api/commands/update" && method == Method.POST ->
+                    handleCommandDefUpdate(session)
+                uri == "/api/commands/delete" && method == Method.POST ->
+                    handleCommandDefDelete(session)
+                uri == "/api/commands/run" && method == Method.POST ->
+                    handleCommandDefRun(session)
                 else -> cors(newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_JSON, jsonError("not found")))
             }
         } catch (e: Exception) {
@@ -413,6 +447,104 @@ class ZtAiDebugHttpServer(
         return guardFeature("storage") {
             textResponse(ZtAiDebugFileWriteHelper.writeJson(path, content, "utf-8", false), MIME_JSON)
         }
+    }
+
+    private fun handleLlmTool(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        val tool = obj.get("tool")?.asString?.trim().orEmpty()
+        if (tool.isEmpty()) return textResponse(jsonError("tool required"), MIME_JSON)
+        val argsEl = obj.get("arguments")
+        val args = if (argsEl != null && argsEl.isJsonObject) {
+            org.json.JSONObject(argsEl.asJsonObject.toString())
+        } else {
+            org.json.JSONObject()
+        }
+        return textResponse(ZtAiDebugLlmHelper.executeTool(tool, args), MIME_JSON)
+    }
+
+    private fun handleConfigGet(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session)
+        val group = obj?.get("group")?.asString?.trim()?.takeIf { it.isNotEmpty() }
+        val keys = obj?.getAsJsonArray("keys")?.let { arr ->
+            org.json.JSONArray().apply {
+                for (element in arr) {
+                    if (element.isJsonPrimitive) put(element.asString)
+                }
+            }
+        }
+        return textResponse(ZtAiDebugLlmHelper.getConfig(group, keys), MIME_JSON)
+    }
+
+    private fun handleConfigSet(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        val key = obj.get("key")?.asString?.trim().orEmpty()
+        if (key.isEmpty()) return textResponse(jsonError("key required"), MIME_JSON)
+        val value = obj.get("value")?.asString.orEmpty()
+        return textResponse(ZtAiDebugLlmHelper.setConfig(key, value), MIME_JSON)
+    }
+
+    private fun handleConfigZt(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        val command = obj.get("command")?.asString?.trim().orEmpty()
+        if (command.isEmpty()) return textResponse(jsonError("command required"), MIME_JSON)
+        return textResponse(ZtAiDebugLlmHelper.runZt(command), MIME_JSON)
+    }
+
+    private fun handleBeautifyColors(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(
+            ZtAiDebugLlmHelper.setBeautifyColors(org.json.JSONObject(obj.toString())),
+            MIME_JSON
+        )
+    }
+
+    private fun handleBeautifyClear(session: IHTTPSession): Response {
+        parseBodyObject(session)
+        return textResponse(ZtAiDebugLlmHelper.clearBeautifyJson(), MIME_JSON)
+    }
+
+    private fun handleContainerCreate(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(
+            ZtAiDebugLlmHelper.createContainerJson(org.json.JSONObject(obj.toString())),
+            MIME_JSON
+        )
+    }
+
+    private fun handleContainerSwitch(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(
+            ZtAiDebugLlmHelper.switchContainerJson(org.json.JSONObject(obj.toString())),
+            MIME_JSON
+        )
+    }
+
+    private fun handleContainerDelete(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(
+            ZtAiDebugLlmHelper.deleteContainerJson(org.json.JSONObject(obj.toString())),
+            MIME_JSON
+        )
+    }
+
+    private fun handleCommandDefAdd(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugLlmHelper.addCommandDefJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleCommandDefUpdate(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugLlmHelper.updateCommandDefJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleCommandDefDelete(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugLlmHelper.deleteCommandDefJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleCommandDefRun(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugLlmHelper.runCommandDefJson(org.json.JSONObject(obj.toString())), MIME_JSON)
     }
 
     private fun handleEditorOpen(session: IHTTPSession): Response {

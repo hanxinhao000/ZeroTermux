@@ -1,6 +1,5 @@
 package com.termux.zerocore.ai.editor
 
-import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -16,7 +15,8 @@ import android.widget.TextView
 import com.termux.R
 import com.termux.zerocore.ai.agent.ZtAgentAiChatClient
 import com.termux.zerocore.ai.agent.ZtAgentAiConfigHelper
-import com.termux.zerocore.ai.deepseek.markdown.MarkDownAPI
+import com.termux.zerocore.ai.agent.ZtAgentMarkwon
+import com.termux.zerocore.ai.agent.ZtAgentSelectionLinkMovementMethod
 import com.termux.zerocore.ai.deepseek.utils.SpannableTextUtil
 import io.noties.markwon.Markwon
 import kotlin.math.abs
@@ -62,11 +62,7 @@ class ZtEditorAiPanelHelper(
         ViewConfiguration.get(panelCard.context).scaledTouchSlop
     }
 
-    private val markwon: Markwon by lazy {
-        Markwon.builder(panelCard.context)
-            .usePlugin(MarkDownAPI.create(panelCard.context))
-            .build()
-    }
+    private val markwon: Markwon by lazy { ZtAgentMarkwon.get(panelCard.context) }
 
     init {
         panelCard.isFocusable = false
@@ -508,6 +504,8 @@ class ZtEditorAiPanelHelper(
         } else {
             content.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
             lp.gravity = Gravity.START
+            lp.width = LinearLayout.LayoutParams.MATCH_PARENT
+            content.maxWidth = Int.MAX_VALUE
         }
         content.layoutParams = lp
         return itemView
@@ -517,7 +515,7 @@ class ZtEditorAiPanelHelper(
         val spanned = markwon.toMarkdown(markdown)
         val finalSpanned = SpannableTextUtil.createClickableSpannableString(spanned, panelCard.context)
         markwon.setParsedMarkdown(textView, finalSpanned)
-        textView.movementMethod = LinkMovementMethod.getInstance()
+        textView.movementMethod = ZtAgentSelectionLinkMovementMethod
     }
 
     private fun removeMessageView(contentView: TextView) {

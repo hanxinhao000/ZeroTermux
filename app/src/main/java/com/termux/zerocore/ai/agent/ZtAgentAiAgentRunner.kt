@@ -202,6 +202,27 @@ class ZtAgentAiAgentRunner(
                     val id = args.optString("source_id", "").trim()
                     if (id.isEmpty()) "→ switch APT source" else "→ switch to $id"
                 }
+                "list_zerotermux_containers" -> "→ list containers"
+                "create_zerotermux_container" -> {
+                    val name = args.optString("container_name", args.optString("name", "")).trim()
+                    if (name.isEmpty()) "→ create container" else "→ create $name"
+                }
+                "switch_zerotermux_container" -> {
+                    val id = args.optString("container_id", args.optString("container_name", "")).trim()
+                    if (id.isEmpty()) "→ switch container" else "→ switch to $id"
+                }
+                "delete_zerotermux_container" -> {
+                    val id = args.optString("container_id", args.optString("container_name", "")).trim()
+                    if (id.isEmpty()) "→ delete container" else "→ delete $id"
+                }
+                "list_zerotermux_command_defs" -> "→ list command defs"
+                "add_zerotermux_command_def" -> {
+                    val name = args.optString("name", "").trim()
+                    if (name.isEmpty()) "→ add command def" else "→ add $name"
+                }
+                "update_zerotermux_command_def" -> "→ update command def"
+                "delete_zerotermux_command_def" -> "→ delete command def"
+                "run_zerotermux_command_def" -> "→ run command def"
                 else -> ""
             }
         } catch (_: Exception) {

@@ -12,6 +12,7 @@ import com.termux.zerocore.bean.ClipboardBean
 import com.termux.zerocore.bean.CreateSystemBean
 import com.termux.zerocore.bean.MinLBean
 import com.termux.zerocore.bean.MinLBean.DataNum
+import com.termux.zerocore.command.ZtCommandDefHelper
 import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.url.FileUrl
 import java.io.*
@@ -64,35 +65,8 @@ object FileIOUtils {
     public const val MB100 = 1024 * 1024 * 100
 
     public fun commendSave(nameString:String, commitString:String, isChecked:Boolean) {
-        val commi22 = SaveData.getData(COMMEND_KEY)
-        if (commi22 == null || commi22.isEmpty() || commi22 == COMMEND_DEF) {
-            val minLBean = MinLBean()
-            val data = MinLBean.Data()
-            minLBean.data = data
-            val arrayList = ArrayList<DataNum>()
-            val dataNum = DataNum()
-            dataNum.id = System.currentTimeMillis()
-            dataNum.name = nameString
-            dataNum.value = commitString
-            dataNum.isChecked = isChecked
-            arrayList.add(0, dataNum)
-            data.list = arrayList
-            val s = Gson().toJson(minLBean)
-            SaveData.saveData(COMMEND_KEY, s)
-        } else {
-            val minLBean = Gson().fromJson(commi22, MinLBean::class.java)
-            val list = minLBean.data.list
-            val dataNum = DataNum()
-            dataNum.id = System.currentTimeMillis()
-            dataNum.name = nameString
-            dataNum.value = commitString
-            dataNum.isChecked = isChecked
-            list.add(0, dataNum)
-            val s = Gson().toJson(minLBean)
-            SaveData.saveData(COMMEND_KEY, s)
-            UUtils.showMsg(UUtils.getString(R.string.添加成功))
-        }
-
+        ZtCommandDefHelper.addCommandSimple(nameString, commitString, isChecked)
+        UUtils.showMsg(UUtils.getString(R.string.添加成功))
     }
 
     public fun getAdbShellFilePath(context: Context): String {

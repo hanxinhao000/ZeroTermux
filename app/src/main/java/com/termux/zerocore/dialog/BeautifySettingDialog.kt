@@ -20,9 +20,11 @@ import com.rtugeek.android.colorseekbar.ColorSeekBar
 import com.termux.R
 import com.termux.shared.logger.Logger
 import com.termux.zerocore.activity.ImageActivity
+import com.termux.zerocore.ai.config.ZtBeautifyColorHelper
 import com.termux.zerocore.data.UsbFileData
 import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.url.FileUrl
+import com.termux.zerocore.ai.config.ZtBeautifyClearHelper
 import com.termux.zerocore.utils.FileIOUtils
 import java.io.File
 import java.io.FileInputStream
@@ -78,9 +80,9 @@ class BeautifySettingDialog : BaseDialogDown {
         initProgress()
     }
 
-    private fun initProgress(){
-        val stringOther = SaveData.getStringOther("font_color_progress")
-        val back_color_progress = SaveData.getStringOther("back_color_progress")
+    private fun initProgress() {
+        ZtBeautifyColorHelper.readFontColorProgress()?.let { mColorFont?.progress = it }
+        ZtBeautifyColorHelper.readBackColorProgress()?.let { back_color?.progress = it }
         val change_text = SaveData.getStringOther("change_text")
         val change_text_show = SaveData.getStringOther("change_text_show")
 
@@ -89,22 +91,6 @@ class BeautifySettingDialog : BaseDialogDown {
         val textShadowStrength = SaveData.getStringOther("text_shadow_strength")
         val textShadowEnabled = SaveData.getStringOther("text_shadow_enabled")
 
-        if(!(stringOther == null || stringOther.isEmpty() || stringOther == "def")){
-            try {
-                val toInt = stringOther.toInt()
-                mColorFont?.progress = toInt
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
-        }
-        if(!(back_color_progress == null || back_color_progress.isEmpty() || back_color_progress == "def")){
-            try {
-                val toInt = back_color_progress.toInt()
-                back_color?.progress = toInt
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
-        }
         if (!(change_text == null || change_text.isEmpty() || change_text == "def")) {
             try {
                 mBackApSeekBar?.progress = change_text.toInt()
@@ -149,23 +135,15 @@ class BeautifySettingDialog : BaseDialogDown {
 
 
         mColorFont?.setOnColorChangeListener { progress, color ->
-
             fontColor = color
             fontColorProgress = progress
+            ZtBeautifyColorHelper.saveFontColorFromUi(color, progress)
             mFontColorChange?.onColorChange(color)
-
-            SaveData.saveStringOther("font_color","$color")
-            SaveData.saveStringOther("font_color_progress","$progress")
-
         }
 
         back_color?.setOnColorChangeListener { progress, color ->
-
+            ZtBeautifyColorHelper.saveBackColorFromUi(color, progress)
             mBackColorChange?.onColorChange(color)
-
-            SaveData.saveStringOther("back_color","$color")
-            SaveData.saveStringOther("back_color_progress","$progress")
-
         }
 
         mBackApSeekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -203,8 +181,8 @@ class BeautifySettingDialog : BaseDialogDown {
             mContext.startActivity(intent)
         }
         def_tv?.setOnClickListener {
-
-
+            ZtBeautifyClearHelper.clearAndApplyUi()
+            dismiss()
         }
 
         mBlurSwitch?.setOnCheckedChangeListener { _, isChecked ->

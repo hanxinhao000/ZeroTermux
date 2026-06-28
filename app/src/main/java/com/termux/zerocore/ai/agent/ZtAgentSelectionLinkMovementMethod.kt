@@ -6,6 +6,7 @@ import android.text.style.ClickableSpan
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.TextView
+import io.noties.markwon.ext.tables.TableAwareMovementMethod
 import kotlin.math.abs
 
 /**
@@ -13,7 +14,12 @@ import kotlin.math.abs
  */
 object ZtAgentSelectionLinkMovementMethod : LinkMovementMethod() {
 
+    private val tableMovement by lazy { TableAwareMovementMethod.create() }
+
     override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
+        if (tableMovement.onTouchEvent(widget, buffer, event)) {
+            return true
+        }
         if (event.action == MotionEvent.ACTION_UP) {
             val slop = ViewConfiguration.get(widget.context).scaledTouchSlop
             if (isNearClickableSpan(widget, buffer, event, slop)) {

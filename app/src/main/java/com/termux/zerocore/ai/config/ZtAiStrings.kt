@@ -36,6 +36,10 @@ object ZtAiStrings {
 
     fun pkgSourceHint(): String = str(R.string.zt_ai_pkg_source_hint)
 
+    fun containerHint(): String = str(R.string.zt_ai_container_hint)
+
+    fun commandDefHint(): String = str(R.string.zt_ai_command_def_hint)
+
     // --- Tool descriptions (function calling) ---
 
     fun toolListCapabilities(): String = str(R.string.zt_ai_tool_list_capabilities)
@@ -55,6 +59,26 @@ object ZtAiStrings {
     fun toolListPkgSources(): String = str(R.string.zt_ai_tool_list_pkg_sources)
 
     fun toolSwitchPkgSource(): String = str(R.string.zt_ai_tool_switch_pkg_source)
+
+    fun toolResetBeautify(): String = str(R.string.zt_ai_tool_reset_beautify)
+
+    fun toolListContainers(): String = str(R.string.zt_ai_tool_list_containers)
+
+    fun toolCreateContainer(): String = str(R.string.zt_ai_tool_create_container)
+
+    fun toolSwitchContainer(): String = str(R.string.zt_ai_tool_switch_container)
+
+    fun toolDeleteContainer(): String = str(R.string.zt_ai_tool_delete_container)
+
+    fun toolListCommandDefs(): String = str(R.string.zt_ai_tool_list_command_defs)
+
+    fun toolAddCommandDef(): String = str(R.string.zt_ai_tool_add_command_def)
+
+    fun toolUpdateCommandDef(): String = str(R.string.zt_ai_tool_update_command_def)
+
+    fun toolDeleteCommandDef(): String = str(R.string.zt_ai_tool_delete_command_def)
+
+    fun toolRunCommandDef(): String = str(R.string.zt_ai_tool_run_command_def)
 
     fun toolReadTerminal(): String = str(R.string.zt_ai_tool_read_terminal)
 
@@ -83,6 +107,26 @@ object ZtAiStrings {
     fun statusListPkgSources(): String = str(R.string.zt_ai_status_list_pkg_sources)
 
     fun statusSwitchPkgSource(): String = str(R.string.zt_ai_status_switch_pkg_source)
+
+    fun statusResetBeautify(): String = str(R.string.zt_ai_status_reset_beautify)
+
+    fun statusListContainers(): String = str(R.string.zt_ai_status_list_containers)
+
+    fun statusCreateContainer(): String = str(R.string.zt_ai_status_create_container)
+
+    fun statusSwitchContainer(): String = str(R.string.zt_ai_status_switch_container)
+
+    fun statusDeleteContainer(): String = str(R.string.zt_ai_status_delete_container)
+
+    fun statusListCommandDefs(): String = str(R.string.zt_ai_status_list_command_defs)
+
+    fun statusAddCommandDef(): String = str(R.string.zt_ai_status_add_command_def)
+
+    fun statusUpdateCommandDef(): String = str(R.string.zt_ai_status_update_command_def)
+
+    fun statusDeleteCommandDef(): String = str(R.string.zt_ai_status_delete_command_def)
+
+    fun statusRunCommandDef(): String = str(R.string.zt_ai_status_run_command_def)
 
     fun statusConfigDefault(): String = str(R.string.zt_ai_status_config_default)
 
@@ -179,6 +223,9 @@ object ZtAiStrings {
 
     private val cfgDescRes: Map<String, Int> = mapOf(
         "font_color" to R.string.zt_ai_cfg_font_color_desc,
+        "back_color" to R.string.zt_ai_cfg_back_color_desc,
+        "font_color_progress" to R.string.zt_ai_cfg_font_color_progress_desc,
+        "back_color_progress" to R.string.zt_ai_cfg_back_color_progress_desc,
         "change_text_show" to R.string.zt_ai_cfg_change_text_show_desc,
         "blur_enabled" to R.string.zt_ai_cfg_blur_enabled_desc,
         "blur_radius" to R.string.zt_ai_cfg_blur_radius_desc,

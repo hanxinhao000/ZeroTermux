@@ -1,13 +1,35 @@
 package com.termux.zerocore.ai.config
 
+import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.xh_lib.utils.UUtils
 import com.termux.app.TermuxActivity
 import com.termux.zerocore.bean.ZTUserBean
 import com.termux.zerocore.config.mainmenu.MainMenuPackageManager
+import com.termux.zerocore.config.ztcommand.ZTSocketService
 import com.termux.zerocore.config.ztcommand.navigation.ZtForegroundActivityHolder
 
 /** 配置写入后的即时副作用（尽量与 UI 设置页行为一致）。 */
 object ZtAiConfigSideEffects {
+
+    /** LocalBroadcast → TermuxActivity.messageReceiver → initColorConfig() */
+    const val RELOAD_BEAUTIFY_MESSAGE = "reload_beautify"
+
+    /** LocalBroadcast → TermuxActivity.messageReceiver → ZtBeautifyUiEffects.applyToActivity() */
+    const val RELOAD_BEAUTIFY_UI_MESSAGE = "reload_beautify_ui"
+
+    fun requestBeautifyUiReload() {
+        UUtils.getHandler().post {
+            val activity = ZtForegroundActivityHolder.getTermuxActivity()
+            if (activity != null) {
+                ZtBeautifyUiEffects.applyToActivity(activity)
+                return@post
+            }
+            val intent = Intent(ZTSocketService.ZT_COMMAND_ACTIVITY_ACTION)
+            intent.putExtra("message", RELOAD_BEAUTIFY_UI_MESSAGE)
+            LocalBroadcastManager.getInstance(UUtils.getContext()).sendBroadcast(intent)
+        }
+    }
 
     fun apply(key: String, bean: ZTUserBean) {
         when (key) {
@@ -34,6 +56,9 @@ object ZtAiConfigSideEffects {
                 activity.initColorConfig()
                 activity.getTerminalView()?.invalidate()
             }
+            val intent = Intent(ZTSocketService.ZT_COMMAND_ACTIVITY_ACTION)
+            intent.putExtra("message", RELOAD_BEAUTIFY_MESSAGE)
+            LocalBroadcastManager.getInstance(UUtils.getContext()).sendBroadcast(intent)
         }
     }
 

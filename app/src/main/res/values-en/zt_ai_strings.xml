@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="zt_ai_hint_beautify">Blurry/hard-to-read terminal text → set text_shadow_enabled=false; background/wallpaper blur → adjust blur_enabled/blur_radius</string>
+    <string name="zt_ai_hint_beautify">Font color: key=font_color value=#RRGGBB; overlay: key=back_color; or use font_color_progress/back_color_progress 0–100. Reset beautify → reset_zerotermux_beautify (same as menu Clear Style; do not set keys to def). Blurry text → text_shadow_enabled; blur → blur_enabled/blur_radius</string>
     <string name="zt_ai_hint_beautify_ui">Snowflake/snow → set_zerotermux_config key=isSnowflakeShow value=true|false; particle/rain → key=isRainShow (mutually exclusive). Sidebar background → mIsBackMenuVisible. Use set_zerotermux_config, do not edit menu XML</string>
     <string name="zt_ai_left_menu_rules_summary">Before creating a menu, call get_zerotermux_left_menu and read xml_rules + builtin_menu_catalog. click must use a fixed prefix (java:/ztShell:/jumpUrl: etc.); bare pkg/mc/exit are forbidden. Copy full java: class names from the catalog; tag is a remark—do not change its meaning; write &amp;&amp; as &amp;amp;&amp;&amp; in Shell. Prefer catalog items; never invent Config classes.</string>
     <string name="zt_ai_left_menu_hint_extra"> Each create_menu_package uses the localized AI menu name (e.g. AI Created) and creates a new package.</string>
     <string name="zt_ai_left_menu_example_keyword">Example</string>
     <string name="zt_ai_pkg_source_hint">Default mirror is tsinghua. Call list_zerotermux_pkg_sources first, let the user pick, then switch_zerotermux_pkg_source with user_confirmed=true only after explicit approval. Overwrites sources.list and runs apt update/upgrade.</string>
+    <string name="zt_ai_container_hint">Multi-container same as left menu Container Switch. list_zerotermux_containers; create via create_zerotermux_container; switch via switch_zerotermux_container (restart required); delete via delete_zerotermux_container with user_confirmed=true. Cannot delete main or active container.</string>
 
-    <string name="zt_ai_tool_list_capabilities">List ZeroTermux settings, beautify keys, UI effects, openpage ids, and zt commands. Call FIRST when unsure. category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source</string>
+    <string name="zt_ai_tool_list_capabilities">List ZeroTermux settings, beautify keys, UI effects, openpage ids, and zt commands. Call FIRST when unsure. category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source|containers|command_defs</string>
     <string name="zt_ai_tool_get_config">Read ZeroTermux user settings (ZTUserBean), beautify SaveData, and UI effects (isSnowflakeShow/isRainShow).</string>
-    <string name="zt_ai_tool_set_config">Set one ZeroTermux config. Booleans: true/false or 1/0. Snowflake/particle: isSnowflakeShow / isRainShow (mutually exclusive). Confirm risky keys like isInternalPassage first.</string>
+    <string name="zt_ai_tool_set_config">Set one ZeroTermux config. Booleans: true/false or 1/0. Colors: font_color/back_color as #RRGGBB, or progress keys 0–100. Use reset_zerotermux_beautify to restore default beautify. Snowflake/particle: isSnowflakeShow / isRainShow (mutually exclusive). Confirm risky keys like isInternalPassage first.</string>
+    <string name="zt_ai_tool_reset_beautify">Restore default beautify (same as left menu Clear Style): clears font/overlay colors and opacity, removes terminal background image/video, resets UI. Call when user asks to reset/clear beautify; do not set keys to def one by one.</string>
     <string name="zt_ai_tool_open_page">Open an in-app page by page_id (same as zt openpage). Examples: zt_settings, zero_termux_settings, agent_ai_settings, editor (extras may include edit_path for file/dir)</string>
     <string name="zt_ai_tool_run_zt">Run a zt command via local socket (preferred over terminal). Examples: help, toast hello, openleft, openpage list, reboot, x11status. Confirm reboot/destructive actions.</string>
     <string name="zt_ai_tool_get_left_menu">Read menu list, xml_rules, and builtin_menu_catalog. Call BEFORE creating menu XML.</string>
     <string name="zt_ai_tool_update_left_menu">Create/update an AI menu package with valid zt-menu XML. MUST read get_zerotermux_left_menu first. Use java:/ztShell:/jumpUrl: prefixes; never bare pkg/mc/exit.</string>
     <string name="zt_ai_tool_list_pkg_sources">List Termux APT mirror options (same as left menu Switch Source). Default tsinghua; present options before switching.</string>
     <string name="zt_ai_tool_switch_pkg_source">Switch APT source after the user picks one. MUST set user_confirmed=true only after explicit approval. Overwrites sources.list and runs apt update.</string>
+    <string name="zt_ai_tool_list_containers">List all Termux multi-containers (same as left menu Container Switch). Returns container_id, name, active, is_main.</string>
+    <string name="zt_ai_tool_create_container">Create a new Termux container (same as + on Container Switch page). Requires container_name; optional switch_after_create=true to switch immediately.</string>
+    <string name="zt_ai_tool_switch_container">Switch to a container. App restart required for full effect; set restart_app=true to restart immediately.</string>
+    <string name="zt_ai_tool_delete_container">Delete a container (cannot delete main or currently active). Requires user_confirmed=true.</string>
+    <string name="zt_ai_tool_list_command_defs">List saved quick shell commands from left menu Command Definition (same as terminal selection Add Command).</string>
+    <string name="zt_ai_tool_add_command_def">Add a command definition. name=label, command=shell; append_newline=true equals UI auto-enter.</string>
+    <string name="zt_ai_tool_update_command_def">Update a command by command_id or name; optional new_name/command/append_newline.</string>
+    <string name="zt_ai_tool_delete_command_def">Delete a command definition. Requires user_confirmed=true.</string>
+    <string name="zt_ai_tool_run_command_def">Run a saved command definition in the terminal.</string>
     <string name="zt_ai_tool_read_terminal">Read the current terminal screen. ALWAYS call before describing terminal state, install progress, or command output. Do not guess.</string>
     <string name="zt_ai_tool_send_command">Send a command to the terminal (newline appended by default). Waits for shell prompt (default up to 10 min). Describe results ONLY from the returned snapshot.</string>
     <string name="zt_ai_tool_send_key">Send a special key or key combination to the terminal.</string>
     <string name="zt_ai_tool_run_zt_command">Run a zt command through the terminal (same as typing `zt …`). Judge success from terminal snapshot. Examples: help, openleft, openpage zt_settings</string>
 
-    <string name="zt_ai_tool_param_category">Filter: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source</string>
+    <string name="zt_ai_tool_param_category">Filter: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">Optional: settings, beautify, beautify_ui, all</string>
     <string name="zt_ai_tool_param_keys">Optional list of keys to read</string>
     <string name="zt_ai_tool_param_config_key">Key from list_zerotermux_capabilities</string>
@@ -39,6 +50,17 @@
     <string name="zt_ai_tool_param_switch_tab">Group name to expand after update; default AI menu name; empty/false to skip</string>
     <string name="zt_ai_tool_param_source_id">tsinghua|bfsu|official|nju|ustc|hit</string>
     <string name="zt_ai_tool_param_user_confirmed">true only after user explicitly agrees</string>
+    <string name="zt_ai_tool_param_container_id">Container dir id, e.g. files, files1; call list_zerotermux_containers first</string>
+    <string name="zt_ai_tool_param_container_name">Container display name; container_id or container_name</string>
+    <string name="zt_ai_tool_param_container_create_name">Display name for the new container</string>
+    <string name="zt_ai_tool_param_switch_after_create">Switch immediately after create; default false</string>
+    <string name="zt_ai_tool_param_restart_app">Whether to restart app immediately after switch; default false</string>
+    <string name="zt_ai_tool_param_cmd_def_name">Command display name</string>
+    <string name="zt_ai_tool_param_cmd_def_command">Shell command text to save/send</string>
+    <string name="zt_ai_tool_param_cmd_def_append_newline">When true, append newline on run (UI auto-enter)</string>
+    <string name="zt_ai_tool_param_cmd_def_id">Command id from list (command_id)</string>
+    <string name="zt_ai_tool_param_cmd_def_name_lookup">Find command by display name</string>
+    <string name="zt_ai_tool_param_cmd_def_new_name">New display name on update</string>
     <string name="zt_ai_tool_param_max_chars">Maximum characters to return, default 8000</string>
     <string name="zt_ai_tool_param_command">Text or shell command to send</string>
     <string name="zt_ai_tool_param_append_newline">Whether to append newline after command, default true</string>
@@ -55,6 +77,16 @@
     <string name="zt_ai_status_update_left_menu">Updating left menu XML</string>
     <string name="zt_ai_status_list_pkg_sources">Listing APT mirrors</string>
     <string name="zt_ai_status_switch_pkg_source">Switching APT mirror</string>
+    <string name="zt_ai_status_reset_beautify">Clearing beautify settings</string>
+    <string name="zt_ai_status_list_containers">Listing containers</string>
+    <string name="zt_ai_status_create_container">Creating container</string>
+    <string name="zt_ai_status_switch_container">Switching container</string>
+    <string name="zt_ai_status_delete_container">Deleting container</string>
+    <string name="zt_ai_status_list_command_defs">Listing command defs</string>
+    <string name="zt_ai_status_add_command_def">Adding command def</string>
+    <string name="zt_ai_status_update_command_def">Updating command def</string>
+    <string name="zt_ai_status_delete_command_def">Deleting command def</string>
+    <string name="zt_ai_status_run_command_def">Running command def</string>
     <string name="zt_ai_status_config_default">ZeroTermux config</string>
 
     <string name="zt_ai_terminal_snapshot_header">=== Terminal snapshot (authoritative; do not invent; ignore stale history) ===</string>
@@ -138,6 +170,27 @@
     <string name="zt_ai_pkg_source_hit_summary">Harbin Institute of Technology mirror</string>
     <string name="zt_ai_pkg_source_switched_msg">Switch command sent to terminal; wait for apt to finish</string>
 
+    <!-- Containers -->
+    <string name="zt_ai_container_menu_equiv">Left menu Common Functions → Container Switch (ContainerSwitchClickConfig)</string>
+    <string name="zt_ai_container_delete_confirm_hint">Deletion is irreversible. Explain container name and consequences; call delete_zerotermux_container with user_confirmed=true only after explicit approval.</string>
+    <string name="zt_ai_container_delete_warning">Permanently deletes all Termux data in that container (home, packages, etc.). Cannot be undone.</string>
+    <string-array name="zt_ai_container_workflow">
+        <item>1. list_zerotermux_containers</item>
+        <item>2. Show container names and which is active</item>
+        <item>3. Switch: switch_zerotermux_container container_id=… restart_app=true</item>
+        <item>4. Delete: after user confirms, delete_zerotermux_container container_id=… user_confirmed=true</item>
+    </string-array>
+
+    <!-- Command defs -->
+    <string name="zt_ai_command_def_hint">Command Definition same as left menu. list/add/update/delete/run_zerotermux_command_defs*; delete needs user_confirmed=true. append_newline=true = auto-enter.</string>
+    <string name="zt_ai_command_def_menu_equiv">Left menu Command Definition (CommandDefinitionCLickConfig)</string>
+    <string name="zt_ai_command_def_delete_confirm_hint">Deletion is irreversible. Explain name and shell to user; delete with user_confirmed=true after approval.</string>
+    <string-array name="zt_ai_command_def_workflow">
+        <item>1. list_zerotermux_command_defs</item>
+        <item>2. add_zerotermux_command_def name=… command=… append_newline=true|false</item>
+        <item>3. run to test; update to edit; delete needs user_confirmed=true</item>
+    </string-array>
+
     <string name="zt_ai_click_java_desc">Built-in Java menu item</string>
     <string name="zt_ai_click_java_note">Copy from builtin_menu_catalog; do not invent classes; icon ignored</string>
     <string name="zt_ai_click_ztshell_desc">Run shell in terminal</string>
@@ -159,10 +212,13 @@
     <string name="zt_ai_click_empty_note">name may say placeholder menu</string>
 
     <string name="zt_ai_cfg_font_color_title">Terminal font color</string>
-    <string name="zt_ai_cfg_font_color_desc">SaveData color value</string>
+    <string name="zt_ai_cfg_font_color_desc">Terminal font color; value as #RRGGBB or #AARRGGBB (e.g. #FFFFFF)</string>
     <string name="zt_ai_cfg_font_color_progress_title">Font color slider</string>
+    <string name="zt_ai_cfg_font_color_progress_desc">ColorSeekBar position 0–100; synced with font_color</string>
     <string name="zt_ai_cfg_back_color_title">Background overlay color</string>
+    <string name="zt_ai_cfg_back_color_desc">Terminal overlay color; value as #RRGGBB (e.g. #000000)</string>
     <string name="zt_ai_cfg_back_color_progress_title">Background color slider</string>
+    <string name="zt_ai_cfg_back_color_progress_desc">ColorSeekBar position 0–100; synced with back_color</string>
     <string name="zt_ai_cfg_change_text_title">Background opacity 0-100</string>
     <string name="zt_ai_cfg_change_text_show_title">Show double-tap hint</string>
     <string name="zt_ai_cfg_change_text_show_desc">def/true/false</string>

@@ -16,7 +16,17 @@ object ZtAgentAiToolExecutor {
         "get_zerotermux_left_menu",
         "update_zerotermux_left_menu",
         "list_zerotermux_pkg_sources",
-        "switch_zerotermux_pkg_source"
+        "switch_zerotermux_pkg_source",
+        "reset_zerotermux_beautify",
+        "list_zerotermux_containers",
+        "create_zerotermux_container",
+        "switch_zerotermux_container",
+        "delete_zerotermux_container",
+        "list_zerotermux_command_defs",
+        "add_zerotermux_command_def",
+        "update_zerotermux_command_def",
+        "delete_zerotermux_command_def",
+        "run_zerotermux_command_def"
     )
 
     fun execute(

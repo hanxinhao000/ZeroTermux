@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Hints -->
-    <string name="zt_ai_hint_beautify">文字模糊/字糊/看不清字→关闭 text_shadow_enabled；背景模糊/壁纸糊→调整 blur_enabled/blur_radius</string>
+    <string name="zt_ai_hint_beautify">终端字体色 key=font_color value=#RRGGBB（如 #00FF00）；背景遮罩色 key=back_color value=#RRGGBB；或用 font_color_progress/back_color_progress 设滑块 0–100。恢复默认/清空美化→reset_zerotermux_beautify（等同菜单「清空美化」，勿逐项设 def）。文字糊→text_shadow_enabled；背景糊→blur_enabled/blur_radius</string>
     <string name="zt_ai_hint_beautify_ui">雪花/下雪/snowflake/snow→set_zerotermux_config key=isSnowflakeShow value=true|false；粒子/粒子动画/下雨/particle/rain→key=isRainShow；二者互斥。侧栏背景图→mIsBackMenuVisible。用 set 控制，勿改菜单 XML</string>
     <string name="zt_ai_left_menu_rules_summary">创建菜单前必须先 get_zerotermux_left_menu 阅读 xml_rules 与 builtin_menu_catalog。click 必须使用固定前缀（java:/ztShell:/jumpUrl: 等），禁止 pkg/mc/exit 等裸命令。java: 项从内置 catalog 复制完整类名；tag 是备注不可删改含义；Shell 中 &amp;&amp; 写 &amp;amp;&amp;&amp;。优先从 catalog 挑选 item 组合，不要编造不存在的 Config 类。</string>
     <string name="zt_ai_left_menu_hint_extra"> 每次 create_menu_package 使用当前语言的 AI 菜单名（如 AI创建 / AI Created）新建独立包。</string>
@@ -9,21 +9,31 @@
     <string name="zt_ai_pkg_source_hint">换源默认清华源(tsinghua)。先 list_zerotermux_pkg_sources 给出方案让用户选，用户明确同意后再 switch_zerotermux_pkg_source 且 user_confirmed=true。会修改 sources.list 并 apt update/upgrade，须告知会覆盖现有源配置。</string>
 
     <!-- Tool descriptions -->
-    <string name="zt_ai_tool_list_capabilities">列举 ZeroTermux 设置键、美化项、终端特效键、openpage 页面与 zt 命令。不确定时先调用。category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source</string>
+    <string name="zt_ai_tool_list_capabilities">列举 ZeroTermux 设置键、美化项、终端特效键、openpage 页面与 zt 命令。不确定时先调用。category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source|containers|command_defs</string>
     <string name="zt_ai_tool_get_config">读取 ZeroTermux 用户设置(ZTUserBean)、美化 SaveData 与终端特效(isSnowflakeShow/isRainShow)。</string>
-    <string name="zt_ai_tool_set_config">设置一项 ZeroTermux 配置。布尔值 true/false 或 1/0。雪花/粒子: isSnowflakeShow / isRainShow（互斥）。危险项如 isInternalPassage 须先确认用户。</string>
+    <string name="zt_ai_tool_set_config">设置一项 ZeroTermux 配置。布尔值 true/false 或 1/0。字体/背景色: font_color、back_color 用 #RRGGBB；或 font_color_progress、back_color_progress 用 0–100。恢复默认美化请用 reset_zerotermux_beautify。雪花/粒子: isSnowflakeShow / isRainShow（互斥）。危险项如 isInternalPassage 须先确认用户。</string>
+    <string name="zt_ai_tool_reset_beautify">恢复默认美化（等同左侧菜单「清空美化」）：清除字体/背景色与透明度、删除终端背景图/视频并重置 UI。用户说恢复美化/清空美化/恢复默认颜色时调用，勿逐项 set def。</string>
     <string name="zt_ai_tool_open_page">按 page_id 打开 App 内页面（同 zt openpage）。示例: zt_settings, zero_termux_settings, agent_ai_settings, editor（extras 可传 edit_path 打开文件/目录）</string>
     <string name="zt_ai_tool_run_zt">经本地 Socket 执行 zt 命令（优先于终端）。示例: help, toast hello, openleft, openpage list, reboot, x11status。reboot 等危险操作须用户确认。</string>
     <string name="zt_ai_tool_get_left_menu">读取 Menu 菜单列表、xml_rules 与 builtin_menu_catalog。创建菜单 XML 前必须先调用。</string>
     <string name="zt_ai_tool_update_left_menu">创建/更新 AI 菜单包（合法 zt-menu XML）。须先 get_zerotermux_left_menu。click 须用 java:/ztShell:/jumpUrl: 等前缀，禁止裸 pkg/mc/exit。</string>
     <string name="zt_ai_tool_list_pkg_sources">列举 Termux APT 换源方案（同左侧「切换源」）。默认 tsinghua，先展示选项再切换。</string>
     <string name="zt_ai_tool_switch_pkg_source">用户选定源并明确同意后切换 APT 源。须 user_confirmed=true。会覆盖 sources.list 并 apt update。</string>
+    <string name="zt_ai_tool_list_containers">列举所有 Termux 多容器（同左侧「容器切换」）。返回 container_id、name、active、is_main。</string>
+    <string name="zt_ai_tool_create_container">新建 Termux 容器（同「容器切换」页点 +）。须 container_name；可选 switch_after_create=true 创建后立即切换。</string>
+    <string name="zt_ai_tool_switch_container">切换到指定容器。切换后须重启应用才能完全生效；可设 restart_app=true 自动重启。</string>
+    <string name="zt_ai_tool_delete_container">删除指定容器（不可删主容器与当前活跃容器）。须用户明确同意且 user_confirmed=true。</string>
+    <string name="zt_ai_tool_list_command_defs">列举左侧「命令定义」中保存的快捷 shell 命令（同 CommandDefinitionCLickConfig / 终端选区「添加命令」）。</string>
+    <string name="zt_ai_tool_add_command_def">添加一条命令定义。name=显示名，command=shell；append_newline=true 等同 UI「自动回车」。</string>
+    <string name="zt_ai_tool_update_command_def">修改命令定义。用 command_id 或 name 定位；可改 new_name/command/append_newline。</string>
+    <string name="zt_ai_tool_delete_command_def">删除命令定义。须 user_confirmed=true。</string>
+    <string name="zt_ai_tool_run_command_def">在终端执行已保存的命令定义（同点击命令定义面板中的按钮）。</string>
     <string name="zt_ai_tool_read_terminal">读取当前终端可见屏幕。描述终端状态、安装进度或命令输出前必须先调用，禁止猜测。</string>
     <string name="zt_ai_tool_send_command">向终端发送命令（默认追加换行）。默认等待 shell 提示符（最长约 10 分钟）。仅依据返回的快照描述结果。</string>
     <string name="zt_ai_tool_send_key">向终端发送特殊按键或组合键。</string>
     <string name="zt_ai_tool_run_zt_command">经终端执行 zt 命令（等同输入 zt …）。须依据终端快照判断结果。示例: help, openleft, openpage zt_settings</string>
 
-    <string name="zt_ai_tool_param_category">筛选: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source</string>
+    <string name="zt_ai_tool_param_category">筛选: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">可选: settings, beautify, beautify_ui, all</string>
     <string name="zt_ai_tool_param_keys">可选，要读取的键名列表</string>
     <string name="zt_ai_tool_param_config_key">list_zerotermux_capabilities 中的键名</string>
@@ -41,6 +51,17 @@
     <string name="zt_ai_tool_param_switch_tab">更新后展开的分组名；默认 AI 菜单名；空或 false 跳过</string>
     <string name="zt_ai_tool_param_source_id">tsinghua|bfsu|official|nju|ustc|hit</string>
     <string name="zt_ai_tool_param_user_confirmed">仅用户明确同意后为 true</string>
+    <string name="zt_ai_tool_param_container_id">容器目录 id，如 files、files1；先 list_zerotermux_containers</string>
+    <string name="zt_ai_tool_param_container_name">容器显示名；与 container_id 二选一</string>
+    <string name="zt_ai_tool_param_container_create_name">新建容器的显示名称</string>
+    <string name="zt_ai_tool_param_switch_after_create">创建成功后是否立即切换，默认 false</string>
+    <string name="zt_ai_tool_param_restart_app">切换后是否立即重启应用，默认 false</string>
+    <string name="zt_ai_tool_param_cmd_def_name">命令显示名称</string>
+    <string name="zt_ai_tool_param_cmd_def_command">要保存/发送的 shell 命令文本</string>
+    <string name="zt_ai_tool_param_cmd_def_append_newline">true 时执行后自动追加换行（等同 UI 自动回车）</string>
+    <string name="zt_ai_tool_param_cmd_def_id">命令 id（list 返回的 command_id）</string>
+    <string name="zt_ai_tool_param_cmd_def_name_lookup">按显示名查找命令</string>
+    <string name="zt_ai_tool_param_cmd_def_new_name">update 时的新显示名</string>
     <string name="zt_ai_tool_param_max_chars">返回的最大字符数，默认 8000</string>
     <string name="zt_ai_tool_param_command">要发送的文本或 shell 命令</string>
     <string name="zt_ai_tool_param_append_newline">是否在命令后追加换行，默认 true</string>
@@ -58,6 +79,16 @@
     <string name="zt_ai_status_update_left_menu">更新左侧菜单 XML</string>
     <string name="zt_ai_status_list_pkg_sources">列举 APT 换源方案</string>
     <string name="zt_ai_status_switch_pkg_source">切换 APT 源</string>
+    <string name="zt_ai_status_reset_beautify">清空美化设置</string>
+    <string name="zt_ai_status_list_containers">读取容器列表</string>
+    <string name="zt_ai_status_create_container">新建容器</string>
+    <string name="zt_ai_status_switch_container">切换容器</string>
+    <string name="zt_ai_status_delete_container">删除容器</string>
+    <string name="zt_ai_status_list_command_defs">读取命令定义</string>
+    <string name="zt_ai_status_add_command_def">添加命令定义</string>
+    <string name="zt_ai_status_update_command_def">修改命令定义</string>
+    <string name="zt_ai_status_delete_command_def">删除命令定义</string>
+    <string name="zt_ai_status_run_command_def">执行命令定义</string>
     <string name="zt_ai_status_config_default">ZeroTermux 配置</string>
 
     <!-- Terminal snapshot -->
@@ -145,6 +176,28 @@
     <string name="zt_ai_pkg_source_hit_summary">哈尔滨工业大学镜像</string>
     <string name="zt_ai_pkg_source_switched_msg">换源命令已发送到终端，请等待 apt 完成</string>
 
+    <!-- Containers -->
+    <string name="zt_ai_container_hint">多容器同左侧「容器切换」。先 list_zerotermux_containers；新建 create_zerotermux_container；切换 switch_zerotermux_container（切换后须重启）；删除 delete_zerotermux_container 且 user_confirmed=true。不可删主容器与当前活跃容器。</string>
+    <string name="zt_ai_container_menu_equiv">左侧菜单 常用功能 → 容器切换 (ContainerSwitchClickConfig)</string>
+    <string name="zt_ai_container_delete_confirm_hint">删除不可恢复。向用户说明容器名称与后果，用户明确同意后再调用 delete_zerotermux_container 且 user_confirmed=true。</string>
+    <string name="zt_ai_container_delete_warning">将永久删除该容器内全部 Termux 数据（home、已装包等），无法恢复。</string>
+    <string-array name="zt_ai_container_workflow">
+        <item>1. list_zerotermux_containers</item>
+        <item>2. 向用户展示各容器名称与当前 active</item>
+        <item>3. 切换: switch_zerotermux_container container_id=… restart_app=true</item>
+        <item>4. 删除: 用户确认后 delete_zerotermux_container container_id=… user_confirmed=true</item>
+    </string-array>
+
+    <!-- Command defs (左侧「命令定义」) -->
+    <string name="zt_ai_command_def_hint">命令定义同左侧菜单「命令定义」(CommandDefinitionCLickConfig)。先 list_zerotermux_command_defs；添加 add_zerotermux_command_def；修改 update_zerotermux_command_def；删除 delete_zerotermux_command_def 且 user_confirmed=true；执行 run_zerotermux_command_def。append_newline=true 等同 UI「自动回车」。</string>
+    <string name="zt_ai_command_def_menu_equiv">左侧菜单 命令定义 (CommandDefinitionCLickConfig)</string>
+    <string name="zt_ai_command_def_delete_confirm_hint">删除后不可恢复。向用户说明命令名称与 shell 内容，用户明确同意后再 delete 且 user_confirmed=true。</string>
+    <string-array name="zt_ai_command_def_workflow">
+        <item>1. list_zerotermux_command_defs</item>
+        <item>2. add_zerotermux_command_def name=显示名 command=shell append_newline=true|false</item>
+        <item>3. run_zerotermux_command_def 测试；update 修改；delete 需 user_confirmed=true</item>
+    </string-array>
+
     <!-- Click type descriptions (left menu guide) -->
     <string name="zt_ai_click_java_desc">调用内置 Java 菜单项</string>
     <string name="zt_ai_click_java_note">从 builtin_menu_catalog 复制，勿编造类名；icon 无效</string>
@@ -168,10 +221,13 @@
 
     <!-- Config registry titles (beautify SaveData) -->
     <string name="zt_ai_cfg_font_color_title">终端字体颜色</string>
-    <string name="zt_ai_cfg_font_color_desc">SaveData 颜色值</string>
+    <string name="zt_ai_cfg_font_color_desc">终端字体颜色，value 用 #RRGGBB 或 #AARRGGBB（如 #FFFFFF）</string>
     <string name="zt_ai_cfg_font_color_progress_title">字体颜色滑块</string>
+    <string name="zt_ai_cfg_font_color_progress_desc">ColorSeekBar 位置 0–100；与 font_color 同步</string>
     <string name="zt_ai_cfg_back_color_title">背景遮罩颜色</string>
+    <string name="zt_ai_cfg_back_color_desc">终端背景遮罩色，value 用 #RRGGBB（如 #000000）</string>
     <string name="zt_ai_cfg_back_color_progress_title">背景颜色滑块</string>
+    <string name="zt_ai_cfg_back_color_progress_desc">ColorSeekBar 位置 0–100；与 back_color 同步</string>
     <string name="zt_ai_cfg_change_text_title">背景透明度 0-100</string>
     <string name="zt_ai_cfg_change_text_show_title">显示双击提示</string>
     <string name="zt_ai_cfg_change_text_show_desc">def/true/false</string>

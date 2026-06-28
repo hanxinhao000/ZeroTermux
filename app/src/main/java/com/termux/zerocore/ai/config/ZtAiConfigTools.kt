@@ -182,6 +182,148 @@ object ZtAiConfigTools {
                     )
             ).put("required", JSONArray().put("source_id").put("user_confirmed"))
         ))
+        tools.put(tool(
+            "reset_zerotermux_beautify",
+            ZtAiStrings.toolResetBeautify(),
+            JSONObject().put("type", "object").put("properties", JSONObject()).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "list_zerotermux_containers",
+            ZtAiStrings.toolListContainers(),
+            JSONObject().put("type", "object").put("properties", JSONObject()).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "create_zerotermux_container",
+            ZtAiStrings.toolCreateContainer(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put(
+                        "container_name",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_container_create_name))
+                    )
+                    .put(
+                        "switch_after_create",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_switch_after_create))
+                    )
+                    .put(
+                        "restart_app",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_restart_app))
+                    )
+            ).put("required", JSONArray().put("container_name"))
+        ))
+        tools.put(tool(
+            "switch_zerotermux_container",
+            ZtAiStrings.toolSwitchContainer(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put(
+                        "container_id",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_container_id))
+                    )
+                    .put(
+                        "container_name",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_container_name))
+                    )
+                    .put(
+                        "restart_app",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_restart_app))
+                    )
+            ).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "delete_zerotermux_container",
+            ZtAiStrings.toolDeleteContainer(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put(
+                        "container_id",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_container_id))
+                    )
+                    .put(
+                        "container_name",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_container_name))
+                    )
+                    .put(
+                        "user_confirmed",
+                        JSONObject().put("type", "string")
+                            .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_user_confirmed))
+                    )
+            ).put("required", JSONArray().put("user_confirmed"))
+        ))
+        tools.put(tool(
+            "list_zerotermux_command_defs",
+            ZtAiStrings.toolListCommandDefs(),
+            JSONObject().put("type", "object").put("properties", JSONObject()).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "add_zerotermux_command_def",
+            ZtAiStrings.toolAddCommandDef(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put("name", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_name)))
+                    .put("command", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_command)))
+                    .put("append_newline", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_append_newline)))
+            ).put("required", JSONArray().put("name").put("command"))
+        ))
+        tools.put(tool(
+            "update_zerotermux_command_def",
+            ZtAiStrings.toolUpdateCommandDef(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put("command_id", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_id)))
+                    .put("name", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_name_lookup)))
+                    .put("new_name", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_new_name)))
+                    .put("command", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_command)))
+                    .put("append_newline", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_append_newline)))
+            ).put("required", JSONArray())
+        ))
+        tools.put(tool(
+            "delete_zerotermux_command_def",
+            ZtAiStrings.toolDeleteCommandDef(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put("command_id", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_id)))
+                    .put("name", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_name_lookup)))
+                    .put("user_confirmed", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_user_confirmed)))
+            ).put("required", JSONArray().put("user_confirmed"))
+        ))
+        tools.put(tool(
+            "run_zerotermux_command_def",
+            ZtAiStrings.toolRunCommandDef(),
+            JSONObject().put("type", "object").put(
+                "properties",
+                JSONObject()
+                    .put("command_id", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_id)))
+                    .put("name", JSONObject().put("type", "string")
+                        .put("description", ZtAiStrings.str(com.termux.R.string.zt_ai_tool_param_cmd_def_name_lookup)))
+            ).put("required", JSONArray())
+        ))
     }
 
     private fun tool(name: String, description: String, parameters: JSONObject): JSONObject {

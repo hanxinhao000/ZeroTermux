@@ -1,10 +1,13 @@
 package com.termux.zerocore.ai.config
 
+import android.util.Log
 import com.example.xh_lib.utils.SaveData
 import com.google.gson.Gson
+import com.termux.zerocore.command.ZtCommandDefHelper
 import com.termux.zerocore.bean.ZTUserBean
 import com.termux.zerocore.config.ztcommand.navigation.ZtNavigationHelper
 import com.termux.zerocore.ftp.utils.UserSetManage
+import com.zp.z_file.content.TAG
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -177,6 +180,14 @@ object ZtAiConfigRegistry {
                 root.put("pkg_source_hint", ZtAiStrings.pkgSourceHint())
                 root.put("pkg_sources", JSONObject(ZtAiPkgSourceHelper.listSources()))
             }
+            "containers" -> {
+                root.put("container_hint", ZtAiStrings.containerHint())
+                root.put("containers", JSONObject(ZtAiContainerHelper.listContainersJson()))
+            }
+            "command_defs" -> {
+                root.put("command_def_hint", ZtAiStrings.commandDefHint())
+                root.put("command_defs", JSONObject(ZtCommandDefHelper.listJson()))
+            }
             "all" -> {
                 root.put("settings", listSettingDefs())
                 root.put("beautify", JSONArray(beautifyKeys().map { it.toJson() }))
@@ -198,9 +209,24 @@ object ZtAiConfigRegistry {
                     "list_zerotermux_pkg_sources",
                     "switch_zerotermux_pkg_source"
                 )))
+                root.put("container_hint", ZtAiStrings.containerHint())
+                root.put("container_tools", JSONArray(listOf(
+                    "list_zerotermux_containers",
+                    "create_zerotermux_container",
+                    "switch_zerotermux_container",
+                    "delete_zerotermux_container"
+                )))
+                root.put("command_def_hint", ZtAiStrings.commandDefHint())
+                root.put("command_def_tools", JSONArray(listOf(
+                    "list_zerotermux_command_defs",
+                    "add_zerotermux_command_def",
+                    "update_zerotermux_command_def",
+                    "delete_zerotermux_command_def",
+                    "run_zerotermux_command_def"
+                )))
                 root.put("groups", JSONArray(listOf(
                     "ZeroTermux", "x11", "beautify", "beautify_ui", "workstation",
-                    "agent_ai", "ai_legacy", "editor"
+                    "agent_ai", "ai_legacy", "editor", "containers", "command_defs"
                 )))
             }
             else -> return gson.toJson(mapOf("ok" to false, "error" to "unknown category: $category"))
@@ -253,6 +279,7 @@ object ZtAiConfigRegistry {
     }
 
     fun setConfig(key: String, value: String): String {
+        Log.i("ZtAiConfigRegistry", "setConfig key: $key, value: $value")
         val trimmedKey = key.trim()
         val trimmedValue = value.trim()
         booleanBindings().find { it.def.key == trimmedKey }?.let { binding ->
@@ -282,6 +309,7 @@ object ZtAiConfigRegistry {
             return ok("set ${binding.def.key}")
         }
         beautifyKeys().find { it.key == trimmedKey }?.let { def ->
+            ZtBeautifyColorHelper.setConfigKey(trimmedKey, trimmedValue)?.let { return it }
             val stored = when (def.type) {
                 "boolean" -> when {
                     trimmedValue.equals("true", true) || trimmedValue == "1" -> "true"
@@ -326,7 +354,8 @@ object ZtAiConfigRegistry {
         beautifyKeys().forEach { def ->
             if (filter != null && def.key !in filter) return@forEach
             val raw = SaveData.getStringOther(def.key)
-            values.put(def.key, raw ?: JSONObject.NULL)
+            val enriched = ZtBeautifyColorHelper.enrichForAiRead(def.key, raw)
+            values.put(def.key, enriched ?: JSONObject.NULL)
         }
     }
 
