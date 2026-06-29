@@ -1020,7 +1020,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void setExtraKeysView(ExtraKeysView extraKeysView) {
         mExtraKeysView = extraKeysView;
     }
-
+ // ZeroTermux add {@
     /**
      * 将 SaveData 中的 font_color 应用到终端文字与底部 ExtraKeys。
      * initColorConfig 可能在 ExtraKeysView 创建之前执行，需在 reload 后再调用一次。
@@ -1098,7 +1098,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
         back_color.setVisibility(View.VISIBLE);
     }
-
+    // @}
     // ZeroTermux add {@
     public SlidingConsumer getDrawer() {
         return mSlidingConsumer;
@@ -1267,7 +1267,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (mExtraKeysView != null) {
                 mExtraKeysView.setButtonTextAllCaps(mProperties.shouldExtraKeysTextBeAllCaps());
                 mExtraKeysView.reload(mTermuxTerminalExtraKeys.getExtraKeysInfo(), mTerminalToolbarDefaultHeight);
+                 // ZeroTermux add {@
                 applySavedFontColorToUi();
+                // @}
             }
 
             // Update NightMode.APP_NIGHT_MODE

@@ -191,6 +191,10 @@
         <item>3. run to test; update to edit; delete needs user_confirmed=true</item>
     </string-array>
 
+    <!-- Terminal toolbar -->
+    <string name="zt_ai_terminal_toolbar_hint">The main screen bottom terminal toolbar (Extra Keys + text input) can be hidden by the user. AI cannot restore it. read_terminal snapshots mark hidden; if the user says the keyboard is gone, tell them: right menu → Switch session → long-press Keyboard to show it again.</string>
+    <string name="zt_ai_terminal_toolbar_hidden_notice">[Terminal toolbar hidden] Bottom keyboard/Extra Keys are not visible; AI cannot restore them. Tell the user in their language: right menu → Switch session → long-press Keyboard to show again.</string>
+
     <string name="zt_ai_click_java_desc">Built-in Java menu item</string>
     <string name="zt_ai_click_java_note">Copy from builtin_menu_catalog; do not invent classes; icon ignored</string>
     <string name="zt_ai_click_ztshell_desc">Run shell in terminal</string>

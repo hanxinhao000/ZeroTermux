@@ -198,6 +198,10 @@
         <item>3. run_zerotermux_command_def 测试；update 修改；delete 需 user_confirmed=true</item>
     </string-array>
 
+    <!-- Terminal toolbar (底部终端工具栏，AI 不可控制) -->
+    <string name="zt_ai_terminal_toolbar_hint">主界面底部终端工具栏（Extra Keys + 文本输入）可被用户手动隐藏。AI 无法代其恢复。read_terminal 快照会标注 hidden；若用户反馈键盘没了，提示：打开右侧菜单 → 切换会话 → 长按「键盘」即可重新显示。</string>
+    <string name="zt_ai_terminal_toolbar_hidden_notice">【终端工具栏已隐藏】底部键盘/Extra Keys 当前不可见，AI 无法代用户恢复。请用与用户相同的语言提示：打开右侧菜单 → 切换会话 → 长按「键盘」可重新显示。</string>
+
     <!-- Click type descriptions (left menu guide) -->
     <string name="zt_ai_click_java_desc">调用内置 Java 菜单项</string>
     <string name="zt_ai_click_java_note">从 builtin_menu_catalog 复制，勿编造类名；icon 无效</string>

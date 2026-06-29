@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.xh_lib.utils.SaveData
 import com.google.gson.Gson
 import com.termux.zerocore.command.ZtCommandDefHelper
+import com.termux.zerocore.ai.agent.ZtTerminalAiSnapshot
 import com.termux.zerocore.bean.ZTUserBean
 import com.termux.zerocore.config.ztcommand.navigation.ZtNavigationHelper
 import com.termux.zerocore.ftp.utils.UserSetManage
@@ -188,6 +189,10 @@ object ZtAiConfigRegistry {
                 root.put("command_def_hint", ZtAiStrings.commandDefHint())
                 root.put("command_defs", JSONObject(ZtCommandDefHelper.listJson()))
             }
+            "terminal_ui" -> {
+                root.put("terminal_toolbar_hint", ZtAiStrings.terminalToolbarHint())
+                root.put("terminal_toolbar_hidden", ZtTerminalAiSnapshot.isToolbarHidden())
+            }
             "all" -> {
                 root.put("settings", listSettingDefs())
                 root.put("beautify", JSONArray(beautifyKeys().map { it.toJson() }))
@@ -224,9 +229,11 @@ object ZtAiConfigRegistry {
                     "delete_zerotermux_command_def",
                     "run_zerotermux_command_def"
                 )))
+                root.put("terminal_toolbar_hint", ZtAiStrings.terminalToolbarHint())
+                root.put("terminal_toolbar_hidden", ZtTerminalAiSnapshot.isToolbarHidden())
                 root.put("groups", JSONArray(listOf(
                     "ZeroTermux", "x11", "beautify", "beautify_ui", "workstation",
-                    "agent_ai", "ai_legacy", "editor", "containers", "command_defs"
+                    "agent_ai", "ai_legacy", "editor", "containers", "command_defs", "terminal_ui"
                 )))
             }
             else -> return gson.toJson(mapOf("ok" to false, "error" to "unknown category: $category"))

@@ -1,5 +1,7 @@
 package com.termux.zerocore.ai.agent
 
+import com.example.xh_lib.utils.UUtils
+import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences
 import com.termux.zerocore.ai.config.ZtAiStrings
 
 object ZtTerminalAiSnapshot {
@@ -26,6 +28,16 @@ object ZtTerminalAiSnapshot {
         Regex("""(?i)\(Y/n\)""")
     )
 
+    fun isToolbarHidden(): Boolean {
+        return TermuxAppSharedPreferences.build(UUtils.getContext(), false)
+            ?.shouldShowTerminalToolbar() == false
+    }
+
+    fun toolbarHiddenNotice(): String? {
+        if (!isToolbarHidden()) return null
+        return ZtAiStrings.terminalToolbarHiddenNotice()
+    }
+
     fun format(visible: String, full: String, maxChars: Int = DEFAULT_MAX_CHARS): String {
         val visibleText = visible.trim()
         val fullText = full.trim()
@@ -48,6 +60,7 @@ object ZtTerminalAiSnapshot {
         val statusLine = resolveStatusLine(lastLine, visibleText)
         return buildString {
             appendLine(ZtAiStrings.terminalSnapshotHeader())
+            toolbarHiddenNotice()?.let { appendLine(it) }
             appendLine(ZtAiStrings.terminalSnapshotLastLine(lastLine))
             appendLine(statusLine)
             appendLine(ZtAiStrings.terminalSnapshotVisibleHeader())

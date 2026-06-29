@@ -40,6 +40,10 @@ object ZtAiStrings {
 
     fun commandDefHint(): String = str(R.string.zt_ai_command_def_hint)
 
+    fun terminalToolbarHint(): String = str(R.string.zt_ai_terminal_toolbar_hint)
+
+    fun terminalToolbarHiddenNotice(): String = str(R.string.zt_ai_terminal_toolbar_hidden_notice)
+
     // --- Tool descriptions (function calling) ---
 
     fun toolListCapabilities(): String = str(R.string.zt_ai_tool_list_capabilities)
