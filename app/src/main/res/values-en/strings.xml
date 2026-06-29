@@ -1820,10 +1820,19 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="editor_dock_hide">Hide panel</string>
     <string name="editor_x11_connect">Connect</string>
     <string name="editor_x11_display_env">DISPLAY</string>
-    <string name="editor_x11_display_set">DISPLAY=:0 set</string>
-    <string name="editor_x11_env_missing">Install the X11 environment first (main sidebar → X11 environment)</string>
+    <string name="editor_x11_display_set">DISPLAY=:99 set</string>
+    <string name="editor_x11_env_missing">GUI environment not ready — tap Retry to install</string>
     <string name="editor_x11_hide">Hide X11</string>
-    <string name="editor_x11_init_failed">X11 window init failed; check whether libXlorie.so is installed</string>
+    <string name="editor_x11_init_failed">GUI window init failed</string>
+    <string name="editor_x11_installing_env">Installing GUI environment (Xvfb, ImageMagick, xdotool)…</string>
+    <string name="editor_x11_starting_env">Starting built-in GUI server…</string>
+    <string name="editor_x11_start_failed">GUI start failed — tap Retry</string>
+    <string name="editor_x11_retry">Retry</string>
+    <string name="editor_x11_install_repo">[ZeroTermux Editor] Installing x11-repo…</string>
+    <string name="editor_x11_install_packages">[ZeroTermux Editor] Installing xorg-server-xvfb scrot xdotool…</string>
+    <string name="editor_x11_status_starting">GUI starting</string>
+    <string name="editor_x11_status_installing">GUI installing</string>
+    <string name="editor_x11_status_connecting">GUI connecting</string>
     <string name="editor_vnc_install_repo">Installing x11-repo…</string>
     <string name="editor_vnc_install_packages">Installing Xvfb and x11vnc…</string>
     <string name="editor_vnc_installing_env">Installing GUI/VNC environment (x11-repo, Xvfb, x11vnc)…</string>
@@ -1837,12 +1846,12 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="editor_vnc_status_installing">Installing environment…</string>
     <string name="editor_vnc_status_starting">Starting VNC…</string>
     <string name="editor_vnc_status_disconnected">VNC disconnected</string>
-    <string name="editor_x11_internal_required">Enable the X11 internal channel in ZeroTermux settings and restart the app</string>
-    <string name="editor_x11_setup_open_settings">Open X11 channel settings</string>
+    <string name="editor_x11_internal_required">Preparing GUI environment…</string>
+    <string name="editor_x11_setup_open_settings">Retry</string>
     <string name="editor_x11_maximize">Maximize X11</string>
     <string name="editor_x11_restore">Restore X11</string>
-    <string name="editor_x11_status_connected">X11 connected</string>
-    <string name="editor_x11_status_disconnected">X11 disconnected</string>
+    <string name="editor_x11_status_connected">GUI connected</string>
+    <string name="editor_x11_status_disconnected">GUI disconnected</string>
     <string name="error_allow_external_apps_ungranted">%1$s requires `allow-external-apps`
         property to be set to `true` in `%2$s` file.</string>
     <string name="title_report_text">Report text</string>

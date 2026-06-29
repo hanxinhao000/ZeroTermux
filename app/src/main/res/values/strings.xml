@@ -829,13 +829,22 @@
     <string name="editor_x11_restore">还原 X11</string>
     <string name="editor_x11_connect">连接</string>
     <string name="editor_x11_display_env">DISPLAY</string>
-    <string name="editor_x11_display_set">已设置 DISPLAY=:0</string>
-    <string name="editor_x11_status_connected">X11 已连接</string>
-    <string name="editor_x11_status_disconnected">X11 未连接</string>
-    <string name="editor_x11_internal_required">请先在 ZeroTermux 设置中启用 X11 内部通道并重启 App</string>
-    <string name="editor_x11_setup_open_settings">打开 X11 通道设置</string>
-    <string name="editor_x11_env_missing">请先安装 X11 环境（主界面侧栏 → X11环境）</string>
-    <string name="editor_x11_init_failed">X11 窗口初始化失败，请检查 libXlorie.so 是否已安装</string>
+    <string name="editor_x11_display_set">已设置 DISPLAY=:99</string>
+    <string name="editor_x11_status_connected">GUI 已连接</string>
+    <string name="editor_x11_status_disconnected">GUI 未连接</string>
+    <string name="editor_x11_internal_required">正在准备 GUI 环境，请稍候…</string>
+    <string name="editor_x11_setup_open_settings">重试</string>
+    <string name="editor_x11_env_missing">GUI 环境未就绪，点击重试安装</string>
+    <string name="editor_x11_init_failed">GUI 窗口初始化失败</string>
+    <string name="editor_x11_installing_env">正在安装 GUI 环境（Xvfb、ImageMagick、xdotool），请稍候…</string>
+    <string name="editor_x11_starting_env">正在启动内置 GUI 服务…</string>
+    <string name="editor_x11_start_failed">GUI 启动失败，点击重试</string>
+    <string name="editor_x11_retry">重试</string>
+    <string name="editor_x11_install_repo">[ZeroTermux Editor] 安装 x11-repo…</string>
+    <string name="editor_x11_install_packages">[ZeroTermux Editor] 安装 xorg-server-xvfb scrot xdotool…</string>
+    <string name="editor_x11_status_starting">GUI 启动中</string>
+    <string name="editor_x11_status_installing">GUI 环境安装中</string>
+    <string name="editor_x11_status_connecting">GUI 连接中</string>
     <string name="editor_vnc_install_repo">正在安装 x11-repo…</string>
     <string name="editor_vnc_install_packages">正在安装 Xvfb 与 x11vnc…</string>
     <string name="editor_vnc_installing_env">正在安装 GUI/VNC 环境（x11-repo、Xvfb、x11vnc），请稍候…</string>

@@ -69,8 +69,8 @@ import com.termux.zerocore.editor.EditorRunLanguage
 import com.termux.shared.termux.extrakeys.ExtraKeysView
 import com.termux.zerocore.editor.EditorTerminalInputView
 import com.termux.zerocore.editor.EditorTerminalPanel
-import com.termux.zerocore.editor.EditorVncPanel
-import com.termux.zerocore.editor.EditorVncEnvironment
+import com.termux.zerocore.editor.EditorX11Panel
+import com.termux.zerocore.editor.EditorX11Environment
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
@@ -209,9 +209,9 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var mEditorRunButton: ImageView? = null
     private var mEditorRunLoading: ProgressBar? = null
     private var editorTerminalPanel: EditorTerminalPanel? = null
-    private var editorVncPanel: EditorVncPanel? = null
+    private var editorX11Panel: EditorX11Panel? = null
     private var editorBottomDock: EditorBottomDockPanel? = null
-    private val editorDockHeightBridge = object : EditorVncPanel.DockHeightController {
+    private val editorDockHeightBridge = object : EditorX11Panel.DockHeightController {
         override fun saveDockedHeight() {
             editorBottomDock?.saveDockedHeightBeforeMaximize()
         }
@@ -629,33 +629,33 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val setupMessage = findViewById<TextView>(R.id.editor_x11_setup_message) ?: return
         val setupAction = findViewById<TextView>(R.id.editor_x11_setup_action) ?: return
         val status = findViewById<TextView>(R.id.editor_x11_status) ?: return
+        val displayBtn = findViewById<TextView>(R.id.editor_x11_display)
+        val connectBtn = findViewById<TextView>(R.id.editor_x11_connect)
         val maximize = findViewById<android.widget.ImageView>(R.id.editor_x11_maximize) ?: return
         val vncExtraKeysView = findViewById<com.termux.shared.termux.extrakeys.ExtraKeysView>(
             R.id.editor_vnc_extra_keys
-        ) ?: return
+        )
+        vncExtraKeysView?.visibility = View.GONE
 
-        editorVncPanel = EditorVncPanel(
+        editorX11Panel = EditorX11Panel(
             activity = this,
             surfaceContainer = surface,
             setupPanel = setupPanel,
             setupMessageView = setupMessage,
             setupActionView = setupAction,
             statusView = status,
+            displayButton = displayBtn,
+            connectButton = connectBtn,
             maximizeButton = maximize,
-            extraKeysView = vncExtraKeysView,
             codeEditor = code_editor,
             dockHeightController = editorDockHeightBridge,
             onWriteTerminal = { command -> editorTerminalPanel?.writeCommandHidden(command) },
             onEnsureTerminal = {
                 editorTerminalPanel?.prepareBackgroundSession(resolveTerminalDirectory(null))
             },
-            isShellVncReady = {
-                editorTerminalPanel?.getRecentTerminalText()?.contains(EditorVncEnvironment.VNC_READY_MARKER) == true
-            },
-            isGuiProcessStartedInTerminal = {
-                editorTerminalPanel?.getRecentTerminalText()?.let { text ->
-                    text.contains("GUI 程序已启动") || text.contains("GUI app started")
-                } == true
+            isShellX11Ready = {
+                editorTerminalPanel?.getRecentTerminalText()
+                    ?.contains(EditorX11Environment.X11_READY_MARKER) == true
             },
             onLayoutChanged = { updateEditorContentAnchor() },
             onTabActiveChanged = { updateEditorX11ButtonState() },
@@ -667,7 +667,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         }
 
         val terminalPanel = editorTerminalPanel ?: return
-        val vncPanel = editorVncPanel ?: return
+        val x11Panel = editorX11Panel ?: return
         editorBottomDock = EditorBottomDockPanel(
             activity = this,
             dockView = dockView,
@@ -685,7 +685,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             terminalSection = terminalSection,
             x11Section = x11Section,
             terminalPanel = terminalPanel,
-            x11Panel = vncPanel,
+            x11Panel = x11Panel,
             onLayoutChanged = { updateEditorContentAnchor() },
             onDockVisibilityChanged = { updateDockToolbarState() },
             onOpenTerminalAtDirectory = { ensureTerminalSessionForDock() }
@@ -849,7 +849,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 runner.runBuildScript(directory)
                 if (isGuiRun) {
                     dock.openX11Tab()
-                    editorVncPanel?.onGuiAppStarted()
+                    editorX11Panel?.onGuiAppStarted()
                 } else {
                     dock.openTerminalTab()
                 }
@@ -2340,23 +2340,23 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun onResume() {
         super.onResume()
         editorTerminalPanel?.onResume()
-        editorVncPanel?.onResume()
+        editorX11Panel?.onResume()
         updateEditorX11ButtonState()
     }
 
     override fun onPause() {
-        editorVncPanel?.onPause()
+        editorX11Panel?.onPause()
         super.onPause()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        editorVncPanel?.onWindowFocusChanged(hasFocus)
+        editorX11Panel?.onWindowFocusChanged(hasFocus)
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        editorVncPanel?.onConfigurationChanged(newConfig)
+        editorX11Panel?.onConfigurationChanged(newConfig)
         updateEditorContentAnchor()
         editorBottomDock?.onHostLayoutChanged()
     }
@@ -2368,8 +2368,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         sidebarAnimator?.cancel()
         cancelSidebarGesture()
         shutdownLspManager()
-        editorVncPanel?.onDestroy()
-        editorVncPanel = null
+        editorX11Panel?.onDestroy()
+        editorX11Panel = null
         editorTerminalPanel?.destroy()
         editorTerminalPanel = null
         editorAiPanel?.destroy()
@@ -4012,10 +4012,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 }
             )
             .append('\n')
-        sb.append("GUI说明: 内置 VNC 连接 DISPLAY=")
-            .append(EditorVncEnvironment.DISPLAY)
-            .append(" 端口 ")
-            .append(EditorVncEnvironment.VNC_PORT)
+        sb.append("GUI说明: 内置简易 GUI (Xvfb) DISPLAY=")
+            .append(EditorX11Environment.DISPLAY)
             .append("，无需 sway 或主界面 X11 环境\n")
     }
 

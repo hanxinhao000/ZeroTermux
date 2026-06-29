@@ -27,7 +27,7 @@ class EditorBottomDockPanel(
     private val terminalSection: View,
     private val x11Section: View,
     private val terminalPanel: EditorTerminalPanel,
-    private val x11Panel: EditorVncPanel,
+    private val x11Panel: EditorX11Panel,
     private val onLayoutChanged: () -> Unit,
     private val onDockVisibilityChanged: () -> Unit,
     private val onOpenTerminalAtDirectory: () -> Unit
@@ -131,7 +131,7 @@ class EditorBottomDockPanel(
         openTerminalTab()
     }
 
-    /** Run flow: show GUI tab, boot VNC, then invoke [onGuiReady] before switching to terminal. */
+    /** Run flow: show GUI tab, boot X11, then invoke [onGuiReady] before switching to terminal. */
     fun openGuiThenRun(directory: File?, onGuiReady: () -> Unit) {
         terminalOpen = true
         x11Open = true

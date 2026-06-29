@@ -9,7 +9,7 @@ object EditorBuildScriptHelper {
 
     const val SCRIPT_NAME = "build.sh"
     private const val SCRIPT_MARKER = "# ZeroTermux build script"
-    private const val SCRIPT_VNC_MARKER = EditorVncEnvironment.SCRIPT_VNC_MARKER
+    private const val SCRIPT_X11_MARKER = EditorX11Environment.SCRIPT_X11_MARKER
 
     fun scriptFile(directory: File): File = File(directory, SCRIPT_NAME)
 
@@ -30,19 +30,16 @@ object EditorBuildScriptHelper {
         if (!content.contains(SCRIPT_MARKER)) {
             return false
         }
-        if (!content.contains(SCRIPT_VNC_MARKER)) {
+        if (!content.contains(SCRIPT_X11_MARKER)) {
             return true
         }
         if (!content.contains("lang=$localeTag")) {
             return true
         }
-        if (!content.contains("export DISPLAY=${EditorVncEnvironment.DISPLAY}")) {
+        if (!content.contains("export DISPLAY=${EditorX11Environment.DISPLAY}")) {
             return true
         }
-        if (!content.contains("ensure_editor_x11vnc")) {
-            return true
-        }
-        if (!content.contains("/dev/tcp/127.0.0.1/${EditorVncEnvironment.VNC_PORT}")) {
+        if (!content.contains("ensure_editor_gui_stack")) {
             return true
         }
         return !content.contains("ensure_java()")
@@ -191,12 +188,12 @@ object EditorBuildScriptHelper {
                   fi
                 }
 
-                ${EditorVncEnvironment.coreVncShellFunctions()}
+                ${EditorX11Environment.coreX11ShellFunctions()}
 
                 ensure_java_gui() {
-                  export DISPLAY=${EditorVncEnvironment.DISPLAY}
-                  ensure_editor_xvfb || exit 1
-                  ensure_editor_x11vnc || exit 1
+                  export DISPLAY=${EditorX11Environment.DISPLAY}
+                  ensure_editor_gui_stack || exit 1
+                  editor_gpu_env
                   if ! pkg list-installed 2>/dev/null | grep -q ttf-dejavu; then
                     echo $installGuiFonts
                     pkg install -y ttf-dejavu 2>/dev/null || true
@@ -219,8 +216,8 @@ object EditorBuildScriptHelper {
         return buildString {
             appendLine(shebang)
             appendLine("set -e")
-            appendLine("export DISPLAY=${EditorVncEnvironment.DISPLAY}")
-            appendLine("$SCRIPT_MARKER lang=${strings.localeTag} $SCRIPT_VNC_MARKER — ${strings.headerNote}")
+            appendLine("export DISPLAY=${EditorX11Environment.DISPLAY}")
+            appendLine("$SCRIPT_MARKER lang=${strings.localeTag} $SCRIPT_X11_MARKER — ${strings.headerNote}")
             appendLine()
             appendLine(strings.ensureFunctionsBlock())
             appendLine()
@@ -248,7 +245,7 @@ object EditorBuildScriptHelper {
             SOURCE="$fileName"
             CLASS="$className"
             javac "${'$'}SOURCE"
-            ${setVisibleWarn}export LIBGL_ALWAYS_SOFTWARE=1
+            ${setVisibleWarn}editor_gpu_env
             java -Djava.awt.headless=false "${'$'}CLASS" &
             GUI_PID=${'$'}!
             sleep 0.8
@@ -256,7 +253,7 @@ object EditorBuildScriptHelper {
               wait "${'$'}GUI_PID" 2>/dev/null || true
               exit 1
             fi
-            echo ${strings.guiStartedQuoted()} "(PID ${'$'}GUI_PID, DISPLAY=${EditorVncEnvironment.DISPLAY})"
+            echo ${strings.guiStartedQuoted()} "(PID ${'$'}GUI_PID, DISPLAY=${EditorX11Environment.DISPLAY})"
             refresh_editor_gui_display
         """.trimIndent()
     }
