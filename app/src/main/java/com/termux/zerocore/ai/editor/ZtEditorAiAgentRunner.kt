@@ -5,6 +5,7 @@ import com.example.xh_lib.utils.UUtils
 import com.termux.R
 import com.termux.zerocore.ai.agent.ZtAgentAiChatClient
 import com.termux.zerocore.ai.agent.ZtAgentAiConfigHelper
+import com.termux.zerocore.ai.agent.ZtTerminalWaitHelper
 import org.json.JSONObject
 
 class ZtEditorAiAgentRunner(
@@ -71,7 +72,9 @@ class ZtEditorAiAgentRunner(
                 )
                 for (toolCall in result.toolCalls) {
                     if (callback.isCancelled()) return
-                    executeToolCallWithUi(toolCall, callback, workingMessages)
+                    if (executeToolCallWithUi(toolCall, callback, workingMessages)) {
+                        return
+                    }
                 }
                 rounds++
                 continue
@@ -111,13 +114,46 @@ class ZtEditorAiAgentRunner(
         )
     }
 
+    /**
+     * @return true 表示 agent 应结束（如编译已完成）
+     */
     private fun executeToolCallWithUi(
         toolCall: ZtAgentAiChatClient.ToolCall,
         callback: Callback,
         workingMessages: MutableList<ZtAgentAiChatClient.ChatMessage>
-    ) {
+    ): Boolean {
         val label = ZtEditorAiToolExecutor.statusLabel(toolCall.name)
         val preview = toolCallPreview(toolCall)
+
+        if (toolCall.name == "run_build_script") {
+            post { callback.onToolStep(label, preview) }
+            val startResult = ZtEditorAiToolExecutor.execute(toolCall, host)
+            workingMessages.add(
+                ZtAgentAiChatClient.ChatMessage(
+                    role = ROLE_TOOL,
+                    content = startResult,
+                    toolCallId = toolCall.id
+                )
+            )
+            if (host.isTerminalAvailable()) {
+                val waitResult = ZtTerminalWaitHelper.waitForTerminalSettle(
+                    initialWaitMs = 800,
+                    pollIntervalMs = 800,
+                    maxWaitMs = ZtTerminalWaitHelper.DEFAULT_COMMAND_MAX_WAIT_MS,
+                    captureSnapshot = { host.captureTerminalSnapshot(4000) }
+                )
+                val summary = buildBuildCompletionMessage(waitResult)
+                post { callback.onComplete(summary) }
+            } else {
+                post {
+                    callback.onComplete(
+                        UUtils.getString(R.string.zt_editor_ai_build_finished_no_terminal)
+                    )
+                }
+            }
+            return true
+        }
+
         val toolResult = ZtEditorAiToolExecutor.execute(toolCall, host)
 
         when (toolCall.name) {
@@ -149,6 +185,20 @@ class ZtEditorAiAgentRunner(
                 toolCallId = toolCall.id
             )
         )
+        return false
+    }
+
+    private fun buildBuildCompletionMessage(result: ZtTerminalWaitHelper.WaitResult): String {
+        val header = UUtils.getString(R.string.zt_editor_ai_build_finished)
+        return if (result.awaitingConfirmation) {
+            header + "\n\n" + ZtTerminalWaitHelper.formatConfirmationNotice() +
+                "\n\n" + result.snapshot.take(2000)
+        } else if (result.timedOut) {
+            header + "\n\n" + ZtTerminalWaitHelper.formatTimedOutNotice(result.waitedMs) +
+                "\n\n" + result.snapshot.take(2000)
+        } else {
+            header + "\n\n" + result.snapshot.take(3000)
+        }
     }
 
     private fun toolCallPreview(toolCall: ZtAgentAiChatClient.ToolCall): String {
@@ -194,7 +244,8 @@ class ZtEditorAiAgentRunner(
         list.add(
             ZtAgentAiChatClient.ChatMessage(
                 role = ROLE_SYSTEM,
-                content = basePrompt + "\n\n" + UUtils.getString(R.string.zt_editor_ai_system_prompt)
+                content = basePrompt + "\n\n" + UUtils.getString(R.string.zt_editor_ai_system_prompt) +
+                    "\n\n" + UUtils.getString(R.string.zt_editor_ai_system_prompt_edit_rules)
             )
         )
         list.addAll(history.filter { it.role == ROLE_USER || it.role == ROLE_ASSISTANT }.takeLast(HISTORY_LIMIT))

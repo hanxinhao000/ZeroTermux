@@ -372,10 +372,33 @@ class ZtEditorAiPanelHelper(
     }
 
     fun destroy() {
+        persistHistory()
         ZtEditorAiResetHelper.registerUiRefreshCallback(null)
         hide()
         chatClient?.cancel()
         agentRunner?.cancel()
+    }
+
+    /** 持久化对话历史（Activity 暂停/销毁时调用）。 */
+    fun persistHistory() {
+        if (conversationHistory.isNotEmpty()) {
+            ZtEditorAiChatStore.save(conversationHistory)
+        }
+    }
+
+    /** 从存储重新加载 UI（Activity 恢复时若面板已创建）。 */
+    fun reloadHistoryFromStore() {
+        if (isSending) return
+        conversationHistory.clear()
+        conversationHistory.addAll(ZtEditorAiChatStore.load())
+        messagesContainer.removeAllViews()
+        pendingAssistantRow = null
+        if (conversationHistory.isEmpty()) {
+            emptyView.visibility = View.VISIBLE
+            messagesContainer.visibility = View.GONE
+        } else {
+            restoreConversationUi()
+        }
     }
 
     private fun onSendClicked() {

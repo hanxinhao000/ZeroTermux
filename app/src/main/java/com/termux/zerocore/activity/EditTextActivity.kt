@@ -2342,10 +2342,12 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         editorTerminalPanel?.onResume()
         editorX11Panel?.onResume()
         updateEditorX11ButtonState()
+        editorAiPanel?.reloadHistoryFromStore()
     }
 
     override fun onPause() {
         editorX11Panel?.onPause()
+        editorAiPanel?.persistHistory()
         super.onPause()
     }
 
@@ -3797,6 +3799,45 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         editor.setText(text)
         updateDirtyState()
         return "Replaced entire content (${text.length} chars)"
+    }
+
+    override fun getCurrentEditorFilePath(): String? {
+        val tab = currentTab() ?: return null
+        if (tab.previewOnly || isTextPreviewMode(tab)) return null
+        return tab.file.absolutePath
+    }
+
+    override fun requestCodeEditConfirmation(
+        actionLabel: String,
+        preview: String,
+        onResult: (approved: Boolean) -> Unit
+    ) {
+        val showDialog = {
+            if (isFinishing || isDestroyed) {
+                onResult(false)
+            } else {
+                val filePath = getCurrentEditorFilePath().orEmpty()
+                val message = buildString {
+                    if (filePath.isNotBlank()) {
+                        append(getString(R.string.zt_editor_ai_edit_confirm_file, filePath))
+                        append("\n\n")
+                    }
+                    append(preview)
+                }
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.zt_editor_ai_edit_confirm_title, actionLabel))
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok) { _, _ -> onResult(true) }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> onResult(false) }
+                    .setOnCancelListener { onResult(false) }
+                    .show()
+            }
+        }
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
+            showDialog()
+        } else {
+            runOnUiThread { showDialog() }
+        }
     }
 
     private fun resolveEditorPath(rawPath: String): File? {

@@ -1,14 +1,22 @@
 package com.termux.zerocore.ai.editor
 
+import com.example.xh_lib.utils.SaveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.termux.zerocore.ai.agent.ZtAgentAiChatClient
 import com.termux.zerocore.ftp.utils.UserSetManage
 
+/**
+ * 编辑器 AI 对话历史（与主界面 [com.termux.zerocore.ai.agent.ZtAgentAiChatStore] 完全独立）。
+ * 使用独立 SaveData 键，避免 ZTUserBean 并发读写覆盖历史。
+ */
 object ZtEditorAiChatStore {
 
     const val MAX_MESSAGES = 100
     const val TRIM_BATCH = 50
+
+    /** 独立存储键，不与 agentAiChatHistoryJson 共用 */
+    private const val STORAGE_KEY = "zt_editor_ai_chat_history_v1"
 
     private val gson = Gson()
 
@@ -18,19 +26,18 @@ object ZtEditorAiChatStore {
     )
 
     fun load(): MutableList<ZtAgentAiChatClient.ChatMessage> {
-        val json = UserSetManage.get().getZTUserBean().editorAiChatHistoryJson
-        if (json.isNullOrBlank()) return mutableListOf()
-        return try {
-            val type = object : TypeToken<List<StoredMessage>>() {}.type
-            val stored: List<StoredMessage>? = gson.fromJson(json, type)
-            stored?.mapNotNull { item ->
-                if (item.role.isBlank() || item.content.isBlank()) return@mapNotNull null
-                if (item.role != ROLE_USER && item.role != ROLE_ASSISTANT) return@mapNotNull null
-                ZtAgentAiChatClient.ChatMessage(item.role, item.content)
-            }?.toMutableList() ?: mutableListOf()
-        } catch (_: Exception) {
-            mutableListOf()
+        val json = SaveData.getStringOther(STORAGE_KEY)?.trim().orEmpty()
+        if (json.isNotBlank() && json != "def") {
+            return parseMessages(json)
         }
+        // 从旧版 ZTUserBean 字段迁移
+        val legacy = UserSetManage.get().getZTUserBean().editorAiChatHistoryJson?.trim().orEmpty()
+        if (legacy.isBlank()) return mutableListOf()
+        val migrated = parseMessages(legacy)
+        if (migrated.isNotEmpty()) {
+            save(migrated)
+        }
+        return migrated
     }
 
     fun save(messages: List<ZtAgentAiChatClient.ChatMessage>) {
@@ -38,14 +45,12 @@ object ZtEditorAiChatStore {
             .filter { (it.role == ROLE_USER || it.role == ROLE_ASSISTANT) && !it.content.isNullOrBlank() }
             .toMutableList()
         trimIfNeeded(trimmed)
-        val bean = UserSetManage.get().getZTUserBean()
-        bean.editorAiChatHistoryJson = gson.toJson(
-            trimmed.map { StoredMessage(it.role, it.content!!) }
-        )
-        UserSetManage.get().setZTUserBean(bean)
+        val json = gson.toJson(trimmed.map { StoredMessage(it.role, it.content!!) })
+        SaveData.saveStringOther(STORAGE_KEY, json)
     }
 
     fun clear() {
+        SaveData.saveStringOther(STORAGE_KEY, "")
         val bean = UserSetManage.get().getZTUserBean()
         bean.editorAiChatHistoryJson = null
         UserSetManage.get().setZTUserBean(bean)
@@ -57,6 +62,20 @@ object ZtEditorAiChatStore {
             repeat(removeCount) {
                 if (messages.isNotEmpty()) messages.removeAt(0)
             }
+        }
+    }
+
+    private fun parseMessages(json: String): MutableList<ZtAgentAiChatClient.ChatMessage> {
+        return try {
+            val type = object : TypeToken<List<StoredMessage>>() {}.type
+            val stored: List<StoredMessage>? = gson.fromJson(json, type)
+            stored?.mapNotNull { item ->
+                if (item.role.isBlank() || item.content.isBlank()) return@mapNotNull null
+                if (item.role != ROLE_USER && item.role != ROLE_ASSISTANT) return@mapNotNull null
+                ZtAgentAiChatClient.ChatMessage(item.role, item.content)
+            }?.toMutableList() ?: mutableListOf()
+        } catch (_: Exception) {
+            mutableListOf()
         }
     }
 

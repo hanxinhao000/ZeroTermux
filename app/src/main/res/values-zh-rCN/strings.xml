@@ -1745,6 +1745,16 @@
     <string name="zt_editor_ai_reset_done">已还原编辑器 AI 对话</string>
     <string name="zt_editor_ai_reset_panel_desc">还原编辑器 AI 对话</string>
     <string name="zt_editor_ai_running_bubble">AI\n运行中</string>
+    <string name="zt_editor_ai_edit_confirm_title">确认修改：%1$s</string>
+    <string name="zt_editor_ai_edit_confirm_file">目标文件：%1$s</string>
+    <string name="zt_editor_ai_edit_preview_insert">将插入以下内容：\n\n%1$s</string>
+    <string name="zt_editor_ai_edit_preview_range">将替换字符 %1$d..%2$d 为：\n\n%3$s</string>
+    <string name="zt_editor_ai_edit_preview_replace_all">将替换整个文件（约 %1$d 行）：\n\n%2$s</string>
+    <string name="zt_editor_ai_edit_rejected">用户已拒绝此次代码修改</string>
+    <string name="zt_editor_ai_edit_no_file">Error: 当前没有可编辑的打开文件，请先在编辑器中打开文本文件</string>
+    <string name="zt_editor_ai_build_finished">编译/运行已完成，AI 已自动结束。</string>
+    <string name="zt_editor_ai_build_finished_no_terminal">已启动编译，但终端不可用，无法等待完成。</string>
+    <string name="zt_editor_ai_system_prompt_edit_rules">13. 修改代码时只能编辑当前已打开的文件，禁止用 open_file 切换到其他文件后再写入；需要新文件时用 create_file。\n14. insert_at_cursor / replace_range / replace_all 会弹出确认框，用户拒绝后不要重复相同修改。\n15. run_build_script 执行并等待编译结束后会自动结束对话，无需继续调用工具。</string>
 
     <string name="code_editor_loading">Loading...(如果为打开目录，则忽略此loading...直接开始操作即可，无需等待)</string>
 
