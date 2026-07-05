@@ -42,10 +42,29 @@ object TimerRuntimeState {
 
     fun scheduleNext(delayMs: Long) {
         nextFireAtMillis.set(System.currentTimeMillis() + delayMs)
+        TimerSessionPersist.saveIfAllowed()
     }
+
+    fun setNextFireAtMillis(millis: Long) {
+        nextFireAtMillis.set(millis)
+        TimerSessionPersist.saveIfAllowed()
+    }
+
+    /** 从持久化恢复时使用，避免在 Service 启动前误触发保存逻辑。 */
+    fun restoreNextFireAtMillis(millis: Long) {
+        nextFireAtMillis.set(millis)
+    }
+
+    fun getNextFireAtMillis(): Long = nextFireAtMillis.get()
 
     fun clearSchedule() {
         nextFireAtMillis.set(0L)
+    }
+
+    /** 用户主动停止：清除内存调度与持久化快照。 */
+    fun resetForUserStop() {
+        nextFireAtMillis.set(0L)
+        TimerSessionPersist.clear()
     }
 
     fun remainingMillis(): Long {

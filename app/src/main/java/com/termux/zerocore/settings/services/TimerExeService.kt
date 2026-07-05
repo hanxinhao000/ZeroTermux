@@ -13,6 +13,8 @@ import com.termux.zerocore.libsu.LibSuManage
 import com.termux.zerocore.settings.timer.TimerBean
 import com.termux.zerocore.settings.timer.TimerNotificationHelper
 import com.termux.zerocore.settings.timer.TimerRuntimeState
+import com.termux.zerocore.settings.timer.TimerScheduleHelper
+import com.termux.zerocore.settings.timer.TimerSessionPersist
 import com.termux.zerocore.utils.NotificationUtils
 import com.zp.z_file.util.LogUtils
 import java.util.concurrent.atomic.AtomicBoolean
@@ -22,6 +24,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     companion object {
         const val TIMER_EXE_START = "timer_exe_start"
         const val TIMER_EXE_END = "timer_exe_end"
+        const val EXTRA_RESUME = "timer_extra_resume"
         private const val TAG = "TimerExeService"
         private const val NOTIFICATION_ID = 1556
         private const val SCRIPT_WAIT_POLL_MS = 2_000L
@@ -59,12 +62,13 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         when (intent?.action) {
             TIMER_EXE_START -> {
                 LogUtils.e(TAG, "onStartCommand TIMER_EXE_START")
-                startTimer()
+                val resume = intent.getBooleanExtra(EXTRA_RESUME, false)
+                startTimer(resume)
                 return START_STICKY
             }
             TIMER_EXE_END -> {
                 LogUtils.e(TAG, "onStartCommand TIMER_EXE_END")
-                endTime()
+                endTime(userInitiated = true)
                 return START_NOT_STICKY
             }
         }
@@ -73,12 +77,13 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         if (isActive.get()) {
+            TimerSessionPersist.saveForBackgroundResume()
             refreshForegroundNotification()
         }
         super.onTaskRemoved(rootIntent)
     }
 
-    private fun startTimer() {
+    private fun startTimer(resume: Boolean = false) {
         if (!isActive.compareAndSet(false, true)) {
             refreshForegroundNotification()
             return
@@ -88,7 +93,11 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         mLibSuManage?.setTimerListener(this)
         ensureLogWriter()
         TimerRuntimeState.setRunning(true)
-        TimerRuntimeState.setExecutionCount(mLibSuManage?.cunt ?: 0)
+        if (!resume) {
+            TimerRuntimeState.setExecutionCount(mLibSuManage?.cunt ?: 0)
+        } else {
+            mLibSuManage?.cunt = TimerRuntimeState.getExecutionCount()
+        }
         if (isScriptRunning()) {
             resumeActiveScriptState()
             return
@@ -97,6 +106,26 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         TimerRuntimeState.setWaitingForScript(false)
         TimerRuntimeState.setExecutingScript(false)
         refreshForegroundNotification()
+        if (resume) {
+            resumeFromPersistedSchedule()
+        } else {
+            scheduleNextExecution()
+        }
+    }
+
+    private fun resumeFromPersistedSchedule() {
+        val remaining = TimerRuntimeState.remainingMillis()
+        if (remaining > 0L) {
+            TimerRuntimeState.statusMessage = buildWaitingMessage()
+            mainHandler.removeCallbacks(scheduleRunnable)
+            mainHandler.postDelayed(scheduleRunnable, remaining)
+            refreshForegroundNotification()
+            return
+        }
+        if (TimerRuntimeState.getNextFireAtMillis() > 0L) {
+            onIntervalElapsed()
+            return
+        }
         scheduleNextExecution()
     }
 
@@ -200,6 +229,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         val count = manage.cunt + 1
         manage.cunt = count
         TimerRuntimeState.setExecutionCount(count)
+        TimerSessionPersist.saveIfAllowed()
         mTimerBean = TimerSetManage.get().getZTTimerBean()
         val command = if (mTimerBean!!.isZeroTermux) "shell_ZeroTermux" else "shell_Android"
         ensureLogWriter()
@@ -211,7 +241,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         manage.shellCommandExec(command, onComplete)
     }
 
-    private fun endTime() {
+    private fun endTime(userInitiated: Boolean = false) {
         if (!isActive.getAndSet(false)) {
             stopSelf()
             return
@@ -226,8 +256,15 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         TimerRuntimeState.setRunning(false)
         TimerRuntimeState.setWaitingForScript(false)
         TimerRuntimeState.setExecutingScript(false)
-        TimerRuntimeState.clearSchedule()
         TimerRuntimeState.statusMessage = ""
+        if (userInitiated) {
+            TimerRuntimeState.resetForUserStop()
+        } else if (TimerSetManage.get().getZTTimerBean().isAlwaysAllowTimer) {
+            TimerSessionPersist.saveForBackgroundResume()
+            TimerRuntimeState.clearSchedule()
+        } else {
+            TimerRuntimeState.resetForUserStop()
+        }
         stopForeground(STOP_FOREGROUND_REMOVE)
         NotificationUtils.cancelNotification(applicationContext, NOTIFICATION_ID)
         stopSelf()
@@ -235,11 +272,12 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
 
     private fun getIntervalMs(): Long {
         mTimerBean = TimerSetManage.get().getZTTimerBean()
-        return if (mTimerBean!!.timerNumber == TimerBean.TIMER_OTHER) {
-            mTimerBean!!.timerOtherNumber.coerceAtLeast(1_000L)
-        } else {
-            mTimerBean!!.timerNumber.toLong().coerceAtLeast(1_000L)
-        }
+        return TimerScheduleHelper.computeNextDelayMs(mTimerBean!!)
+    }
+
+    private fun getTimeLabel(): String {
+        mTimerBean = TimerSetManage.get().getZTTimerBean()
+        return TimerScheduleHelper.formatScheduleLabel(mTimerBean!!)
     }
 
     private fun buildWaitingMessage(): String {
@@ -265,33 +303,14 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         startForeground(NOTIFICATION_ID, notification)
     }
 
-    private fun getTimeLabel(): String {
-        mTimerBean = TimerSetManage.get().getZTTimerBean()
-        if (mTimerBean!!.timerNumber == TimerBean.TIMER_OTHER) {
-            return if (mTimerBean!!.timerOtherNumber >= 60 * 1000) {
-                "${mTimerBean!!.timerOtherNumber / 60 / 1000} ${UUtils.getString(R.string.zt_timer_minute)}"
-            } else if (mTimerBean!!.timerOtherNumber >= 1000) {
-                "${mTimerBean!!.timerOtherNumber / 1000} ${UUtils.getString(R.string.zt_timer_second_unit)}"
-            } else {
-                "< 1 ${UUtils.getString(R.string.zt_timer_second_unit)}"
-            }
-        }
-        return when (mTimerBean!!.timerNumber) {
-            TimerBean.TIMER_30_SECOND -> UUtils.getString(R.string.zt_timer_30_second)
-            TimerBean.TIMER_1_MINUTE -> UUtils.getString(R.string.zt_timer_1_minute)
-            TimerBean.TIMER_10_MINUTE -> UUtils.getString(R.string.zt_timer_10_minute)
-            TimerBean.TIMER_30_MINUTE -> UUtils.getString(R.string.zt_timer_30_minute)
-            else -> "${mTimerBean!!.timerNumber / 60 / 1000} ${UUtils.getString(R.string.zt_timer_minute)}"
-        }
-    }
-
     override fun onBind(intent: Intent?): IBinder? {
         return TimerExeLocalBinder(this)
     }
 
     override fun onDestroy() {
         if (isActive.get()) {
-            endTime()
+            val alwaysAllow = TimerSetManage.get().getZTTimerBean().isAlwaysAllowTimer
+            endTime(userInitiated = !alwaysAllow)
         }
         super.onDestroy()
     }
