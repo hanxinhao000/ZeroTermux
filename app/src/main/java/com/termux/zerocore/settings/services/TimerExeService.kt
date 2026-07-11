@@ -15,8 +15,6 @@ import com.termux.zerocore.settings.timer.TimerNotificationHelper
 import com.termux.zerocore.settings.timer.TimerRuntimeState
 import com.termux.zerocore.settings.timer.TimerScheduleHelper
 import com.termux.zerocore.settings.timer.TimerSessionPersist
-import com.termux.zerocore.settings.timer.TimerTermuxSessionHelper
-import com.termux.zerocore.utils.SingletonCommunicationUtils
 import com.termux.zerocore.utils.NotificationUtils
 import com.zp.z_file.util.LogUtils
 import java.util.concurrent.atomic.AtomicBoolean
@@ -32,6 +30,8 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         private const val SCRIPT_WAIT_POLL_MS = 2_000L
         private const val LAUNCH_RETRY_MS = 1_000L
         private const val STUCK_WATCHDOG_MS = 5_000L
+        private const val SCRIPT_STUCK_RESET_MS = 20_000L
+        private const val SCRIPT_MAX_RUNTIME_MS = 600_000L
         /** 每日定时：过期超过该阈值则视为错过窗口，直接排到下一天，避免重复触发。 */
         private const val DAILY_OVERDUE_SKIP_MS = 120_000L
     }
@@ -42,6 +42,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     private val isActive = AtomicBoolean(false)
     private val pendingRunAfterScript = AtomicBoolean(false)
     private val isLaunchingCommand = AtomicBoolean(false)
+    private var scriptExecStartedAtMillis = 0L
 
     private val scheduleRunnable = Runnable { onIntervalElapsed() }
     private val waitForScriptRunnable = Runnable { waitForScriptToFinish() }
@@ -101,6 +102,14 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             return
         }
         isLaunchingCommand.set(false)
+        if (resume) {
+            TimerRuntimeState.setExecutingScript(false)
+            TimerRuntimeState.setWaitingForScript(false)
+            TimerRuntimeState.statusMessage = ""
+            pendingRunAfterScript.set(false)
+            scriptExecStartedAtMillis = 0L
+            isLaunchingCommand.set(false)
+        }
         mTimerBean = TimerSetManage.get().getZTTimerBean()
         mLibSuManage?.setTimerListener(this)
         ensureLogWriter()
@@ -111,48 +120,20 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             mLibSuManage?.cunt = TimerRuntimeState.getExecutionCount()
         }
         if (isScriptRunning()) {
-            val continueResume = {
-                resumeActiveScriptState()
-                startStuckWatchdog()
-            }
-            if (needsZeroTermuxSession()) {
-                ensureZeroTermuxSession(continueResume)
-            } else {
-                continueResume()
-            }
+            resumeActiveScriptState()
+            startStuckWatchdog()
             return
         }
         pendingRunAfterScript.set(false)
         TimerRuntimeState.setWaitingForScript(false)
         TimerRuntimeState.setExecutingScript(false)
         refreshForegroundNotification()
-        val startScheduling = {
-            if (resume) {
-                resumeFromPersistedSchedule()
-            } else {
-                scheduleNextExecution()
-            }
-            startStuckWatchdog()
+        if (resume) {
+            resumeFromPersistedSchedule()
+        } else {
+            scheduleNextExecution()
         }
-        startScheduling()
-    }
-
-    private fun needsZeroTermuxSession(): Boolean {
-        mTimerBean = TimerSetManage.get().getZTTimerBean()
-        return mTimerBean?.isZeroTermux == true
-    }
-
-    private fun ensureZeroTermuxSession(onReady: () -> Unit) {
-        TimerTermuxSessionHelper.ensureSession(applicationContext) { ok ->
-            mainHandler.post {
-                if (!ok) {
-                    LogUtils.e(TAG, "ZeroTermux background session bootstrap failed")
-                }
-                if (isActive.get()) {
-                    onReady()
-                }
-            }
-        }
+        startStuckWatchdog()
     }
 
     private fun resumeFromPersistedSchedule() {
@@ -211,11 +192,17 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         mTimerBean = TimerSetManage.get().getZTTimerBean()
         val bean = mTimerBean ?: return
         val nextAt = TimerScheduleHelper.computeNextFireAtMillis(bean)
-        val delay = (nextAt - System.currentTimeMillis()).coerceAtLeast(1_000L)
-        TimerRuntimeState.setNextFireAtMillis(nextAt)
+        val now = System.currentTimeMillis()
+        val rawDelay = nextAt - now
+        val delay = if (rawDelay <= 0L) 0L else rawDelay.coerceAtLeast(100L)
+        TimerRuntimeState.setNextFireAtMillis(if (rawDelay <= 0L) now else nextAt)
         TimerRuntimeState.statusMessage = buildWaitingMessage()
         refreshForegroundNotification()
-        mainHandler.postDelayed(scheduleRunnable, delay)
+        if (delay <= 0L) {
+            mainHandler.post(scheduleRunnable)
+        } else {
+            mainHandler.postDelayed(scheduleRunnable, delay)
+        }
     }
 
     private fun onIntervalElapsed() {
@@ -276,18 +263,15 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             return
         }
         mainHandler.removeCallbacks(launchRetryRunnable)
-        val launch = { execCommandInternal() }
-        if (needsZeroTermuxSession()) {
-            ensureZeroTermuxSession(launch)
-        } else {
-            launch()
-        }
+        scriptExecStartedAtMillis = System.currentTimeMillis()
+        execCommandInternal()
     }
 
     private fun execCommandInternal() {
         execCommand {
             isLaunchingCommand.set(false)
             TimerRuntimeState.setExecutingScript(false)
+            TimerRuntimeState.statusMessage = ""
             if (!isActive.get()) {
                 // Service 正在停止时仍尽量把下一次绝对时间写入持久化，避免恢复后卡在过期的 00:00
                 persistNextFireIfAlwaysAllow()
@@ -328,14 +312,24 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         TimerRuntimeState.setExecutionCount(count)
         TimerSessionPersist.saveIfAllowed()
         mTimerBean = TimerSetManage.get().getZTTimerBean()
-        val command = if (mTimerBean!!.isZeroTermux) "shell_ZeroTermux" else "shell_Android"
+        val useZeroTermux = mTimerBean!!.isZeroTermux
         ensureLogWriter()
         manage.writeRunHeader(count)
         TimerRuntimeState.setExecutingScript(true)
         TimerRuntimeState.setWaitingForScript(false)
         TimerRuntimeState.statusMessage = UUtils.getString(R.string.zt_timer_executing_current_script)
         refreshForegroundNotification()
-        manage.shellCommandExec(command, onComplete)
+        scriptExecStartedAtMillis = System.currentTimeMillis()
+
+        val finish: () -> Unit = {
+            scriptExecStartedAtMillis = 0L
+            onComplete?.run()
+            Unit
+        }
+
+        val command = if (useZeroTermux) "shell_ZeroTermux" else "shell_Android"
+        LogUtils.e(TAG, "execCommand: LibSu $command #$count")
+        manage.shellCommandExec(command, Runnable { finish() })
     }
 
     private fun startStuckWatchdog() {
@@ -343,24 +337,50 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         mainHandler.postDelayed(stuckWatchdogRunnable, STUCK_WATCHDOG_MS)
     }
 
+    private fun recoverFromStuckScript(reason: String) {
+        LogUtils.e(TAG, "watchdog: recover - $reason")
+        mLibSuManage?.stop()
+        TimerRuntimeState.setExecutingScript(false)
+        TimerRuntimeState.setWaitingForScript(false)
+        TimerRuntimeState.statusMessage = ""
+        isLaunchingCommand.set(false)
+        pendingRunAfterScript.set(false)
+        scriptExecStartedAtMillis = 0L
+        scheduleNextExecution()
+    }
+
     private fun checkStuckCountdown() {
         if (!isActive.get()) return
         try {
-            if (needsZeroTermuxSession() &&
-                !SingletonCommunicationUtils.getInstance().hasTerminalListener() &&
-                (TimerRuntimeState.isExecutingScript() ||
-                    TimerRuntimeState.isWaitingForScript() ||
-                    isLaunchingCommand.get() ||
-                    pendingRunAfterScript.get())
-            ) {
-                ensureZeroTermuxSession { }
+            val elapsed = if (scriptExecStartedAtMillis > 0L) {
+                System.currentTimeMillis() - scriptExecStartedAtMillis
+            } else {
+                0L
+            }
+            val shellRunning = mLibSuManage?.isShellCommandRunning == true
+            if (TimerRuntimeState.isExecutingScript() && scriptExecStartedAtMillis > 0L) {
+                if (elapsed > SCRIPT_MAX_RUNTIME_MS) {
+                    recoverFromStuckScript("script exceeded max runtime")
+                    return
+                }
+                if (!shellRunning && elapsed > SCRIPT_STUCK_RESET_MS) {
+                    recoverFromStuckScript("executing flag set but LibSu not running")
+                    return
+                }
+            }
+            if (isLaunchingCommand.get() && !shellRunning && elapsed > SCRIPT_STUCK_RESET_MS) {
+                recoverFromStuckScript("launch flag stuck")
+                return
             }
             if (!TimerRuntimeState.isExecutingScript() &&
                 !TimerRuntimeState.isWaitingForScript() &&
-                !isLaunchingCommand.get() &&
                 TimerRuntimeState.getNextFireAtMillis() > 0L &&
                 TimerRuntimeState.remainingMillis() <= 0L
             ) {
+                if (isLaunchingCommand.get() || shellRunning) {
+                    recoverFromStuckScript("countdown zero while launch/shell active")
+                    return
+                }
                 LogUtils.e(TAG, "watchdog: stuck at 00:00, rescheduling next run")
                 scheduleNextExecution()
             }
@@ -396,9 +416,6 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             TimerRuntimeState.clearSchedule()
         } else {
             TimerRuntimeState.resetForUserStop()
-        }
-        if (needsZeroTermuxSession()) {
-            TimerTermuxSessionHelper.releaseIfHeadless(applicationContext)
         }
         stopForeground(STOP_FOREGROUND_REMOVE)
         NotificationUtils.cancelNotification(applicationContext, NOTIFICATION_ID)

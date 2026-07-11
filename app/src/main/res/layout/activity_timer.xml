@@ -424,7 +424,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_height="30dp"
                         android:id="@+id/s_30"
-                        android:background="@drawable/shape_line_8cff5a"
+                        android:background="@drawable/shape_line_2e84e6"
                         android:gravity="center">
 
                         <androidx.cardview.widget.CardView

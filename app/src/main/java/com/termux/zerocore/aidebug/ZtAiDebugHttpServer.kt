@@ -64,6 +64,8 @@ class ZtAiDebugHttpServer(
                     handleCrashDelete(session)
                 uri == "/api/crashes/clear" && method == Method.POST ->
                     textResponse(ZtAiDebugCrashHelper.clearJson(appContext), MIME_JSON)
+                uri == "/api/timer/status" && method == Method.GET ->
+                    textResponse(ZtAiDebugTimerHelper.statusJson(appContext), MIME_JSON)
                 uri == "/api/screenshot" && method == Method.GET ->
                     handleScreenshot(session)
                 uri == "/api/camera/frame" && method == Method.GET ->

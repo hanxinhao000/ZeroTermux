@@ -12,6 +12,7 @@ import com.example.xh_lib.utils.UUtils;
 import com.termux.BuildConfig;
 import com.termux.R;
 import com.termux.zerocore.settings.timer.TimerExecutionLog;
+import com.termux.zerocore.settings.timer.TimerRuntimeState;
 import com.termux.zerocore.url.FileUrl;
 import com.termux.zerocore.utils.FileIOUtils;
 import com.topjohnwu.superuser.CallbackList;
@@ -64,6 +65,7 @@ public class LibSuManage {
     private final Handler mMainHandler = new Handler(Looper.getMainLooper());
     private final ExecutorService mShellExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean mShellExecuting = false;
+    private static final long SHELL_CMD_TIMEOUT_MS = 5 * 60_000L;
 
     private boolean isRun = false;
 
@@ -107,6 +109,12 @@ public class LibSuManage {
     }
 
     public void initRunnable(boolean zeroTermux) {
+        // 定时 Service 已在写日志时，不要关掉 writer，否则从设置页进入会导致日志假死
+        if (TimerRuntimeState.INSTANCE.isRunning()
+            && mShellLogWriter != null
+            && !mShellLogWriter.isStop()) {
+            return;
+        }
         logThreadStop();
         TimerExecutionLog.INSTANCE.ensureLogDir();
         mShellLogWriter = new ShellLogWriter(TimerExecutionLog.INSTANCE.logFile(zeroTermux));
@@ -164,12 +172,25 @@ public class LibSuManage {
     public void shellCommandExec(String funName, Runnable onComplete) {
         mShellExecutor.execute(() -> {
             mShellExecuting = true;
+            Thread timeoutThread = new Thread(() -> {
+                try {
+                    Thread.sleep(SHELL_CMD_TIMEOUT_MS);
+                    if (mShellExecuting) {
+                        LogUtils.e(TAG, "forcing shell stop after timeout: " + funName);
+                        stop();
+                    }
+                } catch (InterruptedException ignored) {
+                }
+            }, "LibSuTimerTimeout");
+            timeoutThread.setDaemon(true);
+            timeoutThread.start();
             try {
                 Shell.cmd(funName).to(mConsoleList).exec();
             } catch (Exception e) {
                 LogUtils.e(TAG, "shellCommandExec error: " + e);
             } finally {
                 mShellExecuting = false;
+                timeoutThread.interrupt();
                 if (onComplete != null) {
                     mMainHandler.post(onComplete);
                 }

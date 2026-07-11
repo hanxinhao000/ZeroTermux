@@ -12,7 +12,8 @@ export PATH="/data/data/com.termux/files/usr/bin:/data/data/com.termux/files/usr
 export LANG='en_US.UTF-8'
 export SHELL='/data/data/com.termux/files/usr/bin/bash'
 cd "$HOME"
-exec "$SHELL" -l "./.timerdir/termux_timer.sh"
+# 不要用 exec / login shell：会卡住 LibSu 或替换进程，导致定时任务无法结束
+"$SHELL" "./.timerdir/termux_timer.sh"
 }
 shell_Android() {
 echo ">>>>>>>>>>>>>>>>>shell_Android"

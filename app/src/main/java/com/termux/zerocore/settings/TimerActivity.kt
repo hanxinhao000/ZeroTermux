@@ -30,9 +30,7 @@ import com.termux.zerocore.settings.timer.TimerNotificationHelper
 import com.termux.zerocore.settings.timer.TimerRuntimeState
 import com.termux.zerocore.settings.timer.TimerScheduleHelper
 import com.termux.zerocore.settings.timer.TimerSessionPersist
-import com.termux.zerocore.settings.timer.TimerTermuxSessionHelper
 import com.termux.zerocore.url.FileUrl
-import com.termux.zerocore.utils.SingletonCommunicationUtils
 import com.termux.zerocore.utils.ZtNotificationPermissionHelper
 import com.zp.z_file.util.LogUtils
 import java.io.File
@@ -66,7 +64,6 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
     private val mExecutionLogText: TextView by lazy { findViewById(R.id.timer_execution_log_text) }
     private var mLibSuManage: LibSuManage? = null
     private var pageInitialized = false
-    private var awaitingSessionBootstrap = false
     private val uiHandler = Handler(Looper.getMainLooper())
     private val uiTickRunnable = object : Runnable {
         override fun run() {
@@ -90,21 +87,16 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         if (!ZtNotificationPermissionHelper.ensurePermission(this, REQ_NOTIFICATION_PERMISSION)) {
             return
         }
-        if (!prepareNotificationEntry()) {
-            return
-        }
         initializePage()
     }
 
     override fun onResume() {
         super.onResume()
         if (!pageInitialized && ZtNotificationPermissionHelper.hasPermission(this)) {
-            if (!prepareNotificationEntry()) {
-                return
-            }
             initializePage()
         }
         if (pageInitialized) {
+            reconcileStaleExecutionState()
             syncSwitchWithServiceState()
             updateStatusCard()
             uiHandler.post(uiTickRunnable)
@@ -124,7 +116,6 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQ_NOTIFICATION_PERMISSION) return
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (!prepareNotificationEntry()) return
             initializePage()
             return
         }
@@ -138,44 +129,38 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         return ZtNotificationPermissionHelper.ensurePermission(this, REQ_NOTIFICATION_PERMISSION)
     }
 
-    /**
-     * 从通知进入且使用 ZeroTermux 环境时，先后台拉起 Termux 会话再打开页面。
-     * @return false 表示异步等待，暂不 initializePage
-     */
-    private fun prepareNotificationEntry(): Boolean {
-        if (!intent.getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
-            return true
-        }
-        if (!TimerSetManage.get().getZTTimerBean().isZeroTermux) {
-            return true
-        }
-        if (SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
-            return true
-        }
-        if (awaitingSessionBootstrap) {
-            return false
-        }
-        awaitingSessionBootstrap = true
-        TimerTermuxSessionHelper.ensureSession(this) { ok ->
-            awaitingSessionBootstrap = false
-            if (isFinishing || isDestroyed) return@ensureSession
-            if (!ok) {
-                UUtils.showMsg(getString(R.string.zt_timer_main_program_missing))
-                finish()
-                return@ensureSession
-            }
-            if (!pageInitialized) {
-                initializePage()
-            }
-        }
-        return false
-    }
-
     private fun initializePage() {
         if (pageInitialized) return
         setContentView(R.layout.activity_timer)
         pageInitialized = true
         initViewFun()
+    }
+
+    /** 打开页面时校正 UI：LibSu 已结束但 Service 仍标记「执行中」时清除，避免从通知进入后假卡住。 */
+    private fun reconcileStaleExecutionState() {
+        if (!isTimerRunning()) return
+        val shellRunning = mLibSuManage?.isShellCommandRunning == true
+        if (!shellRunning &&
+            TimerRuntimeState.isExecutingScript() &&
+            !TimerRuntimeState.isWaitingForScript()
+        ) {
+            TimerRuntimeState.setExecutingScript(false)
+            TimerRuntimeState.statusMessage = ""
+            refreshTimerServiceNotification()
+        }
+    }
+
+    /** 定时已在运行时仅刷新前台通知，不重启调度。 */
+    private fun refreshTimerServiceNotification() {
+        if (!TimerRuntimeState.isRunning()) return
+        val intent = Intent(this, TimerExeService::class.java).apply {
+            action = TimerExeService.TIMER_EXE_START
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
     }
 
     private fun initViewFun() {
@@ -204,18 +189,18 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         syncSwitchWithServiceState()
         applyTimerModeUi(ztTimerBean.timerMode, persist = false)
         if (ztTimerBean.timerMode == TimerBean.MODE_INTERVAL) {
-            if (ztTimerBean.timerNumber != TimerBean.TIMER_OTHER) {
-                switchIndex(ztTimerBean.timerNumber, persist = false)
+            mCheckTimerSum.text = TimerScheduleHelper.formatScheduleLabel(ztTimerBean)
+            if (ztTimerBean.timerNumber == TimerBean.TIMER_OTHER) {
+                applyIntervalSelectionUi(TimerBean.TIMER_OTHER)
             } else {
-                mCheckTimerSum.text = TimerScheduleHelper.formatScheduleLabel(ztTimerBean)
-                resetIntervalSelectionBackground()
-                mOther.setBackgroundResource(R.drawable.shape_line_8cff5a)
+                applyIntervalSelectionUi(ztTimerBean.timerNumber)
             }
         } else {
             updateDailyTimeLabel(ztTimerBean.scheduledHour, ztTimerBean.scheduledMinute)
             mCheckTimerSum.text = TimerScheduleHelper.formatScheduleLabel(ztTimerBean)
         }
         environmentString()
+        reconcileStaleExecutionState()
         updateStatusCard()
         refreshExecutionLogPreview()
     }
@@ -383,6 +368,18 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         mOther.setBackgroundResource(R.drawable.shape_line_2e84e6)
     }
 
+    /** 仅恢复间隔选项的高亮，运行中也可调用（与用户点击 switchIndex 区分）。 */
+    private fun applyIntervalSelectionUi(timer: Int) {
+        resetIntervalSelectionBackground()
+        when (timer) {
+            TimerBean.TIMER_30_SECOND -> mS30.setBackgroundResource(R.drawable.shape_line_8cff5a)
+            TimerBean.TIMER_1_MINUTE -> mM1.setBackgroundResource(R.drawable.shape_line_8cff5a)
+            TimerBean.TIMER_10_MINUTE -> mM10.setBackgroundResource(R.drawable.shape_line_8cff5a)
+            TimerBean.TIMER_30_MINUTE -> mM30.setBackgroundResource(R.drawable.shape_line_8cff5a)
+            TimerBean.TIMER_OTHER -> mOther.setBackgroundResource(R.drawable.shape_line_8cff5a)
+        }
+    }
+
     private fun applyTimerModeUi(mode: Int, persist: Boolean) {
         val intervalSelected = mode == TimerBean.MODE_INTERVAL
         mModeInterval.setBackgroundResource(
@@ -465,37 +462,32 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
             return
         }
         LogUtils.e(TAG, "switchIndex timer: $timer")
-        resetIntervalSelectionBackground()
+        applyIntervalSelectionUi(timer)
         val ztUserBean = TimerSetManage.get().getZTTimerBean()
         ztUserBean.timerMode = TimerBean.MODE_INTERVAL
         applyTimerModeUi(TimerBean.MODE_INTERVAL, persist = false)
         when (timer) {
             TimerBean.TIMER_30_SECOND -> {
-                mS30.setBackgroundResource(R.drawable.shape_line_8cff5a)
                 ztUserBean.timerNumber = TimerBean.TIMER_30_SECOND
                 mCheckTimerSum.text = UUtils.getString(R.string.zt_timer_30_second)
                 if (persist) TimerSetManage.get().setZTTimerBean(ztUserBean)
             }
             TimerBean.TIMER_1_MINUTE -> {
-                mM1.setBackgroundResource(R.drawable.shape_line_8cff5a)
                 ztUserBean.timerNumber = TimerBean.TIMER_1_MINUTE
                 mCheckTimerSum.text = UUtils.getString(R.string.zt_timer_1_minute)
                 if (persist) TimerSetManage.get().setZTTimerBean(ztUserBean)
             }
             TimerBean.TIMER_10_MINUTE -> {
-                mM10.setBackgroundResource(R.drawable.shape_line_8cff5a)
                 ztUserBean.timerNumber = TimerBean.TIMER_10_MINUTE
                 mCheckTimerSum.text = UUtils.getString(R.string.zt_timer_10_minute)
                 if (persist) TimerSetManage.get().setZTTimerBean(ztUserBean)
             }
             TimerBean.TIMER_30_MINUTE -> {
-                mM30.setBackgroundResource(R.drawable.shape_line_8cff5a)
                 ztUserBean.timerNumber = TimerBean.TIMER_30_MINUTE
                 mCheckTimerSum.text = UUtils.getString(R.string.zt_timer_30_minute)
                 if (persist) TimerSetManage.get().setZTTimerBean(ztUserBean)
             }
             TimerBean.TIMER_OTHER -> {
-                mOther.setBackgroundResource(R.drawable.shape_line_8cff5a)
                 ztUserBean.timerNumber = TimerBean.TIMER_OTHER
                 val yesNoDialog = YesNoDialog(this)
                 yesNoDialog.titleTv.text = UUtils.getString(R.string.zt_timer_other_title_dialog)
