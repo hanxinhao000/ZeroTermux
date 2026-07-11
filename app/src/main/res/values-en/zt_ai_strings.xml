@@ -31,6 +31,13 @@
     <string name="zt_ai_tool_send_command">Send a command to the terminal (newline appended by default). Waits for shell prompt (default up to 10 min). Describe results ONLY from the returned snapshot.</string>
     <string name="zt_ai_tool_send_key">Send a special key or key combination to the terminal.</string>
     <string name="zt_ai_tool_run_zt_command">Run a zt command through the terminal (same as typing `zt …`). Judge success from terminal snapshot. Examples: help, openleft, openpage zt_settings</string>
+    <string name="zt_ai_tool_list_directory">List a directory directly (no terminal). path optional (defaults to ~/home), absolute or relative. Prefer over ls.</string>
+    <string name="zt_ai_tool_read_file">Read a text file directly (no terminal). Prefer over cat. Use max_bytes for large files.</string>
+    <string name="zt_ai_tool_write_file">Write a text file directly (no terminal; creates parent dirs). Prefer over echo/heredoc. Overwrites existing files.</string>
+    <string name="zt_ai_tool_create_file">Create an empty file (no terminal; creates parent dirs). Use write_file to write content.</string>
+    <string name="zt_ai_tool_mkdir">Create a directory directly (no terminal; nested OK). Prefer over mkdir -p.</string>
+    <string name="zt_ai_tool_delete_path">Delete a file or directory (recursive). Requires user_confirmed=true after explicit user consent.</string>
+    <string name="zt_ai_tool_stat_path">Stat a path: exists, type, size, lastModified (no terminal).</string>
 
     <string name="zt_ai_tool_param_category">Filter: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">Optional: settings, beautify, beautify_ui, all</string>
@@ -67,6 +74,9 @@
     <string name="zt_ai_tool_param_max_wait">Max ms to wait for shell prompt after send; default 600000</string>
     <string name="zt_ai_tool_param_terminal_key">enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z</string>
     <string name="zt_ai_tool_param_run_zt_cmd">zt command without `zt` prefix, e.g. help or openpage zt_settings</string>
+    <string name="zt_ai_tool_param_fs_path">Absolute path, or relative to ~/home; Termux files and external storage allowed</string>
+    <string name="zt_ai_tool_param_fs_content">Full text content to write</string>
+    <string name="zt_ai_tool_param_fs_max_bytes">Max bytes to read; default 524288 (512KB), max 2MB</string>
 
     <string name="zt_ai_status_list_capabilities">Listing ZeroTermux capabilities</string>
     <string name="zt_ai_status_get_config">Reading ZeroTermux config</string>
@@ -269,6 +279,7 @@
     <string name="zt_ai_cfg_custom_ai_title">Use custom LLM</string>
     <string name="zt_ai_cfg_agent_terminal_title">Agent controls terminal</string>
     <string name="zt_ai_cfg_agent_zt_control_title">Agent controls ZeroTermux</string>
+    <string name="zt_ai_cfg_agent_filesystem_title">Agent direct filesystem access</string>
     <string name="zt_ai_cfg_double_click_title">Double-tap terminal action</string>
     <string name="zt_ai_cfg_double_click_desc">0=custom cmd 1=keyword 2=none 3=SSH</string>
     <string name="zt_ai_cfg_agent_provider_title">Agent provider</string>

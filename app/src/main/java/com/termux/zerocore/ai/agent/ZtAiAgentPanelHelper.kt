@@ -267,7 +267,8 @@ class ZtAiAgentPanelHelper(
         agentRunner = ZtAgentAiAgentRunner(
             chatClient!!,
             terminalEnabled = ZtAgentAiConfigHelper.isTerminalEnabled(),
-            ztControlEnabled = ZtAgentAiConfigHelper.isZtControlEnabled()
+            ztControlEnabled = ZtAgentAiConfigHelper.isZtControlEnabled(),
+            filesystemEnabled = ZtAgentAiConfigHelper.isFilesystemEnabled()
         )
         agentRunner!!.run(conversationHistory, object : ZtAgentAiAgentRunner.Callback {
             override fun onToolStep(label: String, detail: String) {
@@ -361,11 +362,33 @@ class ZtAiAgentPanelHelper(
                 content = ZtAgentAiConfigHelper.resolveSystemPrompt(
                     config.systemPrompt,
                     terminalEnabled = ZtAgentAiConfigHelper.isTerminalEnabled(),
-                    ztControlEnabled = ZtAgentAiConfigHelper.isZtControlEnabled()
+                    ztControlEnabled = ZtAgentAiConfigHelper.isZtControlEnabled(),
+                    filesystemEnabled = ZtAgentAiConfigHelper.isFilesystemEnabled()
                 )
             )
         )
-        list.addAll(conversationHistory)
+        val terminalEnabled = ZtAgentAiConfigHelper.isTerminalEnabled()
+        val lastUserIndex = conversationHistory.indexOfLast { it.role == ROLE_USER }
+        conversationHistory.forEachIndexed { index, message ->
+            if (terminalEnabled && message.role == ROLE_USER) {
+                val snapshot = if (index == lastUserIndex) {
+                    ZtAgentAiTerminalExecutor.captureSnapshot(3000)
+                } else {
+                    message.terminalSnapshot
+                }
+                list.add(
+                    ZtAgentAiChatClient.ChatMessage(
+                        role = ROLE_USER,
+                        content = ZtAgentAiChatStore.contentWithSnapshot(
+                            message.content.orEmpty(),
+                            snapshot
+                        )
+                    )
+                )
+            } else {
+                list.add(message)
+            }
+        }
         return list
     }
 
@@ -376,7 +399,18 @@ class ZtAiAgentPanelHelper(
         renderMarkdown(content, text)
         messagesContainer.addView(itemView)
         if (persist) {
-            conversationHistory.add(ZtAgentAiChatClient.ChatMessage(ROLE_USER, text))
+            val snapshot = if (ZtAgentAiConfigHelper.isTerminalEnabled()) {
+                ZtAgentAiTerminalExecutor.captureSnapshot(3000)
+            } else {
+                null
+            }
+            conversationHistory.add(
+                ZtAgentAiChatClient.ChatMessage(
+                    role = ROLE_USER,
+                    content = text,
+                    terminalSnapshot = snapshot
+                )
+            )
             ZtAgentAiChatStore.save(conversationHistory)
         }
     }

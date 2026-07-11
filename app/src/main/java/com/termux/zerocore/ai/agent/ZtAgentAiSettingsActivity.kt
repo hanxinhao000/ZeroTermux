@@ -30,6 +30,7 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
     private val systemPromptEdit by lazy { findViewById<EditText>(R.id.agent_ai_system_prompt) }
     private val terminalSwitch by lazy { findViewById<SwitchCompat>(R.id.agent_ai_terminal_switch) }
     private val ztControlSwitch by lazy { findViewById<SwitchCompat>(R.id.agent_ai_zt_control_switch) }
+    private val filesystemSwitch by lazy { findViewById<SwitchCompat>(R.id.agent_ai_filesystem_switch) }
     private val toolRoundCards by lazy {
         ZtAgentAiConfigHelper.toolRoundOptions().associateWith { rounds ->
             findViewById<CardView>(toolRoundCardId(rounds))
@@ -51,6 +52,7 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
         initApiKeyVisibilityToggle()
         initTerminalSwitch()
         initZtControlSwitch()
+        initFilesystemSwitch()
         initToolRoundCards()
         initResetEntry()
         loadFieldsFromConfig()
@@ -122,6 +124,12 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
         }
     }
 
+    private fun initFilesystemSwitch() {
+        filesystemSwitch.setOnCheckedChangeListener { _, isChecked ->
+            ZtAgentAiConfigHelper.saveFilesystemEnabled(isChecked)
+        }
+    }
+
     private fun initToolRoundCards() {
         toolRoundCards.forEach { (rounds, card) ->
             card.setOnClickListener { selectToolRounds(rounds) }
@@ -175,6 +183,7 @@ class ZtAgentAiSettingsActivity : BaseTitleActivity() {
         systemPromptEdit.setText(config.systemPrompt)
         terminalSwitch.isChecked = ZtAgentAiConfigHelper.isTerminalEnabled()
         ztControlSwitch.isChecked = ZtAgentAiConfigHelper.isZtControlEnabled()
+        filesystemSwitch.isChecked = ZtAgentAiConfigHelper.isFilesystemEnabled()
         suppressSave = false
     }
 

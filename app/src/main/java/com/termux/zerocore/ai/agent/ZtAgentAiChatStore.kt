@@ -13,7 +13,8 @@ object ZtAgentAiChatStore {
 
     data class StoredMessage(
         val role: String,
-        val content: String
+        val content: String,
+        val terminalSnapshot: String? = null
     )
 
     fun load(): MutableList<ZtAgentAiChatClient.ChatMessage> {
@@ -25,7 +26,11 @@ object ZtAgentAiChatStore {
             stored?.mapNotNull { item ->
                 if (item.role.isBlank() || item.content.isBlank()) return@mapNotNull null
                 if (item.role != ROLE_USER && item.role != ROLE_ASSISTANT) return@mapNotNull null
-                ZtAgentAiChatClient.ChatMessage(item.role, item.content)
+                ZtAgentAiChatClient.ChatMessage(
+                    role = item.role,
+                    content = item.content,
+                    terminalSnapshot = item.terminalSnapshot?.takeIf { it.isNotBlank() }
+                )
             }?.toMutableList() ?: mutableListOf()
         } catch (_: Exception) {
             mutableListOf()
@@ -39,7 +44,13 @@ object ZtAgentAiChatStore {
         trimIfNeeded(trimmed)
         val bean = UserSetManage.get().getZTUserBean()
         bean.agentAiChatHistoryJson = gson.toJson(
-            trimmed.map { StoredMessage(it.role, it.content!!) }
+            trimmed.map {
+                StoredMessage(
+                    role = it.role,
+                    content = it.content!!,
+                    terminalSnapshot = it.terminalSnapshot?.takeIf { snap -> snap.isNotBlank() }
+                )
+            }
         )
         UserSetManage.get().setZTUserBean(bean)
     }
@@ -51,6 +62,19 @@ object ZtAgentAiChatStore {
                 if (messages.isNotEmpty()) messages.removeAt(0)
             }
         }
+    }
+
+    /** 将用户原文与终端快照拼成发给模型的 content。 */
+    fun contentWithSnapshot(userText: String, snapshot: String?): String {
+        val text = userText.trim()
+        val snap = snapshot?.trim().orEmpty()
+        if (snap.isEmpty()) return text
+        return buildString {
+            appendLine(text)
+            appendLine()
+            appendLine("---")
+            append(snap)
+        }.trim()
     }
 
     private const val ROLE_USER = "user"

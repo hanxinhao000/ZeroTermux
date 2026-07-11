@@ -28,7 +28,9 @@ class ZtAgentAiChatClient(
         val role: String,
         val content: String? = null,
         val toolCalls: List<ToolCall>? = null,
-        val toolCallId: String? = null
+        val toolCallId: String? = null,
+        /** 发送该条用户消息时的终端快照；仅持久化与组请求用，不作为独立 API 字段。 */
+        val terminalSnapshot: String? = null
     )
 
     data class ToolCall(

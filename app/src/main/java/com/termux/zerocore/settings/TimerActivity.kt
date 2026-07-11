@@ -30,6 +30,7 @@ import com.termux.zerocore.settings.timer.TimerNotificationHelper
 import com.termux.zerocore.settings.timer.TimerRuntimeState
 import com.termux.zerocore.settings.timer.TimerScheduleHelper
 import com.termux.zerocore.settings.timer.TimerSessionPersist
+import com.termux.zerocore.settings.timer.TimerTermuxSessionHelper
 import com.termux.zerocore.url.FileUrl
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import com.termux.zerocore.utils.ZtNotificationPermissionHelper
@@ -65,6 +66,7 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
     private val mExecutionLogText: TextView by lazy { findViewById(R.id.timer_execution_log_text) }
     private var mLibSuManage: LibSuManage? = null
     private var pageInitialized = false
+    private var awaitingSessionBootstrap = false
     private val uiHandler = Handler(Looper.getMainLooper())
     private val uiTickRunnable = object : Runnable {
         override fun run() {
@@ -88,7 +90,7 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         if (!ZtNotificationPermissionHelper.ensurePermission(this, REQ_NOTIFICATION_PERMISSION)) {
             return
         }
-        if (!handleNotificationEntry()) {
+        if (!prepareNotificationEntry()) {
             return
         }
         initializePage()
@@ -97,7 +99,7 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
     override fun onResume() {
         super.onResume()
         if (!pageInitialized && ZtNotificationPermissionHelper.hasPermission(this)) {
-            if (!handleNotificationEntry()) {
+            if (!prepareNotificationEntry()) {
                 return
             }
             initializePage()
@@ -122,7 +124,7 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQ_NOTIFICATION_PERMISSION) return
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (!handleNotificationEntry()) return
+            if (!prepareNotificationEntry()) return
             initializePage()
             return
         }
@@ -136,20 +138,37 @@ class TimerActivity : AppCompatActivity(), LibSuManage.TimerListener, View.OnCli
         return ZtNotificationPermissionHelper.ensurePermission(this, REQ_NOTIFICATION_PERMISSION)
     }
 
-    private fun handleNotificationEntry(): Boolean {
+    /**
+     * 从通知进入且使用 ZeroTermux 环境时，先后台拉起 Termux 会话再打开页面。
+     * @return false 表示异步等待，暂不 initializePage
+     */
+    private fun prepareNotificationEntry(): Boolean {
         if (!intent.getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
             return true
         }
-        val isZeroTermux = TimerSetManage.get().getZTTimerBean().isZeroTermux
-        if (!isZeroTermux) {
+        if (!TimerSetManage.get().getZTTimerBean().isZeroTermux) {
             return true
         }
-        if (!SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
-            UUtils.showMsg(getString(R.string.zt_timer_main_program_missing))
-            finish()
+        if (SingletonCommunicationUtils.getInstance().hasTerminalListener()) {
+            return true
+        }
+        if (awaitingSessionBootstrap) {
             return false
         }
-        return true
+        awaitingSessionBootstrap = true
+        TimerTermuxSessionHelper.ensureSession(this) { ok ->
+            awaitingSessionBootstrap = false
+            if (isFinishing || isDestroyed) return@ensureSession
+            if (!ok) {
+                UUtils.showMsg(getString(R.string.zt_timer_main_program_missing))
+                finish()
+                return@ensureSession
+            }
+            if (!pageInitialized) {
+                initializePage()
+            }
+        }
+        return false
     }
 
     private fun initializePage() {

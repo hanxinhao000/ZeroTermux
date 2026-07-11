@@ -178,11 +178,9 @@ public class LibSuManage {
     }
 
     public boolean isShellCommandRunning() {
-        if (mShellExecuting) {
-            return true;
-        }
-        Shell shell = Shell.getCachedShell();
-        return shell != null && shell.isAlive();
+        // 仅以当前是否正在执行命令为准。缓存 Shell 常驻存活，不能当作「脚本仍在跑」，
+        // 否则每日定时触发后会一直误判 busy，无法进入下一次调度。
+        return mShellExecuting;
     }
 
     public void stop() {

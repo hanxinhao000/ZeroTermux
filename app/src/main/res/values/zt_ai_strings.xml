@@ -32,6 +32,13 @@
     <string name="zt_ai_tool_send_command">向终端发送命令（默认追加换行）。默认等待 shell 提示符（最长约 10 分钟）。仅依据返回的快照描述结果。</string>
     <string name="zt_ai_tool_send_key">向终端发送特殊按键或组合键。</string>
     <string name="zt_ai_tool_run_zt_command">经终端执行 zt 命令（等同输入 zt …）。须依据终端快照判断结果。示例: help, openleft, openpage zt_settings</string>
+    <string name="zt_ai_tool_list_directory">直接列出目录内容（不经终端）。path 可省略（默认 ~/home），或绝对/相对路径。优先于 ls。</string>
+    <string name="zt_ai_tool_read_file">直接读取文本文件内容（不经终端）。优先于 cat。大文件可设 max_bytes。</string>
+    <string name="zt_ai_tool_write_file">直接写入文本文件（不经终端，自动创建父目录）。优先于 echo/heredoc。会覆盖已有文件。</string>
+    <string name="zt_ai_tool_create_file">创建空文件（不经终端，自动创建父目录）。若需写入内容请用 write_file。</string>
+    <string name="zt_ai_tool_mkdir">直接创建目录（不经终端，含多级）。优先于 mkdir -p。</string>
+    <string name="zt_ai_tool_delete_path">删除文件或目录（递归）。须用户明确同意且 user_confirmed=true。</string>
+    <string name="zt_ai_tool_stat_path">查看路径是否存在及类型/大小/修改时间（不经终端）。</string>
 
     <string name="zt_ai_tool_param_category">筛选: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">可选: settings, beautify, beautify_ui, all</string>
@@ -68,6 +75,9 @@
     <string name="zt_ai_tool_param_max_wait">发送后等待 shell 提示符的最长时间（毫秒），默认 600000</string>
     <string name="zt_ai_tool_param_terminal_key">enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z</string>
     <string name="zt_ai_tool_param_run_zt_cmd">不含 `zt` 前缀的 zt 命令，如 help 或 openpage zt_settings</string>
+    <string name="zt_ai_tool_param_fs_path">绝对路径，或相对 ~/home 的路径；允许 Termux files 与外部存储</string>
+    <string name="zt_ai_tool_param_fs_content">要写入的完整文本内容</string>
+    <string name="zt_ai_tool_param_fs_max_bytes">最大读取字节数，默认 524288（512KB），上限 2MB</string>
 
     <!-- Status labels -->
     <string name="zt_ai_status_list_capabilities">列举 ZeroTermux 能力</string>
@@ -279,6 +289,7 @@
     <string name="zt_ai_cfg_custom_ai_title">使用自定义 LLM</string>
     <string name="zt_ai_cfg_agent_terminal_title">智能体控制终端</string>
     <string name="zt_ai_cfg_agent_zt_control_title">智能体控制 ZeroTermux</string>
+    <string name="zt_ai_cfg_agent_filesystem_title">智能体直接读写文件</string>
     <string name="zt_ai_cfg_double_click_title">双击终端功能</string>
     <string name="zt_ai_cfg_double_click_desc">0=自定义命令 1=关键字 2=无 3=SSH</string>
     <string name="zt_ai_cfg_agent_provider_title">智能体服务商</string>

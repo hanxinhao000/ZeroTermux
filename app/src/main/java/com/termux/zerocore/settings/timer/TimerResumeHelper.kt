@@ -22,14 +22,22 @@ object TimerResumeHelper {
         TimerRuntimeState.setExecutionCount(snapshot.executionCount)
         TimerRuntimeState.restoreNextFireAtMillis(snapshot.nextFireAtMillis)
 
-        val intent = Intent(context, TimerExeService::class.java).apply {
-            action = TimerExeService.TIMER_EXE_START
-            putExtra(TimerExeService.EXTRA_RESUME, true)
+        val startService = {
+            val intent = Intent(context, TimerExeService::class.java).apply {
+                action = TimerExeService.TIMER_EXE_START
+                putExtra(TimerExeService.EXTRA_RESUME, true)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent)
+
+        if (bean.isZeroTermux) {
+            TimerTermuxSessionHelper.ensureSession(context) { startService() }
         } else {
-            context.startService(intent)
+            startService()
         }
     }
 }

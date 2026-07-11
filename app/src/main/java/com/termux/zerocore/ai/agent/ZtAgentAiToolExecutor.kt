@@ -32,27 +32,40 @@ object ZtAgentAiToolExecutor {
     fun execute(
         toolCall: ZtAgentAiChatClient.ToolCall,
         terminalEnabled: Boolean,
-        ztControlEnabled: Boolean
+        ztControlEnabled: Boolean,
+        filesystemEnabled: Boolean = false
     ): String {
         if (toolCall.name in configToolNames) {
             if (!ztControlEnabled) {
-                return ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_disabled)
+                return disabledMessage(com.termux.R.string.zt_agent_ai_zt_control_tool_disabled)
             }
             return ZtAiConfigExecutor.execute(toolCall)
+        }
+        if (toolCall.name in ZtAgentAiFilesystemExecutor.toolNames) {
+            if (!filesystemEnabled) {
+                return disabledMessage(
+                    if (terminalEnabled) {
+                        com.termux.R.string.zt_agent_ai_filesystem_tool_disabled
+                    } else {
+                        com.termux.R.string.zt_agent_ai_filesystem_tool_disabled_no_terminal
+                    }
+                )
+            }
+            return ZtAgentAiFilesystemExecutor.execute(toolCall)
         }
         return when (toolCall.name) {
             "read_terminal", "send_terminal_command", "send_terminal_key" -> {
                 if (!terminalEnabled) {
-                    return ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_disabled)
+                    return disabledMessage(com.termux.R.string.zt_agent_ai_terminal_tool_disabled)
                 }
                 ZtAgentAiTerminalExecutor.execute(toolCall)
             }
             "run_zt_command" -> {
                 if (!ztControlEnabled) {
-                    return ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_disabled)
+                    return disabledMessage(com.termux.R.string.zt_agent_ai_zt_control_tool_disabled)
                 }
                 if (!terminalEnabled) {
-                    return ZtLocaleStrings.getString(R.string.zt_agent_ai_zt_requires_terminal)
+                    return disabledMessage(com.termux.R.string.zt_agent_ai_zt_requires_terminal)
                 }
                 runZtCommand(toolCall)
             }
@@ -60,9 +73,16 @@ object ZtAgentAiToolExecutor {
         }
     }
 
+    private fun disabledMessage(@androidx.annotation.StringRes messageRes: Int): String {
+        return ZtLocaleStrings.getString(messageRes)
+    }
+
     fun statusLabel(toolName: String): String {
         if (toolName in configToolNames) {
             return ZtAiConfigExecutor.statusLabel(toolName)
+        }
+        if (toolName in ZtAgentAiFilesystemExecutor.toolNames) {
+            return ZtAgentAiFilesystemExecutor.statusLabel(toolName)
         }
         return when (toolName) {
             "read_terminal" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_read_terminal)

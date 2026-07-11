@@ -10,7 +10,8 @@ import org.json.JSONObject
 class ZtAgentAiAgentRunner(
     private val client: ZtAgentAiChatClient,
     private val terminalEnabled: Boolean,
-    private val ztControlEnabled: Boolean
+    private val ztControlEnabled: Boolean,
+    private val filesystemEnabled: Boolean = false
 ) {
     interface Callback {
         fun onToolStep(label: String, detail: String)
@@ -50,8 +51,8 @@ class ZtAgentAiAgentRunner(
         callback: Callback
     ) {
         val workingMessages = buildWorkingMessages(history)
-        val tools = if (terminalEnabled || ztControlEnabled) {
-            ZtAgentAiTools.definitions(terminalEnabled, ztControlEnabled)
+        val tools = if (terminalEnabled || ztControlEnabled || filesystemEnabled) {
+            ZtAgentAiTools.definitions(terminalEnabled, ztControlEnabled, filesystemEnabled)
         } else {
             null
         }
@@ -117,7 +118,8 @@ class ZtAgentAiAgentRunner(
         val toolResult = ZtAgentAiToolExecutor.execute(
             toolCall,
             terminalEnabled,
-            ztControlEnabled
+            ztControlEnabled,
+            filesystemEnabled
         )
         android.util.Log.i(TAG, "tool ${toolCall.name} result=$toolResult")
 
@@ -223,6 +225,34 @@ class ZtAgentAiAgentRunner(
                 "update_zerotermux_command_def" -> "→ update command def"
                 "delete_zerotermux_command_def" -> "→ delete command def"
                 "run_zerotermux_command_def" -> "→ run command def"
+                "list_directory" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ list ~" else "→ list $path"
+                }
+                "read_file" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ read file" else "→ read $path"
+                }
+                "write_file" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ write file" else "→ write $path"
+                }
+                "create_file" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ create file" else "→ create $path"
+                }
+                "mkdir" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ mkdir" else "→ mkdir $path"
+                }
+                "delete_path" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ delete" else "→ delete $path"
+                }
+                "stat_path" -> {
+                    val path = args.optString("path", "").trim()
+                    if (path.isEmpty()) "→ stat" else "→ stat $path"
+                }
                 else -> ""
             }
         } catch (_: Exception) {
@@ -241,7 +271,8 @@ class ZtAgentAiAgentRunner(
                 content = ZtAgentAiConfigHelper.resolveSystemPrompt(
                     config.systemPrompt,
                     terminalEnabled,
-                    ztControlEnabled
+                    ztControlEnabled,
+                    filesystemEnabled
                 )
             )
         )
@@ -261,28 +292,25 @@ class ZtAgentAiAgentRunner(
                 )
             )
             val lastUserIndex = limited.indexOfLast { it.role == ROLE_USER }
-            if (lastUserIndex >= 0) {
-                if (lastUserIndex > 0) {
-                    list.addAll(limited.subList(0, lastUserIndex))
-                }
-                val lastUser = limited[lastUserIndex]
-                val snapshot = ZtAgentAiTerminalExecutor.captureSnapshot(3000)
-                list.add(
-                    ZtAgentAiChatClient.ChatMessage(
-                        role = ROLE_USER,
-                        content = buildString {
-                            appendLine(lastUser.content.orEmpty())
-                            appendLine()
-                            appendLine("---")
-                            append(snapshot)
-                        }.trim()
+            limited.forEachIndexed { index, message ->
+                if (message.role == ROLE_USER) {
+                    val snapshot = if (index == lastUserIndex) {
+                        ZtAgentAiTerminalExecutor.captureSnapshot(3000)
+                    } else {
+                        message.terminalSnapshot
+                    }
+                    list.add(
+                        ZtAgentAiChatClient.ChatMessage(
+                            role = ROLE_USER,
+                            content = ZtAgentAiChatStore.contentWithSnapshot(
+                                message.content.orEmpty(),
+                                snapshot
+                            )
+                        )
                     )
-                )
-                if (lastUserIndex < limited.lastIndex) {
-                    list.addAll(limited.subList(lastUserIndex + 1, limited.size))
+                } else {
+                    list.add(message)
                 }
-            } else {
-                list.addAll(limited)
             }
         } else {
             list.addAll(limited)

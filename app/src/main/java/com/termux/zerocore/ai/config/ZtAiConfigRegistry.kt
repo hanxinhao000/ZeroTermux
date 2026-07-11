@@ -105,7 +105,8 @@ object ZtAiConfigRegistry {
         bindBool("mIsCustomVisibleTerminal", "ai_legacy", ZTUserBean::isIsCustomVisibleTerminal, ZTUserBean::setIsCustomVisibleTerminal),
         bindBool("mIsCustomAi", "ai_legacy", ZTUserBean::isCustomAi, ZTUserBean::setCustomAi),
         bindBool("agentAiTerminalEnabled", "agent_ai", ZTUserBean::isAgentAiTerminalEnabled, ZTUserBean::setAgentAiTerminalEnabled),
-        bindBool("agentAiZtControlEnabled", "agent_ai", ZTUserBean::isAgentAiZtControlEnabled, ZTUserBean::setAgentAiZtControlEnabled)
+        bindBool("agentAiZtControlEnabled", "agent_ai", ZTUserBean::isAgentAiZtControlEnabled, ZTUserBean::setAgentAiZtControlEnabled),
+        bindBool("agentAiFilesystemEnabled", "agent_ai", ZTUserBean::isAgentAiFilesystemEnabled, ZTUserBean::setAgentAiFilesystemEnabled)
     )
 
     private fun intBindings(): List<IntBinding> = listOf(

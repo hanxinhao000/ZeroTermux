@@ -100,6 +100,16 @@ object ZtAgentAiConfigHelper {
         UserSetManage.get().setZTUserBean(bean)
     }
 
+    fun isFilesystemEnabled(): Boolean {
+        return UserSetManage.get().getZTUserBean().isAgentAiFilesystemEnabled
+    }
+
+    fun saveFilesystemEnabled(enabled: Boolean) {
+        val bean = UserSetManage.get().getZTUserBean()
+        bean.setAgentAiFilesystemEnabled(enabled)
+        UserSetManage.get().setZTUserBean(bean)
+    }
+
     fun maxToolRounds(): Int {
         return normalizeToolRounds(UserSetManage.get().getZTUserBean().agentAiMaxToolRounds)
     }
@@ -119,15 +129,25 @@ object ZtAgentAiConfigHelper {
     fun resolveSystemPrompt(
         rawPrompt: String,
         terminalEnabled: Boolean,
-        ztControlEnabled: Boolean = isZtControlEnabled()
+        ztControlEnabled: Boolean = isZtControlEnabled(),
+        filesystemEnabled: Boolean = isFilesystemEnabled()
     ): String {
         val base = rawPrompt.trim().ifBlank {
             ZtLocaleStrings.getString(com.termux.R.string.zt_agent_ai_default_system_prompt)
         }
         val parts = mutableListOf(
             ZtLocaleStrings.getString(com.termux.R.string.zt_agent_ai_locale_reply_prompt),
-            base
+            base,
+            buildPermissionsStatusPrompt(terminalEnabled, ztControlEnabled, filesystemEnabled),
+            ZtLocaleStrings.getString(com.termux.R.string.zt_agent_ai_permission_guard_prompt)
         )
+        if (!terminalEnabled && !ztControlEnabled && !filesystemEnabled) {
+            parts.add(
+                ZtLocaleStrings.getString(
+                    com.termux.R.string.zt_agent_ai_all_tools_disabled_prompt
+                )
+            )
+        }
         if (terminalEnabled) {
             parts.add(
                 ZtLocaleStrings.getString(
@@ -154,7 +174,24 @@ object ZtAgentAiConfigHelper {
                 )
             )
         }
-        if (terminalEnabled || ztControlEnabled) {
+        if (filesystemEnabled) {
+            parts.add(
+                ZtLocaleStrings.getString(
+                    com.termux.R.string.zt_agent_ai_filesystem_system_prompt
+                )
+            )
+        } else {
+            parts.add(
+                ZtLocaleStrings.getString(
+                    if (terminalEnabled) {
+                        com.termux.R.string.zt_agent_ai_filesystem_disabled_prompt
+                    } else {
+                        com.termux.R.string.zt_agent_ai_filesystem_disabled_no_terminal
+                    }
+                )
+            )
+        }
+        if (terminalEnabled || ztControlEnabled || filesystemEnabled) {
             parts.add(
                 ZtLocaleStrings.getString(
                     com.termux.R.string.zt_agent_ai_tool_usage_prompt
@@ -169,8 +206,32 @@ object ZtAgentAiConfigHelper {
         return parts.joinToString("\n\n")
     }
 
+    private fun buildPermissionsStatusPrompt(
+        terminalEnabled: Boolean,
+        ztControlEnabled: Boolean,
+        filesystemEnabled: Boolean
+    ): String {
+        fun statusLine(nameRes: Int, enabled: Boolean): String {
+            val name = ZtLocaleStrings.getString(nameRes)
+            val state = ZtLocaleStrings.getString(
+                if (enabled) {
+                    com.termux.R.string.zt_agent_ai_perm_enabled
+                } else {
+                    com.termux.R.string.zt_agent_ai_perm_disabled
+                }
+            )
+            return "- $name：$state"
+        }
+        return buildString {
+            appendLine(ZtLocaleStrings.getString(com.termux.R.string.zt_agent_ai_permissions_status_header))
+            appendLine(statusLine(com.termux.R.string.zt_agent_ai_terminal_enabled, terminalEnabled))
+            appendLine(statusLine(com.termux.R.string.zt_agent_ai_zt_control_enabled, ztControlEnabled))
+            append(statusLine(com.termux.R.string.zt_agent_ai_filesystem_enabled, filesystemEnabled))
+        }.trim()
+    }
+
     fun isAgentToolsEnabled(): Boolean {
-        return isTerminalEnabled() || isZtControlEnabled()
+        return isTerminalEnabled() || isZtControlEnabled() || isFilesystemEnabled()
     }
 
     fun isConfigured(): Boolean {

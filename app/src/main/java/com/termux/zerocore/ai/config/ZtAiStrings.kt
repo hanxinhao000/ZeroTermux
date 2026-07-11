@@ -92,6 +92,20 @@ object ZtAiStrings {
 
     fun toolRunZtCommand(): String = str(R.string.zt_ai_tool_run_zt_command)
 
+    fun toolListDirectory(): String = str(R.string.zt_ai_tool_list_directory)
+
+    fun toolReadFile(): String = str(R.string.zt_ai_tool_read_file)
+
+    fun toolWriteFile(): String = str(R.string.zt_ai_tool_write_file)
+
+    fun toolCreateFile(): String = str(R.string.zt_ai_tool_create_file)
+
+    fun toolMkdir(): String = str(R.string.zt_ai_tool_mkdir)
+
+    fun toolDeletePath(): String = str(R.string.zt_ai_tool_delete_path)
+
+    fun toolStatPath(): String = str(R.string.zt_ai_tool_stat_path)
+
     // --- Executor status labels ---
 
     fun statusListCapabilities(): String = str(R.string.zt_ai_status_list_capabilities)
@@ -212,6 +226,7 @@ object ZtAiStrings {
         "mIsCustomAi" to R.string.zt_ai_cfg_custom_ai_title,
         "agentAiTerminalEnabled" to R.string.zt_ai_cfg_agent_terminal_title,
         "agentAiZtControlEnabled" to R.string.zt_ai_cfg_agent_zt_control_title,
+        "agentAiFilesystemEnabled" to R.string.zt_ai_cfg_agent_filesystem_title,
         "mDoubleClickFun" to R.string.zt_ai_cfg_double_click_title,
         "agentAiActiveProvider" to R.string.zt_ai_cfg_agent_provider_title,
         "agentAiApiUrl" to R.string.zt_ai_cfg_agent_api_url_title,

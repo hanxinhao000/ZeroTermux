@@ -54,6 +54,8 @@ public class ZTUserBean {
     private boolean agentAiTerminalEnabled = true;
     // 智能体是否可控制 ZeroTermux（页面跳转、ztcommand）
     private boolean agentAiZtControlEnabled = true;
+    // 智能体是否可直接读写文件系统（不经终端）
+    private boolean agentAiFilesystemEnabled = true;
     // 单次对话智能体工具调用轮数上限（10/20/40/60/80/100）
     private int agentAiMaxToolRounds = 40;
     //显示/隐藏终端
@@ -364,6 +366,14 @@ public class ZTUserBean {
 
     public void setAgentAiZtControlEnabled(boolean agentAiZtControlEnabled) {
         this.agentAiZtControlEnabled = agentAiZtControlEnabled;
+    }
+
+    public boolean isAgentAiFilesystemEnabled() {
+        return agentAiFilesystemEnabled;
+    }
+
+    public void setAgentAiFilesystemEnabled(boolean agentAiFilesystemEnabled) {
+        this.agentAiFilesystemEnabled = agentAiFilesystemEnabled;
     }
 
     public int getAgentAiMaxToolRounds() {

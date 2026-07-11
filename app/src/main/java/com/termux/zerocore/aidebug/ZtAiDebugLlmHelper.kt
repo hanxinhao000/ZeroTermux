@@ -2,6 +2,7 @@ package com.termux.zerocore.aidebug
 
 import com.google.gson.Gson
 import com.termux.zerocore.ai.agent.ZtAgentAiChatClient
+import com.termux.zerocore.ai.agent.ZtAgentAiConfigHelper
 import com.termux.zerocore.ai.agent.ZtAgentAiToolExecutor
 import com.termux.zerocore.ai.config.ZtAiConfigRegistry
 import com.termux.zerocore.ai.config.ZtAiZtSocketClient
@@ -14,7 +15,7 @@ import org.json.JSONObject
 
 /**
  * 调试 API（19998）代理主界面 AI 智能体的全部 LLM 工具，便于外部 Cursor 等远程调试。
- * 鉴权由调试匹配码负责，此处不再检查 agentAiZtControlEnabled。
+ * 鉴权由调试匹配码负责；工具执行仍遵循智能体 AI 三项权限开关，与主界面智能体一致。
  */
 object ZtAiDebugLlmHelper {
 
@@ -43,7 +44,14 @@ object ZtAiDebugLlmHelper {
         "read_terminal",
         "send_terminal_command",
         "send_terminal_key",
-        "run_zt_command"
+        "run_zt_command",
+        "list_directory",
+        "read_file",
+        "write_file",
+        "create_file",
+        "mkdir",
+        "delete_path",
+        "stat_path"
     )
 
     fun listToolsJson(): String {
@@ -104,18 +112,29 @@ object ZtAiDebugLlmHelper {
             name = name,
             arguments = arguments.toString()
         )
+        val terminalEnabled = ZtAgentAiConfigHelper.isTerminalEnabled()
+        val ztControlEnabled = ZtAgentAiConfigHelper.isZtControlEnabled()
+        val filesystemEnabled = ZtAgentAiConfigHelper.isFilesystemEnabled()
         val result = ZtAgentAiToolExecutor.execute(
             toolCall,
-            terminalEnabled = true,
-            ztControlEnabled = true
+            terminalEnabled = terminalEnabled,
+            ztControlEnabled = ztControlEnabled,
+            filesystemEnabled = filesystemEnabled
         )
-        val ok = !result.startsWith("Error:") &&
+        val permissionDenied = result.contains("权限不足") || result.contains("Permission denied")
+        val ok = !permissionDenied &&
+            !result.startsWith("Error:") &&
             !result.contains("\"ok\":false") &&
             !result.contains("\"code\":1")
         return gson.toJson(
             mapOf(
                 "ok" to ok,
                 "tool" to name,
+                "permissions" to mapOf(
+                    "terminal" to terminalEnabled,
+                    "zt_control" to ztControlEnabled,
+                    "filesystem" to filesystemEnabled
+                ),
                 "result" to result
             )
         )

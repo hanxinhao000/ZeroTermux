@@ -7,7 +7,11 @@ import org.json.JSONObject
 
 object ZtAgentAiTools {
 
-    fun definitions(terminalEnabled: Boolean, ztControlEnabled: Boolean): JSONArray {
+    fun definitions(
+        terminalEnabled: Boolean,
+        ztControlEnabled: Boolean,
+        filesystemEnabled: Boolean = false
+    ): JSONArray {
         val tools = JSONArray()
         if (terminalEnabled) {
             addTerminalTools(tools)
@@ -17,6 +21,9 @@ object ZtAgentAiTools {
             if (terminalEnabled) {
                 addZtControlTools(tools)
             }
+        }
+        if (filesystemEnabled) {
+            ZtAgentAiFilesystemTools.addFilesystemTools(tools)
         }
         return tools
     }
