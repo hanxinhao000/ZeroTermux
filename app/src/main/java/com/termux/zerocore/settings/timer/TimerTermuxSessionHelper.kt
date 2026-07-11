@@ -29,7 +29,6 @@ object TimerTermuxSessionHelper : ServiceConnection {
 
     private const val TAG = "TimerTermuxSessionHelper"
     private const val BIND_TIMEOUT_MS = 12_000L
-    private const val SESSION_NAME = "timer-bg"
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private val bootstrapping = AtomicBoolean(false)
@@ -172,16 +171,12 @@ object TimerTermuxSessionHelper : ServiceConnection {
                     null,
                     workingDirectory,
                     false,
-                    SESSION_NAME
+                    null
                 )
                 if (created == null) {
                     LogUtils.e(TAG, "createTermuxSession returned null")
                     completePending(false)
                     return@post
-                }
-                val handle = created.terminalSession?.mHandle
-                if (!handle.isNullOrEmpty()) {
-                    TermuxAppSharedPreferences.build(ctx, false)?.setCurrentSession(handle)
                 }
             }
             registerHeadlessListenerIfNeeded()

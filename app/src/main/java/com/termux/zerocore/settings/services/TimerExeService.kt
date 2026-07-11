@@ -134,11 +134,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             }
             startStuckWatchdog()
         }
-        if (needsZeroTermuxSession()) {
-            ensureZeroTermuxSession(startScheduling)
-        } else {
-            startScheduling()
-        }
+        startScheduling()
     }
 
     private fun needsZeroTermuxSession(): Boolean {
@@ -351,7 +347,11 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         if (!isActive.get()) return
         try {
             if (needsZeroTermuxSession() &&
-                !SingletonCommunicationUtils.getInstance().hasTerminalListener()
+                !SingletonCommunicationUtils.getInstance().hasTerminalListener() &&
+                (TimerRuntimeState.isExecutingScript() ||
+                    TimerRuntimeState.isWaitingForScript() ||
+                    isLaunchingCommand.get() ||
+                    pendingRunAfterScript.get())
             ) {
                 ensureZeroTermuxSession { }
             }

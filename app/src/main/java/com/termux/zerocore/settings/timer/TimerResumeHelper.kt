@@ -34,10 +34,6 @@ object TimerResumeHelper {
             }
         }
 
-        if (bean.isZeroTermux) {
-            TimerTermuxSessionHelper.ensureSession(context) { startService() }
-        } else {
-            startService()
-        }
+        startService()
     }
 }
