@@ -9,6 +9,7 @@ import com.termux.R
 import com.termux.app.activities.SettingsActivity
 import com.termux.zerocore.ai.activity.MainAiSettings
 import com.termux.zerocore.ai.agent.ZtAgentAiSettingsActivity
+import com.termux.zerocore.crashhistory.ZtCrashHistoryActivity
 import com.termux.zerocore.guide.TermuxGuideActivity
 import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_CREATE_FOLDER
 import com.termux.zerocore.guide.TermuxGuideActivity.Companion.GUIDE_EXTRA
@@ -38,6 +39,9 @@ class ZtSettingsActivity : BaseTitleActivity() {
         }
         findViewById<CardView>(R.id.zt_about_card_view).setOnClickListener {
             startActivity(Intent(this, ZTAboutActivity::class.java))
+        }
+        findViewById<CardView>(R.id.crash_history_settings_card).setOnClickListener {
+            startActivity(Intent(this, ZtCrashHistoryActivity::class.java))
         }
         findViewById<CardView>(R.id.install_card_view).setOnClickListener {
             startActivity(Intent(this, ZTInstallActivity::class.java))

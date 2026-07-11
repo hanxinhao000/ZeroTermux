@@ -191,8 +191,6 @@
     <group name="需要插件/引擎(安装完成请重启APP)">
         <item tag="内置键盘"
             click="java:com.termux.zerocore.config.mainmenu.config.KeyDataClickConfig" />
-        <item tag="网络linux目录"
-            click="java:com.termux.zerocore.config.mainmenu.config.FileBrowserClickConfig" />
         <item tag="x86 Alpine"
             click="java:com.termux.zerocore.config.mainmenu.config.X86AlpineDataClickConfig" />
     </group>
@@ -247,8 +245,6 @@
             click="java:com.termux.zerocore.config.mainmenu.config.UnInstallClickConfig" />
         <item tag="ADB 远程链接"
             click="java:com.termux.zerocore.config.mainmenu.config.RemoteConnectionClickConfig" />
-        <item tag="浏览器终端"
-            click="java:com.termux.zerocore.config.mainmenu.config.WebDataClickConfig" />
         <item tag="短信/通话"
             click="java:com.termux.zerocore.config.mainmenu.config.PhoneSmsClickConfig" />
         <item tag="定时任务"

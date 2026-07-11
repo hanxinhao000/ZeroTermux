@@ -1928,4 +1928,16 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_workstation_terminal">Allow terminal</string>
     <string name="zt_workstation_terminal_risk">High risk: the web UI can control your terminal and fully manage files, including delete and copy to other devices</string>
     <string name="zt_workstation_web_blocked">This feature is disabled on the phone. Enable the matching switch in ZeroTermux Settings → ZT Workstation.</string>
+
+    <string name="zt_crash_history_title">Crash History</string>
+    <string name="zt_crash_history_settings_summary">Auto-saved crash logs: view details, delete one, or clear all. Also available on AI debug port 19998</string>
+    <string name="zt_crash_history_hint">Crashes are recorded automatically. Up to 100 entries are kept.</string>
+    <string name="zt_crash_history_empty">No crash history yet</string>
+    <string name="zt_crash_history_clear_all">Clear all</string>
+    <string name="zt_crash_history_clear_all_confirm">Clear all crash history? This cannot be undone.</string>
+    <string name="zt_crash_history_delete_confirm">Delete this crash record?</string>
+    <string name="zt_crash_history_detail_title">Crash detail</string>
+    <string name="zt_crash_history_not_found">Record not found or already deleted</string>
+    <string name="zt_crash_history_thread">Thread: %1$s · Version: %2$s</string>
+    <string name="zt_crash_history_detail_meta">Time: %1$s\nThread: %2$s\nVersion: %3$s\nException: %4$s\nMessage: %5$s</string>
 </resources>

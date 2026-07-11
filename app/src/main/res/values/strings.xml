@@ -1891,4 +1891,16 @@
     <string name="install_empty_android">Android/data/files/xinhao/module,没有模块包</string>
     <string name="code_editor_loading">Loading...(如果为打开目录，则忽略此loading...，直接开始操作即可，无需等待)</string>
 
+    <string name="zt_crash_history_title">历史报错</string>
+    <string name="zt_crash_history_settings_summary">自动保存闪退记录，可查看详情、删除单项或全部清空；AI 调试端口 19998 也可访问</string>
+    <string name="zt_crash_history_hint">应用闪退时会自动记录异常信息，最多保留 100 条。</string>
+    <string name="zt_crash_history_empty">暂无历史报错记录</string>
+    <string name="zt_crash_history_clear_all">全部清空</string>
+    <string name="zt_crash_history_clear_all_confirm">确定要清空所有历史报错记录吗？此操作不可恢复。</string>
+    <string name="zt_crash_history_delete_confirm">确定要删除这条报错记录吗？</string>
+    <string name="zt_crash_history_detail_title">报错详情</string>
+    <string name="zt_crash_history_not_found">记录不存在或已被删除</string>
+    <string name="zt_crash_history_thread">线程: %1$s · 版本: %2$s</string>
+    <string name="zt_crash_history_detail_meta">时间: %1$s\n线程: %2$s\n版本: %3$s\n异常: %4$s\n消息: %5$s</string>
+
 </resources>

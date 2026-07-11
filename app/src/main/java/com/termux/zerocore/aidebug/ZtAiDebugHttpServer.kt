@@ -3,6 +3,7 @@ package com.termux.zerocore.aidebug
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.termux.zerocore.crashhistory.ZtAiDebugCrashHelper
 import com.termux.zerocore.workstation.ZtWorkstationContactsHelper
 import com.termux.zerocore.workstation.ZtWorkstationFileHelper
 import com.termux.zerocore.workstation.ZtWorkstationSmsHelper
@@ -52,6 +53,17 @@ class ZtAiDebugHttpServer(
                     val filter = session.parms["filter"]
                     textResponse(ZtAiDebugLogHelper.readLogcat(lines, filter), MIME_JSON)
                 }
+                uri == "/api/crashes" && method == Method.GET ->
+                    textResponse(ZtAiDebugCrashHelper.listJson(appContext), MIME_JSON)
+                uri == "/api/crashes/detail" && method == Method.GET ->
+                    textResponse(
+                        ZtAiDebugCrashHelper.detailJson(appContext, session.parms["id"] ?: ""),
+                        MIME_JSON
+                    )
+                uri == "/api/crashes/delete" && method == Method.POST ->
+                    handleCrashDelete(session)
+                uri == "/api/crashes/clear" && method == Method.POST ->
+                    textResponse(ZtAiDebugCrashHelper.clearJson(appContext), MIME_JSON)
                 uri == "/api/screenshot" && method == Method.GET ->
                     handleScreenshot(session)
                 uri == "/api/camera/frame" && method == Method.GET ->
@@ -545,6 +557,20 @@ class ZtAiDebugHttpServer(
     private fun handleCommandDefRun(session: IHTTPSession): Response {
         val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
         return textResponse(ZtAiDebugLlmHelper.runCommandDefJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleCrashDelete(session: IHTTPSession): Response {
+        val body = readBody(session)
+        val id = if (body.isNotBlank()) {
+            try {
+                JsonParser.parseString(body).asJsonObject.get("id")?.asString
+            } catch (_: Exception) {
+                null
+            }
+        } else {
+            session.parms["id"]
+        }
+        return textResponse(ZtAiDebugCrashHelper.deleteJson(appContext, id ?: ""), MIME_JSON)
     }
 
     private fun handleEditorOpen(session: IHTTPSession): Response {

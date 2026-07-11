@@ -173,6 +173,10 @@ object ZtAiDebugApiDocs {
             mapOf("method" to "GET", "path" to "/api/terminal/snapshot", "desc" to if (lang == "zh") "终端文本 ?maxChars=12000" else "Terminal text ?maxChars=12000"),
             mapOf("method" to "POST", "path" to "/api/terminal/exec", "desc" to if (lang == "zh") "JSON {command, waitMs?}" else "JSON {command, waitMs?}"),
             mapOf("method" to "GET", "path" to "/api/logs/logcat", "desc" to if (lang == "zh") "?lines=300&filter=TAG" else "?lines=300&filter=TAG"),
+            mapOf("method" to "GET", "path" to "/api/crashes", "desc" to if (lang == "zh") "历史闪退报错列表" else "Crash history list"),
+            mapOf("method" to "GET", "path" to "/api/crashes/detail", "desc" to if (lang == "zh") "?id= 单条报错详情" else "?id= single crash detail"),
+            mapOf("method" to "POST", "path" to "/api/crashes/delete", "desc" to if (lang == "zh") "{id} 删除单条报错" else "{id} delete one crash"),
+            mapOf("method" to "POST", "path" to "/api/crashes/clear", "desc" to if (lang == "zh") "清空全部历史报错" else "Clear all crash history"),
             mapOf("method" to "GET", "path" to "/api/screenshot", "desc" to if (lang == "zh") "PNG 截屏 ?source=auto|root|app" else "PNG screenshot ?source=auto|root|app"),
             mapOf("method" to "GET", "path" to "/api/root/status", "desc" to if (lang == "zh") "Root/ADB 状态" else "Root/ADB status"),
             mapOf("method" to "POST", "path" to "/api/root/exec", "desc" to if (lang == "zh") "su 执行 {command,timeoutMs?} (需 Root 模式)" else "su exec {command,timeoutMs?} (needs Root mode)"),
@@ -239,6 +243,14 @@ object ZtAiDebugApiDocs {
             mapOf(
                 "name" to if (lang == "zh") "logcat" else "logcat",
                 "cmd" to "curl -s \"$base/api/logs/logcat$q&lines=300&filter=EditorVncPanel\""
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "历史报错列表" else "Crash history",
+                "cmd" to "curl -s \"$base/api/crashes$q\""
+            ),
+            mapOf(
+                "name" to if (lang == "zh") "历史报错详情" else "Crash detail",
+                "cmd" to "curl -s \"$base/api/crashes/detail$q&id=CRASH_ID\""
             ),
             mapOf(
                 "name" to if (lang == "zh") "Root 状态" else "Root status",

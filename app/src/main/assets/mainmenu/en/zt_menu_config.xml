@@ -187,8 +187,6 @@
     <group name="Requires Plugin/Engine (Restart APP after installation)">
         <item tag="Built-in Keyboard"
             click="java:com.termux.zerocore.config.mainmenu.config.KeyDataClickConfig" />
-        <item tag="Network Linux Directory"
-            click="java:com.termux.zerocore.config.mainmenu.config.FileBrowserClickConfig" />
         <item tag="x86 Alpine"
             click="java:com.termux.zerocore.config.mainmenu.config.X86AlpineDataClickConfig" />
     </group>
@@ -243,8 +241,6 @@
             click="java:com.termux.zerocore.config.mainmenu.config.UnInstallClickConfig" />
         <item tag="ADB Remote Connection"
             click="java:com.termux.zerocore.config.mainmenu.config.RemoteConnectionClickConfig" />
-        <item tag="Browser Terminal"
-            click="java:com.termux.zerocore.config.mainmenu.config.WebDataClickConfig" />
         <item tag="SMS/Call"
             click="java:com.termux.zerocore.config.mainmenu.config.PhoneSmsClickConfig" />
         <item tag="Scheduled Tasks"

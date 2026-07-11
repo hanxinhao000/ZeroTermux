@@ -25,7 +25,6 @@ import com.termux.zerocore.config.mainmenu.config.DataMessageClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DefBashClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DockerCheckClickConfig;
 import com.termux.zerocore.config.mainmenu.config.DownLoadClickConfig;
-import com.termux.zerocore.config.mainmenu.config.FileBrowserClickConfig;
 import com.termux.zerocore.config.mainmenu.config.FixEnvironmentalErrorClickConfig;
 import com.termux.zerocore.config.mainmenu.config.FloatWindowsClickConfig;
 import com.termux.zerocore.config.mainmenu.config.FontSettingsClickConfig;
@@ -57,7 +56,6 @@ import com.termux.zerocore.config.mainmenu.config.SnowflakeClickConfig;
 import com.termux.zerocore.config.mainmenu.config.SwitchSourceClickConfig;
 import com.termux.zerocore.config.mainmenu.config.UnInstallClickConfig;
 import com.termux.zerocore.config.mainmenu.config.VNCClickConfig;
-import com.termux.zerocore.config.mainmenu.config.WebDataClickConfig;
 import com.termux.zerocore.config.mainmenu.config.WebDataClickConfigImp;
 import com.termux.zerocore.config.mainmenu.config.X11EnvironmentClickConfig;
 import com.termux.zerocore.config.mainmenu.config.X11SettingsClickConfig;
@@ -134,7 +132,6 @@ public class MainMenuConfig implements BaseConfig {
         // 需要引擎
         ArrayList<MainMenuClickConfig> engineClicks = new ArrayList<>();
         engineClicks.add(new KeyDataClickConfig());
-        engineClicks.add(new FileBrowserClickConfig());
         engineClicks.add(new X86AlpineDataClickConfig());
         MAIN_MENU_CATEGORY_DATAS.add(new MainMenuCategoryData(context.getString(R.string.zt_engine), CODE_ZT_ENGINE, engineClicks));
         // ROOT 功能
@@ -171,7 +168,6 @@ public class MainMenuConfig implements BaseConfig {
         ztFeaturesClicks.add(new MyUsedSoftLinksDataClickConfig());
         ztFeaturesClicks.add(new UnInstallClickConfig());
         ztFeaturesClicks.add(new RemoteConnectionClickConfig());
-        ztFeaturesClicks.add(new WebDataClickConfig());
         // ztFeaturesClicks.add(new ZeroFunctionClickConfig());
         ztFeaturesClicks.add(new PhoneSmsClickConfig());
         ztFeaturesClicks.add(new ScheduledTaskClickConfig());
