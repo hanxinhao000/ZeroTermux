@@ -15,39 +15,23 @@ object EditorBuildScriptHelper {
 
     fun ensureScript(context: Context, directory: File, contextFile: File?, source: String?): File {
         val script = scriptFile(directory)
+        val hasEntry = hasRunnableEntry(contextFile, source)
         val desired = defaultScript(context, contextFile, source)
         if (!script.exists()) {
             script.parentFile?.mkdirs()
             script.writeText(desired)
-        } else if (shouldUpgradeLegacyScript(script.readText(), scriptLocaleTag(context))) {
+        } else if (hasEntry) {
+            // 当前文件有入口：复写 build.sh，指向该文件的编译/运行命令
             script.writeText(desired)
         }
+        // 无入口：保留上一次的 build.sh，不做改写
         return script
     }
 
-    /** 旧版 build.sh 或界面语言变化时，升级为当前语言的自动安装版本。 */
-    private fun shouldUpgradeLegacyScript(content: String, localeTag: String): Boolean {
-        if (!content.contains(SCRIPT_MARKER)) {
-            return false
-        }
-        if (!content.contains(SCRIPT_X11_MARKER)) {
-            return true
-        }
-        if (!content.contains("lang=$localeTag")) {
-            return true
-        }
-        if (!content.contains("export DISPLAY=${EditorX11Environment.DISPLAY}")) {
-            return true
-        }
-        if (!content.contains("ensure_editor_gui_stack")) {
-            return true
-        }
-        return !content.contains("ensure_java()")
-            && !content.contains("ensure_cc()")
-            && !content.contains("ensure_python()")
-            && !content.contains("ensure_php()")
-            && !content.contains("ensure_node()")
-            || content.contains("xorg-fonts-dejavu")
+    /** 当前源文件是否含可运行入口（main / __main__ 等）。无入口则保留已有 build.sh。 */
+    fun hasRunnableEntry(contextFile: File?, source: String?): Boolean {
+        if (contextFile == null) return false
+        return EditorRunDetector.detect(contextFile.name, source.orEmpty()) != null
     }
 
     fun defaultScript(context: Context, contextFile: File?, source: String?): String {
@@ -58,13 +42,13 @@ object EditorBuildScriptHelper {
         }
         val fileName = contextFile.name
         val fileSource = source.orEmpty()
-        val body = when {
-            EditorRunLanguage.JAVA.matchesExtension(fileName) -> javaScriptBody(strings, fileName, fileSource)
-            EditorRunLanguage.C.matchesExtension(fileName) -> cScriptBody(fileName)
-            EditorRunLanguage.PYTHON.matchesExtension(fileName) -> pythonScriptBody(fileName)
-            EditorRunLanguage.PHP.matchesExtension(fileName) -> phpScriptBody(fileName)
-            EditorRunLanguage.NODE.matchesExtension(fileName) -> nodeScriptBody(fileName)
-            else -> """
+        val body = when (EditorRunDetector.detect(fileName, fileSource)) {
+            EditorRunLanguage.JAVA -> javaScriptBody(strings, fileName, fileSource)
+            EditorRunLanguage.C -> cScriptBody(fileName)
+            EditorRunLanguage.PYTHON -> pythonScriptBody(fileName)
+            EditorRunLanguage.PHP -> phpScriptBody(fileName)
+            EditorRunLanguage.NODE -> nodeScriptBody(fileName)
+            null -> """
                 # ${strings.currentFileComment(fileName)}
                 echo ${strings.editForFile(fileName)}
             """.trimIndent()

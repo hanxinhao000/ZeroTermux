@@ -64,8 +64,6 @@ import com.termux.zerocore.editor.EditorFileTreeScrollView
 import com.termux.zerocore.editor.EditorHelloProjectCreator
 import com.termux.zerocore.editor.EditorHelloProjectType
 import com.termux.zerocore.editor.EditorProgramRunner
-import com.termux.zerocore.editor.EditorRunDetector
-import com.termux.zerocore.editor.EditorRunLanguage
 import com.termux.shared.termux.extrakeys.ExtraKeysView
 import com.termux.zerocore.editor.EditorTerminalInputView
 import com.termux.zerocore.editor.EditorTerminalPanel
@@ -842,19 +840,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         updateSidebarProjectPath()
         val dock = editorBottomDock
         if (dock != null) {
-            val isGuiRun = contextFile != null &&
-                EditorRunLanguage.JAVA.matchesExtension(contextFile.name) &&
-                EditorRunDetector.isJavaGuiSource(content)
-            dock.openGuiThenRun(directory) {
-                runner.runBuildScript(directory)
-                if (isGuiRun) {
-                    dock.openX11Tab()
-                    editorX11Panel?.onGuiAppStarted()
-                } else {
-                    dock.openTerminalTab()
-                }
-                setRunLoading(false)
-            }
+            // 默认打开终端执行 build.sh，不自动跳转到 GUI 窗口
+            dock.prepareTerminalBackground(directory)
+            dock.openTerminalTab()
+            runner.runBuildScript(directory)
+            setRunLoading(false)
         } else {
             runner.runBuildScript(directory)
             setRunLoading(false)
@@ -4008,17 +3998,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         if (tab != null && (tab.previewOnly || isTextPreviewMode(tab))) {
             return getString(R.string.zt_editor_ai_unavailable)
         }
-        val contextFile = currentFile
-        val content = code_editor?.text?.toString().orEmpty()
-        val isGuiRun = contextFile != null &&
-            EditorRunLanguage.JAVA.matchesExtension(contextFile.name) &&
-            EditorRunDetector.isJavaGuiSource(content)
         onRunBuildScriptClicked()
-        return if (isGuiRun) {
-            getString(R.string.zt_editor_ai_build_started_gui)
-        } else {
-            getString(R.string.zt_editor_ai_build_started)
-        }
+        return getString(R.string.zt_editor_ai_build_started)
     }
 
     override fun switchEditorDockTab(tab: String): String {
