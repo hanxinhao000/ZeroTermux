@@ -25,6 +25,7 @@ object ZtAgentAiTools {
         if (filesystemEnabled) {
             ZtAgentAiFilesystemTools.addFilesystemTools(tools)
         }
+        ZtAgentAiSkillTools.addSkillTools(tools)
         return tools
     }
 

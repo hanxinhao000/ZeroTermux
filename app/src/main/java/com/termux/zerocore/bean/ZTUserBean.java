@@ -50,6 +50,8 @@ public class ZTUserBean {
     private String agentAiChatHistoryJson;
     // 编辑器 AI 对话历史（JSON，与智能体独立）
     private String editorAiChatHistoryJson;
+    // 智能体已启用的 Skill id 列表（JSON 数组）
+    private String agentAiEnabledSkillsJson;
     // 智能体是否可读取/控制终端
     private boolean agentAiTerminalEnabled = true;
     // 智能体是否可控制 ZeroTermux（页面跳转、ztcommand）
@@ -326,6 +328,14 @@ public class ZTUserBean {
 
     public void setAgentAiSystemPrompt(String agentAiSystemPrompt) {
         this.agentAiSystemPrompt = agentAiSystemPrompt;
+    }
+
+    public String getAgentAiEnabledSkillsJson() {
+        return agentAiEnabledSkillsJson;
+    }
+
+    public void setAgentAiEnabledSkillsJson(String agentAiEnabledSkillsJson) {
+        this.agentAiEnabledSkillsJson = agentAiEnabledSkillsJson;
     }
 
     public String getAgentAiProviderCacheJson() {

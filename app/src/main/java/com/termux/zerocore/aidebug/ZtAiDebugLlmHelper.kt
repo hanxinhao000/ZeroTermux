@@ -51,7 +51,9 @@ object ZtAiDebugLlmHelper {
         "create_file",
         "mkdir",
         "delete_path",
-        "stat_path"
+        "stat_path",
+        "list_agent_skills",
+        "save_agent_skill"
     )
 
     fun listToolsJson(): String {
@@ -76,6 +78,18 @@ object ZtAiDebugLlmHelper {
                     "add" to "POST /api/commands/add {\"name\":\"更新\",\"command\":\"pkg update\",\"append_newline\":\"true\"}",
                     "run" to "POST /api/commands/run {\"name\":\"更新\"}",
                     "delete" to "POST /api/commands/delete {\"name\":\"更新\",\"user_confirmed\":\"true\"}"
+                ),
+                "skills_shortcut" to mapOf(
+                    "list" to "GET /api/skills",
+                    "create" to "POST /api/skills/create {\"skill_id\":\"my-workflow\"}",
+                    "save" to "POST /api/skills/save {\"skill_id\":\"my-workflow\",\"description\":\"...\",\"content\":\"# ...\"}",
+                    "enable" to "POST /api/skills/enable {\"skill_id\":\"termux-pkg-guide\",\"enabled\":true}",
+                    "restore" to "POST /api/skills/restore-default — 仅保留内置 pkg 安装指南",
+                    "llm_tool" to "POST /api/llm/tool {\"tool\":\"list_agent_skills\",\"arguments\":{}}"
+                ),
+                "agent_shortcut" to mapOf(
+                    "context" to "GET /api/agent/context — resolved system prompt incl. enabled skills",
+                    "chat" to "POST /api/agent/chat {\"message\":\"...\",\"timeout_sec\":120}"
                 )
             )
         )

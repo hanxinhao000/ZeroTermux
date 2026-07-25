@@ -38,6 +38,14 @@
     <string name="zt_ai_tool_mkdir">Create a directory directly (no terminal; nested OK). Prefer over mkdir -p.</string>
     <string name="zt_ai_tool_delete_path">Delete a file or directory (recursive). Requires user_confirmed=true after explicit user consent.</string>
     <string name="zt_ai_tool_stat_path">Stat a path: exists, type, size, lastModified (no terminal).</string>
+    <string name="zt_ai_tool_list_agent_skills">List local skills under ~/.skill (each &lt;skill-id&gt;/SKILL.md). Call before save or when user asks what skills exist.</string>
+    <string name="zt_ai_tool_save_agent_skill">Save a reusable workflow as ~/.skill/&lt;skill-id&gt;/SKILL.md. If user gave no name, invent a short skill_id (lowercase+hyphens) and display name; otherwise use the user name. content is Markdown body (steps/rules). Enabled by default after save.</string>
+
+    <string name="zt_ai_tool_param_skill_id">Directory/skill id: lowercase letters, digits, hyphens, e.g. termux-pkg-guide</string>
+    <string name="zt_ai_tool_param_skill_name">Display name (frontmatter name); optional, defaults to skill_id</string>
+    <string name="zt_ai_tool_param_skill_description">When to use this skill (frontmatter description)</string>
+    <string name="zt_ai_tool_param_skill_content">Skill body: Markdown steps/rules (no frontmatter)</string>
+    <string name="zt_ai_tool_param_skill_enable">Auto-enable after save; default true</string>
 
     <string name="zt_ai_tool_param_category">Filter: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">Optional: settings, beautify, beautify_ui, all</string>

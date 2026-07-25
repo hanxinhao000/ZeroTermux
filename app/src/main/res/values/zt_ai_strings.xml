@@ -39,6 +39,14 @@
     <string name="zt_ai_tool_mkdir">直接创建目录（不经终端，含多级）。优先于 mkdir -p。</string>
     <string name="zt_ai_tool_delete_path">删除文件或目录（递归）。须用户明确同意且 user_confirmed=true。</string>
     <string name="zt_ai_tool_stat_path">查看路径是否存在及类型/大小/修改时间（不经终端）。</string>
+    <string name="zt_ai_tool_list_agent_skills">列举本地 ~/.skill 目录下已保存的 Skills（每项为 &lt;skill-id&gt;/SKILL.md）。用户问有哪些 skill、或保存前可先调用。</string>
+    <string name="zt_ai_tool_save_agent_skill">将可复用流程保存为本地 Skill 到 ~/.skill/&lt;skill-id&gt;/SKILL.md。用户未给名称时自拟简短 skill_id（小写+连字符）和 name；用户给了名称则用用户的。content 为 Markdown 正文（步骤/规则）。保存后默认自动启用。</string>
+
+    <string name="zt_ai_tool_param_skill_id">目录名/skill id：小写字母、数字、连字符，如 termux-pkg-guide、install-vim</string>
+    <string name="zt_ai_tool_param_skill_name">显示名称（frontmatter name），可省略则用 skill_id</string>
+    <string name="zt_ai_tool_param_skill_description">何时使用该 Skill（frontmatter description）</string>
+    <string name="zt_ai_tool_param_skill_content">Skill 正文：Markdown 步骤与规则（不含 frontmatter）</string>
+    <string name="zt_ai_tool_param_skill_enable">保存后是否自动启用，默认 true</string>
 
     <string name="zt_ai_tool_param_category">筛选: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">可选: settings, beautify, beautify_ui, all</string>

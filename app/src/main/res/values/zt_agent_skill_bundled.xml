@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zt_agent_skill_bundled_name">Termux pkg 安装指南</string>
+    <string name="zt_agent_skill_bundled_description">用户要安装/卸载/搜索/升级软件、换源或 pkg/apt 报错时必须启用并执行本 Skill：用终端工具真实跑 pkg 命令，不要只口头给步骤。</string>
+    <string name="zt_agent_skill_bundled_body"><![CDATA[# Termux pkg 安装指南（可执行）
+
+> **强制执行**：匹配本 Skill 时，必须用工具真正操作终端（`send_terminal_command` / `read_terminal`，有权限时也可用 `list_zerotermux_pkg_sources` / `switch_zerotermux_pkg_source`）。禁止只回复文字步骤而不执行。用户明确说「只要命令/不要执行」时才停在文字说明。
+
+## 触发条件（命中任一即执行）
+
+- 安装 / 卸载 / 搜索 / 升级软件包
+- 出现 `No mirror`、`Unable to locate package`、`Hash Sum mismatch` 等
+- 用户问怎么装 wget / python / git / node / curl 等
+
+---
+
+## 标准安装流程（必须按序用工具执行）
+
+1. （可选）源不可用时：先 `list_zerotermux_pkg_sources`，用户同意后 `switch_zerotermux_pkg_source`（`user_confirmed=true`），默认推荐 `tsinghua`；或终端执行 `termux-change-repo`（需用户交互时说明）。
+2. `send_terminal_command`：`pkg update`
+3. 包名不确定时：`pkg search <关键词>`，根据输出选准确包名，禁止编造。
+4. `send_terminal_command`：`pkg install -y <包名>`（可多个：`pkg install -y git curl vim`）
+5. 用 `read_terminal` 确认成功；再验证：`<命令> --version` 或 `command -v <命令>`
+6. 向用户报告：**已真实安装成功/失败原因**（贴关键终端输出）
+
+### 示例：安装 wget（完整执行）
+
+```bash
+pkg update
+pkg search wget
+pkg install -y wget
+wget --version
+```
+
+### 示例：安装 Python
+
+```bash
+pkg install -y python
+python --version
+```
+
+---
+
+## 换源
+
+出现 **`No mirror or mirror group selected`** 或下载极慢：
+
+1. 优先工具换源（清华默认），或 `termux-change-repo`
+2. 再 `pkg update`，然后重试安装
+
+---
+
+## 升级 / 卸载
+
+| 需求 | 实际执行的命令 |
+|------|----------------|
+| 更新软件 | `pkg update && pkg upgrade -y` |
+| 只刷新索引 | `pkg update` |
+| 卸载 | 先 `pkg list-installed` 确认包名，再 `pkg uninstall -y <包名>` |
+
+---
+
+## 报错处理（读完整终端输出后再执行）
+
+1. **No mirror…** → 换源 → `pkg update` → 重试
+2. **Unable to locate package** → `pkg search` 纠正包名；必要时装 `root-repo`/`x11-repo` → `pkg update` → 重试
+3. **Hash Sum mismatch** → 换源/重试 → `pkg update`
+4. **unmet dependencies** → `pkg update && pkg upgrade -y` → 重试；仍失败则贴完整报错
+5. **Permission denied（存储）** → `termux-setup-storage`，提示用户授权
+6. **command not found** → 重新 `pkg install -y <包名>` 并验证
+
+---
+
+## 常用包名
+
+| 需求 | 包名 | 命令 |
+|------|------|------|
+| wget | wget | `pkg install -y wget` |
+| curl | curl | `pkg install -y curl` |
+| Python | python | `pkg install -y python` |
+| Git | git | `pkg install -y git` |
+| Node | nodejs | `pkg install -y nodejs` |
+| Clang | clang | `pkg install -y clang` |
+| Java | openjdk-17 | `pkg install -y openjdk-17` |
+| vim | vim | `pkg install -y vim` |
+| unzip | unzip | `pkg install -y unzip` |
+
+---
+
+## 执行纪律
+
+1. 先读终端完整输出，禁止凭印象编造结果
+2. 安装/升级/搜索：**直接执行**，不要只给提示
+3. 危险操作（`rm -rf /`、批量乱卸、改系统分区）必须先确认
+4. 未说「已安装成功」前，必须已验证命令输出
+5. 不要为本流程再 `save_agent_skill`（本 Skill 已内置）]]></string>
+</resources>

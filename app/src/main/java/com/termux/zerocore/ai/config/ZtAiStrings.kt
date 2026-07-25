@@ -106,6 +106,10 @@ object ZtAiStrings {
 
     fun toolStatPath(): String = str(R.string.zt_ai_tool_stat_path)
 
+    fun toolListAgentSkills(): String = str(R.string.zt_ai_tool_list_agent_skills)
+
+    fun toolSaveAgentSkill(): String = str(R.string.zt_ai_tool_save_agent_skill)
+
     // --- Executor status labels ---
 
     fun statusListCapabilities(): String = str(R.string.zt_ai_status_list_capabilities)

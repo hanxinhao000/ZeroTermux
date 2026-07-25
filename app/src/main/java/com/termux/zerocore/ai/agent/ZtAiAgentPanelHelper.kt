@@ -256,7 +256,7 @@ class ZtAiAgentPanelHelper(
         val config = ZtAgentAiConfigHelper.loadActiveConfig()
         chatClient = ZtAgentAiChatClient(config)
 
-        if (ZtAgentAiConfigHelper.isAgentToolsEnabled()) {
+        if (ZtAgentAiConfigHelper.shouldUseAgentRunner()) {
             runAgentLoop(assistantView)
         } else {
             runStreamChat(assistantView)

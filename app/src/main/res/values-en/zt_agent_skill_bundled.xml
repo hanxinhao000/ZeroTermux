@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zt_agent_skill_bundled_name">Termux pkg install guide</string>
+    <string name="zt_agent_skill_bundled_description">When the user asks to install/uninstall/search/upgrade packages, change mirrors, or hits pkg/apt errors: enable and RUN this skill with real terminal tools. Do not only paste tips.</string>
+    <string name="zt_agent_skill_bundled_body"><![CDATA[# Termux pkg install guide (executable)
+
+> **Must execute**: When this skill matches, use tools on the real terminal (`send_terminal_command` / `read_terminal`; also `list_zerotermux_pkg_sources` / `switch_zerotermux_pkg_source` when allowed). Do not reply with text-only steps. Only stay text-only if the user explicitly says “commands only / do not run”.
+
+## Triggers (any match → run)
+
+- Install / uninstall / search / upgrade packages
+- Errors like `No mirror`, `Unable to locate package`, `Hash Sum mismatch`
+- How to install wget / python / git / node / curl, etc.
+
+---
+
+## Standard install flow (run with tools in order)
+
+1. If mirrors fail: `list_zerotermux_pkg_sources`, then after user agrees `switch_zerotermux_pkg_source` (`user_confirmed=true`, prefer `tsinghua`); or `termux-change-repo` when interactive.
+2. `send_terminal_command`: `pkg update`
+3. If package name unsure: `pkg search <keyword>`, pick the exact name from output — never invent names
+4. `send_terminal_command`: `pkg install -y <package>` (or multiple: `pkg install -y git curl vim`)
+5. `read_terminal` to confirm; verify with `<cmd> --version` or `command -v <cmd>`
+6. Tell the user **real success/failure** with relevant terminal output
+
+### Example: install wget (fully run)
+
+```bash
+pkg update
+pkg search wget
+pkg install -y wget
+wget --version
+```
+
+### Example: install Python
+
+```bash
+pkg install -y python
+python --version
+```
+
+---
+
+## Mirrors
+
+On **`No mirror or mirror group selected`** or very slow downloads:
+
+1. Prefer tool-based mirror switch (tsinghua default), or `termux-change-repo`
+2. Then `pkg update` and retry install
+
+---
+
+## Upgrade / uninstall
+
+| Need | Command to run |
+|------|----------------|
+| Update packages | `pkg update && pkg upgrade -y` |
+| Refresh index only | `pkg update` |
+| Uninstall | Confirm with `pkg list-installed`, then `pkg uninstall -y <package>` |
+
+---
+
+## Error handling (read full terminal first)
+
+1. **No mirror…** → change mirror → `pkg update` → retry
+2. **Unable to locate package** → `pkg search`; maybe `root-repo`/`x11-repo` → `pkg update` → retry
+3. **Hash Sum mismatch** → change mirror / retry → `pkg update`
+4. **unmet dependencies** → `pkg update && pkg upgrade -y` → retry; else paste full error
+5. **Permission denied (storage)** → `termux-setup-storage`, ask user to grant permission
+6. **command not found** → reinstall with `pkg install -y <package>` and verify
+
+---
+
+## Common packages
+
+| Need | Package | Command |
+|------|---------|---------|
+| wget | wget | `pkg install -y wget` |
+| curl | curl | `pkg install -y curl` |
+| Python | python | `pkg install -y python` |
+| Git | git | `pkg install -y git` |
+| Node | nodejs | `pkg install -y nodejs` |
+| Clang | clang | `pkg install -y clang` |
+| Java | openjdk-17 | `pkg install -y openjdk-17` |
+| vim | vim | `pkg install -y vim` |
+| unzip | unzip | `pkg install -y unzip` |
+
+---
+
+## Discipline
+
+1. Read full terminal output; never invent results
+2. Install/upgrade/search: **execute**, don’t only tip
+3. Confirm before dangerous ops (`rm -rf /`, mass uninstall, system edits)
+4. Do not claim “installed” until verification output is seen
+5. Do not `save_agent_skill` for this flow (already built-in)]]></string>
+</resources>

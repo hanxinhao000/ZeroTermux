@@ -203,6 +203,11 @@ object ZtAgentAiConfigHelper {
                 com.termux.R.string.zt_agent_ai_gui_compile_prompt
             )
         )
+        parts.add(ZtAgentAiSkillHelper.skillsCapabilityPrompt())
+        val skillsBlock = ZtAgentAiSkillHelper.buildSkillsPrompt(ZtAgentAiSkillHelper.enabledSkillIds())
+        if (skillsBlock.isNotBlank()) {
+            parts.add(skillsBlock)
+        }
         return parts.joinToString("\n\n")
     }
 
@@ -233,6 +238,13 @@ object ZtAgentAiConfigHelper {
     fun isAgentToolsEnabled(): Boolean {
         return isTerminalEnabled() || isZtControlEnabled() || isFilesystemEnabled()
     }
+
+    /** Skill 工具始终可用；无其它权限时仍可走 Agent 循环保存/列举 Skill。 */
+    fun shouldUseAgentRunner(): Boolean {
+        return isAgentToolsEnabled() || hasSkillTools()
+    }
+
+    fun hasSkillTools(): Boolean = true
 
     fun isConfigured(): Boolean {
         val config = loadActiveConfig()

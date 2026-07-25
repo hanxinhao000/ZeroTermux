@@ -53,6 +53,9 @@ object ZtAgentAiToolExecutor {
             }
             return ZtAgentAiFilesystemExecutor.execute(toolCall)
         }
+        if (toolCall.name in ZtAgentAiSkillTools.toolNames) {
+            return ZtAgentAiSkillExecutor.execute(toolCall)
+        }
         return when (toolCall.name) {
             "read_terminal", "send_terminal_command", "send_terminal_key" -> {
                 if (!terminalEnabled) {
@@ -83,6 +86,9 @@ object ZtAgentAiToolExecutor {
         }
         if (toolName in ZtAgentAiFilesystemExecutor.toolNames) {
             return ZtAgentAiFilesystemExecutor.statusLabel(toolName)
+        }
+        if (toolName in ZtAgentAiSkillTools.toolNames) {
+            return ZtAgentAiSkillExecutor.statusLabel(toolName)
         }
         return when (toolName) {
             "read_terminal" -> ZtLocaleStrings.getString(R.string.zt_agent_ai_tool_read_terminal)

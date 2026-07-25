@@ -186,6 +186,22 @@ class ZtAiDebugHttpServer(
                     handleCommandDefDelete(session)
                 uri == "/api/commands/run" && method == Method.POST ->
                     handleCommandDefRun(session)
+                uri == "/api/skills" && method == Method.GET ->
+                    textResponse(ZtAiDebugSkillHelper.listJson(), MIME_JSON)
+                uri == "/api/skills/create" && method == Method.POST ->
+                    handleSkillsCreate(session)
+                uri == "/api/skills/save" && method == Method.POST ->
+                    handleSkillsSave(session)
+                uri == "/api/skills/enable" && method == Method.POST ->
+                    handleSkillsEnable(session)
+                uri == "/api/skills/ensure-example" && method == Method.POST ->
+                    textResponse(ZtAiDebugSkillHelper.ensureExampleJson(), MIME_JSON)
+                uri == "/api/skills/restore-default" && method == Method.POST ->
+                    textResponse(ZtAiDebugSkillHelper.restoreDefaultJson(), MIME_JSON)
+                uri == "/api/agent/context" && method == Method.GET ->
+                    textResponse(ZtAiDebugAgentHelper.contextJson(), MIME_JSON)
+                uri == "/api/agent/chat" && method == Method.POST ->
+                    handleAgentChat(session)
                 else -> cors(newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_JSON, jsonError("not found")))
             }
         } catch (e: Exception) {
@@ -559,6 +575,26 @@ class ZtAiDebugHttpServer(
     private fun handleCommandDefRun(session: IHTTPSession): Response {
         val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
         return textResponse(ZtAiDebugLlmHelper.runCommandDefJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleSkillsCreate(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugSkillHelper.createJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleSkillsSave(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugSkillHelper.saveJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleSkillsEnable(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugSkillHelper.setEnabledJson(org.json.JSONObject(obj.toString())), MIME_JSON)
+    }
+
+    private fun handleAgentChat(session: IHTTPSession): Response {
+        val obj = parseBodyObject(session) ?: return textResponse(jsonError("JSON body required"), MIME_JSON)
+        return textResponse(ZtAiDebugAgentHelper.chatJson(org.json.JSONObject(obj.toString())), MIME_JSON)
     }
 
     private fun handleCrashDelete(session: IHTTPSession): Response {

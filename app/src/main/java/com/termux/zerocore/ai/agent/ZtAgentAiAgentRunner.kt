@@ -51,7 +51,7 @@ class ZtAgentAiAgentRunner(
         callback: Callback
     ) {
         val workingMessages = buildWorkingMessages(history)
-        val tools = if (terminalEnabled || ztControlEnabled || filesystemEnabled) {
+        val tools = if (ZtAgentAiConfigHelper.shouldUseAgentRunner()) {
             ZtAgentAiTools.definitions(terminalEnabled, ztControlEnabled, filesystemEnabled)
         } else {
             null
@@ -252,6 +252,11 @@ class ZtAgentAiAgentRunner(
                 "stat_path" -> {
                     val path = args.optString("path", "").trim()
                     if (path.isEmpty()) "→ stat" else "→ stat $path"
+                }
+                "list_agent_skills" -> "→ list ~/.skill"
+                "save_agent_skill" -> {
+                    val id = args.optString("skill_id", "").trim()
+                    if (id.isEmpty()) "→ save skill" else "→ save skill $id"
                 }
                 else -> ""
             }
