@@ -1846,6 +1846,7 @@
     <string name="editor_build_script_install_gui_fonts">[ZeroTermux Editor] 正在安装 GUI 字体…</string>
     <string name="editor_build_script_display_not_ready">[ZeroTermux Editor] DISPLAY 未就绪，请先点击运行或打开 GUI 面板</string>
     <string name="editor_build_script_gui_started">[ZeroTermux Editor] GUI 程序已启动</string>
+    <string name="editor_build_script_gui_view_hint">[ZeroTermux Editor] 提示：如为带窗口的代码，请点击右上角 GUI 按钮查看画面</string>
     <string name="editor_build_script_gui_set_visible_hint">[ZeroTermux Editor] 提示：main() 中需调用 new Hello().setVisible(true) 才能显示窗口</string>
     <string name="editor_sidebar_open_terminal">打开终端</string>
     <string name="editor_terminal_ctrl_c">发送 Ctrl+C 中断</string>

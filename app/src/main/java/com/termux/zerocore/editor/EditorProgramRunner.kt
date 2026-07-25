@@ -98,6 +98,12 @@ class EditorProgramRunner(
         val runningMsg = shellQuote(
             context.getString(R.string.editor_build_script_running, EditorBuildScriptHelper.SCRIPT_NAME)
         )
+        val appPidFile = EditorX11Environment.APP_PID_FILE
+        sendToTerminal(
+            "if [ -f $appPidFile ]; then while read -r _p; do " +
+                "[ -n \"\$_p\" ] && kill \"\$_p\" 2>/dev/null || true; " +
+                "done < $appPidFile; : > $appPidFile; fi\n"
+        )
         sendToTerminal(
             "echo $runningMsg && cd $dir && chmod +x ${EditorBuildScriptHelper.SCRIPT_NAME} && ./${EditorBuildScriptHelper.SCRIPT_NAME}\n"
         )

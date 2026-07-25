@@ -79,8 +79,8 @@ object EditorBuildScriptHelper {
         private val installNode = bashSingleQuote(context.getString(R.string.editor_build_script_install_node))
         private val installNodeFailed = bashSingleQuote(context.getString(R.string.editor_build_script_install_node_failed))
         private val installGuiFonts = bashSingleQuote(context.getString(R.string.editor_build_script_install_gui_fonts))
-        private val guiStarted = bashSingleQuote(context.getString(R.string.editor_build_script_gui_started))
         private val guiSetVisibleHint = bashSingleQuote(context.getString(R.string.editor_build_script_gui_set_visible_hint))
+        private val guiViewHint = bashSingleQuote(context.getString(R.string.editor_build_script_gui_view_hint))
 
         fun currentFileComment(fileName: String): String {
             return context.getString(R.string.editor_build_script_current_file, fileName)
@@ -188,7 +188,7 @@ object EditorBuildScriptHelper {
 
         fun guiSetVisibleHintQuoted(): String = guiSetVisibleHint
 
-        fun guiStartedQuoted(): String = guiStarted
+        fun guiViewHintQuoted(): String = guiViewHint
 
         private fun bashSingleQuote(value: String): String {
             return EditorBuildScriptHelper.bashSingleQuote(value)
@@ -204,6 +204,8 @@ object EditorBuildScriptHelper {
             appendLine("$SCRIPT_MARKER lang=${strings.localeTag} $SCRIPT_X11_MARKER — ${strings.headerNote}")
             appendLine()
             appendLine(strings.ensureFunctionsBlock())
+            appendLine()
+            appendLine("stop_editor_gui_app")
             appendLine()
         }
     }
@@ -232,13 +234,13 @@ object EditorBuildScriptHelper {
             ${setVisibleWarn}editor_gpu_env
             java -Djava.awt.headless=false "${'$'}CLASS" &
             GUI_PID=${'$'}!
+            echo "${'$'}GUI_PID" > "${EditorX11Environment.APP_PID_FILE}"
             sleep 0.8
             if ! kill -0 "${'$'}GUI_PID" 2>/dev/null; then
               wait "${'$'}GUI_PID" 2>/dev/null || true
               exit 1
             fi
-            echo ${strings.guiStartedQuoted()} "(PID ${'$'}GUI_PID, DISPLAY=${EditorX11Environment.DISPLAY})"
-            refresh_editor_gui_display
+            echo ${strings.guiViewHintQuoted()}
         """.trimIndent()
     }
 

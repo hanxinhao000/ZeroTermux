@@ -1857,6 +1857,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="editor_build_script_install_gui_fonts">[ZeroTermux Editor] Installing GUI fonts…</string>
     <string name="editor_build_script_display_not_ready">[ZeroTermux Editor] DISPLAY not ready — tap Run or open the GUI panel first</string>
     <string name="editor_build_script_gui_started">[ZeroTermux Editor] GUI app started</string>
+    <string name="editor_build_script_gui_view_hint">[ZeroTermux Editor] Hint: For windowed programs, tap the GUI button in the top-right corner to view</string>
     <string name="editor_build_script_gui_set_visible_hint">[ZeroTermux Editor] Hint: call new Hello().setVisible(true) in main() to show the window</string>
     <string name="editor_sidebar_open_terminal">Open terminal</string>
     <string name="editor_terminal_ctrl_c">Send Ctrl+C to interrupt</string>

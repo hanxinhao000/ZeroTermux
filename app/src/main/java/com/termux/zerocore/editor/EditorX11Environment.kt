@@ -19,6 +19,7 @@ object EditorX11Environment {
     const val INPUT_DIR = "$GUI_DIR/input.d"
     const val LOG_FILE = "\${HOME}/.zerotermux/editor-gui.log"
     const val PID_FILE = "\${HOME}/.zerotermux/editor-gui.pid"
+    const val APP_PID_FILE = "\${HOME}/.zerotermux/editor-gui-app.pid"
 
     fun isPackagesInstalled(): Boolean {
         val binDir = TermuxConstants.TERMUX_BIN_PREFIX_DIR
@@ -42,6 +43,14 @@ object EditorX11Environment {
             append("      [ -n \"\$_pid\" ] && kill \"\$_pid\" 2>/dev/null || true\n")
             append("    done < \"${PID_FILE}\"\n")
             append("    : > \"${PID_FILE}\"\n")
+            append("  fi\n")
+            append("}\n")
+            append("stop_editor_gui_app() {\n")
+            append("  if [ -f \"${APP_PID_FILE}\" ]; then\n")
+            append("    while read -r _pid; do\n")
+            append("      [ -n \"\$_pid\" ] && kill \"\$_pid\" 2>/dev/null || true\n")
+            append("    done < \"${APP_PID_FILE}\"\n")
+            append("    : > \"${APP_PID_FILE}\"\n")
             append("  fi\n")
             append("}\n")
             append("ensure_editor_xvfb() {\n")
