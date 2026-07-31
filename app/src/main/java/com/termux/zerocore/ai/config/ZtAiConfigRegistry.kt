@@ -90,7 +90,6 @@ object ZtAiConfigRegistry {
         bindBool("isSnowflakeShow", "beautify_ui", ZTUserBean::isSnowflakeShow, ZTUserBean::setSnowflakeShow),
         bindBool("isRainShow", "beautify_ui", ZTUserBean::isRainShow, ZTUserBean::setRainShow),
         bindBool("isResetVolume", "ZeroTermux", ZTUserBean::isResetVolume, ZTUserBean::setResetVolume),
-        bindBool("isAiAgentPanelEnabled", "ZeroTermux", ZTUserBean::isAiAgentPanelEnabled, ZTUserBean::setAiAgentPanelEnabled),
         bindBool("isShowCommand", "x11", ZTUserBean::isShowCommand, ZTUserBean::setShowCommand),
         bindBool("isInternalPassage", "x11", ZTUserBean::isInternalPassage, ZTUserBean::setInternalPassage, risky = true, requiresRestart = true),
         bindBool("isCloseFoldMenu", "ZeroTermux", ZTUserBean::isCloseFoldMenu, ZTUserBean::setCloseFoldMenu),

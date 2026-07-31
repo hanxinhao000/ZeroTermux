@@ -7,7 +7,6 @@
     <string name="zt_ai_left_menu_hint_extra"> 每次 create_menu_package 使用当前语言的 AI 菜单名（如 AI创建 / AI Created）新建独立包。</string>
     <string name="zt_ai_left_menu_example_keyword">示例</string>
     <string name="zt_ai_pkg_source_hint">换源默认清华源(tsinghua)。先 list_zerotermux_pkg_sources 给出方案让用户选，用户明确同意后再 switch_zerotermux_pkg_source 且 user_confirmed=true。会修改 sources.list 并 apt update/upgrade，须告知会覆盖现有源配置。</string>
-    <string name="zt_ai_container_hint">多容器同左侧「容器切换」。先 list_zerotermux_containers；新建 create_zerotermux_container；切换 switch_zerotermux_container（切换后须重启）；删除 delete_zerotermux_container 且 user_confirmed=true。不可删主容器与当前活跃容器。</string>
 
     <!-- Tool descriptions -->
     <string name="zt_ai_tool_list_capabilities">列举 ZeroTermux 设置键、美化项、终端特效键、openpage 页面与 zt 命令。不确定时先调用。category: all|settings|beautify|beautify_ui|pages|zt_commands|left_menu|pkg_source|containers|command_defs</string>
@@ -23,12 +22,12 @@
     <string name="zt_ai_tool_list_containers">列举所有 Termux 多容器（同左侧「容器切换」）。返回 container_id、name、active、is_main。</string>
     <string name="zt_ai_tool_create_container">新建 Termux 容器（同「容器切换」页点 +）。须 container_name；可选 switch_after_create=true 创建后立即切换。</string>
     <string name="zt_ai_tool_switch_container">切换到指定容器。切换后须重启应用才能完全生效；可设 restart_app=true 自动重启。</string>
-    <string name="zt_ai_tool_delete_container">删除指定容器（不可删主容器与当前活跃容器）。须 user_confirmed=true。</string>
+    <string name="zt_ai_tool_delete_container">删除指定容器（不可删主容器与当前活跃容器）。须用户明确同意且 user_confirmed=true。</string>
     <string name="zt_ai_tool_list_command_defs">列举左侧「命令定义」中保存的快捷 shell 命令（同 CommandDefinitionCLickConfig / 终端选区「添加命令」）。</string>
     <string name="zt_ai_tool_add_command_def">添加一条命令定义。name=显示名，command=shell；append_newline=true 等同 UI「自动回车」。</string>
     <string name="zt_ai_tool_update_command_def">修改命令定义。用 command_id 或 name 定位；可改 new_name/command/append_newline。</string>
     <string name="zt_ai_tool_delete_command_def">删除命令定义。须 user_confirmed=true。</string>
-    <string name="zt_ai_tool_run_command_def">在终端执行已保存的命令定义。</string>
+    <string name="zt_ai_tool_run_command_def">在终端执行已保存的命令定义（同点击命令定义面板中的按钮）。</string>
     <string name="zt_ai_tool_read_terminal">读取当前终端可见屏幕。描述终端状态、安装进度或命令输出前必须先调用，禁止猜测。</string>
     <string name="zt_ai_tool_send_command">向终端发送命令（默认追加换行）。默认等待 shell 提示符（最长约 10 分钟）。仅依据返回的快照描述结果。</string>
     <string name="zt_ai_tool_send_key">向终端发送特殊按键或组合键。</string>
@@ -40,6 +39,14 @@
     <string name="zt_ai_tool_mkdir">直接创建目录（不经终端，含多级）。优先于 mkdir -p。</string>
     <string name="zt_ai_tool_delete_path">删除文件或目录（递归）。须用户明确同意且 user_confirmed=true。</string>
     <string name="zt_ai_tool_stat_path">查看路径是否存在及类型/大小/修改时间（不经终端）。</string>
+    <string name="zt_ai_tool_list_agent_skills">列举本地 ~/.skill 目录下已保存的 Skills（每项为 &lt;skill-id&gt;/SKILL.md）。用户问有哪些 skill、或保存前可先调用。</string>
+    <string name="zt_ai_tool_save_agent_skill">将可复用流程保存为本地 Skill 到 ~/.skill/&lt;skill-id&gt;/SKILL.md。用户未给名称时自拟简短 skill_id（小写+连字符）和 name；用户给了名称则用用户的。content 为 Markdown 正文（步骤/规则）。保存后默认自动启用。</string>
+
+    <string name="zt_ai_tool_param_skill_id">目录名/skill id：小写字母、数字、连字符，如 termux-pkg-guide、install-vim</string>
+    <string name="zt_ai_tool_param_skill_name">显示名称（frontmatter name），可省略则用 skill_id</string>
+    <string name="zt_ai_tool_param_skill_description">何时使用该 Skill（frontmatter description）</string>
+    <string name="zt_ai_tool_param_skill_content">Skill 正文：Markdown 步骤与规则（不含 frontmatter）</string>
+    <string name="zt_ai_tool_param_skill_enable">保存后是否自动启用，默认 true</string>
 
     <string name="zt_ai_tool_param_category">筛选: all, settings, beautify, beautify_ui, pages, zt_commands, left_menu, pkg_source, containers, command_defs</string>
     <string name="zt_ai_tool_param_group">可选: settings, beautify, beautify_ui, all</string>
@@ -188,6 +195,7 @@
     <string name="zt_ai_pkg_source_switched_msg">换源命令已发送到终端，请等待 apt 完成</string>
 
     <!-- Containers -->
+    <string name="zt_ai_container_hint">多容器同左侧「容器切换」。先 list_zerotermux_containers；新建 create_zerotermux_container；切换 switch_zerotermux_container（切换后须重启）；删除 delete_zerotermux_container 且 user_confirmed=true。不可删主容器与当前活跃容器。</string>
     <string name="zt_ai_container_menu_equiv">左侧菜单 常用功能 → 容器切换 (ContainerSwitchClickConfig)</string>
     <string name="zt_ai_container_delete_confirm_hint">删除不可恢复。向用户说明容器名称与后果，用户明确同意后再调用 delete_zerotermux_container 且 user_confirmed=true。</string>
     <string name="zt_ai_container_delete_warning">将永久删除该容器内全部 Termux 数据（home、已装包等），无法恢复。</string>
@@ -198,8 +206,8 @@
         <item>4. 删除: 用户确认后 delete_zerotermux_container container_id=… user_confirmed=true</item>
     </string-array>
 
-    <!-- Command defs -->
-    <string name="zt_ai_command_def_hint">命令定义同左侧菜单「命令定义」。先 list_zerotermux_command_defs；add/update/delete/run；delete 须 user_confirmed=true。append_newline=true 等同「自动回车」。</string>
+    <!-- Command defs (左侧「命令定义」) -->
+    <string name="zt_ai_command_def_hint">命令定义同左侧菜单「命令定义」(CommandDefinitionCLickConfig)。先 list_zerotermux_command_defs；添加 add_zerotermux_command_def；修改 update_zerotermux_command_def；删除 delete_zerotermux_command_def 且 user_confirmed=true；执行 run_zerotermux_command_def。append_newline=true 等同 UI「自动回车」。</string>
     <string name="zt_ai_command_def_menu_equiv">左侧菜单 命令定义 (CommandDefinitionCLickConfig)</string>
     <string name="zt_ai_command_def_delete_confirm_hint">删除后不可恢复。向用户说明命令名称与 shell 内容，用户明确同意后再 delete 且 user_confirmed=true。</string>
     <string-array name="zt_ai_command_def_workflow">
@@ -208,7 +216,7 @@
         <item>3. run_zerotermux_command_def 测试；update 修改；delete 需 user_confirmed=true</item>
     </string-array>
 
-    <!-- Terminal toolbar -->
+    <!-- Terminal toolbar (底部终端工具栏，AI 不可控制) -->
     <string name="zt_ai_terminal_toolbar_hint">主界面底部终端工具栏（Extra Keys + 文本输入）可被用户手动隐藏。AI 无法代其恢复。read_terminal 快照会标注 hidden；若用户反馈键盘没了，提示：打开右侧菜单 → 切换会话 → 长按「键盘」即可重新显示。</string>
     <string name="zt_ai_terminal_toolbar_hidden_notice">【终端工具栏已隐藏】底部键盘/Extra Keys 当前不可见，AI 无法代用户恢复。请用与用户相同的语言提示：打开右侧菜单 → 切换会话 → 长按「键盘」可重新显示。</string>
 
@@ -272,7 +280,7 @@
     <string name="zt_ai_cfg_rain_title">粒子/雨特效</string>
     <string name="zt_ai_cfg_rain_desc">终端粒子/雨动画。别名: 粒子/下雨/particle/rain。与 isSnowflakeShow 互斥</string>
     <string name="zt_ai_cfg_reset_volume_title">还原音量键</string>
-    <string name="zt_ai_cfg_ai_panel_title">右侧 AI 智能体面板</string>
+    <string name="zt_ai_cfg_ai_panel_title">右侧栏 AI 选项卡智能体</string>
     <string name="zt_ai_cfg_show_command_title">显示终端层</string>
     <string name="zt_ai_cfg_internal_passage_title">X11 内部通道</string>
     <string name="zt_ai_cfg_internal_passage_desc">切换后需重启 App；完整安装请 openpage zero_termux_settings</string>

@@ -270,7 +270,7 @@
     <string name="zt_ai_cfg_rain_title">Particle/rain effect</string>
     <string name="zt_ai_cfg_rain_desc">Terminal particle/rain animation. Aliases: particle/rain/粒子/下雨. Mutually exclusive with isSnowflakeShow</string>
     <string name="zt_ai_cfg_reset_volume_title">Restore volume keys</string>
-    <string name="zt_ai_cfg_ai_panel_title">Right-side AI agent panel</string>
+    <string name="zt_ai_cfg_ai_panel_title">AI agent in right-side AI tab</string>
     <string name="zt_ai_cfg_show_command_title">Show terminal layer</string>
     <string name="zt_ai_cfg_internal_passage_title">X11 internal channel</string>
     <string name="zt_ai_cfg_internal_passage_desc">Usually requires app restart; use openpage zero_termux_settings for full setup</string>

@@ -124,6 +124,14 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
+            android:name=".zerocore.settings.MenuSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".zerocore.settings.ZtDeveloperOptionsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
             android:name=".zerocore.settings.MenuUpdateSourceActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -136,6 +144,10 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <activity android:name=".zerocore.ai.agent.ZtAgentAiSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity android:name=".zerocore.ai.agent.ZtAgentAiSkillsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 

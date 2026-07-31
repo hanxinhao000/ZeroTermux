@@ -1,90 +1,89 @@
 package com.termux.zerocore.ai.agent
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.graphics.Rect
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewTreeObserver
-import android.view.inputmethod.InputMethodManager
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.EditorInfo
-import android.app.Activity
-import android.content.Intent
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.termux.R
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import io.noties.markwon.Markwon
 
+/**
+ * AI 智能体面板控制器：嵌入右侧栏 AI 选项卡。
+ * [panelHost] 为右侧栏内的面板根视图；[isDrawerOpen] 用于判断顶栏打断条是否显示。
+ */
 class ZtAiAgentPanelHelper(
-    private val overlay: View,
-    panelRoot: View,
-    private val onOpenRightMenu: Runnable? = null
+    private val panelHost: View,
+    private val hostActivity: Activity,
+    private val onCloseDrawer: Runnable? = null,
+    private val onOpenAiTab: Runnable? = null,
+    private val isDrawerOpen: (() -> Boolean)? = null
 ) {
-    private val panelCard: View = panelRoot
-    private val contextLabel: TextView = panelRoot.findViewById(R.id.ai_agent_panel_context_label)
-    private val contextText: TextView = panelRoot.findViewById(R.id.ai_agent_panel_context_text)
-    private val emptyView: TextView = panelRoot.findViewById(R.id.ai_agent_panel_empty)
-    private val messagesContainer: LinearLayout = panelRoot.findViewById(R.id.ai_agent_panel_messages)
-    private val scrollView: ScrollView = panelRoot.findViewById(R.id.ai_agent_panel_scroll)
-    private val input: EditText = panelRoot.findViewById(R.id.ai_agent_panel_input)
-    private val sendButton: TextView = panelRoot.findViewById(R.id.ai_agent_panel_send)
+    private val panelCard: View = panelHost
+    private val contextLabel: TextView = panelHost.findViewById(R.id.ai_agent_panel_context_label)
+    private val contextText: TextView = panelHost.findViewById(R.id.ai_agent_panel_context_text)
+    private val emptyView: TextView = panelHost.findViewById(R.id.ai_agent_panel_empty)
+    private val messagesContainer: LinearLayout = panelHost.findViewById(R.id.ai_agent_panel_messages)
+    private val scrollView: ScrollView = panelHost.findViewById(R.id.ai_agent_panel_scroll)
+    private val input: EditText = panelHost.findViewById(R.id.ai_agent_panel_input)
+    private val sendButton: TextView = panelHost.findViewById(R.id.ai_agent_panel_send)
+    private val panelStopBar: View? = panelHost.findViewById(R.id.ai_agent_panel_stop_bar)
 
     private val conversationHistory = ZtAgentAiChatStore.load()
     private var chatClient: ZtAgentAiChatClient? = null
     private var agentRunner: ZtAgentAiAgentRunner? = null
     private var isSending = false
     private var agentCancelled = false
-    /** 悬浮窗是否处于打开状态（与 overlay 动画结束后的实际展示一致）。 */
+    /** 右侧栏 AI 选项卡是否正在展示本面板。 */
     private var isPanelShown = false
     private var lastPanelHeight = 0
+    private var lastImePad = -1
     private var keyboardListenerAttached = false
 
     private var pendingAssistantRow: View? = null
+
+    /** 抬起目标：右侧栏整体（含底部选项卡），避免键盘挡住输入框。 */
+    private val imeLiftTarget: View by lazy {
+        (panelHost.parent as? View)?.parent as? View ?: panelHost
+    }
 
     private val scrollBottomRunnable1 = Runnable { performScrollToBottom() }
     private val scrollBottomRunnable2 = Runnable { performScrollToBottom() }
 
     private val keyboardLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+        updateImeLiftPadding()
         onPanelLayoutChanged()
     }
 
     private val markwon: Markwon by lazy { ZtAgentMarkwon.get(panelCard.context) }
 
     private val runningBanner: View? by lazy {
-        findRunningBannerView()
-    }
-
-    private fun findRunningBannerView(): View? {
-        var node: View? = overlay
-        while (node != null) {
-            node.findViewById<View>(R.id.ai_agent_running_banner)?.let { return it }
-            node = node.parent as? View
-        }
-        return panelCard.rootView.findViewById(R.id.ai_agent_running_banner)
-    }
-
-    private val panelStopBar: View? by lazy {
-        overlay.findViewById(R.id.ai_agent_panel_stop_bar)
+        panelCard.rootView.findViewById(R.id.ai_agent_running_banner)
     }
 
     init {
-        panelRoot.findViewById<View>(R.id.ai_agent_panel_close).setOnClickListener { dismissPanel() }
-        panelRoot.findViewById<View>(R.id.ai_agent_panel_reset).setOnClickListener {
-            ZtAgentAiResetHelper.showResetConfirmDialog(panelRoot.context)
+        panelHost.findViewById<View>(R.id.ai_agent_panel_skills).setOnClickListener {
+            openSkillsPage()
         }
-        panelRoot.findViewById<View>(R.id.ai_agent_panel_settings).setOnClickListener {
+        panelHost.findViewById<View>(R.id.ai_agent_panel_reset).setOnClickListener {
+            ZtAgentAiResetHelper.showResetConfirmDialog(hostActivity)
+        }
+        panelHost.findViewById<View>(R.id.ai_agent_panel_settings).setOnClickListener {
             openAgentSettings()
         }
-        panelRoot.findViewById<View>(R.id.ai_agent_panel_open_menu).setOnClickListener {
-            dismissPanel()
-            onOpenRightMenu?.run()
-        }
-        overlay.setOnClickListener { dismissPanel() }
         panelCard.isFocusable = false
         panelCard.isFocusableInTouchMode = false
         sendButton.setOnClickListener { onSendClicked() }
@@ -99,42 +98,20 @@ class ZtAiAgentPanelHelper(
         }
         input.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && isVisible()) {
+                updateImeLiftPadding()
                 scrollToBottomDelayed()
+            } else if (!hasFocus) {
+                panelCard.post { updateImeLiftPadding() }
             }
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(imeLiftTarget) { _, insets ->
+            updateImeLiftPadding(insets)
+            insets
         }
         restoreConversationUi()
         ZtAgentAiResetHelper.registerUiRefreshCallback { clearUiAfterReset() }
         bindStopBar(panelStopBar)
         bindStopBar(runningBanner, reopenOnLabelClick = true)
-        setupSwipeToDismiss()
-    }
-
-    private fun setupSwipeToDismiss() {
-        val swipePanel = panelCard as? ZtAiAgentPanelCardView ?: return
-        swipePanel.swipeDismissCallback = object : ZtAiAgentPanelCardView.SwipeDismissCallback {
-            override fun onSwipeDrag(translationX: Float, panelWidth: Float) {
-                if (panelWidth <= 0f) return
-                val progress = (translationX / panelWidth).coerceIn(0f, 1f)
-                overlay.alpha = 1f - progress * 0.55f
-            }
-
-            override fun onSwipeRelease(translationX: Float, panelWidth: Float) {
-                if (panelWidth > 0f && translationX > panelWidth * 0.22f) {
-                    dismissPanel()
-                } else {
-                    panelCard.animate().translationX(0f).setDuration(180L).start()
-                    overlay.animate().alpha(1f).setDuration(180L).start()
-                }
-            }
-        }
-    }
-
-    private fun finalizePanelHidden() {
-        overlay.visibility = View.GONE
-        panelCard.translationX = 0f
-        overlay.alpha = 1f
-        isPanelShown = false
-        updateStopBarsVisibility()
     }
 
     private fun bindStopBar(bar: View?, reopenOnLabelClick: Boolean = false) {
@@ -149,7 +126,7 @@ class ZtAiAgentPanelHelper(
         }
     }
 
-    /** 打断 AI 自动执行（不关闭悬浮窗）。 */
+    /** 打断 AI 自动执行（不关闭面板）。 */
     fun stopAgentExecution() {
         if (!isSending) return
         agentCancelled = true
@@ -195,6 +172,8 @@ class ZtAiAgentPanelHelper(
         if (keyboardListenerAttached) return
         panelCard.viewTreeObserver.addOnGlobalLayoutListener(keyboardLayoutListener)
         keyboardListenerAttached = true
+        ViewCompat.requestApplyInsets(imeLiftTarget)
+        updateImeLiftPadding()
     }
 
     private fun detachKeyboardListener() {
@@ -202,6 +181,7 @@ class ZtAiAgentPanelHelper(
         panelCard.viewTreeObserver.removeOnGlobalLayoutListener(keyboardLayoutListener)
         keyboardListenerAttached = false
         lastPanelHeight = 0
+        applyImePad(0)
     }
 
     private fun onPanelLayoutChanged() {
@@ -210,6 +190,38 @@ class ZtAiAgentPanelHelper(
         if (height == lastPanelHeight) return
         lastPanelHeight = height
         scrollToBottomDelayed()
+    }
+
+    private fun updateImeLiftPadding(insets: WindowInsetsCompat? = null) {
+        if (!isPanelShown || panelHost.visibility != View.VISIBLE || isDrawerOpen?.invoke() == false) {
+            applyImePad(0)
+            return
+        }
+        val visible = Rect()
+        imeLiftTarget.rootView.getWindowVisibleDisplayFrame(visible)
+        val loc = IntArray(2)
+        imeLiftTarget.getLocationOnScreen(loc)
+        // 外框底边与可见区域底边的差值 = 被键盘挡住的高度
+        val overlap = (loc[1] + imeLiftTarget.height - visible.bottom).coerceAtLeast(0)
+        if (overlap > 0) {
+            applyImePad(overlap)
+            return
+        }
+        val resolved = insets ?: ViewCompat.getRootWindowInsets(imeLiftTarget)
+        val imeBottom = resolved?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+        applyImePad(imeBottom.coerceAtLeast(0))
+    }
+
+    private fun applyImePad(pad: Int) {
+        if (lastImePad == pad) return
+        lastImePad = pad
+        val target = imeLiftTarget
+        if (target.paddingBottom != pad) {
+            target.setPadding(target.paddingLeft, target.paddingTop, target.paddingRight, pad)
+        }
+        if (pad > 0 && isVisible()) {
+            scrollToBottomDelayed()
+        }
     }
 
     private fun restoreConversationUi() {
@@ -489,53 +501,49 @@ class ZtAiAgentPanelHelper(
         updateStopBarsVisibility()
     }
 
-    fun isVisible(): Boolean = overlay.visibility == View.VISIBLE
+    fun isVisible(): Boolean = isPanelShown && panelHost.visibility == View.VISIBLE
+
+    /** 标记 AI 选项卡已展示/隐藏（由右侧栏切换调用）。 */
+    fun setPanelTabVisible(visible: Boolean) {
+        isPanelShown = visible
+        if (visible) {
+            panelHost.visibility = View.VISIBLE
+            attachKeyboardListener()
+            updateStopBarsVisibility()
+            scrollToBottomDelayed()
+        } else {
+            hideInputKeyboard()
+            detachKeyboardListener()
+            if (!isSending) {
+                pendingAssistantRow = null
+            }
+            panelHost.visibility = View.GONE
+            updateStopBarsVisibility()
+        }
+    }
+
+    /** 抽屉开合变化时刷新打断条（运行中且抽屉关闭时显示顶栏）。 */
+    fun onDrawerVisibilityChanged() {
+        updateStopBarsVisibility()
+        updateImeLiftPadding()
+    }
 
     fun show(selectedText: String?) {
         applySelectedText(selectedText)
-        attachKeyboardListener()
+        onOpenAiTab?.run()
+        setPanelTabVisible(true)
         input.clearFocus()
-        if (isPanelShown && overlay.visibility == View.VISIBLE && panelCard.translationX == 0f) {
-            updateStopBarsVisibility()
-            scrollToBottomDelayed()
-            return
-        }
-        panelCard.animate().cancel()
-        overlay.animate().cancel()
-        overlay.visibility = View.VISIBLE
-        isPanelShown = true
         updateStopBarsVisibility()
-        overlay.alpha = 0f
-        panelCard.post {
-            val slideDistance = slideDistance()
-            panelCard.translationX = slideDistance
-            overlay.animate()
-                .alpha(1f)
-                .setDuration(OVERLAY_DURATION_MS)
-                .start()
-            panelCard.animate()
-                .translationX(0f)
-                .setDuration(PANEL_DURATION_MS)
-                .setInterpolator(DecelerateInterpolator())
-                .withEndAction {
-                    scrollToBottomDelayed()
-                    updateStopBarsVisibility()
-                }
-                .start()
-        }
+        scrollToBottomDelayed()
     }
 
-    /** 收起悬浮窗；若 AI 仍在执行则转入后台并显示主界面顶部提示条。 */
+    /** 收起面板展示（切走 AI 选项卡）；若仍在执行则显示主界面顶部提示条。 */
     fun dismissPanel() {
         if (!isPanelShown) return
-        hideInputKeyboard()
-        if (!isSending) {
-            pendingAssistantRow = null
-        }
-        animatePanelAway()
+        setPanelTabVisible(false)
     }
 
-    /** 强制停止 AI 并关闭面板（重置等场景使用）。 */
+    /** 强制停止 AI 并收起面板（重置等场景使用）。 */
     fun hide() {
         if (!isPanelShown && !isSending) {
             updateStopBarsVisibility()
@@ -549,13 +557,14 @@ class ZtAiAgentPanelHelper(
             updateStopBarsVisibility()
         }
         if (isPanelShown) {
-            animatePanelAway()
+            setPanelTabVisible(false)
         }
     }
 
     private fun updateStopBarsVisibility() {
-        val showPanelBar = isSending && isPanelShown
-        val showTopBar = isSending && !isPanelShown
+        val drawerOpen = isDrawerOpen?.invoke() != false
+        val showPanelBar = isSending && isPanelShown && drawerOpen
+        val showTopBar = isSending && (!isPanelShown || !drawerOpen)
         panelStopBar?.visibility = if (showPanelBar) View.VISIBLE else View.GONE
         val bar = runningBanner ?: return
         if (showTopBar) {
@@ -565,33 +574,14 @@ class ZtAiAgentPanelHelper(
         }
     }
 
-    /** 打开 App 页面时仅收起面板，不中断进行中的 AI 对话 */
+    /** 打开 App 页面时仅收起软键盘，不中断进行中的 AI 对话 */
     fun minimizeForNavigation() {
-        dismissPanel()
-    }
-
-    private fun animatePanelAway() {
-        scrollView.removeCallbacks(scrollBottomRunnable1)
-        scrollView.removeCallbacks(scrollBottomRunnable2)
-        detachKeyboardListener()
-        panelCard.animate().cancel()
-        overlay.animate().cancel()
-        val slideDistance = slideDistance()
-        overlay.animate()
-            .alpha(0f)
-            .setDuration(OVERLAY_DURATION_MS)
-            .start()
-        panelCard.animate()
-            .translationX(slideDistance)
-            .setDuration(PANEL_DURATION_MS)
-            .setInterpolator(AccelerateInterpolator())
-            .withEndAction { finalizePanelHidden() }
-            .start()
+        hideInputKeyboard()
     }
 
     fun toggle(selectedText: String?) {
-        if (isPanelShown) {
-            dismissPanel()
+        if (isPanelShown && isDrawerOpen?.invoke() == true) {
+            onCloseDrawer?.run()
         } else {
             show(selectedText)
         }
@@ -611,46 +601,59 @@ class ZtAiAgentPanelHelper(
         }
     }
 
-    private fun slideDistance(): Float {
-        val width = panelCard.width
-        if (width > 0) return width.toFloat()
-        return panelCard.context.resources.displayMetrics.widthPixels * 0.45f
-    }
-
     private fun showInputKeyboard() {
         if (!isVisible() || !input.isEnabled) return
         clearTerminalFocus()
+        if (!input.hasFocus()) {
+            input.requestFocus()
+        }
+        if (isSoftKeyboardVisible()) {
+            updateImeLiftPadding()
+            return
+        }
         val imm = panelCard.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(panelCard.rootView.windowToken, 0)
-        input.requestFocus()
-        input.postDelayed({
-            if (!isVisible()) return@postDelayed
-            imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
-        }, 120)
+        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+        input.post { updateImeLiftPadding() }
+    }
+
+    private fun isSoftKeyboardVisible(): Boolean {
+        val insets = ViewCompat.getRootWindowInsets(panelCard) ?: return false
+        if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+            return true
+        }
+        val visible = Rect()
+        panelCard.rootView.getWindowVisibleDisplayFrame(visible)
+        val screenHeight = panelCard.rootView.height
+        return screenHeight - visible.bottom > screenHeight / 6
     }
 
     private fun hideInputKeyboard() {
         val imm = panelCard.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(input.windowToken, 0)
         input.clearFocus()
+        applyImePad(0)
     }
 
     private fun openAgentSettings() {
         hideInputKeyboard()
-        panelCard.context.startActivity(
-            Intent(panelCard.context, ZtAgentAiSettingsActivity::class.java)
+        hostActivity.startActivity(
+            Intent(hostActivity, ZtAgentAiSettingsActivity::class.java)
+        )
+    }
+
+    private fun openSkillsPage() {
+        hideInputKeyboard()
+        hostActivity.startActivity(
+            Intent(hostActivity, ZtAgentAiSkillsActivity::class.java)
         )
     }
 
     private fun clearTerminalFocus() {
         panelCard.rootView.findViewById<View>(R.id.terminal_view)?.clearFocus()
-        val activity = panelCard.context as? Activity
-        activity?.currentFocus?.takeIf { it.id != R.id.ai_agent_panel_input }?.clearFocus()
+        hostActivity.currentFocus?.takeIf { it.id != R.id.ai_agent_panel_input }?.clearFocus()
     }
 
     companion object {
-        private const val PANEL_DURATION_MS = 280L
-        private const val OVERLAY_DURATION_MS = 220L
         private const val ROLE_USER = "user"
         private const val ROLE_ASSISTANT = "assistant"
         private const val ROLE_SYSTEM = "system"

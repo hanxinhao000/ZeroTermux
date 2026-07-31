@@ -34,6 +34,12 @@
                android:layout_width="match_parent"
                android:id="@+id/frame_file"
                android:layout_height="match_parent"/>
+           <include
+               android:id="@+id/ai_agent_panel_host"
+               layout="@layout/view_ai_agent_panel"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:visibility="gone" />
            <RelativeLayout
                android:layout_width="match_parent"
                android:visibility="invisible"

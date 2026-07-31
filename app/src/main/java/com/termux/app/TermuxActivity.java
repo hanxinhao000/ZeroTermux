@@ -108,7 +108,6 @@ import com.termux.view.TerminalView;
 import com.termux.view.TerminalViewClient;
 import com.termux.x11.MainActivity;
 import com.termux.zerocore.activity.EditTextActivity;
-import com.termux.zerocore.ai.llm.LLMTransitFragment;
 import com.termux.zerocore.background.FireworkView;
 import com.termux.zerocore.bean.EditPromptBean;
 import com.termux.zerocore.bean.ZDYDataBean;
@@ -127,7 +126,6 @@ import com.termux.zerocore.config.mainmenu.view.adapter.MainMenuPackageAdapter;
 import com.termux.zerocore.dialog.YesNoDialog;
 import com.termux.zerocore.config.other.ZTGitHubVersion;
 import com.termux.zerocore.config.ztcommand.config.XmlMenuConfig;
-import com.termux.zerocore.ai.deepseek.DeepSeekTransitFragment;
 import com.termux.zerocore.ai.deepseek.markdown.MarkDownAPI;
 import com.termux.zerocore.dialog.BeautifySettingDialog;
 import com.termux.zerocore.dialog.CommonCommandsDialog;
@@ -772,8 +770,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             indexSwitch(1);
         });
         findViewById(R.id.deepseek).setOnClickListener(view -> {
-            indexSwitch(0);
-            fragmentManager(1);
+            showAiAgentTabContent();
         });
 		// @}
     }
@@ -1456,22 +1453,43 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         initDataMsgInfo();
         setEgInstallStatus();
         // ZeroTermux add {@
-        View aiOverlay = findViewById(R.id.ai_agent_panel_overlay);
-        View aiPanelRoot = findViewById(R.id.ai_agent_panel_root);
-        if (aiOverlay != null && aiPanelRoot != null) {
-            mAiAgentPanelHelper = new ZtAiAgentPanelHelper(aiOverlay, aiPanelRoot, () -> {
-                if (!getDrawer().isOpened()) {
-                    getDrawer().smoothRightOpen();
-                }
-            });
+        View aiPanelHost = findViewById(R.id.ai_agent_panel_host);
+        if (aiPanelHost != null) {
+            mAiAgentPanelHelper = new ZtAiAgentPanelHelper(
+                aiPanelHost,
+                this,
+                () -> getDrawer().smoothClose(),
+                this::prepareAiAgentTabInDrawer,
+                () -> getDrawer().isOpened()
+            );
         }
         // @}
     }
 
     // ZeroTermux add {@
+    /** 切到右侧栏 AI 智能体内容区并打开抽屉（不重复改 helper 可见状态）。 */
+    private void prepareAiAgentTabInDrawer() {
+        frame_file.setVisibility(View.INVISIBLE);
+        session_rl.setVisibility(View.INVISIBLE);
+        if (!getDrawer().isOpened()) {
+            getDrawer().smoothRightOpen();
+        }
+    }
+
+    private void showAiAgentTabContent() {
+        prepareAiAgentTabInDrawer();
+        if (mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.setPanelTabVisible(true);
+        }
+    }
+
     private void showAiAgentPanel(String selectedText) {
         if (mAiAgentPanelHelper != null) {
             mAiAgentPanelHelper.show(selectedText);
+            return;
+        }
+        if (!getDrawer().isOpened()) {
+            getDrawer().smoothRightOpen();
         }
     }
 
@@ -1480,13 +1498,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             getDrawer().smoothClose();
             return;
         }
-        if (UserSetManage.Companion.get().getZTUserBean().isAiAgentPanelEnabled()) {
-            if (mAiAgentPanelHelper != null) {
-                mAiAgentPanelHelper.toggle(null);
-            }
-            return;
+        if (mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.show(null);
+        } else {
+            getDrawer().smoothRightOpen();
         }
-        getDrawer().smoothRightOpen();
     }
 
     /** Volume-/drawer shortcuts when「还原音量+-键」is off (isResetVolume=false). */
@@ -2161,6 +2177,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
     private void indexSwitch(int index) {
+        if (mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.setPanelTabVisible(false);
+        }
         frame_file.setVisibility(View.INVISIBLE);
         session_rl.setVisibility(View.INVISIBLE);
         switch (index) {
@@ -2180,19 +2199,27 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         LogUtils.e(TAG, "fragmentManager fragmentTransaction is: " + fragmentTransaction);
 
         // 1. 先移除可能存在的所有 Fragment
-        Fragment deepSeekFragment = getSupportFragmentManager()
-            .findFragmentByTag("DeepSeekTransitFragment");
         Fragment fileListFragment = getSupportFragmentManager()
             .findFragmentByTag("ZFileListFragment");
-
-        if (deepSeekFragment != null) {
-            fragmentTransaction.remove(deepSeekFragment);
-            LogUtils.e(TAG, "Removed existing DeepSeekTransitFragment");
-        }
+        Fragment deepSeekFragment = getSupportFragmentManager()
+            .findFragmentByTag("DeepSeekTransitFragment");
+        Fragment deepSeekMainFragment = getSupportFragmentManager()
+            .findFragmentByTag("DeepSeekMainFragment");
+        Fragment llmFragment = getSupportFragmentManager()
+            .findFragmentByTag("LLMMainFragment");
 
         if (fileListFragment != null) {
             fragmentTransaction.remove(fileListFragment);
             LogUtils.e(TAG, "Removed existing ZFileListFragment");
+        }
+        if (deepSeekFragment != null) {
+            fragmentTransaction.remove(deepSeekFragment);
+        }
+        if (deepSeekMainFragment != null) {
+            fragmentTransaction.remove(deepSeekMainFragment);
+        }
+        if (llmFragment != null) {
+            fragmentTransaction.remove(llmFragment);
         }
 
         // 2. 立即提交移除操作，确保状态被清理
@@ -2205,27 +2232,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             getSupportFragmentManager().executePendingTransactions();
         }
 
-        switch (index) {
-            case 0:
-                LogUtils.e(TAG, "fragmentManager switch ZFileListFragment. ");
-                fragmentTransaction.replace(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
-                    .commitAllowingStateLoss();
-                LogUtils.e(TAG, "fragmentManager switch ZFileListFragment deno. ");
-                break;
-            case 1:
-                LogUtils.e(TAG, "fragmentManager switch DeepSeekTransitFragment. ");
-                boolean isCustomAi = UserSetManage.Companion.get().getZTUserBean().isCustomAi();
-                if (isCustomAi) {
-                    LLMTransitFragment llmTransitFragment = LLMTransitFragment.newInstance();
-                    fragmentTransaction.replace(R.id.frame_file, llmTransitFragment, "LLMMainFragment")
-                        .commitAllowingStateLoss();
-                } else {
-                    DeepSeekTransitFragment deepSeekTransitFragment = DeepSeekTransitFragment.newInstance();
-                    fragmentTransaction.replace(R.id.frame_file, deepSeekTransitFragment, "DeepSeekMainFragment")
-                        .commitAllowingStateLoss();
-                }
-                LogUtils.e(TAG, "fragmentManager switch DeepSeekTransitFragment deno. ");
-                break;
+        if (index == 0) {
+            LogUtils.e(TAG, "fragmentManager switch ZFileListFragment. ");
+            fragmentTransaction.replace(R.id.frame_file, ZFileListFragment.newInstance(), "ZFileListFragment")
+                .commitAllowingStateLoss();
+            LogUtils.e(TAG, "fragmentManager switch ZFileListFragment deno. ");
         }
         ZTConfig.INSTANCE.setCloseListener(() -> getDrawer().smoothClose());
     }
@@ -2745,6 +2756,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             public void onSwipeOpened(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeOpened(wrapper, consumer, direction);
                 mTerminalView.clearFocus();
+                if (mAiAgentPanelHelper != null) {
+                    mAiAgentPanelHelper.onDrawerVisibilityChanged();
+                }
                 if (!UserSetManage.Companion.get().getZTUserBean().isHideGuideLayout()) {
                     mGuideLayout.setVisibility(View.GONE);
                     ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
@@ -2756,6 +2770,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onSwipeClosed(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeClosed(wrapper, consumer, direction);
+                if (mAiAgentPanelHelper != null) {
+                    mAiAgentPanelHelper.onDrawerVisibilityChanged();
+                }
                 mTerminalView.requestFocus();
             }
         };

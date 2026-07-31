@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!DOCTYPE resources [
-    <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
-    <!ENTITY TERMUX_APP_NAME "ZeroTermux">
-    <!ENTITY TERMUX_API_APP_NAME "Termux:API">
-    <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
-    <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
-    <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
-    <!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker">
-    <!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget">
-    <!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">
-    ]>
+<!DOCTYPE resources [<!ENTITY TERMUX_PACKAGE_NAME "com.termux"><!ENTITY TERMUX_APP_NAME "ZeroTermux"><!ENTITY TERMUX_API_APP_NAME "Termux:API"><!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot"><!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float"><!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling"><!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker"><!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget"><!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">]>
 
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="application_name">&TERMUX_APP_NAME;</string>
@@ -20,9 +10,7 @@
 
     <!-- Termux RUN_COMMAND permission -->
     <string name="permission_run_command_label">运行命令 &TERMUX_APP_NAME; 环境</string>
-    <string name="permission_run_command_description">内执行任意命令 &TERMUX_APP_NAME;
-        环境</string>
-
+    <string name="permission_run_command_description">内执行任意命令 &TERMUX_APP_NAME; 环境</string>
 
 
     <!-- Termux Bootstrap Packages Installation -->
@@ -31,8 +19,8 @@
     <string name="bootstrap_error_body">&TERMUX_APP_NAME;无法安装引导程序包。</string>
     <string name="bootstrap_error_abort">中止</string>
     <string name="bootstrap_error_try_again">重试</string>
-    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME; 有硬编码 $PREFIX 路径，不能安装在任何路径下 %1$s.</string>
-
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; 只能以主用户身份运行。\n编译的 Bootstrap 二进制文件 &TERMUX_APP_NAME;
+        有硬编码 $PREFIX 路径，不能安装在任何路径下 %1$s.</string>
 
 
     <!-- Terminal Sidebar and Shortcuts -->
@@ -50,7 +38,6 @@
 
     <string name="msg_enabling_terminal_toolbar">启用终端工具栏</string>
     <string name="msg_disabling_terminal_toolbar">禁用终端工具栏</string>
-
 
 
     <!-- Terminal Popup -->
@@ -83,12 +70,10 @@
     <string name="action_styling_install">安装</string>
 
 
-
     <!-- Termux Notifications -->
     <string name="notification_action_exit">退出</string>
     <string name="notification_action_wake_lock">获取唤醒锁</string>
     <string name="notification_action_wake_unlock">释放唤醒锁</string>
-
 
 
     <!-- Termux RunCommandService -->
@@ -98,11 +83,9 @@
     <string name="error_run_command_service_api_help">访问 %1$s 有关 RUN_COMMAND 意图用法的更多信息。</string>
 
 
-
     <!-- Termux Execution Commands -->
     <string name="msg_executable_absolute_path">可执行绝对路径： \"%1$s\"</string>
     <string name="msg_working_directory_absolute_path">工作目录绝对路径： \"%1$s\"</string>
-
 
 
     <!-- Termux Report And ShareUtils -->
@@ -113,12 +96,15 @@
     <string name="title_report_text">报告文本</string>
 
 
-
     <!-- Termux File Receiver -->
     <string name="title_file_received">将文件保存在 ~/downloads/</string>
     <string name="action_file_received_edit">编辑</string>
     <string name="action_file_received_open_directory">打开目录</string>
 
+
+    <!-- Miscellaneous -->
+    <string name="error_allow_external_apps_ungranted">%1$s requires `allow-external-apps`
+        property to be set to `true` in `%2$s` file.</string>
 
 
     <!-- Termux Settings -->
@@ -175,10 +161,9 @@
     <!-- Termux Tasker App Preferences -->
     <string name="termux_tasker_preferences_title">&TERMUX_TASKER_APP_NAME;</string>
     <string name="termux_tasker_preferences_summary">配置文件在 &TERMUX_TASKER_APP_NAME; app</string>
-
-    <string name="action_autofill_username">自动填充用户名</string>
-    <string name="error_termux_service_start_failed_general">启动TermuxService失败。请检查logcat查看异常信息。</string>
-    <string name="error_termux_service_start_failed_bg">由于Android后台限制，应用在后台时无法启动TermuxService。</string>
+    <string name="action_autofill_username">Autofill username</string>
+    <string name="error_termux_service_start_failed_general">Failed to start TermuxService. Check logcat for exception message.</string>
+    <string name="error_termux_service_start_failed_bg">Failed to start TermuxService while app is in background due to android bg restrictions.</string>
 
 
     <!-- About Preference -->
@@ -342,7 +327,7 @@
     </string>
     <string name="版本">版本</string>
     <string name="会话窗口在右侧">提示:会话窗口在右侧\n双击命令窗口打开快捷命令\n使用许可:学习交流</string>
-    <string name="开源地址">开源地址\n鸣谢</string>
+    <string name="开源地址">开源/鸣谢</string>
     <string name="已打开开机启动命令">已打开开机启动命令,重启APP生效</string>
     <string name="已关闭开机启动命令">已关闭开机启动命令,重启后生效</string>
     <string name="悬浮窗口">悬浮窗口</string>
@@ -473,9 +458,9 @@
     <string name="语言切换">语言切换</string>
     <string name="中文">中文</string>
     <string name="English">English</string>
-
     <string name="取消">取消</string>
     <string name="termux_x11">termux-x11</string>
+
 
     <string name="本机IP">本机IP</string>
 
@@ -495,18 +480,18 @@
     <string name="所选的端口号范围超出65535最大值">所选的端口号范围超出65535最大值,将默认更改为7766端口</string>
     <string name="开启成功">服务开启成功!</string>
 
+
     <string name="软件开发">软件开发分类</string>
     <string name="MyServer">MyServer</string>
     <string name="Termux_ADB">Termux-ADB</string>
     <string name="实验功能">实验功能</string>
     <string name="ZeroTermux实验功能">ZeroTermux 实验功能</string>
-    <string name="网络ADB">网络ADB(ROOT)</string>
+    <string name="网络ADB">网络ADB</string>
     <string name="网络ADBNo">网络ADB(无ROOT)</string>
     <string name="没有找到本机的ROOT权限">没有找到本机的ROOT权限,是否强制继续?</string>
     <string name="运行完成">命令执行完成,请确保在Root下执行\n请使用:\n \n adb.exe connect</string>
-    <string name="网络ADBClose">关闭ADB(ROOT)</string>
+    <string name="网络ADBClose">关ADB</string>
     <string name="关闭成功">ADB命令关闭成功</string>
-
 
 
     <string name="欢迎来到windows模拟器页面">欢迎来到windows模拟器页面</string>
@@ -580,7 +565,6 @@
     <string name="前往">前往</string>
     <string name="Zero">Zero/UTermux模拟</string>
     <string name="一键启动">一键启动</string>
-
     <string name="确定重置所有任务">确定重置并删除所有任务?\n如果您的下载状态错乱/不正确请应用此设置\n注意:已下载完成的不会被删除\n正在下载的会被删除</string>
     <string name="重置成功">重置成功</string>
 
@@ -593,15 +577,15 @@
     <string name="termux_terminal_view_view_header">视图</string>
 
     <!-- Terminal View Margin Adjustment -->
-    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端外边距适应调整</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">终端距离自动调整</string>
     <string name="termux_terminal_view_terminal_margin_adjustment_off">
-终端外边距适应调整已被禁用。</string>
-    <string name="termux_terminal_view_terminal_margin_adjustment_on">已启用终端外边距适应调整。启用该功能以尝试修复软键盘覆盖部分(Extra Keys/Terminal View)的问题。如果它导致设备屏幕显示抖动(通常在浮窗情况下)，请禁用它。(默认)</string>
-
+终端距离自动调整将被禁用</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">将启用终端距离自动调整。应该启用它以尝试修复软键盘覆盖部分额外键/终端视图的问题。如果它导致设备上的屏幕闪烁，请禁用它。 （默认）</string>
     <string name="VSCODE">VSCODE</string>
     <string name="X86_Alpine">X86_Alpine</string>
     <string name="请在下载站下载Alpine插件">请在下载站下载Alpine插件</string>
     <string name="没有权限">没有内存权限,下载站无法打开!</string>
+
 
     <string name="可能检测到OTG设备">可能检测到OTG设备,但是读取失败,请拔插设备再试,或者给予读取OTG权限!</string>
     <string name="检测到OTG设备">检测到OTG设备,即将创建OTG映射目录\n~/home/xinhaoLink/</string>
@@ -617,15 +601,12 @@
     <string name="电话">电话</string>
     <string name="备注">备注</string>
     <string name="序号">序号</string>
-
     <string name="无权限读取">无权限读取</string>
     <string name="请等待">请等待</string>
     <string name="远程控制下请先安装vim">远程控制下请先安装vim,否则程序不会创建sms.txt以及phone.txt</string>
-
-    <string name="网络访问linux目录">网络linux目录</string>
+    <string name="网络访问linux目录">网络目录</string>
     <string name="filebrowser已运行">filebrowser已运行,端口19951,账户:admin 密码:admin</string>
     <string name="WinXp">Windows Xp</string>
-
     <string name="Win7模拟">Win7模拟</string>
 
     <string name="msg_add_termux_debug_info">添加 termux 调试信息以报告？</string>
@@ -633,13 +614,18 @@
     <string name="termux_api_preferences_title">&TERMUX_API_APP_NAME;</string>
     <string name="termux_api_preferences_summary">偏好 &TERMUX_API_APP_NAME; 应用</string>
     <!-- TermuxService -->
-    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME; 需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME; -> 选中</string>
+    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME;
+        需要“在其他应用上显示”权限才能从 Android >= 10 的后台启动终端会话。从“设置”->“应用”-> 授予它 &TERMUX_APP_NAME;
+        -> 选中</string>
     <string name="选择方式">选择方式</string>
     <string name="要获取最新版本">要获取最新版本，你需要在线下载，旧版本可以选择本地脚本</string>
     <string name="获取线上">获取线上</string>
     <string name="线上脚本">线上脚本</string>
     <string name="本地脚本">本地脚本</string>
     <string name="请双击命令窗口试试">ZeroTermux\n双击命令窗口打开快捷栏\n双击最左(音量+按键)\n右(音量-按键)打开菜单/会话栏\n双指单击打开 工具箱\n右侧菜单打开内置文件浏览器</string>
+    <string name="ZeroTermux论坛">ZeroTermux论坛</string>
+    <string name="Zero论坛">Zero论坛</string>
+
 
     <string name="在线脚本">在线脚本</string>
     <string name="在线脚本服务器名称">Server Name</string>
@@ -648,9 +634,6 @@
     <string name="服务器在线但数据格式出错">服务器在线,但数据格式出错</string>
     <string name="当前文件下载已被禁止">当前文件下载已被禁止</string>
     <string name="此脚本数据错误">此脚本数据错误,请尝试联系管理员</string>
-
-    <string name="ZeroTermux论坛">ZeroTermux论坛</string>
-    <string name="Zero论坛">Zero论坛</string>
 
     <string name="美化设置">美化设置</string>
     <string name="字体颜色">字体颜色</string>
@@ -669,7 +652,6 @@
     <string name="启动器新">启动器[新]</string>
     <string name="启动器旧">启动器[旧]</string>
     <string name="系统切换成功">启动器切换成功,重启之后生效</string>
-
     <!-- TermuxService -->
 
     <string name="error_termux_service_invalid_execution_command_runner">Invalid execution command runner to TermuxService: `%1$s`</string>
@@ -679,10 +661,10 @@
 
     <!-- Termux RunCommandService -->
     <string name="error_run_command_service_invalid_execution_command_runner">Invalid execution command runner to RunCommandService: `%1$s`</string>
-
     <string name="error_termux_service_unsupported_execution_command_shell_create_mode">Unsupported execution command shell create mode to TermuxService: `%1$s`</string>
     <string name="error_termux_service_execution_command_shell_name_unset">Shell name not set but `%1$s` shell create mode passed</string>
-    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME; requires
+    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME;
+        requires
         \"Display over other apps\" permission to start terminal sessions from background on Android >= 10.
         Grants it from Settings -> Apps -> &TERMUX_APP_NAME; -> Advanced</string>
     <string name="bootstrap_error_installed_on_portable_sd">&TERMUX_APP_NAME; cannot be installed on
@@ -690,10 +672,10 @@
         \nBootstrap binaries compiled for &TERMUX_APP_NAME; have hardcoded $PREFIX path and cannot be installed
         under any path other than:\n%1$s.</string>
 
-    <string name="title_share_selected_text">终端文本</string>
-    <string name="title_share_selected_text_with">发送选择文本到:</string>
-    <string name="add_commend_msg_fail">不能添加空的命令</string>
-    <string name="add_commend_msg_ok">"添加成功,详细请在\"命令定义\"功能设置"</string>
+    <string name="title_share_selected_text">Terminal Text</string>
+    <string name="title_share_selected_text_with">Send selected text to:</string>
+    <string name="add_commend_msg_fail">"Can't add empty commands"</string>
+    <string name="add_commend_msg_ok">"The addition is successful. For details, please set the \"Command Definition\" function"</string>
     <string name="tool_cent">工具箱</string>
     <string name="linux_commend">常用命令</string>
     <string name="linux_clipboard">剪贴板</string>
@@ -710,11 +692,13 @@
     <string name="clipboard_empty_copy">复制内容不能为空噢</string>
 
     <string name="tool_other">其他选项</string>
+
     <string name="vedio_select_name">视频背景</string>
     <string name="keyboard_select_name">内置键盘</string>
+
     <string name="image_size_error">文件过大</string>
 
-    <string name="zero_eg_not_install">未检测到引擎,即将跳转到 github 页面.. </string>
+    <string name="zero_eg_not_install">未检测到引擎,即将跳转到 github 页面..</string>
 
     <string name="install_environment">安装所需环境?</string>
 
@@ -751,6 +735,7 @@
     <string name="storage_warning">警告：当前存储暂不可用，您可能需要取消挂载。</string>
 
     <string name="ftp_title">说明</string>
+    <string name="ftp_port_msg">端口超出范围!</string>
 
     <string name="ftp_msg">核心根据apache改进而来，默认目录为本Linux目录\n此版本为2.0，修复了FTP连接异常问题，更换了核心,确保此功能稳定!</string>
 
@@ -765,20 +750,14 @@
     <string name="back_message">请选择以下备份格式,一般推荐"tar.gz"格式</string>
 
     <string name="storage_error">"~/storage"目录在操作过程中目录丢失，请手动termux-setup-storage创建或重新打开"容器管理"让程序自动创建</string>
-
     <string name="backup_success">备份完成，备份文件在->内部存储/xinhao/data/|目录下</string>
-
     <string name="backup_msg_dialog">开始备份当前容器,系统需要新建一个会话来进行备份操作,点击确定继续</string>
-
     <string name="delete_restore_data">删除此数据包</string>
-
     <string name="data_file_name">数据包名称:</string>
     <string name="data_file_size">数据包大小:</string>
     <string name="data_file_path">数据包路径:</string>
     <string name="file_delete_msg">确定要永久删除此数据包？删除之后可没有办法恢复噢。</string>
     <string name="file_delete_fail">无法删除此文件，请在内部存储手动删除!</string>
-
-    <string name="ftp_port_msg">端口超出范围!</string>
     <string name="file_sd_msg">当前程序需要创建内存卡软链接,需要申请SD卡权限，如果拒绝则无法使用容器管理内所有内容!</string>
     <string name="file_sd_fail">拒绝了内存卡权限,此模块无法工作,退出。。。</string>
     <string name="file_sd_success">权限获取成功</string>
@@ -788,16 +767,16 @@
     <string name="system_restore_success">系统恢复完成,请在切换系统，切换您的系统</string>
     <string name="unrecognized_compression_format">不能识别的数据包!</string>
     <string name="create_xinhao_path_fail">创建~/xinhaoLink文件夹失败，请手动创建!</string>
-    <string name="commonly_used_soft_links">常用快捷方式</string>
+    <string name="commonly_used_soft_links">快捷方式</string>
     <string name="create_soft_links">将创建以下快捷方式:\n内部存储 微信、QQ、下载目录\n内部链接:~/xinhaoLink,由于Android 11+ 限制/内部存储/Android/data/ 目录访问将不能创建 /内部存储/Android/data/ 目录,但是程序还是会强制创建</string>
     <string name="create_soft_links_fail">创建失败,请重新尝试一下也可以手动创建 ~/xinhaoLink</string>
-    <string name="my_commonly_used_soft_links">自定快捷方式</string>
+    <string name="my_commonly_used_soft_links">自定快捷</string>
     <string name="my_commonly_used_soft_links_path">输入要链接的目录</string>
     <string name="my_commonly_used_soft_links_repeat">输入的目录不存在!</string>
     <string name="action_share_selected_text">分享选中文本</string>
     <string name="data_message">数据包简介:</string>
-    <string name="create_data_message">创建数据包信息</string>
-    <string name="data_message_hint">创建你的数据包信息，对数据包使用进行说明，设置后数据包相关信息会显示在左侧栏, 可使用 markdown 语法</string>
+    <string name="create_data_message">数据包信息</string>
+    <string name="data_message_hint">创建你的数据包信息，对数据包使用进行说明，设置后数据包相关信息会显示左侧栏, 可使用 markdown 语法</string>
     <string name="data_message_empty">数据包简介不能为空</string>
     <string name="zero_uninstall">卸载</string>
     <string name="install_module">安装模块</string>
@@ -821,7 +800,7 @@
     <string name="install_module_msg9">权限设置错误, 设置默认0700</string>
     <string name="install_module_msg10">模块安装完成!有些功能需要重启后生效</string>
     <string name="install_module_msg11">检测到权限为空,将跳过设置文件权限</string>
-    <string name="install_def_bash">默认启动文件</string>
+    <string name="install_def_bash">默认启动</string>
     <string name="install_def_bash_msg_ok">默认启动文件恢复成功</string>
     <string name="install_def_bash_msg_error">默认启动文件恢复错误!!</string>
     <string name="install_def_bash_is_writer">确定要恢复到默认的系统启动脚本(bash.bashrc)? 操作无法更改!</string>
@@ -842,7 +821,65 @@
     <string name="editor_toolbar_terminal">终端</string>
     <string name="editor_terminal_title">终端</string>
     <string name="editor_terminal_hide">隐藏终端</string>
-    <string name="editor_toolbar_run">运行</string>
+    <string name="editor_terminal_ctrl_c">发送 Ctrl+C 中断</string>
+    <string name="editor_x11_button">GUI</string>
+    <string name="editor_dock_hide">隐藏面板</string>
+    <string name="editor_x11_hide">Hide GUI</string>
+    <string name="editor_x11_maximize">最大化 X11</string>
+    <string name="editor_x11_restore">还原 X11</string>
+    <string name="editor_x11_connect">连接</string>
+    <string name="editor_x11_display_env">DISPLAY</string>
+    <string name="editor_x11_display_set">已设置 DISPLAY=:99</string>
+    <string name="editor_x11_status_connected">GUI 已连接</string>
+    <string name="editor_x11_status_disconnected">GUI 未连接</string>
+    <string name="editor_x11_internal_required">正在准备 GUI 环境，请稍候…</string>
+    <string name="editor_x11_setup_open_settings">重试</string>
+    <string name="editor_x11_env_missing">GUI 环境未就绪，点击重试安装</string>
+    <string name="editor_x11_init_failed">GUI 窗口初始化失败</string>
+    <string name="editor_x11_installing_env">正在安装 GUI 环境（Xvfb、ImageMagick、xdotool），请稍候…</string>
+    <string name="editor_x11_starting_env">正在启动内置 GUI 服务…</string>
+    <string name="editor_x11_start_failed">GUI 启动失败，点击重试</string>
+    <string name="editor_x11_retry">重试</string>
+    <string name="editor_x11_install_repo">[ZeroTermux Editor] 安装 x11-repo…</string>
+    <string name="editor_x11_install_packages">[ZeroTermux Editor] 安装 xorg-server-xvfb scrot xdotool…</string>
+    <string name="editor_x11_status_starting">GUI 启动中</string>
+    <string name="editor_x11_status_installing">GUI 环境安装中</string>
+    <string name="editor_x11_status_connecting">GUI 连接中</string>
+    <string name="editor_vnc_install_repo">正在安装 x11-repo…</string>
+    <string name="editor_vnc_install_packages">正在安装 Xvfb 与 x11vnc…</string>
+    <string name="editor_vnc_installing_env">正在安装 GUI/VNC 环境（x11-repo、Xvfb、x11vnc），请稍候…</string>
+    <string name="editor_vnc_starting_env">正在启动 VNC 服务，请稍候…</string>
+    <string name="editor_vnc_env_missing">缺少 X11/VNC 组件。打开 GUI 标签将自动安装；也可点击重试。</string>
+    <string name="editor_vnc_start_failed">VNC 调试环境启动失败。请确认终端可执行 pkg install，然后点击重试。</string>
+    <string name="editor_vnc_retry">重试</string>
+    <string name="editor_vnc_init_failed">VNC 窗口初始化失败</string>
+    <string name="editor_vnc_status_connected">VNC 已连接</string>
+    <string name="editor_vnc_status_connecting">VNC 连接中…</string>
+    <string name="editor_vnc_status_installing">正在安装环境…</string>
+    <string name="editor_vnc_status_starting">正在启动 VNC…</string>
+    <string name="editor_vnc_status_disconnected">VNC 未连接</string>
+    <string name="editor_toolbar_run">运行 build.sh</string>
+    <string name="editor_build_script_long_press">长按运行按钮可编辑 build.sh</string>
+    <string name="editor_build_script_header_note">可手动编辑或由 AI 修改</string>
+    <string name="editor_build_script_add_commands">请在 build.sh 中添加编译/运行命令</string>
+    <string name="editor_build_script_edit_for_file">请编辑 build.sh 以构建/运行 %1$s</string>
+    <string name="editor_build_script_current_file">当前文件: %1$s</string>
+    <string name="editor_build_script_install_java">[ZeroTermux Editor] 正在安装 OpenJDK…</string>
+    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] OpenJDK 安装失败</string>
+    <string name="editor_build_script_install_c">[ZeroTermux Editor] 正在安装 C 编译器 (clang)…</string>
+    <string name="editor_build_script_install_c_failed">[ZeroTermux Editor] C 编译器安装失败</string>
+    <string name="editor_build_script_install_python">[ZeroTermux Editor] 正在安装 Python…</string>
+    <string name="editor_build_script_install_python_failed">[ZeroTermux Editor] Python 安装失败</string>
+    <string name="editor_build_script_install_php">[ZeroTermux Editor] 正在安装 PHP 与 Composer…</string>
+    <string name="editor_build_script_install_php_failed">[ZeroTermux Editor] PHP 安装失败</string>
+    <string name="editor_build_script_install_node">[ZeroTermux Editor] 正在安装 Node.js 与 npm…</string>
+    <string name="editor_build_script_install_node_failed">[ZeroTermux Editor] Node.js 安装失败</string>
+    <string name="editor_build_script_running">[ZeroTermux Editor] 正在运行 %1$s</string>
+    <string name="editor_build_script_install_gui_fonts">[ZeroTermux Editor] 正在安装 GUI 字体…</string>
+    <string name="editor_build_script_display_not_ready">[ZeroTermux Editor] DISPLAY 未就绪，请先点击运行或打开 GUI 面板</string>
+    <string name="editor_build_script_gui_started">[ZeroTermux Editor] GUI 程序已启动</string>
+    <string name="editor_build_script_gui_view_hint">[ZeroTermux Editor] 提示：如为带窗口的代码，请点击右上角 GUI 按钮查看画面</string>
+    <string name="editor_build_script_gui_set_visible_hint">[ZeroTermux Editor] 提示：main() 中需调用 new Hello().setVisible(true) 才能显示窗口</string>
     <string name="editor_java_install_jdk_title">安装 JDK</string>
     <string name="editor_java_install_jdk_message">未检测到 Java 开发环境（JDK）。是否在 Termux 中安装 OpenJDK？</string>
     <string name="editor_java_install_jdk_confirm">安装</string>
@@ -896,6 +933,7 @@
     <string name="editor_sidebar_cut">剪切</string>
     <string name="editor_sidebar_paste">粘贴</string>
     <string name="editor_sidebar_delete">删除</string>
+    <string name="editor_sidebar_open_terminal">打开终端</string>
     <string name="editor_sidebar_delete_confirm_file">确定删除文件「%1$s」吗？此操作不可恢复。</string>
     <string name="editor_sidebar_delete_confirm_folder">确定删除文件夹「%1$s」及其全部内容吗？此操作不可恢复。</string>
     <string name="editor_sidebar_clipboard_copied">已复制：%1$s</string>
@@ -948,7 +986,7 @@
     <string name="editor_unsaved_exit_message">有 %1$d 个文件未保存，确定要退出吗？</string>
     <string name="editor_unsaved_close_message">%1$s 尚未保存，确定要关闭吗？</string>
     <string name="editor_unsaved_discard">不保存</string>
-    <string name="changed_bash">编辑启动文件</string>
+    <string name="changed_bash">编辑启动</string>
     <string name="save_error_">保存失败</string>
     <string name="save_ok_">保存成功,有些文件需要重启APP生效</string>
     <string name="start_msg">修改欢迎语</string>
@@ -963,15 +1001,13 @@
     <string name="http_folder">文件夹</string>
     <string name="http_file">文件</string>
     <string name="no_http_msg">似乎没有链接网络?请手动在浏览器打开本机IP:19956</string>
+    <string name="open_ttyd_http">网络终端(ttyd)</string>
+    <string name="open_file_http">网络文件</string>
     <string name="buffer_size_key">缓冲大小</string>
     <string name="auto_shell_key">自动终端</string>
     <string name="startup_command_key">启动命令</string>
-    <string name="open_ttyd_http">网络终端(ttyd)</string>
-    <string name="open_file_http">网络文件</string>
-
     <string name="adb_command">输入配对码</string>
     <string name="adb_tool">输入端口号</string>
-    <string name="input_content_cannot_be_empty">输入内容不能为空</string>
 
 
     <string name="notification_channel_foreground_service">前台服务</string>
@@ -996,7 +1032,6 @@
     <string name="termux_targz_ll">安装恢复包</string>
     <string name="termux_install_module_switch">确定要安装此模块?</string>
 
-
     <string name="label_server_ip">输入要被远程机器的IP</string>
     <string name="label_video_resolution">分辨率</string>
     <string name="label_video_bitrate">传输质量</string>
@@ -1007,16 +1042,14 @@
     <string name="back_button">v</string>
     <string name="switch0">无控制（如果不需要远程设备控制，请选中此项）</string>
     <string name="switch1">导航栏（如果远程设备没有屏幕导航栏，请选中此项）</string>
-
     <string name="label_server_title">远程连接(BATE)</string>
     <string name="ip_connect">0.0.0.0</string>
     <string name="remote_connection">ADB远程连接</string>
     <string name="press_again">再按一次退出</string>
     <string name="adb_title_msg">正在连接...请勿多次点击\'启动\'！</string>
     <string name="copy_uri_error">URI复制错误，请等待开发者修复...</string>
-
     <string name="developer_activity">请在DEBUG模式下进入</string>
-
+    <string name="input_content_cannot_be_empty">输入内容不能为空</string>
     <string name="common_functions">常用功能</string>
     <string name="menu_create_project">创建项目</string>
     <string name="menu_create_project_c">C</string>
@@ -1025,7 +1058,7 @@
     <string name="menu_create_project_php">PHP</string>
     <string name="menu_create_project_npm">NPM</string>
     <string name="menu_open_project">打开项目</string>
-    <string name="beautification_function">美化/UI功能</string>
+    <string name="beautification_function">美化/UI</string>
     <string name="online_features">线上功能</string>
     <string name="zt_features">ZT功能</string>
     <string name="zt_settings">ZeroTermux设置</string>
@@ -1043,6 +1076,36 @@
     <string name="install_termux_software_note">使用安装ZT相同签名的原生Termux、API、X11等</string>
     <string name="zt_download_service">ZT下载服务器</string>
     <string name="zt_download_service_note">默认端口为:19956</string>
+    <string name="zt_workstation">ZT电脑工作站</string>
+    <string name="zt_workstation_note">可在网页端打开工作站，方便在电脑或远程当中控制当前程序(19999端口)。各子功能开启时将分别申请所需权限</string>
+    <string name="zt_workstation_permission_denied">需要相应权限才能开启此功能</string>
+    <string name="zt_workstation_permission_denied_camera">需要摄像头权限才能开启摄像头功能</string>
+    <string name="zt_workstation_permission_denied_files">需要存储读写权限才能开启文件夹功能</string>
+    <string name="zt_workstation_permission_denied_phone_sms">需要短信、电话、通讯录权限才能开启短信/电话功能</string>
+    <string name="zt_workstation_notification_title">ZT电脑工作站</string>
+    <string name="zt_workstation_notification_text">Web 工作站运行中，端口 19999</string>
+    <string name="zt_workstation_settings_title">ZT电脑工作站</string>
+    <string name="zt_workstation_master">工作站总开关</string>
+    <string name="zt_workstation_master_note">关闭后 Web 工作站服务停止，子功能开关仅作预设</string>
+    <string name="zt_workstation_auto_start">开启APP自动启动</string>
+    <string name="zt_workstation_auto_start_risk">高危：启动 APP 时自动运行以下已选中的子功能开关</string>
+    <string name="zt_workstation_terminal">允许使用终端</string>
+    <string name="zt_workstation_terminal_risk">高风险：谨慎操作。打开后网页端可直接操控你的终端，并完全接管文件管理，包括删除、复制到其他设备</string>
+    <string name="zt_workstation_camera">允许使用摄像头</string>
+    <string name="zt_workstation_camera_risk">高风险：打开之后可无感知查看你的摄像头。如造成隐私泄露，需使用者自行承担</string>
+    <string name="zt_workstation_files">允许使用文件夹</string>
+    <string name="zt_workstation_files_risk">高风险：完全接管你的所有文件，包括删除、复制到其他设备</string>
+    <string name="zt_workstation_phone_sms">允许使用短信/电话</string>
+    <string name="zt_workstation_phone_sms_risk">高风险：可能泄露你的通讯录以及短信</string>
+    <string name="zt_workstation_status_on">已开启</string>
+    <string name="zt_workstation_status_off">未开启</string>
+    <string name="zt_workstation_enter">进入设置</string>
+    <string name="zt_workstation_disclaimer_title">高危风险免责声明</string>
+    <string name="zt_workstation_disclaimer_message">此页面均为高危风险，请仔细阅读免责声明。\n\n点击「确认」即表示同意，「取消」即表示拒绝。\n\n本页面内容强烈建议你在具备自主管控意识、能明白每一个开关含义后再操作。若不明白，请退出，不要打开。\n\n若本页面对你造成隐私泄露、文件删除、文件复制、文件转发等后果，本应用及作者不承担任何法律责任。你必须非常明确自己在做什么，并在充分理解后同意下一步。</string>
+    <string name="zt_workstation_confirm_enable">确认开启</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="zt_workstation_web_blocked">该功能未在手机端打开开关，请在 ZeroTermux 设置 → ZT电脑工作站 中开启对应权限后再使用。</string>
     <string name="zt_download_service_note1">请注意！此功能没有账号密码保护，默认即可打开下载。打开后请注意个人隐私外泄！</string>
     <string name="zt_sidebar_closes_automatically">侧边栏自动关闭</string>
     <string name="zt_sidebar_closes_automatically_note">调出输入法就自动关闭侧边栏(左、右)</string>
@@ -1066,43 +1129,10 @@
     <string name="zeroCore_about_card_title">ZeroCoreManage</string>
     <string name="zeroCore_about_card_title_note">ZeroCoreManage 是基于ZeroTermux的扩展包,对于\nZeroTermux功能的扩展,目的是为了减小ZeroTermux\n的软件包大小,不安装此扩展包ZeroTermux依旧可以正常运行\n引擎额外内容:\n\n1. 内置键盘\n2. WEB访问内存卡\n3. X86 Alpine</string>
     <string name="zt_developer">开发/贡献</string>
-    <string name="zt_developer_note">hotianbexuanto、Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \n小潼(XiaoTong6666)、XINHAO_HAN、Xieansecn 等(排名不分先后)</string>
+    <string name="zt_developer_note">hotianbexuanto、Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \n小潼(XiaoTong6666)、XINHAO_HAN、Xieansecn等(排名不分先后)</string>
     <string name="zt_install">还原/扩展官方版本</string>
     <string name="zt_install_float">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> Termux Float】安装插件</string>
     <string name="zt_install_file">没有安装此插件！请到【设置 -> 安装/还原Termux官方软件 -> (Zero)Utermux File Plug】安装插件</string>
-    <string name="zt_volume_function_title">还原音量+-键</string>
-    <string name="zt_volume_function_summary">禁用当前使用音量+-键进行弹出左/右面板</string>
-    <string name="zt_moe_remove">MOE目前作者已经不在维护，可能会出现ZeroTermux不可预知的错误结果。</string>
-
-
-    <string-array name="options_resolution_keys">
-        <item>1920x1080</item>
-        <item>1280x720</item>
-        <item>800x448</item>
-        <item>640x360</item>
-    </string-array>
-
-    <string-array name="options_resolution_values">
-        <item>1920,1080</item>
-        <item>1280,720</item>
-        <item>800,448</item>
-        <item>640,360</item>
-    </string-array>
-
-    <string-array name="options_bitrate_keys">
-        <item>6 Mbps</item>
-        <item>4 Mbps</item>
-        <item>2 Mbps</item>
-        <item>1 Mbps</item>
-    </string-array>
-
-    <integer-array name="options_bitrate_values">
-        <item>6144000</item>
-        <item>4096000</item>
-        <item>2048000</item>
-        <item>1024000</item>
-    </integer-array>
-
     <string name="zt_timer">定时任务</string>
     <string name="zt_timer_settings">定时任务设置(BATE)</string>
 
@@ -1161,57 +1191,117 @@
     <string name="zt_env_shell_sum">打开此选项输出sh脚本到指定目录\n关闭则取消此脚本输出</string>
     <string name="zt_env_shell_sum_msg">打开adb shell 运行以下命令:\n1.adb shell\n2.</string>
     <string name="zt_particle_animation">粒子动画</string>
+    <string name="zt_volume_function_title">还原音量+-键</string>
+    <string name="zt_volume_function_summary">禁用当前使用音量+-键进行弹出左/右面板</string>
 
-    <!-- X11功能模块 -->
+    <string name="zt_nav_page_opened">已打开：%1$s</string>
+    <string name="zt_nav_page_termux">主终端</string>
+    <string name="zt_nav_page_zt_settings">ZeroTermux 设置</string>
+    <string name="zt_nav_page_zero_termux_settings">ZeroTermux 功能设置</string>
+    <string name="zt_nav_page_left_menu_settings">左侧菜单设置</string>
+    <string name="zt_nav_page_menu_settings">菜单设置</string>
+    <string name="zt_nav_page_zt_developer_options">开发者选项</string>
+    <string name="zt_nav_page_menu_update_source">菜单更新源</string>
+    <string name="zt_nav_page_ai_settings">AI 设置</string>
+    <string name="zt_nav_page_agent_ai_settings">智能体 AI 配置</string>
+    <string name="zt_nav_page_deepseek_settings">DeepSeek 设置</string>
+    <string name="zt_nav_page_deepseek_key">DeepSeek Key</string>
+    <string name="zt_nav_page_llm_settings">自定义 LLM 设置</string>
+    <string name="zt_nav_page_termux_settings">Termux 原生设置</string>
+    <string name="zt_nav_page_zt_about">关于 ZeroTermux</string>
+    <string name="zt_nav_page_zt_install">安装 Termux 软件</string>
+    <string name="zt_nav_page_zt_online_server">在线服务器</string>
+    <string name="zt_nav_page_timer">定时任务</string>
+    <string name="zt_nav_page_container_settings">容器设置</string>
+    <string name="zt_nav_page_workstation_settings">ZT 电脑工作站</string>
+    <string name="zt_nav_page_developer">开发者选项</string>
+    <string name="zt_nav_page_guide">开机向导（协议页）</string>
+    <string name="zt_nav_page_guide_usage">开机向导（使用习惯）</string>
+    <string name="zt_nav_page_save_path">开机向导（创建文件夹）</string>
+    <string name="zt_nav_page_backup">备份恢复</string>
+    <string name="zt_nav_page_font">字体设置</string>
+    <string name="zt_nav_page_switch_system">切换系统</string>
+    <string name="zt_nav_page_scrcpy">Scrcpy 投屏</string>
+    <string name="zt_nav_page_qemu_run">QEMU 运行窗口</string>
+    <string name="zt_nav_page_webview">内置浏览器</string>
+    <string name="zt_nav_page_help">帮助</string>
+    <string name="zt_nav_page_zt_command_socket">ZT 命令调试</string>
+    <string name="zt_nav_page_editor">文本编辑器</string>
+    <string name="zt_agent_ai_locale_reply_prompt">重要：请始终使用与用户相同的语言回复。用户用英文则用英文，用中文则用中文。工具返回的 JSON 仅作状态参考，向用户说明时须用用户语言概括，勿逐字复述界面文案。</string>
+
+    <string name="zt_ai_agent_panel_title">打开新版本智能体</string>
+    <string name="zt_ai_agent_panel_summary">将右侧面板调整唤醒为AI智能体，可控制终端自动下发命令</string>
+    <string name="zt_ai_agent_panel_title_bar">AI 智能体</string>
+    <string name="zt_ai_agent_running_banner">AI 智能体正在运行…</string>
+    <string name="zt_ai_agent_stop">打断</string>
+    <string name="zt_ai_agent_stopped">（已打断）</string>
+    <string name="zt_ai_agent_panel_hint">在此与 AI 对话…</string>
+    <string name="zt_ai_agent_panel_send">发送</string>
+    <string name="zt_ai_agent_panel_context_label">来自终端选中：</string>
+    <string name="zt_ai_agent_panel_empty">欢迎使用ZeroTermux智能体\n
+        注意：需要配置key\n
+        \n
+        你可以说: \n\"给我安装ubuntu系统\"\n\"当前终端报错\"\n\"你帮我修复下\"\n\n
+        也可以说: \n\"把字体改成红色\"\n\"背景改成白色\"\n\"切换一个容器\"\n
+    </string>
+    <string name="zt_ai_agent_not_configured">请先在 ZeroTermux 设置 → 配置智能体AI 中填写 API Key 与模型。</string>
+    <string name="zt_ai_agent_thinking">思考中…</string>
+    <string name="zt_ai_agent_panel_open_menu">打开右侧菜单</string>
+    <string name="zt_moe_remove">MOE目前作者已经不在维护，可能会出现ZeroTermux不可预知的错误结果。</string>
+
+    <string-array name="options_resolution_keys">
+        <item>1920x1080</item>
+        <item>1280x720</item>
+        <item>800x448</item>
+        <item>640x360</item>
+    </string-array>
+
+    <string-array name="options_resolution_values">
+        <item>1920,1080</item>
+        <item>1280,720</item>
+        <item>800,448</item>
+        <item>640,360</item>
+    </string-array>
+
+    <string-array name="options_bitrate_keys">
+        <item>6 Mbps</item>
+        <item>4 Mbps</item>
+        <item>2 Mbps</item>
+        <item>1 Mbps</item>
+    </string-array>
+
+    <integer-array name="options_bitrate_values">
+        <item>6144000</item>
+        <item>4096000</item>
+        <item>2048000</item>
+        <item>1024000</item>
+    </integer-array>
+
     <string name="x11_features">X11功能</string>
     <string name="x11_features_settings">X11设置</string>
     <string name="x11_features_settings_internal">内部通道X11设置</string>
-    <string name="x11_features_settings_summary">高级（原生）设置：分辨率、底部键盘显示等</string>
-
-    <!-- 终端显示控制 -->
+    <string name="x11_features_settings_summary">详细(原生)设置，分辨率、底部键盘显示等</string>
     <string name="x11_display_terminal">显示终端</string>
     <string name="x11_hide_terminal">隐藏终端</string>
-
-    <!-- 环境配置 -->
     <string name="x11_environment">X11环境</string>
-    <string name="x11_not_connect">X11未检测到连接，请建立会话后重试</string>
-    <string name="x11_msg_error">检测到终端显示异常，已自动恢复</string>
-
-    <!-- 通道选择 -->
+    <string name="x11_not_connect">X11没有任何连接,请连接会话后重试</string>
+    <string name="x11_msg_error">查询到终端显示异常,现已恢复</string>
     <string name="x11_internal_passage">内部通道</string>
     <string name="x11_external_channels">外部通道</string>
-    <string name="x11_external_summary">
-切换后需重启APP生效\n\n
-• 内部通道：X11输出直接显示在终端背景\n
-• 外部通道：X11输出通过Termux:X11 APK显示\n
-⚠️ 内部通道可能影响性能\n\n
-已知问题：快速连续返回操作可能导致内部通道黑屏，再次返回并重新进入即可恢复\n\n
-⚠️ 按键冲突：启用内部通道时，音量键将被强制映射为打开左/右面板。如需使用Termux原生音量键功能，请关闭内部通道\n
-        ⚠️ 背景冲突：内部通道会影响背景视频/背景图片显示，切换到外部通道即可恢复
-</string>
-
-    <!-- 错误提示 -->
-    <string name="x11_internal_passage_install_error">内部通道文件安装失败，请手动设置权限(路径：/usr/libexec/termux-x11/loader.apk)为444\n或重新安装组件</string>
-    <string name="x11_error">未检测到基础环境，请通过左侧导航栏点击「X11环境」进行配置</string>
-    <string name="x11_error_set_env">环境配置失败，已强制启用内部通道！如持续出现此错误，请联系开发者</string>
-
-    <!-- 安装日志 -->
+    <string name="x11_external_summary">切换完成请重启APP生效\n\n内部通道：使用内部通道X11显示输出直接会在终端背景显示\n外部通道：外部通道X11显示输出会在Termux:X11 APK 显示\n内部通道可能会影响一定的性能\n\n注意：已知问题，如果在终端连续返回进入，内部通道可能会黑屏，再次按返回键退出，重新进入即可恢复\n\n操作：如果开启内部通道，音量上下(加减)键会被强制替换成打开左/右面板,如需需要使用Termux 原生上下键功能，请关闭内部通道</string>
+    <string name="x11_internal_passage_install_error">内部通道文件安装失败，请手动设置权限(/usr/libexec/termux-x11/loader.apk)为444\n或重新安装</string>
+    <string name="x11_error">没有安装基础环境，请在左侧栏点击 “ X11环境 ”</string>
+    <string name="x11_error_set_env">环境设置失败，只能强制使用内部通道!如果一直提示此错误，请联系开发者</string>
     <string name="x11_environment_msg">安装日志：</string>
-    <string name="x11_environment_error">loader.apk删除失败，请手动删除：/usr/libexec/termux-x11/loader.apk</string>
-    <string name="x11_environment_error_x11">termux-x11删除失败，请手动删除：/usr/bin/termux-x11</string>
-
-    <!-- 操作确认 -->
-    <string name="x11_dialog_reset">切换成功，需要重启生效。是否立即重启？</string>
-
-    <!-- 环境修复 -->
-    <string name="x11_so_install">修复环境错误</string>
-    <string name="x11_so_install_ok">修复成功，请重新运行termux-x11</string>
-    <string name="x11_so_install_not">环境状态正常，无需修复</string>
-    <string name="x11_so_install_error">修复失败，请通过「左侧导航栏 → X11设置 → 切换通道」查看详细日志</string>
-
+    <string name="x11_environment_error">Loader.apk删除失败，请手动删除目录下：/usr/libexec/termux-x11/loader.apk</string>
+    <string name="x11_environment_error_x11">termux-x11删除失败，请手动删除目录下：/usr/bin/termux-x11</string>
+    <string name="x11_dialog_reset">切换成功，需要重启生效，现在需要重启吗？</string>
+    <string name="x11_so_install">修环境</string>
+    <string name="x11_so_install_ok">修复成功，请使用termux-x11重试</string>
+    <string name="x11_so_install_not">环境正常无需修复</string>
+    <string name="x11_so_install_error">修复失败，请在 左侧栏 -> X11设置 切换通道来显示详细信息</string>
     <string name="x11_install_apk">安装X11</string>
     <string name="x11_install_apk_not">没有安装X11，请先安装X11 APK</string>
-
     <string name="x11_boom_keyboard_gone">隐藏键盘</string>
     <string name="x11_boom_keyboard_visible">显示键盘</string>
     <string name="update_online_sh">在线脚本服务器</string>
@@ -1258,6 +1348,7 @@
     <string name="content_ssh_username">用户名</string>
     <string name="content_ssh_alias_ip_not_empty">别名和IP不能为空</string>
     <string name="content_ssh_add_new_ssh_device">+ 添加新SSH设备</string>
+    <string name="content_ssh_name">SSH</string>
 
     <string name="zt_command_version">ZeroTermux-命令版本：0.2 (2025 ~ 2026)</string>
     <string name="zt_command_error">不支持或ZT版本低不识别: \"</string>
@@ -1307,7 +1398,7 @@
         示例：ln /data/data/com.termux/files/home/自定义名称 /sdcard/ \n
         示例(或指定一个目录)：ln /data/data/com.termux/files/home/自定义名称 /sdcard/自定义目录/ \n
         ] \n
-        \n
+             \n
         \n
         --------0.2版本更新--------\n
         zt dialog \n
@@ -1327,7 +1418,18 @@
         zt bgi /data/data/com.termux/files/home/.img/back.jpg \n
         ]\n
         \n
-        zt qr 打开扫一扫 (扫描二维码或者条形码)\n
+         zt qr 打开扫一扫 (扫描二维码或者条形码)\n
+        \n
+        \n
+        页面跳转:\n
+        \n
+        openpage(op) - 打开 App 内页面 \n
+        openpage[\n
+        示例：zt openpage list  列出可打开页面 \n
+        示例：zt openpage zt_settings  打开 ZeroTermux 设置 \n
+        示例：zt openpage guide  打开开机向导 \n
+        示例：zt openpage agent_ai_settings  打开智能体 AI 配置 \n
+        ]\n
         \n
         \n
 
@@ -1343,7 +1445,7 @@
         -e 显示编辑弹框，示例 zt dialog -e -t 标题 \n
     </string>
     <string name="zt_command_image_backgroup">输入的背景图片路径无效</string>
-    <string name="no_permission">无权限</string>
+    <string name="no_permission">No permission</string>
 
     <string name="deepseek_zs">你是一个ZeroTermux助手，帮助使用ZeroTermux、Termux的用户来回答一些基础的 linux知识,所有的命令最好都使用一行如果有多行尽量使用&amp;&amp;来拼接为1行</string>
     <string name="deepseek_zs_command">当前会话文本:</string>
@@ -1365,15 +1467,15 @@
     <string name="deepseek_settings_recognition_error_toast">格式化命令失败,请重新设置 “代码识别关键字”</string>
 
     <string name="deepseek_settings_url">输入 DeepSeek 接口地址</string>
-    <string name="deepseek_settings_url_edit">将官网的秘钥输入到此处，将自动保存</string>
-    <string name="deepseek_settings_url_edit_summary">将官网的秘钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_url_edit">将官网的密钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_url_edit_summary">将官网的密钥输入到此处，将自动保存</string>
     <string name="deepseek_settings_url_edit_info">目前默认的是 DeepSeek API接口，此处不清楚的话不要随意修改，随意修改可能导致接口无法访问</string>
 
-    <string name="deepseek_settings_key">输入 DeepSeek 秘钥</string>
-    <string name="deepseek_settings_key_edit">将官网的秘钥输入到此处，将自动保存</string>
-    <string name="deepseek_settings_key_edit_summary">将官网的秘钥输入到此处，将自动保存</string>
-    <string name="deepseek_settings_key_edit_info">请输入 DeepSeek 官网申请的秘钥，填写到此处即可。不清楚秘钥怎么获取，可点击：秘钥获取方式</string>
-    <string name="deepseek_settings_key_edit_info_keyword">秘钥获取方式</string>
+    <string name="deepseek_settings_key">输入 DeepSeek 密钥</string>
+    <string name="deepseek_settings_key_edit">将官网的密钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_key_edit_summary">将官网的密钥输入到此处，将自动保存</string>
+    <string name="deepseek_settings_key_edit_info">请输入 DeepSeek 官网申请的密钥，填写到此处即可。不清楚密钥怎么获取，可点击：密钥获取方式</string>
+    <string name="deepseek_settings_key_edit_info_keyword">密钥获取方式</string>
 
     <string name="deepseek_settings_send_command">点击蓝色命令直接执行</string>
     <string name="deepseek_settings_send_command_summary">点击显示蓝色的指令之后，直接在终端执行，而不是显示在终端</string>
@@ -1394,12 +1496,13 @@
     <string name="deepseek_settings_ai_get_deepseek_key_3">然后点击 “创建 API keys”</string>
     <string name="deepseek_settings_ai_get_deepseek_key_4">随意输入一个名称就行</string>
     <string name="deepseek_settings_ai_get_deepseek_key_5">复制此处的key到 ZT 里边的 DeepSeek 设置编辑框即可</string>
+
     <string name="zt_ssh_improt_fail">导入失败：别名丢失</string>
     <string name="zt_ssh_improt_fail_error">导入失败</string>
     <string name="zt_ssh_improt_success">"密钥导入成功\n已保存为:"</string>
 
     <string name="zt_root_fun">ROOT功能</string>
-    <string name="zt_engine">需要插件/引擎(安装完成请重启APP)</string>
+    <string name="zt_engine">插件/引擎</string>
     <string name="zt_data_info_title">信息</string>
     <string name="zt_data_info_content">
         # 此处写入的信息 \n
@@ -1409,6 +1512,7 @@
         ```\n显示到左侧栏\n```\n
         [链接文字](https://www.baidu.com)
     </string>
+
     <string name="zt_new">新版本</string>
     <string name="zt_command_key">底部键盘</string>
     <string name="zt_command_edit_h">输入你的终端底部代码…</string>
@@ -1416,13 +1520,11 @@
     <string name="zt_command_key_error">格式错误!</string>
     <string name="zt_command_path_error">文件操作失败!</string>
     <string name="zt_command_path_ok">保存成功，重启APP生效</string>
-    <string name="zt_recreate">请等待，正在重启当前Activity.</string>
-
     <string name="zt_adb_shell_run_debug">此功能只能在debug版本上使用,是否下载 debug APP 以继续使用此功能?</string>
+    <string name="zt_recreate">请等待，正在重启当前Activity.</string>
     <string name="zt_fold_menu_close">关闭折叠功能</string>
     <string name="zt_fold_menu_close_summary">(需要重启APP)打开此选项左侧的菜单栏目会始终保持展开状态</string>
     <string name="zt_app_crash">程序出错,请将以下信息传递给开发者[截图]\n开发者群一(QQ):</string>
-
     <string name="zt_menu_title_config">配置终端</string>
     <string name="zt_adb_shell_run">SHELL 运行</string>
     <string name="zt_adb_shell_run_summary">
@@ -1443,6 +1545,56 @@
     <string name="zt_xml_settings_title">禁用使用配置文件来设置左菜单</string>
     <string name="zt_xml_settings_summary">(需重启APP)打开此选项将不在载入xml配置文件作为左侧菜单数据源</string>
 
+    <string name="menu_package_card_title">Menu 菜单</string>
+    <string name="menu_package_current_menu">当前菜单：%1$s</string>
+    <string name="menu_package_network_update">默认菜单</string>
+    <string name="menu_package_update">更新</string>
+    <string name="menu_package_install">安装菜单包</string>
+    <string name="menu_package_install_time_prefix">安装时间：</string>
+    <string name="menu_package_backup">备份</string>
+    <string name="menu_package_delete">删除</string>
+    <string name="menu_package_delete_confirm">确定删除菜单包「%1$s」吗？</string>
+    <string name="menu_package_delete_confirm_active">确定删除当前菜单「%1$s」吗？删除后将切换为程序菜单。</string>
+    <string name="menu_package_delete_success">菜单包已删除</string>
+    <string name="menu_package_delete_fail">删除失败</string>
+    <string name="menu_package_network_update_confirm">如果继续更新会覆盖掉当前的菜单选项，确认继续吗？</string>
+    <string name="menu_package_backup_name_title">备份菜单</string>
+    <string name="menu_package_backup_name_hint">请输入备份名称</string>
+    <string name="menu_package_backup_name_empty">备份名称不能为空</string>
+    <string name="menu_package_install_pick_title">选择菜单包</string>
+    <string name="menu_package_install_path_hint">zip 包目录：%1$s</string>
+    <string name="menu_package_install_empty">%1$s 目录下没有 zip 菜单包\n（安装后将解压到应用内部 menu）</string>
+    <string name="menu_package_default_label">默认菜单</string>
+    <string name="menu_package_program_label">程序菜单</string>
+    <string name="menu_package_ai_created_label">AI创建</string>
+    <string name="menu_package_network_label">网络菜单</string>
+    <string name="menu_package_local_label">本地菜单</string>
+    <string name="menu_settings_title">菜单设置</string>
+    <string name="menu_settings_summary">折叠菜单与左侧菜单相关选项</string>
+    <string name="zt_developer_options_title">开发者选项</string>
+    <string name="zt_developer_options_summary">下载服务、工作站、AI 调试与日志等高级选项</string>
+    <string name="left_menu_settings_title">左侧菜单</string>
+    <string name="left_menu_settings_summary">配置左侧菜单更新源等选项</string>
+    <string name="menu_update_source_settings_title">菜单更新源</string>
+    <string name="menu_update_source_settings_summary">选择或添加菜单 zip 下载地址</string>
+    <string name="menu_update_source_default">默认源</string>
+    <string name="menu_update_source_custom">自定义源</string>
+    <string name="menu_update_source_add">添加源</string>
+    <string name="menu_update_source_input_title">请输入菜单地址</string>
+    <string name="menu_update_source_input_hint">https://example.com/menu.zip</string>
+    <string name="menu_update_source_input_empty">菜单地址不能为空</string>
+    <string name="menu_update_source_input_duplicate">该地址已存在</string>
+    <string name="menu_package_network_success">菜单已从网络更新</string>
+    <string name="menu_package_network_update_fail">菜单更新失败，已保持当前菜单</string>
+    <string name="menu_package_network_fallback">网络获取失败，已使用内置默认菜单</string>
+    <string name="menu_package_apply_success">菜单已切换</string>
+    <string name="menu_package_apply_fail">菜单切换失败</string>
+    <string name="menu_package_install_success">菜单包安装成功</string>
+    <string name="menu_package_install_fail">菜单包安装失败</string>
+    <string name="menu_package_backup_success">已备份到 %1$s</string>
+    <string name="menu_package_backup_fail">备份失败</string>
+    <string name="menu_package_install_pick">请选择菜单 zip 包</string>
+
     <string name="zt_usage_habits_title">使用习惯</string>
     <string name="zt_usage_habits_content">注意(使用习惯相关选项可以在ZT设置重新自定义)\n
         选择一个使用习惯\n
@@ -1451,12 +1603,13 @@
         请选择一个使用习惯</string>
     <string name="zt_usage_habits_termux">设置成功Termux使用习惯,更改配置请到设置</string>
     <string name="zt_usage_habits_ztermux">设置成功ZeroTermux使用习惯,更改配置请到设置</string>
-
     <string name="zt_guide">双击屏幕边缘弹出左/右菜单栏\n如果你设置了ZT使用习惯,则为音量+-键\n如果打开左/右侧栏无法关闭此窗口\n长按此处强制关闭</string>
     <string name="zt_core_date_error">核心终端上下数据出错，请返回到桌面再次进入重试.</string>
+
     <string name="deepseek_input_key_error_info_400">可能的问题:\n\n返回400，没有设置 DeepSeek Key 或者输入了错误的key</string>
     <string name="deepseek_input_key_error_info_401">可能的问题:\n\n返回401，API key 错误，认证失败，解决方法：请检查您的 API key 是否正确</string>
     <string name="deepseek_input_key_error_info_402">可能的问题:\n\n返回402，账号余额不足，解决方法：请确认账户余额，并前往Deepseek页面进行充值</string>
+    <string name="deepseek_input_key_error_info_403">可能的问题:\n\n返回403，未知错误</string>
     <string name="deepseek_input_key_error_info_422">可能的问题:\n\n返回422，参数错误，解决方法：一般情况来说不太可能出现此错误，是否key没填写正确？</string>
     <string name="deepseek_input_key_error_info_429">可能的问题:\n\n返回429，请求速率（TPM 或 RPM）达到上限，解决方法：请合理规划您的请求速率。</string>
     <string name="deepseek_input_key_error_info_500">可能的问题:\n\n返回500，DeepSeek服务器内部故障，解决方法：请等待后重试。若问题一直存在，请联系DeepSeek解决。</string>
@@ -1515,161 +1668,6 @@
     <string name="ai_settings_other">设置其他AI</string>
     <string name="ai_settings_other_summary">设置其他的 API_KEY 以及接口模型</string>
 
-    <string name="back_menu_visible">左/右栏目显示背景图片</string>
-    <string name="back_menu_visible_summary">你必须确保路径:\n~Ztinfo/menuBack/\n路径下有 left.png 以及 right.png</string>
-    <string name="text_shadow_enable">启用文字对比度</string>
-
-    <string name="guide_zerotermux_settings_agreement">ZeroTermux 使用协议</string>
-    <string name="guide_zerotermux_previous">返回</string>
-    <string name="guide_zerotermux_next">继续</string>
-    <string name="guide_zerotermux_usage_habits">使用习惯</string>
-    <string name="guide_zerotermux_usage_habits_summary">选择你的使用习惯:\n
-         \n
-        Termux:\n
-        1.双击滑动禁止显示工具箱\n
-        2.音量上下键不弹出左右菜单栏\n
-        \n
-        ZeroTermux: \n
-        1.双击滑动弹出工具箱(可能与放大缩小字体发生冲突)\n
-        2.音量上下键则是弹出左右菜单栏
-        \n
-        \n
-        如果后续需要更改使用习惯，可在主页面的左侧栏进入设置来调整
-    </string>
-    <string name="guide_zerotermux_create_folder">创建文件夹</string>
-    <string name="guide_zerotermux_create_folder_summary"> ZeroTermux 需要在你的内部存储创建以下文件夹\n\n
-        如果看不懂可直接点击 “继续” \n\n
-        注意：设置 内部存储/Android/data 下可能会有未知问题，如有遇到请在GITHUB上反馈\n\n
-        注意：\n
-        当前不支持的数据页面:\n
-        1.Windows模拟\n
-        1.1 如果想使用windows模拟相关的只能在SD卡创建 内部存储/xinhao/windows 文件夹\n
-        1.2 如果不想创建相关的文件夹到内部存储，你可以拒绝使用此模块功能(左侧主菜单 -> QEMU -> Zero/UTermux 模拟)\n
-        2.模块安装\n
-        2.1 如果想使用模块相关的只能在SD卡创建 内部存储/xinhao/module 文件夹\n
-        2.2 如果不想创建相关的文件夹到内部存储，你可以拒绝使用此模块功能(左侧主菜单 -> 模块安装)\n
-        \n\n
-        建议：一般情况下请放到 内部存储，如果放到 Android/data 目录下卸载应用之后所有保存的数据包以及其他所有xinhao文件夹下的数据都会被清空请谨慎选择\n\n
-        Android规范(/内部存储/Android/data/com.termux/files/xinhao/)\n
-        简单易用(/内部存储/xinhao)\n\n
-        目录说明 data(备份包)、apk(临时APK)、windows(qemu目录)、
-        command(命令目录)、font(字体目录)、iso(镜像目录)、mysql(mysql临时文件)
-        online_system(离线termux包)、qemu(qemu目录)、server(server目录)、share(分享目录)、web_config(web临时目录)\n\n
-        如果后期需要更改目录，可在 ZeroTermux 设置当中重新修改, 需注意：两个目录下的数据是分开显示的
-    </string>
-    <string name="guide_zerotermux_create_sdcard">内部存储</string>
-    <string name="guide_zerotermux_create_android">内部存储/Android/data</string>
-    <string name="guide_zerotermux_create_toast_ok">已成功创建</string>
-    <string name="guide_zerotermux_create_toast_no">未创建成功,请检查你的权限情况</string>
-    <string name="install_zerotermux_os_title">安装OS</string>
-    <string name="install_zerotermux_os_summary">ZeroTermux 正在安装基础环境,请稍等…</string>
-    <string name="loading_zerotermux">正在载入 ZeroTermux, 请稍后…</string>
-    <string name="guide_zerotermux_create_toast_created">当前功能在此版本不可用,等下个版本测试上线</string>
-    <string name="settings_keyword">设置双击功能</string>
-    <string name="zt_ai_debug_title">启用外部AI调用ZeroTermux</string>
-    <string name="zt_ai_debug_summary">使用外部AI排查ZeroTermux(极高危) 终端/日志/截屏/自动化/系统状态；Root机可完全控制</string>
-    <string name="zt_ai_debug_disclaimer_title">外部 AI 调试 — 极高危</string>
-    <string name="zt_ai_debug_disclaimer_message">开启后，同一局域网内的电脑/AI 可通过 19998 端口完全控制本机：\n\n• 读取并执行 Termux 终端命令\n• 读取 logcat / 系统日志\n• 截取屏幕、UI 自动化点击滑动\n• 读取短信、联系人、电话/SIM 信息\n• 读写文件、查看系统状态\n\n【无论是否 Root 均适用】匹配码一旦泄露，AI 可读取本机全部可访问数据。\n\n【Root 完全调试额外风险】若再开启 Root 选项，AI 可通过 su 修改系统分区、刷写文件、执行任意命令，可能导致变砖、黑屏、数据永久丢失，且无法恢复。\n\n此为极高危调试功能，用毕请立即关闭。继续即表示您完全了解风险并自行承担一切后果（含变砖）。</string>
-    <string name="zt_ai_debug_notification_title">外部 AI 调试</string>
-    <string name="zt_ai_debug_notification_text">AI 调试接口运行中，端口 19998</string>
-    <string name="zt_ai_debug_match_code_label">匹配码</string>
-    <string name="zt_ai_debug_match_code_hidden">•••••••</string>
-    <string name="zt_ai_debug_match_code_warning">【极高危】匹配码可让 AI 完全控制本机全部数据（含短信/照片/文件）。Root 模式下 AI 还可变砖、黑屏。切勿提供给不信任的人。</string>
-    <string name="zt_ai_debug_match_code_reveal">显示匹配码</string>
-    <string name="zt_ai_debug_match_code_dialog_title">极高危 — 匹配码</string>
-    <string name="zt_ai_debug_match_code_dialog_message">极高危：无论是否 Root，匹配码都会让 AI 完全控制手机可访问的一切数据。\n\n若已开启 Root 完全调试，AI 还可执行 su 命令、修改系统、导致变砖或黑屏且无法恢复。\n\n请勿在不知用途时将匹配码交给任何人。\n\n确定要显示匹配码吗？</string>
-    <string name="zt_ai_debug_port_note">默认端口：19998（局域网访问，所有请求须带 ?code=匹配码）</string>
-    <string name="zt_ai_debug_root_title">Root 完全调试</string>
-    <string name="zt_ai_debug_root_summary">su/ADB/系统级控制/UI自动化（仅 Root 机，极高危）</string>
-    <string name="zt_ai_debug_root_disclaimer_title">Root 完全调试 — 致命风险</string>
-    <string name="zt_ai_debug_root_disclaimer_message">开启后，AI 可通过 su 获得与 Root 用户相同的权限：\n\n• 执行任意系统命令（含 rm/dd 等）\n• 修改 /system、/data 等系统分区\n• UI 自动化（点击/滑动/输入）\n• 开启网络 ADB、读写任意路径\n• 查看 dumpsys/dmesg/进程/包列表\n\n可能导致：永久变砖、黑屏无法开机、数据全部丢失、账号泄露。\n\n此操作不可逆。仅建议在专用 Root 调试机上使用，用毕必须关闭。\n\n您确认承担一切后果（含变砖）？</string>
-    <string name="zt_ai_debug_root_warning">【Root 警告】开启后 AI 拥有 Root 级完全控制权，可能导致变砖、黑屏、数据永久丢失。无论是否 Root，上方匹配码本身已是极高危。</string>
-    <string name="settings_keyword_summary">设置双击终端功能,选择 自定义命令、键盘、禁用</string>
-    <string name="settings_keyword_summary1">当前选择</string>
-    <string name="settings_keyword_item1">键盘</string>
-    <string name="settings_keyword_item2">禁用</string>
-    <string name="settings_keyword_item3">自定义命令</string>
-    <string name="save_path">设置存储路径 (测试版本)</string>
-    <string name="save_path_summary">
-        设置当前存储路径目录\n
-        内部存储/xinhao\n
-        内部存储/Android/data/com.termux/files/xinhao\n
-        请注意 Android data 目录复制文件需要一点相关知识</string>
-    <string name="backup_success_android">备份完成，备份文件在->内部存储/Android/data/com.termux/files/xinhao/data/|目录下</string>
-    <string name="add_containers">新增容器</string>
-    <string name="item_containers_path">路径:</string>
-    <string name="item_containers_toast_create_system_error">系统创建失败!请重试</string>
-    <string name="item_containers_dialog_input_linux_name">"请输入新的linux名称"</string>
-    <string name="item_containers_toast_def_system">"默认系统"</string>
-    <string name="item_containers_error_system">"损坏的系统"</string>
-    <string name="item_containers_toast_not_config">"你当前的默认系统没有配置文件"</string>
-    <string name="item_containers_toast_config_error">"配置文件已损坏，请重新进入创建,多点几次,直到进入为止"</string>
-    <string name="item_containers_toast_settings_ok_reboot">"设置已生效!请重启APP"</string>
-    <string name="item_containers_dialog_no_need">"不需要"</string>
-    <string name="item_containers_dialog_need">"需要"</string>
-    <string name="item_containers_dialog_manual_exit">"请手动退出APP"</string>
-    <string name="item_containers_dialog_msg">"切换成功!\n重启APP生效\n需要重启吗\n其实点击需要没用\n自己手动重启\n进入任务管理器,一般点击 '□'这个建，然后滑退APP "</string>
-    <string name="item_containers_dialog_read_failed">"读取失败!"</string>
-    <string name="item_containers_toast_ignoring_operations">"操作忽略"</string>
-    <string name="item_containers_dialog_don_t_delete_it">"别删除"</string>
-    <string name="item_containers_dialog_i_don_t_delete_it">我不删除</string>
-    <string name="item_containers_dialog_deleted_successfully">"删除成功!"</string>
-    <string name="item_containers_toast_clearing_system_residues">"正在清除系统残留文件"</string>
-    <string name="item_containers_dialog_delete_system_loading_msg">"时间长短，由您的系统大小决定的"</string>
-    <string name="item_containers_dialog_delete_system_loading_title">正在删除,请耐心等待...</string>
-    <string name="item_containers_toast_not_delete_main_system">你不能删除主系统</string>
-    <string name="item_containers_dialog_i_m_sure">"我确定"</string>
-    <string name="item_containers_dialog_delete_system_msg">"请确保你的sd卡权限未被获取!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n你确定要删除掉你的系统吗?\n请慎重,删除后你的数据不可恢复!!!!!!"</string>
-    <string name="item_containers_dialog_delete_system_title">你确定要删除吗</string>
-    <string name="item_containers_main_name">主容器</string>
-    <string name="item_containers_time">创建时间:</string>
-    <string name="install_empty_android">Android/data/files/xinhao/module,没有模块包</string>
-    <string name="menu_package_card_title">Menu 菜单</string>
-    <string name="menu_package_current_menu">当前菜单：%1$s</string>
-    <string name="menu_package_network_update">默认菜单</string>
-    <string name="menu_package_update">更新</string>
-    <string name="menu_package_install">安装菜单包</string>
-    <string name="menu_package_install_time_prefix">安装时间：</string>
-    <string name="menu_package_backup">备份</string>
-    <string name="menu_package_delete">删除</string>
-    <string name="menu_package_delete_confirm">确定删除菜单包「%1$s」吗？</string>
-    <string name="menu_package_delete_confirm_active">确定删除当前菜单「%1$s」吗？删除后将切换为程序菜单。</string>
-    <string name="menu_package_delete_success">菜单包已删除</string>
-    <string name="menu_package_delete_fail">删除失败</string>
-    <string name="menu_package_network_update_confirm">如果继续更新会覆盖掉当前的菜单选项，确认继续吗？</string>
-    <string name="menu_package_backup_name_title">备份菜单</string>
-    <string name="menu_package_backup_name_hint">请输入备份名称</string>
-    <string name="menu_package_backup_name_empty">备份名称不能为空</string>
-    <string name="menu_package_install_pick_title">选择菜单包</string>
-    <string name="menu_package_install_path_hint">zip 包目录：%1$s</string>
-    <string name="menu_package_install_empty">%1$s 目录下没有 zip 菜单包\n（安装后将解压到应用内部 menu）</string>
-    <string name="menu_package_default_label">默认菜单</string>
-    <string name="menu_package_program_label">程序菜单</string>
-    <string name="menu_package_ai_created_label">AI创建</string>
-    <string name="menu_package_network_label">网络菜单</string>
-    <string name="menu_package_local_label">本地菜单</string>
-    <string name="left_menu_settings_title">左侧菜单设置</string>
-    <string name="left_menu_settings_summary">配置左侧菜单更新源等选项</string>
-    <string name="menu_update_source_settings_title">菜单更新源</string>
-    <string name="menu_update_source_settings_summary">选择或添加菜单 zip 下载地址</string>
-    <string name="menu_update_source_default">默认源</string>
-    <string name="menu_update_source_custom">自定义源</string>
-    <string name="menu_update_source_add">添加源</string>
-    <string name="menu_update_source_input_title">请输入菜单地址</string>
-    <string name="menu_update_source_input_hint">https://example.com/menu.zip</string>
-    <string name="menu_update_source_input_empty">菜单地址不能为空</string>
-    <string name="menu_update_source_input_duplicate">该地址已存在</string>
-    <string name="menu_package_network_success">菜单已从网络更新</string>
-    <string name="menu_package_network_update_fail">菜单更新失败，已保持当前菜单</string>
-    <string name="menu_package_network_fallback">网络获取失败，已使用内置默认菜单</string>
-    <string name="menu_package_apply_success">菜单已切换</string>
-    <string name="menu_package_apply_fail">菜单切换失败</string>
-    <string name="menu_package_install_success">菜单包安装成功</string>
-    <string name="menu_package_install_fail">菜单包安装失败</string>
-    <string name="menu_package_backup_success">已备份到 %1$s</string>
-    <string name="menu_package_backup_fail">备份失败</string>
-    <string name="menu_package_install_pick">请选择菜单 zip 包</string>
-
     <string name="zt_agent_ai_settings_title">配置智能体AI</string>
     <string name="zt_agent_ai_settings_summary">采用新的交互方式，可完全控制终端、读取终端、控制和读取ZeroTermux的所有设置</string>
     <string name="zt_agent_ai_provider_title">选择 AI 服务商</string>
@@ -1690,6 +1688,8 @@
     <string name="zt_agent_ai_system_prompt_hint">留空则使用默认 ZeroTermux 智能体提示词</string>
     <string name="zt_agent_ai_skills_title">Skills（技能包）</string>
     <string name="zt_agent_ai_skills_summary">统一存放在 ~/.skill/&lt;名称&gt;/SKILL.md。创建后可在列表中编辑与开关启用。</string>
+    <string name="zt_agent_ai_skills_entry_summary">管理本地 Skills：启用、编辑、删除或新建技能包</string>
+    <string name="zt_agent_ai_skills_create_entry_summary">输入名称后创建 ~/.skill 目录下的 SKILL.md</string>
     <string name="zt_agent_ai_skills_path_format">目录：%1$s/&lt;skill-id&gt;/SKILL.md</string>
     <string name="zt_agent_ai_skills_empty">暂无其他 Skill，内置「%1$s」可供对照；也可点击下方创建</string>
     <string name="zt_agent_ai_skills_create_new">创建新的 Skill</string>
@@ -1734,7 +1734,7 @@
     <string name="zt_agent_ai_tool_rounds_definition">1 轮 = AI 读终端 → 理解 → 再发下一条命令</string>
     <string name="zt_agent_ai_tool_rounds_summary">上限为单次对话最多可自动循环的轮数，用于节省 Token，默认 40</string>
     <string name="zt_agent_ai_tool_rounds_warning">无人看管时任务可能一直跑；上限越大，浪费 Token 越多，请按需选低档位</string>
-    <string name="zt_agent_ai_zt_control_system_prompt">你可通过 ZeroTermux 配置工具全面控制 App（无需逐项问用户权限，但危险操作须先确认）：\n1. list_zerotermux_capabilities — 列举全部设置键、美化项、openpage 页面、zt 命令；不确定时先调用。\n2. get_zerotermux_config / set_zerotermux_config — 读写 ZT 设置与美化（含内部/外部通道 isInternalPassage、工作站、AI 开关等）。\n3. open_zerotermux_page — 打开设置页（zt_settings、zero_termux_settings、agent_ai_settings 等）。\n4. run_zerotermux_zt — 优先用此执行 zt 命令（Socket，不依赖终端）：help、toast、openleft、openpage、reboot、x11status 等。\n5. run_zt_command — 备选，经终端执行 zt。\n6. get_zerotermux_left_menu / update_zerotermux_left_menu — 创建菜单前必须先 get 读取 xml_rules 与 builtin_menu_catalog；click 必须用 java:/ztShell:/jumpUrl: 等前缀。\n7. list_zerotermux_pkg_sources / switch_zerotermux_pkg_source — 与左侧「切换源」相同；默认清华源(tsinghua)；先列举方案让用户选，用户明确同意后再 switch 且 user_confirmed=true；会覆盖 sources.list 并 apt update。\n美化歧义：美化里「文字对比度」(text_shadow_enabled) 实际会让终端文字发糊——用户说「文字模糊/字糊/看不清字」应 set text_shadow_enabled=false；用户说「背景模糊/壁纸糊」才调整 blur_enabled/blur_radius。\n终端特效：用户说「雪花/下雪/snowflake/snow」→ set_zerotermux_config key=isSnowflakeShow value=true|false；「粒子/粒子动画/下雨/particle/rain」→ key=isRainShow；二者互斥，用 set 控制勿改菜单 XML。可 list category=beautify 或 beautify_ui 查看键名。\n内部通道切换 isInternalPassage 后通常需 reboot；reboot/重启 App 必须用户明确同意。根据工具返回 JSON 判断成功与否，禁止编造。</string>
+    <string name="zt_agent_ai_zt_control_system_prompt">你可通过 ZeroTermux 配置工具全面控制 App（无需逐项问用户权限，但危险操作须先确认）：\n1. list_zerotermux_capabilities — 列举全部设置键、美化项、openpage 页面、zt 命令；不确定时先调用。\n2. get_zerotermux_config / set_zerotermux_config — 读写 ZT 设置与美化（含内部/外部通道 isInternalPassage、工作站、AI 开关等）。\n3. open_zerotermux_page — 打开设置页（zt_settings、zero_termux_settings、agent_ai_settings 等）。\n4. run_zerotermux_zt — 优先用此执行 zt 命令（Socket，不依赖终端）：help、toast、openleft、openpage、reboot、x11status 等。\n5. run_zt_command — 备选，经终端执行 zt。\n6. get_zerotermux_left_menu / update_zerotermux_left_menu — 创建菜单前必须先 get 读取 xml_rules 与 builtin_menu_catalog；click 必须用 java:/ztShell:/jumpUrl: 等前缀。\n7. list_zerotermux_pkg_sources / switch_zerotermux_pkg_source — 与左侧「切换源」相同；默认清华源(tsinghua)；先列举方案让用户选，用户明确同意后再 switch 且 user_confirmed=true；会覆盖 sources.list 并 apt update。\n美化歧义：美化里「文字对比度」(text_shadow_enabled) 实际会让终端文字发糊——用户说「文字模糊/字糊/看不清字」应 set text_shadow_enabled=false；用户说「背景模糊/壁纸糊」才调整 blur_enabled/blur_radius。\n终端特效：用户说「雪花/下雪」→ set_zerotermux_config key=isSnowflakeShow value=true|false；「粒子/粒子动画/下雨」→ key=isRainShow；二者互斥，用 set 控制勿改菜单 XML。可 list category=beautify 或 beautify_ui 查看键名。\n内部通道切换 isInternalPassage 后通常需 reboot；reboot/重启 App 必须用户明确同意。根据工具返回 JSON 判断成功与否，禁止编造。</string>
     <string name="zt_agent_ai_zt_requires_terminal">ZeroTermux 控制需通过终端执行 zt 命令，请同时开启「允许控制终端」（路径：ZeroTermux 设置 → 配置智能体AI）</string>
     <string name="zt_agent_ai_tool_run_command">正在执行 ZT 命令…</string>
     <string name="zt_agent_ai_tool_disabled">该工具未开启，请在智能体 AI 配置中打开相应权限</string>
@@ -1782,7 +1782,7 @@
     <string name="zt_editor_ai_hint">让 AI 帮你写代码…</string>
     <string name="zt_editor_ai_unavailable">编辑器不可用（可能处于预览模式或未打开文本文件）</string>
     <string name="zt_editor_ai_terminal_unavailable">编辑器终端不可用，请先在主界面打开 Termux 终端会话</string>
-    <string name="zt_editor_ai_system_prompt">你是 ZeroTermux 代码编辑器内置 AI。你可以创建/打开多个文件，并编辑当前激活的文件；也可读写编辑器内嵌终端，用于编译、运行和排查错误。\n\n规则：\n1. 需要多个文件时：对每个文件依次 create_file（或 open_file）→ read_editor → 写入内容；不要在一个文件里写全部代码。\n2. 切换到另一文件前，先 save_current_file 保存当前文件，再 open_file 打开目标文件。\n3. 修改前先 read_editor；可用 list_open_files 查看已打开标签。\n4. 小改动用 insert_at_cursor / replace_range；整文件用 replace_all。\n5. path 可用绝对路径，或相对当前文件所在目录。\n6. 运行按钮会执行当前目录的 build.sh（不存在则自动创建）；长按运行按钮会打开 build.sh。编译/运行逻辑应写入 build.sh，便于用户和 AI 控制。\n7. 编译或运行：优先 run_build_script（等同运行按钮）；也可用 send_terminal_command 执行 ./build.sh；工具会等待 shell 提示符或确认提示（默认最长约 10 分钟）。若快照状态为「等待确认」或含 [Y/n] 等，必须用与用户相同的语言告知用户并等用户同意后再回复 y/n；禁止自动确认。\n8. 编译失败时：先 read_terminal 获取完整错误，再修改代码并重试；可用 ctrl_c 中断卡住的命令。\n9. 用与用户相同的语言说明做了什么；代码写入编辑器，回复里不要重复大段代码。\n10. 必须以工具返回的快照为准，不要编造文件内容或终端输出。\n11. 本编辑器内置 GUI 面板（底部 Dock「GUI」标签，嵌入式 VNC 连接本地 Xvfb DISPLAY=:99）。在此编译/运行带窗口程序时，禁止让用户安装 sway 或使用主界面侧栏「X11 环境」。\n12. 带窗口程序（如 Java Swing/AWT）：build.sh 会自动 ensure_java_gui；编译运行请用 run_build_script，不要用 sway 或外部 X11。\n13. GUI 程序启动后（终端出现「GUI 程序已启动」），调用 switch_editor_dock_tab tab=gui 切换到 GUI 面板，让用户看到窗口。\n14. 纯命令行编译可用 run_build_script 或 send_terminal_command ./build.sh；read_editor 快照含底部面板/GUI 状态。</string>
+    <string name="zt_editor_ai_system_prompt">你是 ZeroTermux 代码编辑器内置 AI。你可以创建/打开多个文件，并编辑当前激活的文件；也可读写编辑器内嵌终端，用于编译、运行和排查错误。\n\n规则：\n1. 需要多个文件时：对每个文件依次 create_file（或 open_file）→ read_editor → 写入内容；不要在一个文件里写全部代码。\n2. 切换到另一文件前，先 save_current_file 保存当前文件，再 open_file 打开目标文件。\n3. 修改前先 read_editor；可用 list_open_files 查看已打开标签。\n4. 小改动用 insert_at_cursor / replace_range；整文件用 replace_all。\n5. path 可用绝对路径，或相对当前文件所在目录。\n6. 运行按钮会执行当前目录的 build.sh（不存在则自动创建）；长按运行按钮会打开 build.sh。编译/运行逻辑应写入 build.sh，便于用户和 AI 控制。\n7. 编译或运行：优先 run_build_script（等同运行按钮）；也可用 send_terminal_command 执行 ./build.sh；工具会等待 shell 提示符或确认提示（默认最长约 10 分钟）。若快照状态为「等待确认」或含 [Y/n] 等，必须用中文告知用户并等用户同意后再回复 y/n；禁止自动确认。\n8. 编译失败时：先 read_terminal 获取完整错误，再修改代码并重试；可用 ctrl_c 中断卡住的命令。\n9. 用简洁中文说明做了什么；代码写入编辑器，回复里不要重复大段代码。\n10. 必须以工具返回的快照为准，不要编造文件内容或终端输出。\n11. 本编辑器内置 GUI 面板（底部 Dock「GUI」标签，嵌入式 VNC 连接本地 Xvfb DISPLAY=:99）。在此编译/运行带窗口程序时，禁止让用户安装 sway 或使用主界面侧栏「X11 环境」。\n12. 带窗口程序（如 Java Swing/AWT）：build.sh 会自动 ensure_java_gui；编译运行请用 run_build_script，不要用 sway 或外部 X11。\n13. GUI 程序启动后（终端出现「GUI 程序已启动」），调用 switch_editor_dock_tab tab=gui 切换到 GUI 面板，让用户看到窗口。\n14. 纯命令行编译可用 run_build_script 或 send_terminal_command ./build.sh；read_editor 快照含底部面板/GUI 状态。</string>
     <string name="zt_agent_ai_gui_compile_prompt">【带窗口/GUI 程序编译（仅在此类需求时适用）】\n当用户要编译或运行带图形界面的程序（如 Java Swing/AWT、需要 DISPLAY 的 GUI 应用）时：\n1. 不要建议安装 sway、主界面侧栏「X11 环境」或在外部 X11 窗口中运行。\n2. 应使用 open_zerotermux_page：page_id=\"editor\"，extras 传 {\"edit_path\":\"项目目录或源文件绝对路径\"}，跳转到代码编辑器。\n3. 告知用户：编辑器底部有内置「GUI」面板（嵌入式 VNC + Xvfb DISPLAY=:99），与 Run 按钮/编辑器 AI 的 run_build_script 配套，可编译并显示窗口。\n4. 跳转后简要说明：可在编辑器点击运行，或使用编辑器 AI 继续完成编译与调试。\n5. 若无 ZeroTermux 控制权限，请说明需开启「允许控制 ZeroTermux」，或让用户手动从侧栏打开项目进入编辑器。\n其他普通终端/配置任务仍按原有方式处理，不要误跳到编辑器。</string>
     <string name="zt_editor_ai_tool_run_build">正在运行 build.sh…</string>
     <string name="zt_editor_ai_tool_switch_dock">正在切换面板…</string>
@@ -1821,153 +1821,118 @@
     <string name="zt_editor_ai_build_finished_no_terminal">已启动编译，但终端不可用，无法等待完成。</string>
     <string name="zt_editor_ai_system_prompt_edit_rules">13. 修改代码时只能编辑当前已打开的文件，禁止用 open_file 切换到其他文件后再写入；需要新文件时用 create_file。\n14. insert_at_cursor / replace_range / replace_all 会弹出确认框，用户拒绝后不要重复相同修改。\n15. run_build_script 执行并等待编译结束后会自动结束对话，无需继续调用工具。</string>
 
-    <string name="code_editor_loading">Loading...(如果为打开目录，则忽略此loading...直接开始操作即可，无需等待)</string>
+    <string name="back_menu_visible">左/右栏目显示背景图片</string>
+    <string name="back_menu_visible_summary">你必须确保路径:\n~Ztinfo/menuBack/\n路径下有 left.png 以及 right.png</string>
+    <string name="text_shadow_enable">启用文字对比度</string>
 
-    <!-- synced from values/strings.xml -->
-    <string name="zt_nav_page_opened">已打开：%1$s</string>
-    <string name="zt_nav_page_termux">主终端</string>
-    <string name="zt_nav_page_zt_settings">ZeroTermux 设置</string>
-    <string name="zt_nav_page_zero_termux_settings">ZeroTermux 功能设置</string>
-    <string name="zt_nav_page_left_menu_settings">左侧菜单设置</string>
-    <string name="zt_nav_page_menu_update_source">菜单更新源</string>
-    <string name="zt_nav_page_ai_settings">AI 设置</string>
-    <string name="zt_nav_page_agent_ai_settings">智能体 AI 配置</string>
-    <string name="zt_nav_page_deepseek_settings">DeepSeek 设置</string>
-    <string name="zt_nav_page_deepseek_key">DeepSeek Key</string>
-    <string name="zt_nav_page_llm_settings">自定义 LLM 设置</string>
-    <string name="zt_nav_page_termux_settings">Termux 原生设置</string>
-    <string name="zt_nav_page_zt_about">关于 ZeroTermux</string>
-    <string name="zt_nav_page_zt_install">安装 Termux 软件</string>
-    <string name="zt_nav_page_zt_online_server">在线服务器</string>
-    <string name="zt_nav_page_timer">定时任务</string>
-    <string name="zt_nav_page_container_settings">容器设置</string>
-    <string name="zt_nav_page_workstation_settings">ZT 电脑工作站</string>
-    <string name="zt_nav_page_developer">开发者选项</string>
-    <string name="zt_nav_page_guide">开机向导（协议页）</string>
-    <string name="zt_nav_page_guide_usage">开机向导（使用习惯）</string>
-    <string name="zt_nav_page_save_path">开机向导（创建文件夹）</string>
-    <string name="zt_nav_page_backup">备份恢复</string>
-    <string name="zt_nav_page_font">字体设置</string>
-    <string name="zt_nav_page_switch_system">切换系统</string>
-    <string name="zt_nav_page_scrcpy">Scrcpy 投屏</string>
-    <string name="zt_nav_page_qemu_run">QEMU 运行窗口</string>
-    <string name="zt_nav_page_webview">内置浏览器</string>
-    <string name="zt_nav_page_help">帮助</string>
-    <string name="zt_nav_page_zt_command_socket">ZT 命令调试</string>
-    <string name="zt_nav_page_editor">文本编辑器</string>
-    <string name="zt_agent_ai_locale_reply_prompt">重要：请始终使用与用户相同的语言回复。用户用英文则用英文，用中文则用中文。工具返回的 JSON 仅作状态参考，向用户说明时须用用户语言概括，勿逐字复述界面文案。</string>
-    <string name="cancel">取消</string>
-    <string name="command_gone">隐藏</string>
-    <string name="confirm">确认</string>
-    <string name="content_ssh_name">SSH</string>
-    <string name="deepseek_input_key_error_info_403">可能的问题:\n\n返回403，未知错误</string>
-    <string name="editor_build_script_long_press">长按运行按钮可编辑 build.sh</string>
-    <string name="editor_build_script_header_note">可手动编辑或由 AI 修改</string>
-    <string name="editor_build_script_add_commands">请在 build.sh 中添加编译/运行命令</string>
-    <string name="editor_build_script_edit_for_file">请编辑 build.sh 以构建/运行 %1$s</string>
-    <string name="editor_build_script_current_file">当前文件: %1$s</string>
-    <string name="editor_build_script_install_java">[ZeroTermux Editor] 正在安装 OpenJDK…</string>
-    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] OpenJDK 安装失败</string>
-    <string name="editor_build_script_install_c">[ZeroTermux Editor] 正在安装 C 编译器 (clang)…</string>
-    <string name="editor_build_script_install_c_failed">[ZeroTermux Editor] C 编译器安装失败</string>
-    <string name="editor_build_script_install_python">[ZeroTermux Editor] 正在安装 Python…</string>
-    <string name="editor_build_script_install_python_failed">[ZeroTermux Editor] Python 安装失败</string>
-    <string name="editor_build_script_install_php">[ZeroTermux Editor] 正在安装 PHP 与 Composer…</string>
-    <string name="editor_build_script_install_php_failed">[ZeroTermux Editor] PHP 安装失败</string>
-    <string name="editor_build_script_install_node">[ZeroTermux Editor] 正在安装 Node.js 与 npm…</string>
-    <string name="editor_build_script_install_node_failed">[ZeroTermux Editor] Node.js 安装失败</string>
-    <string name="editor_build_script_running">[ZeroTermux Editor] 正在运行 %1$s</string>
-    <string name="editor_build_script_install_gui_fonts">[ZeroTermux Editor] 正在安装 GUI 字体…</string>
-    <string name="editor_build_script_display_not_ready">[ZeroTermux Editor] DISPLAY 未就绪，请先点击运行或打开 GUI 面板</string>
-    <string name="editor_build_script_gui_started">[ZeroTermux Editor] GUI 程序已启动</string>
-    <string name="editor_build_script_gui_view_hint">[ZeroTermux Editor] 提示：如为带窗口的代码，请点击右上角 GUI 按钮查看画面</string>
-    <string name="editor_build_script_gui_set_visible_hint">[ZeroTermux Editor] 提示：main() 中需调用 new Hello().setVisible(true) 才能显示窗口</string>
-    <string name="editor_sidebar_open_terminal">打开终端</string>
-    <string name="editor_terminal_ctrl_c">发送 Ctrl+C 中断</string>
-    <string name="editor_x11_button">GUI</string>
-    <string name="editor_dock_hide">隐藏面板</string>
-    <string name="editor_x11_connect">连接</string>
-    <string name="editor_x11_display_env">DISPLAY</string>
-    <string name="editor_x11_display_set">已设置 DISPLAY=:99</string>
-    <string name="editor_x11_env_missing">GUI 环境未就绪，点击重试安装</string>
-    <string name="editor_x11_hide">隐藏 GUI</string>
-    <string name="editor_x11_init_failed">GUI 窗口初始化失败</string>
-    <string name="editor_x11_installing_env">正在安装 GUI 环境（Xvfb、ImageMagick、xdotool），请稍候…</string>
-    <string name="editor_x11_starting_env">正在启动内置 GUI 服务…</string>
-    <string name="editor_x11_start_failed">GUI 启动失败，点击重试</string>
-    <string name="editor_x11_retry">重试</string>
-    <string name="editor_x11_install_repo">[ZeroTermux Editor] 安装 x11-repo…</string>
-    <string name="editor_x11_install_packages">[ZeroTermux Editor] 安装 xorg-server-xvfb scrot xdotool…</string>
-    <string name="editor_x11_status_starting">GUI 启动中</string>
-    <string name="editor_x11_status_installing">GUI 环境安装中</string>
-    <string name="editor_x11_status_connecting">GUI 连接中</string>
-    <string name="editor_vnc_install_repo">正在安装 x11-repo…</string>
-    <string name="editor_vnc_install_packages">正在安装 Xvfb 与 x11vnc…</string>
-    <string name="editor_vnc_installing_env">正在安装 GUI/VNC 环境（x11-repo、Xvfb、x11vnc），请稍候…</string>
-    <string name="editor_vnc_starting_env">正在启动 VNC 服务，请稍候…</string>
-    <string name="editor_vnc_env_missing">缺少 X11/VNC 组件。打开 GUI 标签将自动安装；也可点击重试。</string>
-    <string name="editor_vnc_start_failed">VNC 调试环境启动失败。请确认终端可执行 pkg install，然后点击重试。</string>
-    <string name="editor_vnc_retry">重试</string>
-    <string name="editor_vnc_init_failed">VNC 窗口初始化失败</string>
-    <string name="editor_vnc_status_connected">VNC 已连接</string>
-    <string name="editor_vnc_status_connecting">VNC 连接中…</string>
-    <string name="editor_vnc_status_installing">正在安装环境…</string>
-    <string name="editor_vnc_status_starting">正在启动 VNC…</string>
-    <string name="editor_vnc_status_disconnected">VNC 未连接</string>
-    <string name="editor_x11_internal_required">正在准备 GUI 环境，请稍候…</string>
-    <string name="editor_x11_setup_open_settings">重试</string>
-    <string name="editor_x11_maximize">最大化 X11</string>
-    <string name="editor_x11_restore">还原 X11</string>
-    <string name="editor_x11_status_connected">GUI 已连接</string>
-    <string name="editor_x11_status_disconnected">GUI 未连接</string>
-    <string name="error_allow_external_apps_ungranted">%1$s requires `allow-external-apps`
-            property to be set to `true` in `%2$s` file.</string>
-    <string name="zt_ai_agent_not_configured">请先在 ZeroTermux 设置 → 配置智能体AI 中填写 API Key 与模型。</string>
-    <string name="zt_ai_agent_panel_context_label">来自终端选中：</string>
-    <string name="zt_ai_agent_panel_empty">欢迎使用ZeroTermux智能体\n
-        注意：需要配置key\n
+    <string name="guide_zerotermux_settings_agreement">ZeroTermux 使用协议</string>
+    <string name="guide_zerotermux_previous">返回</string>
+    <string name="guide_zerotermux_next">继续</string>
+    <string name="guide_zerotermux_usage_habits">使用习惯</string>
+    <string name="guide_zerotermux_usage_habits_summary">选择你的使用习惯:\n
+         \n
+        Termux:\n
+        1.双击滑动禁止显示工具箱\n
+        2.音量上下键不弹出左右菜单栏\n
         \n
-        你可以说: \n\"给我安装ubuntu系统\"\n\"当前终端报错\"\n\"你帮我修复下\"\n\n
-        也可以说: \n\"把字体改成红色\"\n\"背景改成白色\"\n\"切换一个容器\"\n
+        ZeroTermux: \n
+        1.双击滑动弹出工具箱(可能与放大缩小字体发生冲突)\n
+        2.音量上下键则是弹出左右菜单栏
+        \n
+        \n
+        如果后续需要更改使用习惯，可在主页面的左侧栏进入设置来调整
     </string>
-    <string name="zt_ai_agent_panel_hint">在此与 AI 对话…</string>
-    <string name="zt_ai_agent_panel_open_menu">打开右侧菜单</string>
-    <string name="zt_ai_agent_panel_send">发送</string>
-    <string name="zt_ai_agent_panel_summary">将右侧面板调整唤醒为AI智能体，可控制终端自动下发命令</string>
-    <string name="zt_ai_agent_panel_title">打开新版本智能体</string>
-    <string name="zt_ai_agent_panel_title_bar">AI 智能体</string>
-    <string name="zt_ai_agent_running_banner">AI 智能体正在运行…</string>
-    <string name="zt_ai_agent_stop">打断</string>
-    <string name="zt_ai_agent_stopped">（已打断）</string>
-    <string name="zt_ai_agent_thinking">思考中…</string>
-    <string name="zt_workstation">ZT电脑工作站</string>
-    <string name="zt_workstation_auto_start">开启APP自动启动</string>
-    <string name="zt_workstation_auto_start_risk">高危：启动 APP 时自动运行以下已选中的子功能开关</string>
-    <string name="zt_workstation_camera">允许使用摄像头</string>
-    <string name="zt_workstation_camera_risk">高风险：打开之后可无感知查看你的摄像头。如造成隐私泄露，需使用者自行承担</string>
-    <string name="zt_workstation_confirm_enable">确认开启</string>
-    <string name="zt_workstation_disclaimer_message">此页面均为高危风险，请仔细阅读免责声明。\n\n点击「确认」即表示同意，「取消」即表示拒绝。\n\n本页面内容强烈建议你在具备自主管控意识、能明白每一个开关含义后再操作。若不明白，请退出，不要打开。\n\n若本页面对你造成隐私泄露、文件删除、文件复制、文件转发等后果，本应用及作者不承担任何法律责任。你必须非常明确自己在做什么，并在充分理解后同意下一步。</string>
-    <string name="zt_workstation_disclaimer_title">高危风险免责声明</string>
-    <string name="zt_workstation_enter">进入设置</string>
-    <string name="zt_workstation_files">允许使用文件夹</string>
-    <string name="zt_workstation_files_risk">高风险：完全接管你的所有文件，包括删除、复制到其他设备</string>
-    <string name="zt_workstation_master">工作站总开关</string>
-    <string name="zt_workstation_master_note">关闭后 Web 工作站服务停止，子功能开关仅作预设</string>
-    <string name="zt_workstation_note">可在网页端打开工作站，方便在电脑或远程当中控制当前程序(19999端口)。各子功能开启时将分别申请所需权限</string>
-    <string name="zt_workstation_notification_text">Web 工作站运行中，端口 19999</string>
-    <string name="zt_workstation_notification_title">ZT电脑工作站</string>
-    <string name="zt_workstation_permission_denied">需要相应权限才能开启此功能</string>
-    <string name="zt_workstation_permission_denied_camera">需要摄像头权限才能开启摄像头功能</string>
-    <string name="zt_workstation_permission_denied_files">需要存储读写权限才能开启文件夹功能</string>
-    <string name="zt_workstation_permission_denied_phone_sms">需要短信、电话、通讯录权限才能开启短信/电话功能</string>
-    <string name="zt_workstation_phone_sms">允许使用短信/电话</string>
-    <string name="zt_workstation_phone_sms_risk">高风险：可能泄露你的通讯录以及短信</string>
-    <string name="zt_workstation_settings_title">ZT电脑工作站</string>
-    <string name="zt_workstation_status_off">未开启</string>
-    <string name="zt_workstation_status_on">已开启</string>
-    <string name="zt_workstation_terminal">允许使用终端</string>
-    <string name="zt_workstation_terminal_risk">高风险：谨慎操作。打开后网页端可直接操控你的终端，并完全接管文件管理，包括删除、复制到其他设备</string>
-    <string name="zt_workstation_web_blocked">该功能未在手机端打开开关，请在 ZeroTermux 设置 → ZT电脑工作站 中开启对应权限后再使用。</string>
+    <string name="guide_zerotermux_create_folder">创建文件夹</string>
+    <string name="guide_zerotermux_create_folder_summary"> ZeroTermux 需要在你的内部存储创建以下文件夹\n\n
+        如果看不懂可直接点击 “继续” \n\n
+        注意：\n
+        当前不支持的数据页面:\n
+        1.Windows模拟\n
+        1.1 如果想使用windows模拟相关的只能在SD卡创建 内部存储/xinhao/windows 文件夹\n
+        1.2 如果不想创建相关的文件夹到内部存储，你可以拒绝使用此模块功能(左侧主菜单 -> QEMU -> Zero/UTermux 模拟)\n
+        2.模块安装\n
+        2.1 如果想使用模块相关的只能在SD卡创建 内部存储/xinhao/module 文件夹\n
+        2.2 如果不想创建相关的文件夹到内部存储，你可以拒绝使用此模块功能(左侧主菜单 -> 模块安装)\n
+        \n\n
+        建议：一般情况下请放到 内部存储，如果放到 Android/data 目录下卸载应用之后所有保存的数据包以及其他所有xinhao文件夹下的数据都会被清空请谨慎选择\n\n
+        注意：设置 内部存储/Android/data 下可能会有未知问题，如有遇到请在GITHUB上反馈\n
+        Android规范(/内部存储/Android/data/com.termux/files/xinhao/)\n
+        简单易用(/内部存储/xinhao)\n\n
+        目录说明 data(备份包)、apk(临时APK)、windows(qemu目录)、
+        command(命令目录)、font(字体目录)、iso(镜像目录)、mysql(mysql临时文件)
+        online_system(离线termux包)、qemu(qemu目录)、server(server目录)、share(分享目录)、web_config(web临时目录)\n\n
+        如果后期需要更改目录，可在 ZeroTermux 设置当中重新修改, 需注意：两个目录下的数据是分开显示的
+    </string>
+    <string name="guide_zerotermux_create_sdcard">内部存储</string>
+    <string name="guide_zerotermux_create_android">内部存储/Android/data</string>
+    <string name="guide_zerotermux_create_toast_ok">已成功创建</string>
+    <string name="guide_zerotermux_create_toast_no">未创建成功,请检查你的权限情况</string>
+    <string name="guide_zerotermux_create_toast_created">当前功能在此版本不可用,等下个版本测试上线</string>
+    <string name="install_zerotermux_os_title">安装OS</string>
+    <string name="install_zerotermux_os_summary">ZeroTermux 正在安装基础环境,请稍等…</string>
+    <string name="loading_zerotermux">正在载入 ZeroTermux, 请稍后…</string>
+    <string name="settings_keyword">设置双击功能</string>
+    <string name="zt_ai_debug_title">启用外部AI调用ZeroTermux</string>
+    <string name="zt_ai_debug_summary">使用外部AI排查ZeroTermux(极高危) 终端/日志/截屏/自动化/系统状态；Root机可完全控制</string>
+    <string name="zt_ai_debug_disclaimer_title">外部 AI 调试 — 极高危</string>
+    <string name="zt_ai_debug_disclaimer_message">开启后，同一局域网内的电脑/AI 可通过 19998 端口完全控制本机：\n\n• 读取并执行 Termux 终端命令\n• 读取 logcat / 系统日志\n• 截取屏幕、UI 自动化点击滑动\n• 读取短信、联系人、电话/SIM 信息\n• 读写文件、查看系统状态\n\n【无论是否 Root 均适用】匹配码一旦泄露，AI 可读取本机全部可访问数据。\n\n【Root 完全调试额外风险】若再开启 Root 选项，AI 可通过 su 修改系统分区、刷写文件、执行任意命令，可能导致变砖、黑屏、数据永久丢失，且无法恢复。\n\n此为极高危调试功能，用毕请立即关闭。继续即表示您完全了解风险并自行承担一切后果（含变砖）。</string>
+    <string name="zt_ai_debug_notification_title">外部 AI 调试</string>
+    <string name="zt_ai_debug_notification_text">AI 调试接口运行中，端口 19998</string>
+    <string name="zt_ai_debug_match_code_label">匹配码</string>
+    <string name="zt_ai_debug_match_code_hidden">•••••••</string>
+    <string name="zt_ai_debug_match_code_warning">【极高危】匹配码可让 AI 完全控制本机全部数据（含短信/照片/文件）。Root 模式下 AI 还可变砖、黑屏。切勿提供给不信任的人。</string>
+    <string name="zt_ai_debug_match_code_reveal">显示匹配码</string>
+    <string name="zt_ai_debug_match_code_dialog_title">极高危 — 匹配码</string>
+    <string name="zt_ai_debug_match_code_dialog_message">极高危：无论是否 Root，匹配码都会让 AI 完全控制手机可访问的一切数据。\n\n若已开启 Root 完全调试，AI 还可执行 su 命令、修改系统、导致变砖或黑屏且无法恢复。\n\n请勿在不知用途时将匹配码交给任何人。\n\n确定要显示匹配码吗？</string>
+    <string name="zt_ai_debug_port_note">默认端口：19998（局域网访问，所有请求须带 ?code=匹配码）</string>
+    <string name="zt_ai_debug_root_title">Root 完全调试</string>
+    <string name="zt_ai_debug_root_summary">su/ADB/系统级控制/UI自动化（仅 Root 机，极高危）</string>
+    <string name="zt_ai_debug_root_disclaimer_title">Root 完全调试 — 致命风险</string>
+    <string name="zt_ai_debug_root_disclaimer_message">开启后，AI 可通过 su 获得与 Root 用户相同的权限：\n\n• 执行任意系统命令（含 rm/dd 等）\n• 修改 /system、/data 等系统分区\n• UI 自动化（点击/滑动/输入）\n• 开启网络 ADB、读写任意路径\n• 查看 dumpsys/dmesg/进程/包列表\n\n可能导致：永久变砖、黑屏无法开机、数据全部丢失、账号泄露。\n\n此操作不可逆。仅建议在专用 Root 调试机上使用，用毕必须关闭。\n\n您确认承担一切后果（含变砖）？</string>
+    <string name="zt_ai_debug_root_warning">【Root 警告】开启后 AI 拥有 Root 级完全控制权，可能导致变砖、黑屏、数据永久丢失。无论是否 Root，上方匹配码本身已是极高危。</string>
+    <string name="settings_keyword_summary">设置双击终端功能,选择 自定义命令、键盘、禁用</string>
+    <string name="settings_keyword_summary1">当前选择</string>
+    <string name="settings_keyword_item1">键盘</string>
+    <string name="settings_keyword_item2">禁用</string>
+    <string name="settings_keyword_item3">自定义命令</string>
+
+    <string name="command_gone">隐藏</string>
+    <string name="save_path">设置存储路径 (测试版本)</string>
+    <string name="save_path_summary">
+        设置当前存储路径目录\n
+        内部存储/xinhao\n
+        内部存储/Android/data/com.termux/files/xinhao\n
+        请注意 Android data 目录复制文件需要一点相关知识</string>
+    <string name="backup_success_android">备份完成，备份文件在->内部存储/Android/data/com.termux/files/xinhao/data/|目录下</string>
+    <string name="add_containers">新增容器</string>
+    <string name="item_containers_path">路径:</string>
+    <string name="item_containers_toast_create_system_error">系统创建失败!请重试</string>
+    <string name="item_containers_dialog_input_linux_name">"请输入新的linux名称"</string>
+    <string name="item_containers_toast_def_system">"默认系统"</string>
+    <string name="item_containers_error_system">"损坏的系统"</string>
+    <string name="item_containers_toast_not_config">"你当前的默认系统没有配置文件"</string>
+    <string name="item_containers_toast_config_error">"配置文件已损坏，请重新进入创建,多点几次,直到进入为止"</string>
+    <string name="item_containers_toast_settings_ok_reboot">"设置已生效!请重启APP"</string>
+    <string name="item_containers_dialog_no_need">"不需要"</string>
+    <string name="item_containers_dialog_need">"需要"</string>
+    <string name="item_containers_dialog_manual_exit">"请手动退出APP"</string>
+    <string name="item_containers_dialog_msg">"切换成功!\n重启APP生效\n需要重启吗\n其实点击需要没用\n自己手动重启\n进入任务管理器,一般点击 '□'这个建，然后滑退APP "</string>
+    <string name="item_containers_dialog_read_failed">"读取失败!"</string>
+    <string name="item_containers_toast_ignoring_operations">"操作忽略"</string>
+    <string name="item_containers_dialog_don_t_delete_it">"别删除"</string>
+    <string name="item_containers_dialog_i_don_t_delete_it">我不删除</string>
+    <string name="item_containers_dialog_deleted_successfully">"删除成功!"</string>
+    <string name="item_containers_toast_clearing_system_residues">"正在清除系统残留文件"</string>
+    <string name="item_containers_dialog_delete_system_loading_msg">"时间长短，由您的系统大小决定的"</string>
+    <string name="item_containers_dialog_delete_system_loading_title">正在删除,请耐心等待...</string>
+    <string name="item_containers_toast_not_delete_main_system">你不能删除主系统</string>
+    <string name="item_containers_dialog_i_m_sure">"我确定"</string>
+    <string name="item_containers_dialog_delete_system_msg">"请确保你的sd卡权限未被获取!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n否则很可能会清空你SD卡(内部存储)上的所有内容!\n你确定要删除掉你的系统吗?\n请慎重,删除后你的数据不可恢复!!!!!!"</string>
+    <string name="item_containers_dialog_delete_system_title">你确定要删除吗</string>
+    <string name="item_containers_main_name">主容器</string>
+    <string name="item_containers_time">创建时间:</string>
+    <string name="install_empty_android">Android/data/files/xinhao/module,没有模块包</string>
+    <string name="code_editor_loading">Loading...(如果为打开目录，则忽略此loading...，直接开始操作即可，无需等待)</string>
 
     <string name="zt_crash_history_title">历史报错</string>
     <string name="zt_crash_history_settings_summary">自动保存闪退记录，可查看详情、删除单项或全部清空；AI 调试端口 19998 也可访问</string>
@@ -1980,6 +1945,5 @@
     <string name="zt_crash_history_not_found">记录不存在或已被删除</string>
     <string name="zt_crash_history_thread">线程: %1$s · 版本: %2$s</string>
     <string name="zt_crash_history_detail_meta">时间: %1$s\n线程: %2$s\n版本: %3$s\n异常: %4$s\n消息: %5$s</string>
+
 </resources>
-
-

@@ -214,7 +214,6 @@ object ZtAiStrings {
         "isSnowflakeShow" to R.string.zt_ai_cfg_snowflake_title,
         "isRainShow" to R.string.zt_ai_cfg_rain_title,
         "isResetVolume" to R.string.zt_ai_cfg_reset_volume_title,
-        "isAiAgentPanelEnabled" to R.string.zt_ai_cfg_ai_panel_title,
         "isShowCommand" to R.string.zt_ai_cfg_show_command_title,
         "isInternalPassage" to R.string.zt_ai_cfg_internal_passage_title,
         "isCloseFoldMenu" to R.string.zt_ai_cfg_fold_menu_title,

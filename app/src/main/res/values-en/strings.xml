@@ -186,24 +186,24 @@
 
 
 
-    <string name="切换源">Source</string>
-    <string name="容器切换">ContainerSwitching</string>
-    <string name="备份恢复">Backup/restore</string>
-    <string name="发行版本">linux</string>
+    <string name="切换源">Mirrors</string>
+    <string name="容器切换">Containers</string>
+    <string name="备份恢复">Backup</string>
+    <string name="发行版本">Distro</string>
     <string name="QEMU">QEMU</string>
-    <string name="命令定义">CommandEditing</string>
+    <string name="命令定义">Commands</string>
     <string name="短信通话">SMS/Call</string>
-    <string name="打开目录">OpenDirectory</string>
-    <string name="开机启动">Startup(off)</string>
-    <string name="开机启动开">Startup(on)</string>
+    <string name="打开目录">Files</string>
+    <string name="开机启动">Boot Off</string>
+    <string name="开机启动开">Boot On</string>
     <string name="MOE">MOE</string>
-    <string name="MOE全能">MOE ALL</string>
+    <string name="MOE全能">MOE</string>
     <string name="清华源">QingHuaSource</string>
     <string name="北京源">BeiJinSource</string>
     <string name="官方源">OfficialSource</string>
     <string name="警告">warning</string>
     <string name="该操作会覆盖您的文件记录">This operation will overwrite your file records, do you want to continue?</string>
-    <string name="确定">determine</string>
+    <string name="确定">OK</string>
     <string name="无名称系统">UnnamedContainer</string>
     <string name="删除">delete</string>
     <string name="切换">Switch</string>
@@ -256,8 +256,7 @@
     <string name="确定开始">
 Make sure to start backing up your current system?</string>
     <string name="提示">prompt</string>
-    <string name="确定要恢复">
-Determine to restore and create a new container system?</string>
+    <string name="确定要恢复">Restore and create a new container?</string>
     <string name="海的QEMU">QEMU of the sea</string>
     <string name="当前为自动">Currently automatic</string>
     <string name="键盘">keyboard</string>
@@ -344,12 +343,12 @@ error</string>
         [Internal storage/xinhao/web_config/] web temporary directory \n
 
     </string>
-    <string name="版本">version</string>
-    <string name="会话窗口在右侧">Tip: The session window is on the right side\nDouble-click the command window to open the shortcut command\nLicense: Learn to communicate</string>
-    <string name="开源地址">Open source address \n thank</string>
+    <string name="版本">Version</string>
+    <string name="会话窗口在右侧">Tip: Sessions are on the right.\nDouble-tap the terminal for shortcuts.\nFor learning only.</string>
+    <string name="开源地址">GitHub</string>
     <string name="已打开开机启动命令">The boot command has been opened, restart the APP to take effect</string>
     <string name="已关闭开机启动命令">The boot command has been turned off and will take effect after restart</string>
-    <string name="悬浮窗口">Floating window</string>
+    <string name="悬浮窗口">Float</string>
     <string name="draw_overlay_permission_explanation">This app needs permission to draw overlay。</string>
     <string name="grant_permission">Obtain</string>
     <string name="initial_instruction_toast">Long press to move on the window\n\nLong press to zoom on the window, zoom the window size</string>
@@ -365,10 +364,10 @@ error</string>
     <string name="创建文件错误">Error creating file</string>
     <string name="字体设置成功">The font is set successfully</string>
     <string name="如果进入终端没有任何显示">If you enter the terminal without any display, it means that your font file is damaged, please reset the font</string>
-    <string name="字体设置">Font settings</string>
+    <string name="字体设置">Font</string>
     <string name="局域服务器">Server version</string>
     <string name="未连接">not connected</string>
-    <string name="公共仓库">Public warehouse</string>
+    <string name="公共仓库">Repo</string>
     <string name="正在连接到自定义服务器">Connecting to custom server</string>
     <string name="请输入自定义服务器IP">Please enter the custom server IP</string>
     <string name="默认地址">http://10.242.164.19</string>
@@ -381,11 +380,11 @@ error</string>
     <string name="大小">size</string>
     <string name="简介">Introduction</string>
     <string name="剩余">Remaining</string>
-    <string name="第三方服务器上的可执行文件">The executable file on the third-party server may be insecure, determine whether to install it?</string>
-    <string name="下载站">Download station</string>
+    <string name="第三方服务器上的可执行文件">Third-party executables may be unsafe. Install anyway?</string>
+    <string name="下载站">Downloads</string>
     <string name="正在连接到下载站服务器">Connecting to download station server</string>
     <string name="无法连接到下载站服务器">Unable to connect to the download station server</string>
-    <string name="正在连接">connecting</string>
+    <string name="正在连接">Connecting…</string>
     <string name="VNC">VNC</string>
     <string name="快速VNC">Fast VNC</string>
     <string name="自定VNC">Custom VNC</string>
@@ -466,24 +465,24 @@ error</string>
     <string name="无法创建1">Unable to create (internal storage/xinhao/apk) folder, please create it manually!</string>
     <string name="已开始打印APP实时delog">Started to print APP real-time log</string>
     <string name="暂未开放下载">Not yet available for download</string>
-    <string name="雪花关">Snowflake (Off)</string>
-    <string name="雪花开">Snowflakes (open)</string>
+    <string name="雪花关">Snow Off</string>
+    <string name="雪花开">Snow On</string>
     <string name="官方插件">Official plugin</string>
     <string name="TermuxApi">T…x:Api</string>
     <string name="TermuxTasker">T…x:Tasker</string>
     <string name="TermuxBoot">T…x:Boot</string>
     <string name="TermuxStyling">T…x:Styling</string>
-    <string name="全屏模式">Full screen mode</string>
+    <string name="全屏模式">Fullscreen</string>
 
-    <string name="语言切换">Language switch</string>
-    <string name="中文">中文</string>
+    <string name="语言切换">Language</string>
+    <string name="中文">Chinese</string>
     <string name="English">English</string>
     <string name="取消">Cancel</string>
     <string name="termux_x11">termux-x11</string>
 
     <string name="本机IP">Local IP</string>
 
-    <string name="Zero功能">Zero function</string>
+    <string name="Zero功能">Zero</string>
     <string name="ZeroTermux内置功能">ZeroTermux command area (long press to open author address)</string>
     <string name="内置nginx">Nginx (built-in)</string>
     <string name="Nginx开关">Nginx switch</string>
@@ -503,13 +502,13 @@ error</string>
     <string name="软件开发">SoftwareDevelopment</string>
     <string name="MyServer">MyServer</string>
     <string name="Termux_ADB">Termux-ADB</string>
-    <string name="实验功能">ExperimentalFunction</string>
+    <string name="实验功能">Labs</string>
     <string name="ZeroTermux实验功能">ZeroTermux ExperimentalFunction</string>
-    <string name="网络ADB">Network ADB(ROOT)</string>
+    <string name="网络ADB">Net ADB</string>
     <string name="网络ADBNo">Network ADB (no ROOT)</string>
     <string name="没有找到本机的ROOT权限">The ROOT permission of the machine is not found. Do you want to force it to continue?</string>
     <string name="运行完成">The command execution is complete, please make sure to execute it under Root\nPlease use:\n \n adb.exe connect</string>
-    <string name="网络ADBClose">Close ADB(ROOT)</string>
+    <string name="网络ADBClose">Stop ADB</string>
     <string name="关闭成功">ADB command closed successfully</string>
 
 
@@ -611,7 +610,7 @@ Reset successfully</string>
 
     <string name="可能检测到OTG设备">The OTG device may be detected, but the reading fails, please unplug the device and try again, or give permission to read OTG!</string>
     <string name="检测到OTG设备">The OTG device is detected, and the OTG mapping directory will be created\n~/home/xinhaoLink/</string>
-    <string name="下次提示">下次提示</string>
+    <string name="下次提示">Remind later</string>
     <string name="如果下次想继续使用OTG设备">Next time prompt</string>
     <string name="OTG设备异常">
        OTG device abnormal\n
@@ -627,7 +626,7 @@ Reset successfully</string>
     <string name="无权限读取">No permission to read</string>
     <string name="请等待">Please wait</string>
     <string name="远程控制下请先安装vim">Please install vim first under remote control, otherwise the program will not create sms.txt and phone.txt</string>
-    <string name="网络访问linux目录">Network DIR</string>
+    <string name="网络访问linux目录">Net Files</string>
     <string name="filebrowser已运行">filebrowser is running, port 19951, account: admin password: admin</string>
     <string name="WinXp">Windows Xp</string>
 
@@ -645,10 +644,10 @@ Reset successfully</string>
     <string name="线上脚本">Online script</string>
     <string name="本地脚本">Local script</string>
     <string name="请双击命令窗口试试">ZeroTermux\nDouble-click the command window to open the shortcut bar\nDouble-click the far left (volume + button)\nRight (volume-button) to open the menu/session bar\nTwo-finger click to open the toolbox\nThe right menu opens the built-in file browser device</string>
-    <string name="Zero论坛">Zero BBS</string>
+    <string name="Zero论坛">Forum</string>
     <string name="ZeroTermux论坛">ZeroTermux bbs</string>
 
-    <string name="在线脚本">Online script</string>
+    <string name="在线脚本">Scripts</string>
     <string name="在线脚本服务器名称">Server Name</string>
     <string name="数据载入中">Data loading</string>
     <string name="服务器已离线">Server is offline</string>
@@ -656,7 +655,7 @@ Reset successfully</string>
     <string name="当前文件下载已被禁止">The current file download has been forbidden</string>
     <string name="此脚本数据错误">The script data is wrong, please try to contact the administrator</string>
 
-    <string name="美化设置">Beautify settings</string>
+    <string name="美化设置">Theme</string>
     <string name="字体颜色">Font Color</string>
     <string name="背景颜色">Back Color</string>
     <string name="字体颜色透明度">Font Color transparency</string>
@@ -714,8 +713,8 @@ Reset successfully</string>
     <string name="clipboard_empty">no data</string>
     <string name="clipboard_empty_copy">no data copy</string>
     <string name="tool_other">other</string>
-    <string name="vedio_select_name">video back</string>
-    <string name="keyboard_select_name">keyboard</string>
+    <string name="vedio_select_name">Video BG</string>
+    <string name="keyboard_select_name">Keyboard</string>
 
     <string name="image_size_error">file too large</string>
 
@@ -725,17 +724,17 @@ Reset successfully</string>
 
     <string name="x86_alpine_run">X86 Alpine</string>
 
-    <string name="clear_style_dialog">clear Style</string>
+    <string name="clear_style_dialog">Clear Style</string>
 
     <string name="engine_vision">Engine</string>
 
     <string name="engine_not_install">Not Install</string>
 
-    <string name="web_linux">Web Linux</string>
+    <string name="web_linux">Web Term</string>
 
     <string name="ttyd_install_complete">IP:0.0.0.0\nport:7681</string>
 
-    <string name="qq_group">copy qq number</string>
+    <string name="qq_group">QQ Group</string>
 
     <string name="telegram_group">Telegram</string>
 
@@ -751,7 +750,7 @@ Reset successfully</string>
 
     <string name="ttyd_install_msg">The current environment is not currently installed, please wait for the installation to complete [click this entry again]!</string>
 
-    <string name="ftp">FTP server</string>
+    <string name="ftp">FTP</string>
 
     <string name="storage_warning">Aviso: Almacenamiento no disponible. Puede que quieras desmontarlo.</string>
 
@@ -792,19 +791,19 @@ Reset successfully</string>
     <string name="system_restore_success">The system recovery is complete, please switch the system, switch your system</string>
     <string name="unrecognized_compression_format">unrecognized packet!</string>
     <string name="create_xinhao_path_fail">Failed to create ~/xinhaoLink folder, please create it manually!</string>
-    <string name="commonly_used_soft_links">Common shortcuts</string>
+    <string name="commonly_used_soft_links">Shortcuts</string>
     <string name="create_soft_links">The following shortcuts will be created:\nInternal storage WeChat, QQ, download directory\nInternal links: ~/xinhaoLink, due to Android 11+ restrictions /internal storage/Android/data/ directory access will not be created /internal storage/Android/data / Table of contents,But the program will still force the creation of</string>
     <string name="create_soft_links_fail">Creation failed, please try again or manually create ~/xinhaoLink</string>
-    <string name="my_commonly_used_soft_links">custom shortcut</string>
+    <string name="my_commonly_used_soft_links">My Shortcuts</string>
     <string name="my_commonly_used_soft_links_path">Enter the directory to link</string>
     <string name="my_commonly_used_soft_links_repeat"> entered directory does not exist!</string>
     <string name="action_share_selected_text">Share selected text</string>
     <string name="data_message">Data Message:</string>
-    <string name="create_data_message">Create Data MSG</string>
+    <string name="create_data_message">Data Info</string>
     <string name="data_message_hint">Create your package information, provide instructions for using the package. After setting it up, the relevant package information will be displayed in the left sidebar. You can use Markdown syntax.</string>
     <string name="data_message_empty">Data Msg Not Empty</string>
-    <string name="zero_uninstall">unInstall</string>
-    <string name="install_module">Install Module</string>
+    <string name="zero_uninstall">Uninstall</string>
+    <string name="install_module">Modules</string>
     <string name="install_module_download">Install Module(DownLoad Module)</string>
     <string name="install_module_message">Note: It cannot be uninstalled after installation, and it only takes effect for the current container (if the path has been put into the module package but it is not displayed, please check the SD card permission)</string>
     <string name="install_empty">sdcard/xinhao/module,no data</string>
@@ -825,7 +824,7 @@ Reset successfully</string>
     <string name="install_module_msg9">Permission setting error, set default 0700</string>
     <string name="install_module_msg10">The module installation is complete! Some functions need to be restarted to take effect</string>
     <string name="install_module_msg11">If the permission is detected to be empty, setting the file permission will be skipped</string>
-    <string name="install_def_bash">default startup file</string>
+    <string name="install_def_bash">Def. Startup</string>
     <string name="install_def_bash_msg_ok">The default startup file was restored successfully</string>
     <string name="install_def_bash_msg_error">default boot file restore error!!</string>
     <string name="install_def_bash_is_writer">Are you sure you want to revert to the default system startup script (bash.bashrc)? The action cannot be changed!</string>
@@ -952,10 +951,10 @@ Reset successfully</string>
     <string name="editor_unsaved_exit_message">%1$d files have unsaved changes. Exit anyway?</string>
     <string name="editor_unsaved_close_message">%1$s has unsaved changes. Close anyway?</string>
     <string name="editor_unsaved_discard">Discard</string>
-    <string name="changed_bash">edit startup file</string>
+    <string name="changed_bash">Startup File</string>
     <string name="save_error_">save failed</string>
     <string name="save_ok_">Saved successfully, some files need to restart APP to take effect</string>
-    <string name="start_msg">Modify greeting</string>
+    <string name="start_msg">Greeting</string>
     <string name="create_folder">create folder</string>
     <string name="rohibit_toolbox_msg">When you adjust the font size or take a three-finger screenshot, you can choose to disable toolbox\nEnable toolbox: [long press the terminal -> enable toolbox]</string>
     <string name="rohibit_toolbox_select">disable display</string>
@@ -994,7 +993,7 @@ Reset successfully</string>
     <string name="attention_closing_ftp">Shutting down the FTP service&#8230;</string>
     <string name="word_stop">stop</string>
     <string name="ftp_title_no">ZeroTermux:FTP</string>
-    <string name="docker_check">DockerCheck</string>
+    <string name="docker_check">Docker</string>
     <string name="termux_copy_ll">copy</string>
     <string name="termux_moudle_ll">install module</string>
     <string name="termux_targz_ll">install data</string>
@@ -1011,26 +1010,26 @@ Reset successfully</string>
     <string name="switch0">No Control  (check this if remote device control is not required)</string>
     <string name="switch1">Nav Bar  (check this if remote device does not have on-screen nav bar)</string>
     <string name="press_again">Press again to exit</string>
-    <string name="label_server_title">label server(BATE)</string>
+    <string name="label_server_title">Label Server (Beta)</string>
     <string name="ip_connect">0.0.0.0</string>
-    <string name="remote_connection">ADB label server</string>
+    <string name="remote_connection">ADB Remote</string>
     <string name="adb_title_msg">Connecting...Do not click \'Start\' more than once!</string>
 
     <string name="developer_activity">Please enter in DEBUG mode</string>
 
-    <string name="common_functions">Common Functions</string>
-    <string name="menu_create_project">Create Project</string>
+    <string name="common_functions">Common</string>
+    <string name="menu_create_project">Projects</string>
     <string name="menu_create_project_c">C</string>
     <string name="menu_create_project_java">JAVA</string>
     <string name="menu_create_project_python">PYTHON</string>
     <string name="menu_create_project_php">PHP</string>
     <string name="menu_create_project_npm">NPM</string>
-    <string name="menu_open_project">Open Project</string>
-    <string name="beautification_function">Beautification/UI function</string>
-    <string name="online_features">online features</string>
-    <string name="zt_features">ZT function</string>
+    <string name="menu_open_project">Open</string>
+    <string name="beautification_function">UI</string>
+    <string name="online_features">Online</string>
+    <string name="zt_features">ZT</string>
     <string name="zt_settings">ZeroTermux settings</string>
-    <string name="zt_settings1">ZT settings</string>
+    <string name="zt_settings1">Settings</string>
     <string name="zt_settings_note">ZeroTermux Related settings options</string>
 <string name="zt_editor_word_wrap">Editor word wrap</string>
     <string name="zt_editor_word_wrap_summary">Enable automatic line wrapping in the built-in text editor</string>
@@ -1079,6 +1078,8 @@ Reset successfully</string>
     <string name="zt_nav_page_zt_settings">ZeroTermux settings</string>
     <string name="zt_nav_page_zero_termux_settings">ZeroTermux feature settings</string>
     <string name="zt_nav_page_left_menu_settings">Left menu settings</string>
+    <string name="zt_nav_page_menu_settings">Menu settings</string>
+    <string name="zt_nav_page_zt_developer_options">Developer options</string>
     <string name="zt_nav_page_menu_update_source">Menu update source</string>
     <string name="zt_nav_page_ai_settings">AI settings</string>
     <string name="zt_nav_page_agent_ai_settings">Agent AI settings</string>
@@ -1155,7 +1156,7 @@ Reset successfully</string>
 
     <string name="copy_uri_error">URI duplication error, please wait for the developer to fix it...</string>
 
-    <string name="zt_timer">scheduled tasks</string>
+    <string name="zt_timer">Timer</string>
     <string name="zt_timer_settings">Scheduled task settings(BATE)</string>
 
     <string name="zt_timer_start">Start a scheduled task</string>
@@ -1212,20 +1213,20 @@ Reset successfully</string>
     <string name="zt_env_shell_title">ADB Shell runs Termux</string>
     <string name="zt_env_shell_sum">Turn this option on to output the sh script to the specified directory\nClose it to cancel this script output</string>
     <string name="zt_env_shell_sum_msg">Open adb shell and run the following command:\n1.adb shell\n2.</string>
-    <string name="zt_particle_animation">particle animation</string>
+    <string name="zt_particle_animation">Particles</string>
 
     <!-- X11 Features Module -->
-    <string name="x11_features">X11 Features</string>
+    <string name="x11_features">X11</string>
     <string name="x11_features_settings">X11 Settings</string>
     <string name="x11_features_settings_internal">Internal Channel X11 Settings</string>
     <string name="x11_features_settings_summary">Advanced (Native) Settings: Resolution, Bottom Keyboard Display, etc.</string>
 
     <!-- Terminal Display Control -->
-    <string name="x11_display_terminal">Show Terminal</string>
-    <string name="x11_hide_terminal">Hide Terminal</string>
+    <string name="x11_display_terminal">Show Term</string>
+    <string name="x11_hide_terminal">Hide Term</string>
 
     <!-- Environment Configuration -->
-    <string name="x11_environment">X11 Environment</string>
+    <string name="x11_environment">X11 Env</string>
     <string name="x11_not_connect">No X11 connection detected. Please establish a session and try again.</string>
     <string name="x11_msg_error">Terminal display anomaly detected. Automatic recovery completed.</string>
 
@@ -1256,16 +1257,16 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
     <string name="x11_dialog_reset">Switch successful. Requires restart to take effect. Restart now?</string>
 
     <!-- Environment Repair -->
-    <string name="x11_so_install">Fix Environment Error</string>
+    <string name="x11_so_install">Fix Env</string>
     <string name="x11_so_install_ok">Repair successful. Please relaunch termux-x11.</string>
     <string name="x11_so_install_not">Environment status normal. No repair needed.</string>
     <string name="x11_so_install_error">Repair failed. View detailed logs via \"Left Navigation → X11 Settings → Switch Channel\"</string>
 
-    <string name="x11_install_apk">install X11</string>
+    <string name="x11_install_apk">Install X11</string>
     <string name="x11_install_apk_not">X11 is not installed, please install X11 APK first</string>
 
-    <string name="x11_boom_keyboard_gone">Hide Keyboard</string>
-    <string name="x11_boom_keyboard_visible">Show Keyboard</string>
+    <string name="x11_boom_keyboard_gone">Hide Keys</string>
+    <string name="x11_boom_keyboard_visible">Show Keys</string>
     <string name="update_online_sh">Online Script Server</string>
     <string name="update_online_sh_summary">Modify online script server</string>
     <string name="content_ssh_list">Switch SSH</string>
@@ -1432,9 +1433,9 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="zt_ssh_improt_fail_error">Import failed</string>
     <string name="zt_ssh_improt_success">Key import successful\nSaved as:</string>
 
-    <string name="zt_root_fun">ROOT Function</string>
-    <string name="zt_engine">Requires Plugin/Engine (Please Restart APP After Installation)</string>
-    <string name="zt_data_info_title">Information</string>
+    <string name="zt_root_fun">ROOT</string>
+    <string name="zt_engine">Plugins</string>
+    <string name="zt_data_info_title">Info</string>
     <string name="zt_data_info_content">
             # Information written here \n
             ## Will be backed up to the integrated package \n
@@ -1444,8 +1445,8 @@ Enter code recognition parameters separated by commas. These will appear as blue
              [linktext](https://www.baidu.com)
 </string>
 
-    <string name="zt_new">New Version</string>
-    <string name="zt_command_key">Bottom Keyboard</string>
+    <string name="zt_new">What's New</string>
+    <string name="zt_command_key">Extra Keys</string>
     <string name="zt_command_edit_h">Enter your terminal bottom code…</string>
     <string name="zt_command_def">Default</string>
     <string name="zt_command_key_error">Format Error!</string>
@@ -1458,8 +1459,8 @@ Enter code recognition parameters separated by commas. These will appear as blue
     <string name="zt_fold_menu_close_summary">(Requires restarting the APP) Enabling this option will keep the menu section on the left always expanded.</string>
     <string name="zt_app_crash">An error occurred in the application. Please forward the following information to the developer [screenshot]\nDeveloper Group 1 (QQ):</string>
 
-    <string name="zt_menu_title_config">Configure Terminal</string>
-    <string name="zt_adb_shell_run">SHELL Run</string>
+    <string name="zt_menu_title_config">Terminal</string>
+    <string name="zt_adb_shell_run">Shell</string>
     <string name="zt_adb_shell_run_summary">
 Run the termux command terminal in the adb shell.
 The file has been successfully written to:\n
@@ -1478,7 +1479,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_xml_settings_title">Disable Using Configuration File for Left Menu Settings</string>
     <string name="zt_xml_settings_summary">(Requires APP restart) Enabling this option will prevent loading the XML configuration file as the data source for the left menu.</string>
 
-    <string name="menu_package_card_title">Menu</string>
+    <string name="menu_package_card_title">Packages</string>
     <string name="menu_package_current_menu">Current menu: %1$s</string>
     <string name="menu_package_network_update">Default menu</string>
     <string name="menu_package_update">Update</string>
@@ -1502,8 +1503,12 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="menu_package_ai_created_label">AI Created</string>
     <string name="menu_package_network_label">Network menu</string>
     <string name="menu_package_local_label">Local menu</string>
-    <string name="left_menu_settings_title">Left menu settings</string>
-    <string name="left_menu_settings_summary">Configure menu update sources</string>
+    <string name="menu_settings_title">Menu</string>
+    <string name="menu_settings_summary">Fold menu and left-menu options</string>
+    <string name="zt_developer_options_title">Developer options</string>
+    <string name="zt_developer_options_summary">Download service, workstation, AI debug, and logging</string>
+    <string name="left_menu_settings_title">Left Menu</string>
+    <string name="left_menu_settings_summary">Update sources for the left menu</string>
     <string name="menu_update_source_settings_title">Menu update source</string>
     <string name="menu_update_source_settings_summary">Select or add menu zip download URL</string>
     <string name="menu_update_source_default">Default source</string>
@@ -1544,8 +1549,10 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_agent_ai_system_prompt">System prompt (optional)</string>
     <string name="zt_agent_ai_system_prompt_hint">Leave empty to use default ZeroTermux agent prompt</string>
     <string name="zt_agent_ai_skills_title">Skills</string>
-    <string name="zt_agent_ai_skills_summary">Stored under ~/.skill/&lt;name&gt;/SKILL.md. Create, edit, and enable skills from the list below.</string>
-    <string name="zt_agent_ai_skills_path_format">Directory: %1$s/&lt;skill-id&gt;/SKILL.md</string>
+    <string name="zt_agent_ai_skills_summary">Stored under ~/.skill/&lt;name&gt;/SKILL.md. Create, edit, and enable skills from the list.</string>
+    <string name="zt_agent_ai_skills_entry_summary">Manage local Skills: enable, edit, delete, or create skill packs</string>
+    <string name="zt_agent_ai_skills_create_entry_summary">Create a new SKILL.md under ~/.skill</string>
+    <string name="zt_agent_ai_skills_path_format">Path: %1$s/&lt;skill-id&gt;/SKILL.md</string>
     <string name="zt_agent_ai_skills_empty">No other skills yet. Built-in \"%1$s\" is available for reference, or tap below to create one.</string>
     <string name="zt_agent_ai_skills_create_new">Create new skill</string>
     <string name="zt_agent_ai_skills_create_dialog_title">Create new skill</string>
