@@ -1204,6 +1204,7 @@
     <string name="zt_nav_page_menu_update_source">菜单更新源</string>
     <string name="zt_nav_page_ai_settings">AI 设置</string>
     <string name="zt_nav_page_agent_ai_settings">智能体 AI 配置</string>
+    <string name="zt_nav_page_agent_skills">Skills（技能包）</string>
     <string name="zt_nav_page_deepseek_settings">DeepSeek 设置</string>
     <string name="zt_nav_page_deepseek_key">DeepSeek Key</string>
     <string name="zt_nav_page_llm_settings">自定义 LLM 设置</string>

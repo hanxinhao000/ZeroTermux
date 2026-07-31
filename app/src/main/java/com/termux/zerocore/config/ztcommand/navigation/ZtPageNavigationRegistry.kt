@@ -14,6 +14,7 @@ import com.termux.zerocore.activity.SwitchActivity
 import com.termux.zerocore.activity.WebViewActivity
 import com.termux.zerocore.ai.activity.MainAiSettings
 import com.termux.zerocore.ai.agent.ZtAgentAiSettingsActivity
+import com.termux.zerocore.ai.agent.ZtAgentAiSkillsActivity
 import com.termux.zerocore.ai.deepseek.activity.ZeroTermuxDeepSeekKeyActivity
 import com.termux.zerocore.ai.deepseek.activity.ZeroTermuxDeepSeekSettingsActivity
 import com.termux.zerocore.config.ztcommand.activity.SocketBaseActivity
@@ -76,6 +77,10 @@ object ZtPageNavigationRegistry {
         "agent ai" to "agent_ai_settings",
         "智能体" to "agent_ai_settings",
         "智能体设置" to "agent_ai_settings",
+        "skills" to "agent_skills",
+        "agent_skills" to "agent_skills",
+        "技能包" to "agent_skills",
+        "技能" to "agent_skills",
         "ai_settings" to "ai_settings",
         "deepseek" to "deepseek_settings",
         "llm" to "llm_settings",
@@ -127,6 +132,7 @@ object ZtPageNavigationRegistry {
         PageEntry("zt_developer_options", R.string.zt_nav_page_zt_developer_options, ZtDeveloperOptionsActivity::class.java),
         PageEntry("ai_settings", R.string.zt_nav_page_ai_settings, MainAiSettings::class.java),
         PageEntry("agent_ai_settings", R.string.zt_nav_page_agent_ai_settings, ZtAgentAiSettingsActivity::class.java),
+        PageEntry("agent_skills", R.string.zt_nav_page_agent_skills, ZtAgentAiSkillsActivity::class.java),
         PageEntry("deepseek_settings", R.string.zt_nav_page_deepseek_settings, ZeroTermuxDeepSeekSettingsActivity::class.java),
         PageEntry("deepseek_key", R.string.zt_nav_page_deepseek_key, ZeroTermuxDeepSeekKeyActivity::class.java),
         PageEntry("llm_settings", R.string.zt_nav_page_llm_settings, ZeroTermuxLLMSettingsActivity::class.java),
@@ -176,6 +182,7 @@ object ZtPageNavigationRegistry {
     private val keywordRules: List<Pair<List<String>, String>> = listOf(
         listOf("开机向导", "开机引导", "引导页", "boot guide", "boot wizard", "boot_guide", "wizard") to "guide",
         listOf("工作站", "workstation") to "workstation_settings",
+        listOf("技能包", "skills", "agent skills", "agent_skills") to "agent_skills",
         listOf("智能体", "agent ai", "agent_ai") to "agent_ai_settings",
         listOf("功能设置", "zero termux settings") to "zero_termux_settings",
         listOf("菜单设置", "menu settings") to "menu_settings",

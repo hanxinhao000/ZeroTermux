@@ -1083,6 +1083,7 @@ Reset successfully</string>
     <string name="zt_nav_page_menu_update_source">Menu update source</string>
     <string name="zt_nav_page_ai_settings">AI settings</string>
     <string name="zt_nav_page_agent_ai_settings">Agent AI settings</string>
+    <string name="zt_nav_page_agent_skills">Skills</string>
     <string name="zt_nav_page_deepseek_settings">DeepSeek settings</string>
     <string name="zt_nav_page_deepseek_key">DeepSeek Key</string>
     <string name="zt_nav_page_llm_settings">Custom LLM settings</string>
