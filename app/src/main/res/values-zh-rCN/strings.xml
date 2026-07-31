@@ -1317,7 +1317,7 @@
     <string name="zt_terminal_unavailable_key_not_sent">终端未就绪，按键未发送</string>
     <string name="zt_terminal_unavailable_text_not_read">终端未就绪，无法读取终端内容</string>
     <string name="content_ssh_remove_device">删除设备</string>
-    <string name="content_ssh_remove_device_dialog">"确定要删除'%s'吗？\n(IP: '%s')"</string>
+    <string name="content_ssh_remove_device_dialog">确定要删除\'%1$s\'吗？\n(IP: \'%2$s\')</string>
     <string name="content_ssh_remove_ok">已删除</string>
     <string name="content_ssh_add_device">添加SSH设备</string>
     <string name="content_ssh_alias">别名</string>

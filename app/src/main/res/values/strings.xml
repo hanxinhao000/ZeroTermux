@@ -1277,7 +1277,7 @@ Known Issue: Rapid consecutive back operations may cause black screen in Interna
     <string name="content_ssh_list_toast_ssh_hint">First-time setup, initializing SSH environment...</string>
     <string name="content_ssh_list_toast_ssh_wait">Environment not ready yet, please wait...</string>
     <string name="content_ssh_remove_device">Delete Device</string>
-    <string name="content_ssh_remove_device_dialog">"Are you sure you want to delete '%s'?\n(IP: '%s')"</string>
+    <string name="content_ssh_remove_device_dialog">Are you sure you want to delete \'%1$s\'?\n(IP: \'%2$s\')</string>
     <string name="content_ssh_remove_ok">Deleted</string>
     <string name="content_ssh_add_device">Add SSH Device</string>
     <string name="content_ssh_alias">Alias</string>
@@ -1446,7 +1446,7 @@ Enter code recognition parameters separated by commas. These will appear as blue
              [linktext](https://www.baidu.com)
 </string>
 
-    <string name="zt_new">What's New</string>
+    <string name="zt_new">What\'s New</string>
     <string name="zt_command_key">Extra Keys</string>
     <string name="zt_command_edit_h">Enter your terminal bottom code…</string>
     <string name="zt_command_def">Default</string>
