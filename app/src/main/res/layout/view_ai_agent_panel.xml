@@ -15,6 +15,7 @@
         app:cardCornerRadius="3dp"
         app:cardElevation="0dp">
 
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -74,18 +75,16 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_agent_skill" />
             </LinearLayout>
+            <include
+                android:id="@+id/ai_agent_panel_stop_bar"
+                layout="@layout/view_ai_agent_stop_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginTop="2dp"
+                android:visibility="visible" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
-
-    <!-- 文档流内置顶，不遮挡下方对话内容 -->
-    <include
-        android:id="@+id/ai_agent_panel_stop_bar"
-        layout="@layout/view_ai_agent_stop_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="6dp"
-        android:layout_marginTop="2dp"
-        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -105,7 +104,7 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <com.termux.zerocore.ai.agent.ZtAgentSelectableTextView
+        <TextView
             android:id="@+id/ai_agent_panel_context_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,14 +112,10 @@
             android:background="@color/color_55000000"
             android:padding="8dp"
             android:textColor="@color/color_ffffff"
-            android:textIsSelectable="true"
-            android:textSelectHandle="@drawable/ai_agent_text_select_handle_middle"
-            android:textSelectHandleLeft="@drawable/ai_agent_text_select_handle_left"
-            android:textSelectHandleRight="@drawable/ai_agent_text_select_handle_right"
             android:textSize="13sp"
             android:visibility="gone" />
 
-        <com.termux.zerocore.ai.agent.ZtAgentPanelScrollView
+        <ScrollView
             android:id="@+id/ai_agent_panel_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -152,7 +147,7 @@
                     android:orientation="vertical"
                     android:visibility="gone" />
             </LinearLayout>
-        </com.termux.zerocore.ai.agent.ZtAgentPanelScrollView>
+        </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -161,7 +156,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <com.termux.zerocore.ai.agent.ZtAgentSelectableEditText
+            <EditText
                 android:id="@+id/ai_agent_panel_input"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -179,9 +174,6 @@
                 android:textColor="@color/color_ffffff"
                 android:textColorHint="@color/md_grey_500"
                 android:textCursorDrawable="@drawable/ai_agent_text_cursor"
-                android:textSelectHandle="@drawable/ai_agent_text_select_handle_middle"
-                android:textSelectHandleLeft="@drawable/ai_agent_text_select_handle_left"
-                android:textSelectHandleRight="@drawable/ai_agent_text_select_handle_right"
                 android:textSize="14sp" />
 
             <TextView

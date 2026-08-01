@@ -146,6 +146,7 @@ class ZtAgentAiChatClient(
                         try {
                             var line: String?
                             while (source.readUtf8Line().also { line = it } != null) {
+                                if (call.isCanceled()) return
                                 val chunk = parseStreamLine(line!!) ?: continue
                                 if (chunk == STREAM_DONE) break
                                 val content = extractStreamContent(chunk) ?: continue
@@ -153,9 +154,11 @@ class ZtAgentAiChatClient(
                                 val text = full.toString()
                                 UUtils.getHandler().post { listener.onChunk(text) }
                             }
+                            if (call.isCanceled()) return
                             val result = full.toString()
                             UUtils.getHandler().post { listener.onComplete(result) }
                         } catch (e: Exception) {
+                            if (call.isCanceled()) return
                             LogUtils.e(TAG, "chat parse error: $e")
                             postError(listener, e.message ?: "Parse error")
                         }

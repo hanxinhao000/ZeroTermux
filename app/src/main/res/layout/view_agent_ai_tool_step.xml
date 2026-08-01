@@ -16,7 +16,7 @@
         android:textColor="@color/md_grey_500"
         android:textSize="12sp" />
 
-    <com.termux.zerocore.ai.agent.ZtAgentSelectableTextView
+    <TextView
         android:id="@+id/agent_tool_step_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,10 +25,6 @@
         android:fontFamily="monospace"
         android:padding="8dp"
         android:textColor="@color/color_A9B7C6"
-        android:textIsSelectable="true"
-        android:textSelectHandle="@drawable/ai_agent_text_select_handle_middle"
-        android:textSelectHandleLeft="@drawable/ai_agent_text_select_handle_left"
-        android:textSelectHandleRight="@drawable/ai_agent_text_select_handle_right"
         android:textSize="11sp"
         android:visibility="gone" />
 </LinearLayout>

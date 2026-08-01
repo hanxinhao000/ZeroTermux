@@ -66,7 +66,11 @@ class ZtAgentAiAgentRunner(
             val result = client.chatCompletionSync(workingMessages, tools)
             if (callback.isCancelled()) return
             if (result.error != null) {
-                post { callback.onError(result.error) }
+                post {
+                    if (!callback.isCancelled()) {
+                        callback.onError(result.error)
+                    }
+                }
                 return
             }
             if (result.toolCalls.isNotEmpty()) {
@@ -85,10 +89,15 @@ class ZtAgentAiAgentRunner(
                 continue
             }
             val reply = result.content?.trim().orEmpty()
-            post { callback.onComplete(reply) }
+            post {
+                if (!callback.isCancelled()) {
+                    callback.onComplete(reply)
+                }
+            }
             return
         }
         post {
+            if (callback.isCancelled()) return@post
             callback.onError(
                 ZtLocaleStrings.format(
                     R.string.zt_agent_ai_tool_limit,

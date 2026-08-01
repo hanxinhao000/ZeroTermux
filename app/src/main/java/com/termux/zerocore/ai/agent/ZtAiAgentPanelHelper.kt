@@ -4,17 +4,21 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -22,9 +26,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.termux.R
 import com.termux.app.TermuxActivity
 import com.termux.view.TerminalView
-import com.termux.zerocore.ai.deepseek.utils.SpannableTextUtil
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import io.noties.markwon.Markwon
+import io.noties.markwon.ext.tables.TableAwareMovementMethod
 
 /**
  * AI 智能体面板控制器：嵌入右侧栏 AI 选项卡。
@@ -138,11 +142,11 @@ class ZtAiAgentPanelHelper(
         chatClient?.cancel()
         agentRunner?.cancel()
         sendTerminalInterrupt()
-        setSending(false)
         pendingAssistantRow?.findViewById<TextView>(R.id.agent_message_content)?.let { content ->
-            renderMarkdown(content, panelCard.context.getString(R.string.zt_ai_agent_stopped))
+            renderMarkdown(content, panelCard.context.getString(R.string.zt_ai_agent_stopped), scroll = false)
         }
         pendingAssistantRow = null
+        setSending(false)
     }
 
     /** 与迁到侧栏前一致：始终向终端发送 Ctrl+C（不依赖终端工具开关）。 */
@@ -305,14 +309,18 @@ class ZtAiAgentPanelHelper(
         )
         agentRunner!!.run(conversationHistory, object : ZtAgentAiAgentRunner.Callback {
             override fun onToolStep(label: String, detail: String) {
+                if (agentCancelled || !isSending) return
                 appendToolStep(label, detail)
             }
 
             override fun onComplete(content: String) {
+                // 用户已打断：UI 已由 stopAgentExecution 处理，忽略迟到回调
+                if (agentCancelled || !isSending) return
                 finishAssistantReply(assistantView, content)
             }
 
             override fun onError(message: String) {
+                if (agentCancelled || !isSending) return
                 renderMarkdown(assistantView, message)
                 assistantView.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
                 setSending(false)
@@ -327,11 +335,13 @@ class ZtAiAgentPanelHelper(
         val requestMessages = buildRequestMessages()
         chatClient!!.chat(requestMessages, stream = true, listener = object : ZtAgentAiChatClient.Listener {
             override fun onChunk(text: String) {
+                if (agentCancelled || !isSending) return
                 renderMarkdown(assistantView, text)
                 scrollToBottomDelayed()
             }
 
             override fun onError(message: String) {
+                if (agentCancelled || !isSending) return
                 renderMarkdown(assistantView, message)
                 assistantView.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
                 setSending(false)
@@ -339,12 +349,14 @@ class ZtAiAgentPanelHelper(
             }
 
             override fun onComplete(fullText: String) {
+                if (agentCancelled || !isSending) return
                 finishAssistantReply(assistantView, fullText)
             }
         })
     }
 
     private fun finishAssistantReply(assistantView: TextView, fullText: String) {
+        if (agentCancelled) return
         setSending(false)
         updateStopBarsVisibility()
         pendingAssistantRow = null
@@ -468,30 +480,24 @@ class ZtAiAgentPanelHelper(
         return content
     }
 
-    private fun renderMarkdown(textView: TextView, markdown: String) {
-        // textIsSelectable=true 会连带打开横向滚动，量高只剩一行，长回复只显示首句。
-        val selectable = textView.isTextSelectable
-        if (selectable) {
-            textView.setTextIsSelectable(false)
+    private fun renderMarkdown(textView: TextView, markdown: String, scroll: Boolean = true) {
+        // Markwon 原生渲染 + 表格/链接点击；可选中以便长按复制（系统复制菜单）
+        markwon.setMarkdown(textView, markdown)
+        enableMessageTextCopy(textView)
+        textView.movementMethod = TableAwareMovementMethod.create()
+        if (scroll) {
+            textView.post { performScrollToBottom() }
         }
-        textView.setSingleLine(false)
-        textView.maxLines = Integer.MAX_VALUE
-        textView.ellipsize = null
+    }
+
+    /** 长按选中复制；手柄沿用原 drawable，无其它自定义选区效果。 */
+    private fun enableMessageTextCopy(textView: TextView) {
+        textView.setTextIsSelectable(true)
         textView.setHorizontallyScrolling(false)
-        val spanned = markwon.toMarkdown(markdown)
-        val finalSpanned = SpannableTextUtil.createClickableSpannableString(spanned, panelCard.context)
-        markwon.setParsedMarkdown(textView, finalSpanned)
-        if (selectable) {
-            textView.setTextIsSelectable(true)
-        }
-        textView.setHorizontallyScrolling(false)
-        textView.movementMethod = ZtAgentSelectionLinkMovementMethod
-        textView.post {
-            textView.requestLayout()
-            (textView.parent as? View)?.requestLayout()
-            messagesContainer.requestLayout()
-            scrollView.requestLayout()
-            performScrollToBottom()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            textView.setTextSelectHandle(R.drawable.ai_agent_text_select_handle_middle)
+            textView.setTextSelectHandleLeft(R.drawable.ai_agent_text_select_handle_left)
+            textView.setTextSelectHandleRight(R.drawable.ai_agent_text_select_handle_right)
         }
     }
 
@@ -511,7 +517,6 @@ class ZtAiAgentPanelHelper(
             lp.gravity = Gravity.START
             lp.width = LinearLayout.LayoutParams.MATCH_PARENT
             content.maxWidth = Int.MAX_VALUE
-            content.minWidth = 0
         }
         content.layoutParams = lp
         return itemView
@@ -544,16 +549,28 @@ class ZtAiAgentPanelHelper(
         )
         val contentHeight = child.measuredHeight.coerceAtLeast(child.height)
         val target = (contentHeight - scrollView.height + scrollView.paddingBottom).coerceAtLeast(0)
+        // 不用 fullScroll(FOCUS_DOWN)：会把焦点抢到可选中消息 TextView，导致输入框偶发无法输入
         scrollView.scrollTo(0, target)
-        scrollView.fullScroll(View.FOCUS_DOWN)
     }
 
     private fun setSending(sending: Boolean) {
         isSending = sending
         sendButton.isEnabled = !sending
         sendButton.alpha = if (sending) 0.5f else 1f
-        input.isEnabled = !sending
+        if (sending) {
+            input.isEnabled = false
+        } else {
+            restoreInputReady()
+        }
         updateStopBarsVisibility()
+    }
+
+    /** 打断/结束后恢复输入框可聚焦状态（部分机型 disable 后再 enable 会丢 focusable）。 */
+    private fun restoreInputReady() {
+        input.isEnabled = true
+        input.isFocusable = true
+        input.isFocusableInTouchMode = true
+        input.isClickable = true
     }
 
     fun isVisible(): Boolean = isPanelShown && panelHost.visibility == View.VISIBLE
@@ -617,10 +634,9 @@ class ZtAiAgentPanelHelper(
     }
 
     /**
-     * 与迁到侧栏前一致的简单逻辑：
      * - 侧栏打开且 AI 页可见 → 显示面板内打断条
      * - 侧栏关闭（或未在 AI 页）且仍在执行 → 显示主界面顶栏
-     * 不用 bringChildToFront（会破坏 LinearLayout 顺序导致顶栏“消失”）。
+     * 顶栏挂在根 RelativeLayout 最后一层，切换抽屉时用 ensureTopBannerLayer 保持置顶。
      */
     private fun updateStopBarsVisibility() {
         val drawerOpen = isDrawerOpen?.invoke() == true
@@ -630,15 +646,16 @@ class ZtAiAgentPanelHelper(
         val bar = runningBanner ?: return
         val apply = Runnable {
             if (showTopBar) {
-                // 直接显示，避免复杂动画把高度置 0 后卡住
                 bar.animate().cancel()
                 bar.alpha = 1f
                 bar.translationY = 0f
                 val lp = bar.layoutParams
                 if (lp != null && lp.height == 0) {
-                    lp.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
                     bar.layoutParams = lp
                 }
+                applyBannerStatusBarInset(bar)
+                ensureTopBannerLayer(bar)
                 bar.visibility = View.VISIBLE
             } else {
                 bar.animate().cancel()
@@ -652,6 +669,37 @@ class ZtAiAgentPanelHelper(
         } else {
             bar.post(apply)
         }
+    }
+
+    /** 顶栏避开状态栏（根布局 overlay 不会自动 fitsSystemWindows）。 */
+    private fun applyBannerStatusBarInset(bar: View) {
+        val insets = ViewCompat.getRootWindowInsets(bar)
+            ?: ViewCompat.getRootWindowInsets(panelCard)
+        val statusTop = insets?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+        val extra = (2f * bar.resources.displayMetrics.density).toInt()
+        val targetTop = statusTop + extra
+        val lp = bar.layoutParams as? ViewGroup.MarginLayoutParams ?: return
+        if (lp.topMargin != targetTop) {
+            lp.topMargin = targetTop
+            bar.layoutParams = lp
+        }
+    }
+
+    /**
+     * 保证顶栏是根 RelativeLayout/FrameLayout 的最后一个子 View（绘制最上层）。
+     * 注意：不要对竖直 LinearLayout 调用 bringChildToFront，会把条挪到屏幕底部。
+     */
+    private fun ensureTopBannerLayer(bar: View) {
+        val parent = bar.parent as? ViewGroup ?: return
+        if (parent !is RelativeLayout && parent !is FrameLayout) return
+        val last = parent.childCount - 1
+        if (last < 0 || parent.getChildAt(last) === bar) {
+            bar.elevation = 32f * bar.resources.displayMetrics.density
+            return
+        }
+        parent.removeView(bar)
+        parent.addView(bar)
+        bar.elevation = 32f * bar.resources.displayMetrics.density
     }
 
     /** 打开 App 页面时仅收起软键盘，不中断进行中的 AI 对话 */
@@ -682,7 +730,11 @@ class ZtAiAgentPanelHelper(
     }
 
     private fun showInputKeyboard() {
-        if (!isVisible() || !input.isEnabled) return
+        if (!isVisible()) return
+        if (!isSending) {
+            restoreInputReady()
+        }
+        if (!input.isEnabled) return
         clearTerminalFocus()
         if (!input.hasFocus()) {
             input.requestFocus()

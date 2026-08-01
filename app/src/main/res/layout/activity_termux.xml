@@ -6,22 +6,12 @@
     android:clipChildren="false">
 
     <LinearLayout
+        android:id="@+id/activity_termux_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:fitsSystemWindows="true"
         android:clipChildren="false">
-
-        <!-- 放在 fitsSystemWindows 容器内，自动避开状态栏 -->
-        <include
-            android:id="@+id/ai_agent_running_banner"
-            layout="@layout/view_ai_agent_stop_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginTop="2dp"
-            android:elevation="24dp"
-            android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/activity_termux_root_relative_layout"
@@ -99,5 +89,16 @@
             android:layout_height="1dp"
             android:background="@android:color/transparent" />
     </LinearLayout>
+
+    <!-- 作为 RelativeLayout 根的最后子节点，始终叠在终端内容之上；topMargin 由代码按状态栏 insets 设置 -->
+    <include
+        android:id="@+id/ai_agent_running_banner"
+        layout="@layout/view_ai_agent_stop_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="4dp"
+        android:elevation="32dp"
+        android:visibility="gone" />
 
 </com.termux.app.terminal.TermuxActivityRootView>

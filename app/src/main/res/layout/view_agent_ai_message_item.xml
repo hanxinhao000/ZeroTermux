@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:paddingVertical="4dp">
 
-    <com.termux.zerocore.ai.agent.ZtAgentSelectableTextView
+    <TextView
         android:id="@+id/agent_message_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,9 +13,6 @@
         android:paddingVertical="8dp"
         android:textColor="@color/color_ffffff"
         android:textIsSelectable="true"
-        android:singleLine="false"
-        android:maxLines="2147483647"
-        android:ellipsize="none"
         android:textSelectHandle="@drawable/ai_agent_text_select_handle_middle"
         android:textSelectHandleLeft="@drawable/ai_agent_text_select_handle_left"
         android:textSelectHandleRight="@drawable/ai_agent_text_select_handle_right"

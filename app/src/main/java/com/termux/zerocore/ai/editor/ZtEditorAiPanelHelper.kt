@@ -1,5 +1,6 @@
 package com.termux.zerocore.ai.editor
 
+import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -16,9 +17,8 @@ import com.termux.R
 import com.termux.zerocore.ai.agent.ZtAgentAiChatClient
 import com.termux.zerocore.ai.agent.ZtAgentAiConfigHelper
 import com.termux.zerocore.ai.agent.ZtAgentMarkwon
-import com.termux.zerocore.ai.agent.ZtAgentSelectionLinkMovementMethod
-import com.termux.zerocore.ai.deepseek.utils.SpannableTextUtil
 import io.noties.markwon.Markwon
+import io.noties.markwon.ext.tables.TableAwareMovementMethod
 import kotlin.math.abs
 
 class ZtEditorAiPanelHelper(
@@ -535,10 +535,15 @@ class ZtEditorAiPanelHelper(
     }
 
     private fun renderMarkdown(textView: TextView, markdown: String) {
-        val spanned = markwon.toMarkdown(markdown)
-        val finalSpanned = SpannableTextUtil.createClickableSpannableString(spanned, panelCard.context)
-        markwon.setParsedMarkdown(textView, finalSpanned)
-        textView.movementMethod = ZtAgentSelectionLinkMovementMethod
+        markwon.setMarkdown(textView, markdown)
+        textView.setTextIsSelectable(true)
+        textView.setHorizontallyScrolling(false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            textView.setTextSelectHandle(R.drawable.ai_agent_text_select_handle_middle)
+            textView.setTextSelectHandleLeft(R.drawable.ai_agent_text_select_handle_left)
+            textView.setTextSelectHandleRight(R.drawable.ai_agent_text_select_handle_right)
+        }
+        textView.movementMethod = TableAwareMovementMethod.create()
     }
 
     private fun removeMessageView(contentView: TextView) {
