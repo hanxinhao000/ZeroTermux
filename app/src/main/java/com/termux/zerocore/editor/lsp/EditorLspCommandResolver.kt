@@ -69,25 +69,34 @@ object EditorLspCommandResolver {
     }
 
     fun environmentForLanguage(languageId: String): Map<String, String> {
-        if (languageId != EditorLspManager.LANGUAGE_SHELL) {
-            return emptyMap()
+        return when (languageId) {
+            EditorLspManager.LANGUAGE_SHELL -> mapOf(
+                "SHELLCHECK_PATH" to "/dev/null",
+                "SHFMT_PATH" to "/dev/null",
+                "BACKGROUND_ANALYSIS_MAX_FILES" to "0",
+                "ENABLE_SOURCE_ERROR_DIAGNOSTICS" to "false"
+            )
+            EditorLspManager.LANGUAGE_JAVA -> EditorJdtLsSupport.environmentExtras()
+            else -> emptyMap()
         }
-        return mapOf(
-            "SHELLCHECK_PATH" to "/dev/null",
-            "SHFMT_PATH" to "/dev/null",
-            "BACKGROUND_ANALYSIS_MAX_FILES" to "0",
-            "ENABLE_SOURCE_ERROR_DIAGNOSTICS" to "false"
-        )
     }
 
     fun initializationOptionsForLanguage(languageId: String): JSONObject? {
-        if (languageId != EditorLspManager.LANGUAGE_SHELL) {
-            return null
+        return when (languageId) {
+            EditorLspManager.LANGUAGE_SHELL -> JSONObject()
+                .put("shellcheckPath", "")
+                .put("globPattern", "")
+                .put("backgroundAnalysisMaxFiles", 0)
+            EditorLspManager.LANGUAGE_JAVA -> JSONObject()
+                .put("settings", JSONObject().put(
+                    "java",
+                    JSONObject()
+                        .put("configuration", JSONObject().put("updateBuildConfiguration", "automatic"))
+                        .put("autobuild", JSONObject().put("enabled", true))
+                        .put("completion", JSONObject().put("enabled", true))
+                ))
+            else -> null
         }
-        return JSONObject()
-            .put("shellcheckPath", "")
-            .put("globPattern", "")
-            .put("backgroundAnalysisMaxFiles", 0)
     }
 
     fun buildPath(existingPath: String?): String {

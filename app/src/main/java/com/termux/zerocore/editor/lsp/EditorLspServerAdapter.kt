@@ -85,10 +85,11 @@ class EditorLspServerAdapter(
     private fun packageIconText(serverPackage: EditorLspInstaller.ServerPackage): String {
         return when (serverPackage.id) {
             EditorLspInstaller.SHELL_BASIC_ID -> "Sh"
-            "json" -> "J"
+            "json" -> "{}"
             "typescript" -> "TS"
             "python" -> "Py"
             "yaml" -> "Ym"
+            EditorJdtLsSupport.PACKAGE_ID -> "Jv"
             else -> serverPackage.displayName.take(2)
         }
     }
@@ -103,6 +104,7 @@ class EditorLspServerAdapter(
                 EditorLspManager.LANGUAGE_TYPESCRIPT -> "TypeScript"
                 EditorLspManager.LANGUAGE_PYTHON -> "Python"
                 EditorLspManager.LANGUAGE_YAML -> "YAML"
+                EditorLspManager.LANGUAGE_JAVA -> "Java (.java)"
                 else -> languageId
             }
         }

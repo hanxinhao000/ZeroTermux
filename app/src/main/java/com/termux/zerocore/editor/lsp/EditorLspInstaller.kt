@@ -19,7 +19,9 @@ class EditorLspInstaller(private val context: Context) {
         val languageIds: List<String>,
         val npmPackages: List<String>,
         val commands: Map<String, String>,
-        val requiredOnFirstOpen: Boolean = false
+        val requiredOnFirstOpen: Boolean = false,
+        /** npm | jdtls 等自定义安装 */
+        val installKind: String = INSTALL_KIND_NPM
     )
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -83,6 +85,9 @@ class EditorLspInstaller(private val context: Context) {
 
     fun isPackageInstalled(packageId: String): Boolean {
         val serverPackage = packageById(packageId) ?: return false
+        if (serverPackage.installKind == INSTALL_KIND_JDTLS) {
+            return EditorJdtLsSupport.isInstalled()
+        }
         return serverPackage.commands.values.all { command ->
             EditorLspCommandResolver.isCommandAvailable(command)
         }
@@ -100,15 +105,22 @@ class EditorLspInstaller(private val context: Context) {
         }
     }
 
-    fun launchSpecForLanguage(languageId: String): EditorLspLaunchSpec? {
+    fun launchSpecForLanguage(languageId: String, projectRoot: File? = null): EditorLspLaunchSpec? {
         val serverPackage = PACKAGES.firstOrNull { pkg ->
             languageId in pkg.languageIds && isPackageInstalled(pkg.id)
         } ?: return null
+        if (serverPackage.installKind == INSTALL_KIND_JDTLS) {
+            return EditorJdtLsSupport.resolveLaunchSpec(projectRoot)
+        }
         val raw = serverPackage.commands[languageId] ?: return null
         return EditorLspCommandResolver.resolveLaunchSpec(raw)
     }
 
     private fun installPackageWorker(serverPackage: ServerPackage) {
+        if (serverPackage.installKind == INSTALL_KIND_JDTLS) {
+            installJdtLs(serverPackage)
+            return
+        }
         ensureNpmReady()
         if (canUseTerminal()) {
             sendLspInstallToTerminal(serverPackage)
@@ -117,6 +129,26 @@ class EditorLspInstaller(private val context: Context) {
             }
         } else {
             installPackageBlocking(serverPackage)
+        }
+    }
+
+    private fun installJdtLs(serverPackage: ServerPackage) {
+        val script = EditorJdtLsSupport.installShellScript()
+        if (canUseTerminal()) {
+            sendToTerminal("echo '[ZeroTermux Editor] Installing LSP: ${serverPackage.displayName}'\n")
+            // 用临时脚本避免终端转义问题
+            val scriptFile = File(baseDir(), "install-jdtls.sh")
+            baseDir().mkdirs()
+            scriptFile.writeText(script + "\n")
+            sendToTerminal("sh ${shellQuote(scriptFile.absolutePath)}\n")
+            if (!waitForCondition({ isPackageInstalled(serverPackage.id) }, JDTLS_INSTALL_WAIT_MS)) {
+                throw IllegalStateException("jdt-ls 安装超时，请在 Termux 中确认下载/解压是否完成，并已安装 openjdk-21")
+            }
+        } else {
+            runShellScript(script)
+            if (!isPackageInstalled(serverPackage.id)) {
+                throw IllegalStateException("jdt-ls 未就绪：请确认 openjdk-21 与 ~/.zerotermux/editor-lsp/jdtls 已安装")
+            }
         }
     }
 
@@ -255,10 +287,13 @@ class EditorLspInstaller(private val context: Context) {
 
     companion object {
         const val SHELL_BASIC_ID = "shell-basic"
+        const val INSTALL_KIND_NPM = "npm"
+        const val INSTALL_KIND_JDTLS = "jdtls"
         private const val MAX_OUTPUT_LENGTH = 4000
         private const val POLL_INTERVAL_MS = 2000L
         private const val NPM_INSTALL_WAIT_MS = 10 * 60 * 1000L
         private const val LSP_INSTALL_WAIT_MS = 15 * 60 * 1000L
+        private const val JDTLS_INSTALL_WAIT_MS = 30 * 60 * 1000L
         private val installingPackages = LinkedHashSet<String>()
 
         private val PACKAGES = listOf(
@@ -308,6 +343,15 @@ class EditorLspInstaller(private val context: Context) {
                 languageIds = listOf(EditorLspManager.LANGUAGE_YAML),
                 npmPackages = listOf("yaml-language-server"),
                 commands = mapOf(EditorLspManager.LANGUAGE_YAML to "yaml-language-server --stdio")
+            ),
+            ServerPackage(
+                id = EditorJdtLsSupport.PACKAGE_ID,
+                displayName = "Java LSP (Eclipse JDT.LS)",
+                description = "打开 .java 自动启动；提供类/方法/import 补全（需 OpenJDK 21+，包体较大）",
+                languageIds = listOf(EditorLspManager.LANGUAGE_JAVA),
+                npmPackages = emptyList(),
+                commands = mapOf(EditorLspManager.LANGUAGE_JAVA to "jdtls --stdio"),
+                installKind = INSTALL_KIND_JDTLS
             )
         )
 

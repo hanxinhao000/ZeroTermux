@@ -1118,8 +1118,15 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         if (!lspEnabled || !::lspManager.isInitialized) return
         val languageId = lspLanguageId(extension) ?: return
         if (!lspManager.isLanguageInstalled(languageId)) {
-            if (languageId == EditorLspManager.LANGUAGE_SHELL) {
-                lspManager.ensureBasicShellInstalled()
+            when (languageId) {
+                EditorLspManager.LANGUAGE_SHELL -> lspManager.ensureBasicShellInstalled()
+                EditorLspManager.LANGUAGE_JAVA -> lspManager.ensureJavaJdtLsInstalled { success ->
+                    if (success) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            lspManager.openDocument(file, languageId, content)
+                        }
+                    }
+                }
             }
             return
         }

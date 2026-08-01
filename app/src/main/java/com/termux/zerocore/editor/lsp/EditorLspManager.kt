@@ -125,6 +125,17 @@ class EditorLspManager(private val context: Context) {
         lspInstaller.ensureBasicShellInstalled(onFinished)
     }
 
+    fun ensureJavaJdtLsInstalled(onFinished: ((Boolean) -> Unit)? = null) {
+        lspInstaller.installPackage(EditorJdtLsSupport.PACKAGE_ID, quietIfInstalled = true) { success, _ ->
+            if (success) {
+                synchronized(failedLanguages) {
+                    failedLanguages.remove(LANGUAGE_JAVA)
+                }
+            }
+            onFinished?.invoke(success)
+        }
+    }
+
     fun availablePackages(): List<EditorLspInstaller.ServerPackage> {
         return lspInstaller.availablePackages()
     }
@@ -174,15 +185,33 @@ class EditorLspManager(private val context: Context) {
     private fun clientFor(file: File, languageId: String): EditorLspClient? {
         if (!settings.enabled) return null
         if (!lspInstaller.isLanguageInstalled(languageId)) {
-            if (languageId == LANGUAGE_SHELL) {
-                lspInstaller.ensureBasicShellInstalled()
+            when (languageId) {
+                LANGUAGE_SHELL -> lspInstaller.ensureBasicShellInstalled()
+                LANGUAGE_JAVA -> ensureJavaJdtLsInstalled()
             }
-            showErrorOnce("LSP 服务器未安装，请先在设置中安装 Shell 基础 LSP")
+            showErrorOnce(
+                if (languageId == LANGUAGE_JAVA) {
+                    "Java LSP (jdt-ls) 未安装，正在尝试安装；也可在编辑器设置 → LSP 中手动安装"
+                } else {
+                    "LSP 服务器未安装，请先在设置中安装对应语言包"
+                }
+            )
             return null
         }
-        val launchSpec = lspInstaller.launchSpecForLanguage(languageId)
+        val projectRoot = if (languageId == LANGUAGE_JAVA) {
+            EditorJdtLsSupport.findProjectRoot(file)
+        } else {
+            file.parentFile
+        }
+        val launchSpec = lspInstaller.launchSpecForLanguage(languageId, projectRoot)
         if (launchSpec == null) {
-            showErrorOnce("LSP 服务器命令未找到，请重新安装对应语言包")
+            showErrorOnce(
+                if (languageId == LANGUAGE_JAVA) {
+                    "jdt-ls 启动失败：请确认已安装 openjdk-21，并重新安装 Java LSP"
+                } else {
+                    "LSP 服务器命令未找到，请重新安装对应语言包"
+                }
+            )
             return null
         }
         synchronized(failedLanguages) {
@@ -193,11 +222,16 @@ class EditorLspManager(private val context: Context) {
             clients.remove(languageId)
             openDocuments.filterValues { it.languageId == languageId }.keys.forEach { openDocuments.remove(it) }
         }
+        val timeout = if (languageId == LANGUAGE_JAVA) {
+            maxOf(settings.timeoutMillis, EditorJdtLsSupport.INIT_TIMEOUT_MILLIS)
+        } else {
+            settings.timeoutMillis
+        }
         val client = EditorLspClient(
             context.applicationContext,
             launchSpec,
-            file.parentFile,
-            settings.timeoutMillis,
+            projectRoot,
+            timeout,
             ::showErrorOnce,
             EditorLspCommandResolver.environmentForLanguage(languageId),
             EditorLspCommandResolver.initializationOptionsForLanguage(languageId)
@@ -321,6 +355,7 @@ class EditorLspManager(private val context: Context) {
         const val LANGUAGE_PYTHON = "python"
         const val LANGUAGE_SHELL = "shellscript"
         const val LANGUAGE_YAML = "yaml"
+        const val LANGUAGE_JAVA = "java"
         const val DEFAULT_TIMEOUT_MILLIS = 3000L
         private const val MAX_LSP_TEXT_LENGTH = 1024 * 1024
         private const val MAX_COMPLETION_ITEMS = 120
@@ -334,6 +369,7 @@ class EditorLspManager(private val context: Context) {
                 "py", "python", "pyw" -> LANGUAGE_PYTHON
                 "sh", "bash", "zsh", "fish", "profile", "bashrc", "zshrc" -> LANGUAGE_SHELL
                 "yaml", "yml" -> LANGUAGE_YAML
+                "java" -> LANGUAGE_JAVA
                 else -> null
             }
         }
