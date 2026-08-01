@@ -945,6 +945,12 @@ public final class TermuxConstants {
             /** Intent extra for if termux failsafe session needs to be started and is used by {@link TERMUX_ACTIVITY} and {@link TERMUX_SERVICE#ACTION_STOP_SERVICE} */
             public static final String EXTRA_FAILSAFE_SESSION = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.failsafe_session"; // Default: "com.termux.app.failsafe_session"
 
+            /**
+             * Intent extra for repair mode: start an Android system shell without loading the Termux
+             * bootstrap / PREFIX environment. Used by the launcher long-press shortcut.
+             */
+            public static final String EXTRA_REPAIR_MODE = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.repair_mode"; // Default: "com.termux.app.repair_mode"
+
 
             /** Intent action to make termux app notify user that a crash happened. */
             public static final String ACTION_NOTIFY_APP_CRASH = TermuxConstants.TERMUX_PACKAGE_NAME + ".app.notify_app_crash"; // Default: "com.termux.app.notify_app_crash"

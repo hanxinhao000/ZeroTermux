@@ -389,6 +389,13 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
     }
 
     public void addNewSession(boolean isFailSafe, String sessionName) {
+        addNewSession(isFailSafe, sessionName, null);
+    }
+
+    /**
+     * @param workingDirectoryOverride if non-null, used as cwd instead of current session / default
+     */
+    public void addNewSession(boolean isFailSafe, String sessionName, String workingDirectoryOverride) {
         TermuxService service = mActivity.getTermuxService();
         if (service == null) return;
 
@@ -399,7 +406,9 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             TerminalSession currentSession = mActivity.getCurrentSession();
 
             String workingDirectory;
-            if (currentSession == null) {
+            if (workingDirectoryOverride != null && !workingDirectoryOverride.isEmpty()) {
+                workingDirectory = workingDirectoryOverride;
+            } else if (currentSession == null) {
                 workingDirectory = mActivity.getProperties().getDefaultWorkingDirectory();
             } else {
                 workingDirectory = currentSession.getCwd();

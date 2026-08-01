@@ -26,6 +26,7 @@
     <!-- Terminal Sidebar and Shortcuts -->
     <string name="action_new_session">新会话</string>
     <string name="action_new_session_failsafe">故障安全</string>
+    <string name="action_repair_mode">维修模式</string>
     <string name="title_max_terminals_reached">达到最大终端</string>
     <string name="msg_max_terminals_reached">在创建新的之前关闭现有的,如果在备份或恢复当中请忽略。</string>
 

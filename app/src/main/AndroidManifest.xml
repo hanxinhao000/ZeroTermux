@@ -226,9 +226,13 @@
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+            <!-- Shortcuts must be declared on the LAUNCHER activity for long-press menus. -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <!--@}-->
-       <!-- ZeroTermux modify{@-->
+       <!-- ZeroTermux modify {@-->
         <activity
             android:name=".app.TermuxActivity"
             android:exported="true"
@@ -248,10 +252,6 @@
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>-->
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
         </activity>
         <!--@}-->
         <activity-alias

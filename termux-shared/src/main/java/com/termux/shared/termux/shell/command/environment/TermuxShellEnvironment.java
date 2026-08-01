@@ -75,11 +75,13 @@ public class TermuxShellEnvironment extends AndroidShellEnvironment {
         if (termuxApiAppEnvironment != null)
             environment.putAll(termuxApiAppEnvironment);
 
-        environment.put(ENV_HOME, TermuxConstants.TERMUX_HOME_DIR_PATH);
-        environment.put(ENV_PREFIX, TermuxConstants.TERMUX_PREFIX_DIR_PATH);
-
-        // If failsafe is not enabled, then we keep default PATH and TMPDIR so that system binaries can be used
-        if (!isFailSafe) {
+        // Failsafe / repair mode: keep Android system PATH from parent, but start under
+        // /data/data/com.termux/files. Do not set PREFIX or Termux bin PATH.
+        if (isFailSafe) {
+            environment.put(ENV_HOME, TermuxConstants.TERMUX_FILES_DIR_PATH);
+        } else {
+            environment.put(ENV_HOME, TermuxConstants.TERMUX_HOME_DIR_PATH);
+            environment.put(ENV_PREFIX, TermuxConstants.TERMUX_PREFIX_DIR_PATH);
             environment.put(ENV_TMPDIR, TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH);
             if (TermuxBootstrap.isAppPackageVariantAPTAndroid5()) {
                 // Termux in android 5/6 era shipped busybox binaries in applets directory

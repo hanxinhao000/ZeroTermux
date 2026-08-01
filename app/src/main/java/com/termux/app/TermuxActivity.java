@@ -536,23 +536,28 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         final Intent intent = getIntent();
         setIntent(null);
 
+        final boolean launchRepairMode = intent != null && intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_REPAIR_MODE, false);
+        final boolean launchFailsafe = launchRepairMode
+            || (intent != null && intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false));
+
         if (mTermuxService.isTermuxSessionsEmpty()) {
             if (mIsVisible) {
-                TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
-                    if (mTermuxService == null) return; // Activity might have been destroyed.
-                    // ZeroTermux add {@
-                    initCommand();
-                    // @}
-                    try {
-                        boolean launchFailsafe = false;
-                        if (intent != null && intent.getExtras() != null) {
-                            launchFailsafe = intent.getExtras().getBoolean(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
+                if (launchRepairMode) {
+                    // Repair mode: Android system shell only — skip Termux bootstrap and PREFIX setup.
+                    startRepairOrFailsafeSession(true);
+                } else {
+                    TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
+                        if (mTermuxService == null) return; // Activity might have been destroyed.
+                        // ZeroTermux add {@
+                        initCommand();
+                        // @}
+                        try {
+                            mTermuxTerminalSessionActivityClient.addNewSession(launchFailsafe, null);
+                        } catch (WindowManager.BadTokenException e) {
+                            // Activity finished - ignore.
                         }
-                        mTermuxTerminalSessionActivityClient.addNewSession(launchFailsafe, null);
-                    } catch (WindowManager.BadTokenException e) {
-                        // Activity finished - ignore.
-                    }
-                });
+                    });
+                }
             } else {
                 // The service connected while not in foreground - just bail out.
                 finishActivityIfNotFinishing();
@@ -563,8 +568,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             // each time.
             if (!mIsActivityRecreated && intent != null && Intent.ACTION_RUN.equals(intent.getAction())) {
                 // Android 7.1 app shortcut from res/xml/shortcuts.xml.
-                boolean isFailSafe = intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
-                mTermuxTerminalSessionActivityClient.addNewSession(isFailSafe, null);
+                if (launchRepairMode) {
+                    startRepairOrFailsafeSession(true);
+                } else {
+                    mTermuxTerminalSessionActivityClient.addNewSession(launchFailsafe, null);
+                }
             } else {
                 mTermuxTerminalSessionActivityClient.setCurrentSession(mTermuxTerminalSessionActivityClient.getCurrentStoredSessionOrLast());
             }
@@ -580,6 +588,40 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         // Respect being stopped from the {@link TermuxService} notification action.
         finishActivityIfNotFinishing();
+    }
+
+    /**
+     * Start a repair-mode session: {@code /system/bin/sh} with Android PATH,
+     * cwd under {@code /data/data/com.termux/files}, without Termux PREFIX bootstrap.
+     */
+    private void startRepairOrFailsafeSession(boolean repairMode) {
+        try {
+            String sessionName = repairMode ? getString(R.string.action_repair_mode) : null;
+            String workingDirectory = repairMode ? TermuxConstants.TERMUX_FILES_DIR_PATH : null;
+            mTermuxTerminalSessionActivityClient.addNewSession(true, sessionName, workingDirectory);
+        } catch (WindowManager.BadTokenException e) {
+            // Activity finished - ignore.
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (mIsInvalidState || mTermuxService == null || mTermuxTerminalSessionActivityClient == null)
+            return;
+        if (intent == null || !Intent.ACTION_RUN.equals(intent.getAction()))
+            return;
+
+        boolean repairMode = intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_REPAIR_MODE, false);
+        boolean failsafe = repairMode
+            || intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
+        if (repairMode) {
+            startRepairOrFailsafeSession(true);
+        } else {
+            mTermuxTerminalSessionActivityClient.addNewSession(failsafe, null);
+        }
+        setIntent(null);
     }
 
 
