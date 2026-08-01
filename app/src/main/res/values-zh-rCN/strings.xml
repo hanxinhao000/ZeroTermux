@@ -819,7 +819,7 @@
     <string name="editor_toolbar_undo">撤销</string>
     <string name="editor_toolbar_redo">重做</string>
     <string name="editor_toolbar_more">更多操作</string>
-    <string name="editor_toolbar_terminal">终端</string>
+    <string name="editor_toolbar_terminal">Shell 终端</string>
     <string name="editor_terminal_title">终端</string>
     <string name="editor_terminal_hide">隐藏终端</string>
     <string name="editor_terminal_ctrl_c">发送 Ctrl+C 中断</string>

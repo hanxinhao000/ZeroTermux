@@ -843,7 +843,7 @@ Reset successfully</string>
     <string name="editor_toolbar_undo">Undo</string>
     <string name="editor_toolbar_redo">Redo</string>
     <string name="editor_toolbar_more">More actions</string>
-    <string name="editor_toolbar_terminal">Terminal</string>
+    <string name="editor_toolbar_terminal">Shell</string>
     <string name="editor_terminal_title">Terminal</string>
     <string name="editor_terminal_hide">Hide terminal</string>
     <string name="editor_toolbar_run">Run</string>
