@@ -24,7 +24,8 @@ class EditorLspClient(
     private val timeoutMillis: Long,
     private val onError: (String) -> Unit,
     private val environmentExtras: Map<String, String> = emptyMap(),
-    private val initializationOptions: JSONObject? = null
+    private val initializationOptions: JSONObject? = null,
+    private val onServerNotification: ((method: String, params: Any?) -> Unit)? = null
 ) {
     private data class PendingRequest(
         val latch: CountDownLatch = CountDownLatch(1),
@@ -65,12 +66,19 @@ class EditorLspClient(
             startReaderThread()
             startStderrThread()
             initialized = initializeServer()
-            if (!initialized) shutdown()
+            if (!initialized) {
+                EditorLspDebugStore.recordEvent("fatal", "LSP initialize failed: ${launchSpec.executable}")
+                onError("LSP initialize failed")
+                shutdown()
+            } else {
+                EditorLspDebugStore.recordEvent("info", "LSP initialized: ${launchSpec.executable}")
+            }
             initialized
         } catch (e: Exception) {
-            onError(
-                e.message ?: "LSP server start failed: ${launchSpec.executable} ${launchSpec.arguments.joinToString(" ")}"
-            )
+            val msg = e.message
+                ?: "LSP server start failed: ${launchSpec.executable} ${launchSpec.arguments.joinToString(" ")}"
+            EditorLspDebugStore.recordEvent("fatal", msg)
+            onError(msg)
             shutdown()
             false
         }
@@ -164,23 +172,48 @@ class EditorLspClient(
     }
 
     private fun initializeServer(): Boolean {
-        val capabilities = JSONObject()
+        val textDocument = JSONObject()
             .put(
-                "textDocument",
+                "completion",
                 JSONObject().put(
-                    "completion",
-                    JSONObject().put(
-                        "completionItem",
-                        JSONObject()
-                            .put("snippetSupport", false)
-                            .put("documentationFormat", org.json.JSONArray().put("markdown").put("plaintext"))
-                    )
+                    "completionItem",
+                    JSONObject()
+                        .put("snippetSupport", false)
+                        .put("documentationFormat", org.json.JSONArray().put("markdown").put("plaintext"))
                 )
             )
-        val rootUri = rootDirectory?.toURI()?.toString()
+            .put(
+                "publishDiagnostics",
+                JSONObject()
+                    .put("relatedInformation", false)
+                    .put("versionSupport", false)
+                    .put("tagSupport", JSONObject().put("valueSet", org.json.JSONArray().put(1).put(2)))
+            )
+            .put(
+                "synchronization",
+                JSONObject()
+                    .put("dynamicRegistration", false)
+                    .put("willSave", false)
+                    .put("willSaveWaitUntil", false)
+                    .put("didSave", false)
+            )
+        val capabilities = JSONObject()
+            .put("textDocument", textDocument)
+            .put("workspace", JSONObject().put("workspaceFolders", true))
+        val safeRoot = rootDirectory?.takeIf {
+            it.isDirectory && it.absolutePath != "/" && it.canRead()
+        } ?: TermuxConstants.TERMUX_HOME_DIR
+        val rootUri = safeRoot.toURI().toString()
         val params = JSONObject()
             .put("processId", Process.myPid())
-            .put("rootUri", rootUri ?: JSONObject.NULL)
+            .put("rootUri", rootUri)
+            .put("rootPath", safeRoot.absolutePath)
+            .put(
+                "workspaceFolders",
+                org.json.JSONArray().put(
+                    JSONObject().put("uri", rootUri).put("name", safeRoot.name.ifEmpty { "workspace" })
+                )
+            )
             .put("capabilities", capabilities)
             .put("clientInfo", JSONObject().put("name", "ZeroTermux Editor"))
         initializationOptions?.let { params.put("initializationOptions", it) }
@@ -202,14 +235,20 @@ class EditorLspClient(
             writeMessage(message)
             if (!pendingRequest.latch.await(timeout, TimeUnit.MILLISECONDS)) {
                 pendingRequests.remove(id)
+                EditorLspDebugStore.recordEvent("error", "LSP request timeout: $method")
                 null
             } else {
-                pendingRequest.error?.let { onError(it.optString("message", it.toString())) }
+                pendingRequest.error?.let { err ->
+                    EditorLspDebugStore.recordEvent(
+                        "rpc_error",
+                        "$method: ${err.optString("message", err.toString())}"
+                    )
+                }
                 pendingRequest.result
             }
         } catch (e: Exception) {
             pendingRequests.remove(id)
-            onError(e.message ?: "LSP request failed")
+            EditorLspDebugStore.recordEvent("error", e.message ?: "LSP request failed: $method")
             null
         }
     }
@@ -222,7 +261,7 @@ class EditorLspClient(
         try {
             writeMessage(message)
         } catch (e: Exception) {
-            onError(e.message ?: "LSP notify failed")
+            EditorLspDebugStore.recordEvent("error", e.message ?: "LSP notify failed: $method")
         }
     }
 
@@ -246,7 +285,10 @@ class EditorLspClient(
                     val message = readMessage(bufferedInputStream) ?: break
                     handleMessage(message)
                 } catch (e: Exception) {
-                    if (running) onError(e.message ?: "LSP read failed")
+                    if (running) {
+                        EditorLspDebugStore.recordEvent("fatal", e.message ?: "LSP read failed")
+                        onError("LSP connection lost")
+                    }
                     break
                 }
             }
@@ -267,7 +309,8 @@ class EditorLspClient(
                 BufferedReader(InputStreamReader(errorStream)).useLines { lines ->
                     lines.forEach { line ->
                         if (line.isBlank() || shouldIgnoreStderrLine(line)) return@forEach
-                        onError(line)
+                        // jdt-ls / Eclipse 日志会刷屏；只进调试缓冲，不 Toast
+                        EditorLspDebugStore.appendStderr(line)
                     }
                 }
             } catch (_: Exception) {
@@ -280,14 +323,23 @@ class EditorLspClient(
     }
 
     private fun handleMessage(message: JSONObject) {
+        val method = message.optString("method", "")
         val id = message.opt("id")
+        // 服务端通知（无 id）：如 textDocument/publishDiagnostics
+        if (method.isNotEmpty() && (id == null || id == JSONObject.NULL)) {
+            try {
+                onServerNotification?.invoke(method, message.opt("params"))
+            } catch (_: Exception) {
+            }
+            return
+        }
         if (id is Number) {
             val pendingRequest = pendingRequests.remove(id.toInt())
             if (pendingRequest != null) {
                 pendingRequest.error = message.optJSONObject("error")
                 pendingRequest.result = if (message.has("result")) message.opt("result") else null
                 pendingRequest.latch.countDown()
-            } else if (message.has("method")) {
+            } else if (method.isNotEmpty()) {
                 respondToServerRequest(id.toInt())
             }
         }

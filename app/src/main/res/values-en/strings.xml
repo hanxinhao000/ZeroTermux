@@ -1816,6 +1816,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="settings_keyword">Set double-tap function</string>
     <string name="zt_ai_debug_title">Enable external AI debug API</string>
     <string name="zt_ai_debug_summary">External AI debug (CRITICAL) terminal/logs/screenshot/automation/system; Root = full control</string>
+    <string name="zt_ai_debug_summary_with_endpoint">External AI debug (CRITICAL)\nEndpoint: %1$s (give IP:port + match code to AI)</string>
     <string name="zt_ai_debug_disclaimer_title">External AI debug — CRITICAL risk</string>
     <string name="zt_ai_debug_disclaimer_message">When enabled, LAN AI can fully control this device via port 19998:\n\n• Read/run Termux terminal commands\n• logcat / system logs\n• Screenshot, UI tap/swipe automation\n• SMS, contacts, phone/SIM info\n• Read/write files, system status\n\n【With or without Root】A leaked match code lets AI access all data the app can reach.\n\n【Root full debug extra risk】If Root mode is also enabled, AI can run su, modify system partitions, brick the device, cause black screen, permanent data loss — irreversible.\n\nDisable when done. Continuing means you accept ALL consequences including a bricked device.</string>
     <string name="zt_ai_debug_notification_title">External AI debug</string>

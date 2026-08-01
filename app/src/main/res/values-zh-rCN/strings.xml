@@ -1878,6 +1878,7 @@
     <string name="settings_keyword">设置双击功能</string>
     <string name="zt_ai_debug_title">启用外部AI调用ZeroTermux</string>
     <string name="zt_ai_debug_summary">使用外部AI排查ZeroTermux(极高危) 终端/日志/截屏/自动化/系统状态；Root机可完全控制</string>
+    <string name="zt_ai_debug_summary_with_endpoint">使用外部AI排查ZeroTermux(极高危)\n当前地址：%1$s（把 IP:端口 和匹配码发给 AI）</string>
     <string name="zt_ai_debug_disclaimer_title">外部 AI 调试 — 极高危</string>
     <string name="zt_ai_debug_disclaimer_message">开启后，同一局域网内的电脑/AI 可通过 19998 端口完全控制本机：\n\n• 读取并执行 Termux 终端命令\n• 读取 logcat / 系统日志\n• 截取屏幕、UI 自动化点击滑动\n• 读取短信、联系人、电话/SIM 信息\n• 读写文件、查看系统状态\n\n【无论是否 Root 均适用】匹配码一旦泄露，AI 可读取本机全部可访问数据。\n\n【Root 完全调试额外风险】若再开启 Root 选项，AI 可通过 su 修改系统分区、刷写文件、执行任意命令，可能导致变砖、黑屏、数据永久丢失，且无法恢复。\n\n此为极高危调试功能，用毕请立即关闭。继续即表示您完全了解风险并自行承担一切后果（含变砖）。</string>
     <string name="zt_ai_debug_notification_title">外部 AI 调试</string>

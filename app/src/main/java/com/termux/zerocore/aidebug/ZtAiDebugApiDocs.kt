@@ -208,6 +208,21 @@ object ZtAiDebugApiDocs {
             mapOf("method" to "GET", "path" to "/api/vnc/status", "desc" to if (lang == "zh") "编辑器 VNC 诊断（Xvfb/x11vnc/端口/日志）" else "Editor VNC diagnostics (Xvfb/x11vnc/port/log)"),
             mapOf("method" to "POST", "path" to "/api/vnc/start", "desc" to if (lang == "zh") "启动 Xvfb + x11vnc（:99 端口 15901）" else "Start Xvfb + x11vnc (:99 port 15901)"),
             mapOf("method" to "POST", "path" to "/api/editor/open", "desc" to if (lang == "zh") "JSON {path} 打开 EditTextActivity" else "JSON {path} open EditTextActivity"),
+            mapOf(
+                "method" to "GET",
+                "path" to "/api/editor/lsp/status",
+                "desc" to if (lang == "zh") "编辑器 LSP/jdt-ls 状态与诊断摘要" else "Editor LSP/jdt-ls status + diagnostics summary"
+            ),
+            mapOf(
+                "method" to "GET",
+                "path" to "/api/editor/lsp/diagnostics",
+                "desc" to if (lang == "zh") "当前 publishDiagnostics 快照" else "Current publishDiagnostics snapshot"
+            ),
+            mapOf(
+                "method" to "GET",
+                "path" to "/api/editor/lsp/stderr",
+                "desc" to if (lang == "zh") "jdt-ls stderr 尾部 ?lines=" else "jdt-ls stderr tail ?lines="
+            ),
             mapOf("method" to "GET", "path" to "/api/llm/tools", "desc" to if (lang == "zh") "列出全部 LLM/智能体工具名" else "List all LLM agent tool names"),
             mapOf("method" to "POST", "path" to "/api/llm/tool", "desc" to if (lang == "zh") "执行 LLM 工具 {tool, arguments}" else "Run LLM tool {tool, arguments}"),
             mapOf("method" to "POST", "path" to "/api/config/get", "desc" to if (lang == "zh") "读 ZeroTermux 配置 {group?, keys?}" else "Get ZT config {group?, keys?}"),

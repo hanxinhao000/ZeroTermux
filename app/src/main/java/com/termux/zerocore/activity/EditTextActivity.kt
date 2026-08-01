@@ -72,8 +72,11 @@ import com.termux.zerocore.editor.EditorX11Environment
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
+import com.termux.zerocore.editor.lsp.EditorLspUris
 import com.termux.zerocore.ftp.utils.UserSetManage
+import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.lang.Language
+import io.github.rosemoe.sora.lang.diagnostic.DiagnosticsContainer
 import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.FileProviderRegistry
@@ -149,6 +152,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         const val EDITOR_STATE_TERMINAL_VISIBLE = "terminal_visible"
         const val DEFAULT_TAB_SIZE = 4
         const val DIRTY_CHECK_INTERVAL = 600L
+        const val LSP_DOCUMENT_CHANGE_DEBOUNCE_MS = 450L
         const val SIDEBAR_WIDTH_DP = 280
         const val SIDEBAR_EDGE_SWIPE_DP = 28
         const val SIDEBAR_ANIMATION_DURATION = 200L
@@ -290,6 +294,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var isMatchCase = false
     private val dirtyCheckHandler = Handler(Looper.getMainLooper())
     private val editorTabs = ArrayList<EditorTab>()
+    private var lspContentChangeSubscribed = false
+    private val lspDocumentChangeRunnable = Runnable { flushLspDocumentChange() }
     private val dirtyCheckRunnable = object : Runnable {
         override fun run() {
             updateDirtyState()
@@ -476,10 +482,20 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             setDisableSoftKbdIfHardKbdAvailable(false)
             isFocusableInTouchMode = true
             getComponent(EditorAutoCompletion::class.java)?.isEnabled = true
+            // 诊断波浪线：默认幅度 4dp 偏大，略压低起伏
+            props.indicatorWaveAmplitude = 1.8f
+            props.indicatorWaveLength = 14f
+            props.indicatorWaveWidth = 0.85f
             setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus && editorBottomDock?.isTerminalTabActive() == true) {
                     findViewById<EditorTerminalInputView>(R.id.editor_terminal_input)?.clearFocus()
                     setSoftKeyboardEnabled(true)
+                }
+            }
+            if (!lspContentChangeSubscribed) {
+                lspContentChangeSubscribed = true
+                subscribeEvent(ContentChangeEvent::class.java) { _, _ ->
+                    scheduleLspDocumentChange()
                 }
             }
         }
@@ -1107,7 +1123,41 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
 
     private fun applyLspSettings() {
         if (!::lspManager.isInitialized) return
+        lspManager.setDiagnosticsListener { uri, diagnostics ->
+            applyLspDiagnosticsToEditor(uri, diagnostics)
+        }
         lspManager.updateSettings(EditorLspManager.Settings(lspEnabled, lspTimeoutMillis))
+        if (!lspEnabled) {
+            code_editor?.diagnostics = null
+        } else {
+            refreshCurrentEditorDiagnostics()
+        }
+    }
+
+    private fun applyLspDiagnosticsToEditor(uri: String, diagnostics: DiagnosticsContainer?) {
+        val file = currentFile ?: return
+        val currentUri = EditorLspUris.forFile(file)
+        if (!EditorLspUris.same(currentUri, uri)) return
+        val tab = currentTab()
+        if (tab == null || tab.previewOnly || isTextPreviewMode(tab)) {
+            code_editor?.diagnostics = null
+            return
+        }
+        code_editor?.diagnostics = diagnostics
+    }
+
+    private fun refreshCurrentEditorDiagnostics() {
+        if (!::lspManager.isInitialized || !lspEnabled) {
+            code_editor?.diagnostics = null
+            return
+        }
+        val file = currentFile ?: return
+        val tab = currentTab()
+        if (tab == null || tab.previewOnly || isTextPreviewMode(tab)) {
+            code_editor?.diagnostics = null
+            return
+        }
+        code_editor?.diagnostics = lspManager.diagnosticsFor(file)
     }
 
     private fun lspLanguageId(extension: String): String? {
@@ -1135,8 +1185,28 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         }
     }
 
+    private fun scheduleLspDocumentChange() {
+        if (!lspEnabled || !::lspManager.isInitialized) return
+        dirtyCheckHandler.removeCallbacks(lspDocumentChangeRunnable)
+        dirtyCheckHandler.postDelayed(lspDocumentChangeRunnable, LSP_DOCUMENT_CHANGE_DEBOUNCE_MS)
+    }
+
+    private fun flushLspDocumentChange() {
+        if (!lspEnabled || !::lspManager.isInitialized) return
+        val tab = currentTab() ?: return
+        if (tab.previewOnly || isTextPreviewMode(tab)) return
+        val file = tab.file
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        if (!lspManager.isLanguageInstalled(languageId)) return
+        val content = code_editor?.text?.toString() ?: return
+        lifecycleScope.launch(Dispatchers.IO) {
+            lspManager.changeDocument(file, languageId, content)
+        }
+    }
+
     private fun closeLspDocument(file: File) {
         if (!::lspManager.isInitialized) return
+        dirtyCheckHandler.removeCallbacks(lspDocumentChangeRunnable)
         lifecycleScope.launch(Dispatchers.IO) {
             lspManager.closeDocument(file)
         }
@@ -1144,7 +1214,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
 
     private fun shutdownLspManager() {
         if (!::lspManager.isInitialized) return
+        dirtyCheckHandler.removeCallbacks(lspDocumentChangeRunnable)
         val manager = lspManager
+        manager.setDiagnosticsListener(null)
+        manager.releaseActiveIfMine()
+        code_editor?.diagnostics = null
         Thread({
             manager.closeAll()
         }, "ZT-LSP-Shutdown").apply {
@@ -1881,11 +1955,14 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val editor = code_editor ?: return
         editor.setText(tab.content)
         editor.setEditorLanguage(createEditorLanguage(extension, tab.file))
+        // setText 会清空 diagnostics，切换/重载后需回填
+        refreshCurrentEditorDiagnostics()
         editor.post {
             ensureTextmateTheme()
             editor.setEditorLanguage(createEditorLanguage(extension, tab.file))
             editor.invalidate()
             configureCodeEditorInput()
+            refreshCurrentEditorDiagnostics()
         }
         syncLspDocument(tab.file, extension, tab.content)
     }

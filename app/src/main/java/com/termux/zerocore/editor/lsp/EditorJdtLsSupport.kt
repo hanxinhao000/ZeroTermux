@@ -65,20 +65,51 @@ object EditorJdtLsSupport {
 
     fun findConfigTemplateDir(): File? {
         val root = installDir()
-        listOf("config_linux", "config_ss_linux", "config_mac", "config_win").forEach { name ->
+        preferredConfigNames().forEach { name ->
             val dir = File(root, name)
             if (dir.isDirectory) return dir
         }
         return root.listFiles()?.firstOrNull { it.isDirectory && it.name.startsWith("config_") }
     }
 
+    /** aarch64 必须用 *_arm，否则 OSGi 原生库架构不匹配。 */
+    fun preferredConfigNames(): List<String> {
+        val arch = (System.getProperty("os.arch") ?: "").lowercase()
+        val arm = arch.contains("aarch64") || arch.contains("arm64") || arch == "armv8l" || arch == "arm"
+        return if (arm) {
+            listOf(
+                "config_linux_arm",
+                "config_ss_linux_arm",
+                "config_linux",
+                "config_ss_linux",
+                "config_mac_arm",
+                "config_mac"
+            )
+        } else {
+            listOf(
+                "config_linux",
+                "config_ss_linux",
+                "config_linux_arm",
+                "config_ss_linux_arm",
+                "config_mac",
+                "config_win"
+            )
+        }
+    }
+
     fun ensureRuntimeConfigDir(): File? {
         val template = findConfigTemplateDir() ?: return null
         val runtime = File(EditorLspInstaller.baseDir(), CONFIG_RUNTIME_DIR_NAME)
-        if (!runtime.exists()) {
+        val marker = File(runtime, ".zt_config_source")
+        val expected = template.name
+        val needRefresh = !runtime.isDirectory ||
+            !File(runtime, "config.ini").isFile ||
+            marker.takeIf { it.isFile }?.readText()?.trim() != expected
+        if (needRefresh) {
+            if (runtime.exists()) runtime.deleteRecursively()
             runtime.mkdirs()
-            // 复制配置模板到可写目录（jdt-ls 会改写 configuration）
-            template.copyRecursively(runtime, overwrite = false)
+            template.copyRecursively(runtime, overwrite = true)
+            marker.writeText(expected)
         }
         return runtime.takeIf { it.isDirectory }
     }
@@ -126,11 +157,18 @@ object EditorJdtLsSupport {
 
     /**
      * 向上查找工程根：pom.xml / build.gradle(.kts) / settings.gradle(.kts) / .git
+     * 绝不返回 `/`，避免 jdt-ls 扫描系统根触发 AccessDeniedException 刷屏。
      */
     fun findProjectRoot(file: File): File {
+        val home = TermuxConstants.TERMUX_HOME_DIR
         var current: File? = if (file.isDirectory) file else file.parentFile
-        var fallback = current ?: TermuxConstants.TERMUX_HOME_DIR
+        val start = current ?: home
+        var fallback = start
         while (current != null) {
+            val path = current.absolutePath
+            if (path == "/" || path == "/data" || path == "/data/data") {
+                break
+            }
             if (File(current, "pom.xml").isFile ||
                 File(current, "build.gradle").isFile ||
                 File(current, "build.gradle.kts").isFile ||
@@ -141,9 +179,16 @@ object EditorJdtLsSupport {
                 return current
             }
             fallback = current
+            if (current == home || path == home.absolutePath) {
+                break
+            }
             current = current.parentFile
         }
-        return fallback
+        return when {
+            fallback.absolutePath == "/" -> home
+            fallback.isDirectory -> fallback
+            else -> home
+        }
     }
 
     fun installShellScript(downloadUrl: String = DEFAULT_DOWNLOAD_URL): String {

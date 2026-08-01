@@ -10,7 +10,7 @@ import com.termux.zerocore.workstation.ZtWorkstationDeviceHelper
 object ZtAiDebugInfoHelper {
 
     private val gson = Gson()
-    private const val API_VERSION = 5
+    private const val API_VERSION = 6
 
     fun publicLockedDiscovery(context: Context): String {
         val ips = NetworkEnvironmentUtil.getLocalIpv4Addresses()

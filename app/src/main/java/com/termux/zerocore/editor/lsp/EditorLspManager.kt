@@ -4,6 +4,9 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import com.example.xh_lib.utils.UUtils
+import io.github.rosemoe.sora.lang.diagnostic.DiagnosticDetail
+import io.github.rosemoe.sora.lang.diagnostic.DiagnosticRegion
+import io.github.rosemoe.sora.lang.diagnostic.DiagnosticsContainer
 import io.github.rosemoe.sora.text.CharPosition
 import io.github.rosemoe.sora.text.ContentReference
 import org.json.JSONArray
@@ -11,8 +14,17 @@ import org.json.JSONObject
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 class EditorLspManager(private val context: Context) {
+    fun interface DiagnosticsListener {
+        fun onDiagnosticsChanged(uri: String, diagnostics: DiagnosticsContainer?)
+    }
+
+    init {
+        activeInstance = this
+    }
+
     data class Settings(
         val enabled: Boolean,
         val timeoutMillis: Long
@@ -42,11 +54,44 @@ class EditorLspManager(private val context: Context) {
     private val lspInstaller = EditorLspInstaller(context.applicationContext)
     private val clients = ConcurrentHashMap<String, EditorLspClient>()
     private val openDocuments = ConcurrentHashMap<String, OpenDocument>()
+    private val diagnosticsByUri = ConcurrentHashMap<String, DiagnosticsContainer>()
     private val failedLanguages = LinkedHashSet<String>()
     private val suppressedErrors = LinkedHashSet<String>()
+    private val diagnosticIdSeq = AtomicLong(1)
+
+    @Volatile
+    private var diagnosticsListener: DiagnosticsListener? = null
 
     @Volatile
     private var settings = Settings(true, DEFAULT_TIMEOUT_MILLIS)
+
+    fun setDiagnosticsListener(listener: DiagnosticsListener?) {
+        diagnosticsListener = listener
+    }
+
+    fun diagnosticsFor(file: File): DiagnosticsContainer? {
+        val uri = EditorLspUris.forFile(file)
+        diagnosticsByUri[uri]?.let { return it }
+        return diagnosticsByUri.entries.firstOrNull { EditorLspUris.same(it.key, uri) }?.value
+    }
+
+    fun debugStatus(): Map<String, Any?> {
+        return mapOf(
+            "active" to true,
+            "enabled" to settings.enabled,
+            "timeout_ms" to settings.timeoutMillis,
+            "open_documents" to openDocuments.keys.toList(),
+            "clients" to clients.mapValues { (_, client) -> client.isRunning() },
+            "diagnostics_uris" to diagnosticsByUri.keys.toList(),
+            "failed_languages" to synchronized(failedLanguages) { failedLanguages.toList() }
+        )
+    }
+
+    fun releaseActiveIfMine() {
+        if (activeInstance === this) {
+            activeInstance = null
+        }
+    }
 
     fun updateSettings(newSettings: Settings) {
         val shouldRestart = settings.timeoutMillis != newSettings.timeoutMillis
@@ -70,7 +115,7 @@ class EditorLspManager(private val context: Context) {
 
     fun openDocument(file: File, languageId: String, text: String) {
         if (!canUseLsp(languageId, text)) return
-        val uri = file.toURI().toString()
+        val uri = EditorLspUris.forFile(file)
         synchronized(this) {
             val opened = openDocuments[uri]
             if (opened != null) {
@@ -95,17 +140,18 @@ class EditorLspManager(private val context: Context) {
     }
 
     fun closeDocument(file: File) {
-        val uri = file.toURI().toString()
+        val uri = EditorLspUris.forFile(file)
         synchronized(this) {
             val opened = openDocuments.remove(uri) ?: return
             clients[opened.languageId]?.didClose(uri)
+            clearDiagnostics(uri)
         }
     }
 
     fun completion(file: File, languageId: String, content: ContentReference, position: CharPosition): List<CompletionCandidate> {
         val text = contentToString(content)
         if (!canUseLsp(languageId, text)) return emptyList()
-        val uri = file.toURI().toString()
+        val uri = EditorLspUris.forFile(file)
         synchronized(this) {
             changeDocumentLocked(file, languageId, text, true)
         }
@@ -114,10 +160,17 @@ class EditorLspManager(private val context: Context) {
     }
 
     fun closeAll() {
+        val uris: List<String>
         synchronized(this) {
+            uris = diagnosticsByUri.keys.toList()
             openDocuments.clear()
+            diagnosticsByUri.clear()
+            EditorLspDebugStore.clearAllDiagnostics()
             clients.values.forEach { it.shutdown() }
             clients.clear()
+        }
+        uris.forEach { uri ->
+            mainHandler.post { diagnosticsListener?.onDiagnosticsChanged(uri, null) }
         }
     }
 
@@ -162,14 +215,14 @@ class EditorLspManager(private val context: Context) {
 
     private fun openDocumentLocked(file: File, languageId: String, text: String) {
         val client = clientFor(file, languageId) ?: return
-        val uri = file.toURI().toString()
+        val uri = EditorLspUris.forFile(file)
         val version = 1
         client.didOpen(uri, languageId, text, version)
         openDocuments[uri] = OpenDocument(uri, languageId, version, text)
     }
 
     private fun changeDocumentLocked(file: File, languageId: String, text: String, openIfMissing: Boolean) {
-        val uri = file.toURI().toString()
+        val uri = EditorLspUris.forFile(file)
         val opened = openDocuments[uri]
         if (opened == null) {
             if (openIfMissing) openDocumentLocked(file, languageId, text)
@@ -220,7 +273,11 @@ class EditorLspManager(private val context: Context) {
         clients[languageId]?.let { client ->
             if (client.isRunning()) return client
             clients.remove(languageId)
-            openDocuments.filterValues { it.languageId == languageId }.keys.forEach { openDocuments.remove(it) }
+            val staleUris = openDocuments.filterValues { it.languageId == languageId }.keys.toList()
+            staleUris.forEach { uri ->
+                openDocuments.remove(uri)
+                clearDiagnostics(uri)
+            }
         }
         val timeout = if (languageId == LANGUAGE_JAVA) {
             maxOf(settings.timeoutMillis, EditorJdtLsSupport.INIT_TIMEOUT_MILLIS)
@@ -234,7 +291,8 @@ class EditorLspManager(private val context: Context) {
             timeout,
             ::showErrorOnce,
             EditorLspCommandResolver.environmentForLanguage(languageId),
-            EditorLspCommandResolver.initializationOptionsForLanguage(languageId)
+            EditorLspCommandResolver.initializationOptionsForLanguage(languageId),
+            ::handleServerNotification
         )
         return if (client.start()) {
             clients[languageId] = client
@@ -245,6 +303,135 @@ class EditorLspManager(private val context: Context) {
             }
             null
         }
+    }
+
+    private fun handleServerNotification(method: String, params: Any?) {
+        if (method != "textDocument/publishDiagnostics") return
+        val payload = params as? JSONObject ?: return
+        val rawUri = payload.optString("uri")
+        if (rawUri.isBlank()) return
+        val uri = EditorLspUris.normalize(rawUri)
+        val items = payload.optJSONArray("diagnostics") ?: JSONArray()
+        val text = openDocuments[uri]?.text
+            ?: openDocuments.entries.firstOrNull { EditorLspUris.same(it.key, uri) }?.value?.text
+            ?: ""
+        val summary = buildDiagnosticSummary(items)
+        EditorLspDebugStore.setDiagnosticsSnapshot(uri, summary)
+        EditorLspDebugStore.recordEvent(
+            "diagnostics",
+            "publishDiagnostics count=${items.length()} textLen=${text.length}",
+            mapOf("uri" to uri, "count" to items.length(), "text_len" to text.length)
+        )
+        val container = buildDiagnosticsContainer(text, items)
+        if (container == null) {
+            diagnosticsByUri.remove(uri)
+        } else {
+            diagnosticsByUri[uri] = container
+        }
+        mainHandler.post {
+            diagnosticsListener?.onDiagnosticsChanged(uri, container)
+        }
+    }
+
+    private fun clearDiagnostics(uri: String) {
+        diagnosticsByUri.remove(uri)
+        EditorLspDebugStore.clearDiagnostics(uri)
+        mainHandler.post {
+            diagnosticsListener?.onDiagnosticsChanged(uri, null)
+        }
+    }
+
+    private fun buildDiagnosticSummary(items: JSONArray): List<Map<String, Any?>> {
+        val out = ArrayList<Map<String, Any?>>(items.length())
+        for (i in 0 until items.length()) {
+            val item = items.optJSONObject(i) ?: continue
+            val range = item.optJSONObject("range")
+            val start = range?.optJSONObject("start")
+            out.add(
+                mapOf(
+                    "severity" to item.optInt("severity", 1),
+                    "message" to item.optString("message"),
+                    "source" to item.optString("source"),
+                    "line" to (start?.optInt("line") ?: -1),
+                    "character" to (start?.optInt("character") ?: -1)
+                )
+            )
+        }
+        return out
+    }
+
+    private fun buildDiagnosticsContainer(text: String, items: JSONArray): DiagnosticsContainer? {
+        if (items.length() == 0) return null
+        val container = DiagnosticsContainer(true)
+        val regions = ArrayList<DiagnosticRegion>(items.length())
+        for (i in 0 until items.length()) {
+            val item = items.optJSONObject(i) ?: continue
+            val range = item.optJSONObject("range") ?: continue
+            val start = range.optJSONObject("start") ?: continue
+            val end = range.optJSONObject("end") ?: continue
+            val startLine = start.optInt("line", 0)
+            val startChar = start.optInt("character", 0)
+            val endLine = end.optInt("line", startLine)
+            val endChar = end.optInt("character", startChar)
+            var startIndex = lspPositionToIndex(text, startLine, startChar)
+            var endIndex = lspPositionToIndex(text, endLine, endChar)
+            if (endIndex <= startIndex) {
+                endIndex = (startIndex + 1).coerceAtMost(text.length.coerceAtLeast(1))
+            }
+            if (text.isNotEmpty() && startIndex >= text.length) {
+                startIndex = text.length - 1
+                endIndex = text.length
+            }
+            val severity = mapLspSeverity(item.optInt("severity", 1))
+            val message = item.optString("message").trim().ifEmpty { "Issue" }
+            val source = item.optString("source").trim()
+            val brief = if (source.isNotEmpty()) "$source: $message" else message
+            regions.add(
+                DiagnosticRegion(
+                    startIndex,
+                    endIndex,
+                    severity,
+                    diagnosticIdSeq.getAndIncrement(),
+                    DiagnosticDetail(brief, message)
+                )
+            )
+        }
+        if (regions.isEmpty()) return null
+        container.addDiagnostics(regions)
+        return container
+    }
+
+    /** LSP DiagnosticSeverity: 1 Error, 2 Warning, 3 Information, 4 Hint */
+    private fun mapLspSeverity(severity: Int): Short {
+        return when (severity) {
+            1 -> DiagnosticRegion.SEVERITY_ERROR
+            2 -> DiagnosticRegion.SEVERITY_WARNING
+            3, 4 -> DiagnosticRegion.SEVERITY_TYPO
+            else -> DiagnosticRegion.SEVERITY_WARNING
+        }
+    }
+
+    private fun lspPositionToIndex(text: String, line: Int, character: Int): Int {
+        if (text.isEmpty()) return 0
+        var index = 0
+        var currentLine = 0
+        val targetLine = line.coerceAtLeast(0)
+        while (currentLine < targetLine && index < text.length) {
+            if (text[index] == '\n') {
+                currentLine++
+            }
+            index++
+        }
+        val lineStart = index
+        var column = 0
+        val targetColumn = character.coerceAtLeast(0)
+        while (column < targetColumn && index < text.length && text[index] != '\n') {
+            index++
+            column++
+        }
+        // 若跨行字符数异常，至少落在行首
+        if (index < lineStart) return lineStart.coerceIn(0, text.length)
+        return index.coerceIn(0, text.length)
     }
 
     private fun canUseLsp(languageId: String, text: String): Boolean {
@@ -338,16 +525,42 @@ class EditorLspManager(private val context: Context) {
     private fun showErrorOnce(message: String) {
         val normalized = message.trim().take(180)
         if (normalized.isEmpty()) return
+        // Eclipse/jdt-ls 日志与瞬时 RPC 错误不弹 Toast
+        if (looksLikeServerLogNoise(normalized)) {
+            EditorLspDebugStore.appendStderr(normalized)
+            return
+        }
+        EditorLspDebugStore.recordEvent("toast", normalized)
         synchronized(suppressedErrors) {
             if (!suppressedErrors.add(normalized)) return
-            if (suppressedErrors.size > 8) suppressedErrors.remove(suppressedErrors.first())
+            if (suppressedErrors.size > 12) suppressedErrors.remove(suppressedErrors.first())
         }
         mainHandler.post {
             UUtils.showMsg("LSP: $normalized")
         }
     }
 
+    private fun looksLikeServerLogNoise(message: String): Boolean {
+        val m = message.lowercase()
+        return m.startsWith("!") ||
+            m.contains("!entry") ||
+            m.contains("!message") ||
+            m.contains("!session") ||
+            m.contains("accessdeniedexception") ||
+            m.contains("scan of file failed") ||
+            m.contains("org.eclipse.") ||
+            m.contains("reconciled ") ||
+            m.contains("begin problem") ||
+            m.contains("problems reported") ||
+            m.contains("validated ") ||
+            m.contains("completion request")
+    }
+
     companion object {
+        @Volatile
+        var activeInstance: EditorLspManager? = null
+            private set
+
         const val LANGUAGE_JSON = "json"
         const val LANGUAGE_JSONC = "jsonc"
         const val LANGUAGE_JAVASCRIPT = "javascript"

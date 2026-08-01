@@ -102,6 +102,14 @@ class ZtAiDebugHttpServer(
                     textResponse(ZtAiDebugVncHelper.startJson(), MIME_JSON)
                 uri == "/api/editor/open" && method == Method.POST ->
                     handleEditorOpen(session)
+                uri == "/api/editor/lsp/status" && method == Method.GET ->
+                    textResponse(ZtAiDebugEditorLspHelper.statusJson(appContext), MIME_JSON)
+                uri == "/api/editor/lsp/diagnostics" && method == Method.GET ->
+                    textResponse(ZtAiDebugEditorLspHelper.diagnosticsJson(), MIME_JSON)
+                uri == "/api/editor/lsp/stderr" && method == Method.GET -> {
+                    val lines = session.parms["lines"]?.toIntOrNull() ?: 120
+                    textResponse(ZtAiDebugEditorLspHelper.stderrJson(lines), MIME_JSON)
+                }
                 uri == "/api/root/status" && method == Method.GET ->
                     textResponse(ZtAiDebugRootHelper.statusJson(appContext), MIME_JSON)
                 uri == "/api/root/exec" && method == Method.POST ->

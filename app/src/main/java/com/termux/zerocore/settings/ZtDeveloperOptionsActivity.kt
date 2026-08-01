@@ -22,6 +22,7 @@ import com.termux.zerocore.aidebug.ZtAiDebugManager
 import com.termux.zerocore.aidebug.ZtAiDebugMatchCodeHelper
 import com.termux.zerocore.aidebug.ZtAiDebugPermissionHelper
 import com.termux.zerocore.crashhistory.ZtCrashHistoryActivity
+import com.termux.zerocore.ftp.new_ftp.utils.NetworkEnvironmentUtil
 import com.termux.zerocore.ftp.utils.UserSetManage
 import com.termux.zerocore.utils.FileHttpUtils.Companion.get
 import com.termux.zerocore.workstation.ZtWorkstationSettingsActivity
@@ -40,6 +41,7 @@ class ZtDeveloperOptionsActivity : BaseTitleActivity() {
 
     private val ztAiDebugSwitch by lazy { findViewById<SwitchCompat>(R.id.zt_ai_debug_switch) }
     private val ztAiDebugLl by lazy { findViewById<LinearLayout>(R.id.zt_ai_debug_ll) }
+    private val ztAiDebugSummary by lazy { findViewById<TextView>(R.id.zt_ai_debug_summary) }
     private val ztAiDebugDetailCv by lazy { findViewById<CardView>(R.id.zt_ai_debug_detail_cv) }
     private val ztAiDebugMatchCodeValue by lazy { findViewById<TextView>(R.id.zt_ai_debug_match_code_value) }
     private val ztAiDebugMatchCodeReveal by lazy { findViewById<ImageButton>(R.id.zt_ai_debug_match_code_reveal) }
@@ -283,6 +285,18 @@ class ZtDeveloperOptionsActivity : BaseTitleActivity() {
         super.onResume()
         refreshWorkstationStatus()
         refreshAiDebugDetailVisibility()
+        refreshAiDebugEndpointSummary()
+    }
+
+    private fun refreshAiDebugEndpointSummary() {
+        val ips = NetworkEnvironmentUtil.getLocalIpv4Addresses()
+        val port = ZtAiDebugManager.PORT
+        val endpoint = if (ips.isNotEmpty()) {
+            ips.joinToString(" / ") { "$it:$port" }
+        } else {
+            "<ip>:$port"
+        }
+        ztAiDebugSummary.text = getString(R.string.zt_ai_debug_summary_with_endpoint, endpoint)
     }
 
     private fun refreshWorkstationStatus() {
