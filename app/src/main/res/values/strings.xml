@@ -948,6 +948,11 @@ Reset successfully</string>
     <string name="editor_settings_lsp_action_install">Tap to install</string>
     <string name="editor_settings_lsp_action_installed">Ready</string>
     <string name="editor_settings_lsp_required_badge">Recommended</string>
+    <string name="editor_lsp_install_prompt_title">Language assist</string>
+    <string name="editor_lsp_install_prompt_message">Detected that this language supports hints and error checking. An environment needs to be installed. Install now?</string>
+    <string name="editor_lsp_install_prompt_install">Install</string>
+    <string name="editor_lsp_install_prompt_cancel">Cancel</string>
+    <string name="editor_lsp_install_prompt_never">Don\'t ask again</string>
     <string name="editor_unsaved_title">Unsaved file</string>
     <string name="editor_unsaved_exit_message">%1$d files have unsaved changes. Exit anyway?</string>
     <string name="editor_unsaved_close_message">%1$s has unsaved changes. Close anyway?</string>

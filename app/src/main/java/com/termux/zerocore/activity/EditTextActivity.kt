@@ -69,6 +69,8 @@ import com.termux.zerocore.editor.EditorTerminalInputView
 import com.termux.zerocore.editor.EditorTerminalPanel
 import com.termux.zerocore.editor.EditorX11Panel
 import com.termux.zerocore.editor.EditorX11Environment
+import com.termux.zerocore.editor.lsp.EditorClangdSupport
+import com.termux.zerocore.editor.lsp.EditorJdtLsSupport
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
@@ -143,6 +145,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         const val EDITOR_PREF_FONT_PATH = "font_path"
         const val EDITOR_PREF_LSP_ENABLED = "lsp_enabled"
         const val EDITOR_PREF_LSP_TIMEOUT = "lsp_timeout"
+        /** 前缀 + packageId，值为 true 表示该语言 LSP 安装提示不再弹出 */
+        const val EDITOR_PREF_LSP_PROMPT_NEVER_PREFIX = "lsp_prompt_never_"
         const val EDITOR_STATE_SIDEBAR_VISIBLE = "sidebar_visible"
         const val EDITOR_STATE_SIDEBAR_SEARCH_PANEL = "sidebar_search_panel"
         const val EDITOR_STATE_SIDEBAR_SEARCH_QUERY = "sidebar_search_query"
@@ -276,6 +280,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var lspEnabled = false
     private var lspTimeoutMillis = EditorLspManager.DEFAULT_TIMEOUT_MILLIS
     private lateinit var lspManager: EditorLspManager
+    private val lspInstallPromptSessionShown = LinkedHashSet<String>()
+    private var lspInstallPromptDialog: AlertDialog? = null
     private var editorSettingsFontInput: EditText? = null
     private var isSidebarVisible = false
     private var isSidebarSearchPanelVisible = false
@@ -1165,12 +1171,123 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     }
 
     private fun syncLspDocument(file: File, extension: String, content: String) {
-        if (!lspEnabled || !::lspManager.isInitialized) return
+        if (!::lspManager.isInitialized) return
         val languageId = lspLanguageId(extension) ?: return
-        // 未安装则不自动下载；由设置页 LSP 列表统一管理安装
+        maybePromptOptionalLspInstall(languageId, file, content)
+        if (!lspEnabled) return
+        // 未安装则不自动下载；由设置页 LSP 列表或安装提示 Dialog 管理
         if (!lspManager.isLanguageInstalled(languageId)) return
         lifecycleScope.launch(Dispatchers.IO) {
             lspManager.openDocument(file, languageId, content)
+        }
+    }
+
+    /** 仅 Java / C·C++：未安装对应 LSP 时弹一次安装提示。 */
+    private fun lspOptionalPackageId(languageId: String): String? {
+        return when (languageId) {
+            EditorLspManager.LANGUAGE_JAVA -> EditorJdtLsSupport.PACKAGE_ID
+            EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> EditorClangdSupport.PACKAGE_ID
+            else -> null
+        }
+    }
+
+    private fun isLspInstallPromptNever(packageId: String): Boolean {
+        return getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE)
+            .getBoolean(EDITOR_PREF_LSP_PROMPT_NEVER_PREFIX + packageId, false)
+    }
+
+    private fun setLspInstallPromptNever(packageId: String) {
+        getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE).edit()
+            .putBoolean(EDITOR_PREF_LSP_PROMPT_NEVER_PREFIX + packageId, true)
+            .apply()
+    }
+
+    private fun maybePromptOptionalLspInstall(languageId: String, file: File, content: String) {
+        if (!::lspManager.isInitialized) return
+        val packageId = lspOptionalPackageId(languageId) ?: return
+        if (lspManager.isLanguageInstalled(languageId)) return
+        if (isLspInstallPromptNever(packageId)) return
+        if (packageId in lspInstallPromptSessionShown) return
+        if (lspInstallPromptDialog?.isShowing == true) return
+        if (isFinishing || isDestroyed) return
+        lspInstallPromptSessionShown.add(packageId)
+        showLspInstallPromptDialog(packageId, languageId, file, content)
+    }
+
+    private fun showLspInstallPromptDialog(
+        packageId: String,
+        languageId: String,
+        file: File,
+        content: String
+    ) {
+        lspInstallPromptDialog?.dismiss()
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(R.string.editor_lsp_install_prompt_title)
+            .setMessage(R.string.editor_lsp_install_prompt_message)
+            .setPositiveButton(R.string.editor_lsp_install_prompt_install, null)
+            .setNegativeButton(R.string.editor_lsp_install_prompt_cancel) { d, _ ->
+                d.dismiss()
+            }
+            .setNeutralButton(R.string.editor_lsp_install_prompt_never) { d, _ ->
+                setLspInstallPromptNever(packageId)
+                d.dismiss()
+            }
+            .setOnDismissListener {
+                if (lspInstallPromptDialog === it) {
+                    lspInstallPromptDialog = null
+                }
+            }
+            .create()
+        lspInstallPromptDialog = dialog
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                dialog.dismiss()
+                startOptionalLspInstall(packageId, languageId, file, content)
+            }
+        }
+        dialog.show()
+    }
+
+    private fun startOptionalLspInstall(
+        packageId: String,
+        languageId: String,
+        file: File,
+        content: String
+    ) {
+        if (!::lspManager.isInitialized) return
+        // 安装后需要开启 LSP 总开关才生效
+        if (!lspEnabled) {
+            lspEnabled = true
+            getSharedPreferences(EDITOR_PREF_NAME, Context.MODE_PRIVATE).edit()
+                .putBoolean(EDITOR_PREF_LSP_ENABLED, true)
+                .apply()
+            applyLspSettings()
+            reloadCurrentEditorLanguage()
+        }
+        showBottomTerminalForLspInstall()
+        lspManager.installPackage(packageId) { success, _ ->
+            if (!success || isFinishing || isDestroyed) return@installPackage
+            lspInstallPromptSessionShown.remove(packageId)
+            lifecycleScope.launch(Dispatchers.IO) {
+                lspManager.openDocument(file, languageId, content)
+            }
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed) {
+                    reloadCurrentEditorLanguage()
+                }
+            }
+        }
+    }
+
+    /** 安装 LSP 时默认打开底部终端（安装命令仍走原有终端通道）。 */
+    private fun showBottomTerminalForLspInstall() {
+        val dock = editorBottomDock ?: return
+        val directory = resolveTerminalDirectory(currentFile)
+        if (directory != null) {
+            dock.prepareTerminalBackground(directory)
+            dock.showTerminalAtDirectory(directory)
+        } else {
+            dock.openTerminalTab()
         }
     }
 
@@ -1416,6 +1533,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val listView = dialogView.findViewById<RecyclerView>(R.id.lsp_server_list)
         lateinit var lspServerAdapter: EditorLspServerAdapter
         lspServerAdapter = EditorLspServerAdapter(lspManager) { serverPackage ->
+            showBottomTerminalForLspInstall()
             lspManager.installPackage(serverPackage.id) { _, _ ->
                 runOnUiThread {
                     lspServerAdapter.refresh()
