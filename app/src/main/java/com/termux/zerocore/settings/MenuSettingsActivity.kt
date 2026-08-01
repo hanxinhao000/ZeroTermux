@@ -32,7 +32,7 @@ class MenuSettingsActivity : BaseTitleActivity() {
             UserSetManage.get().setZTUserBean(ztUserBean)
         }
         findViewById<CardView>(R.id.left_menu_settings_entry).setOnClickListener {
-            startActivity(Intent(this, LeftMenuSettingsActivity::class.java))
+            startActivity(Intent(this, MenuUpdateSourceActivity::class.java))
         }
     }
 
