@@ -57,6 +57,9 @@ class ZtAiAgentPanelHelper(
     private var agentRunner: ZtAgentAiAgentRunner? = null
     private var isSending = false
     private var agentCancelled = false
+    /** 当前工具调用轮次 / 上限（与设置「工具调用轮数上限」一致）。 */
+    private var toolRoundCurrent = 0
+    private var toolRoundMax = ZtAgentAiConfigHelper.DEFAULT_TOOL_ROUNDS
     /** 右侧栏 AI 选项卡是否正在展示本面板。 */
     private var isPanelShown = false
     private var lastPanelHeight = 0
@@ -287,6 +290,10 @@ class ZtAiAgentPanelHelper(
         )
         setSending(true)
         agentCancelled = false
+        resetToolRoundProgress(
+            show = ZtAgentAiConfigHelper.shouldUseAgentRunner(),
+            max = ZtAgentAiConfigHelper.maxToolRounds()
+        )
 
         chatClient?.cancel()
         agentRunner?.cancel()
@@ -311,6 +318,11 @@ class ZtAiAgentPanelHelper(
             override fun onToolStep(label: String, detail: String) {
                 if (agentCancelled || !isSending) return
                 appendToolStep(label, detail)
+            }
+
+            override fun onToolRoundProgress(current: Int, max: Int) {
+                if (agentCancelled || !isSending) return
+                updateToolRoundProgress(current, max)
             }
 
             override fun onComplete(content: String) {
@@ -561,8 +573,46 @@ class ZtAiAgentPanelHelper(
             input.isEnabled = false
         } else {
             restoreInputReady()
+            hideToolRoundProgress()
         }
         updateStopBarsVisibility()
+    }
+
+    private fun resetToolRoundProgress(show: Boolean, max: Int) {
+        toolRoundCurrent = 0
+        toolRoundMax = max.coerceAtLeast(1)
+        if (show) {
+            updateToolRoundProgress(0, toolRoundMax)
+        } else {
+            hideToolRoundProgress()
+        }
+    }
+
+    private fun updateToolRoundProgress(current: Int, max: Int) {
+        toolRoundCurrent = current.coerceAtLeast(0)
+        toolRoundMax = max.coerceAtLeast(1)
+        val text = panelCard.context.getString(
+            R.string.zt_ai_agent_tool_rounds_progress,
+            toolRoundCurrent,
+            toolRoundMax
+        )
+        applyToolRoundProgress(panelStopBar, text, visible = true)
+        applyToolRoundProgress(runningBanner, text, visible = true)
+    }
+
+    private fun hideToolRoundProgress() {
+        applyToolRoundProgress(panelStopBar, null, visible = false)
+        applyToolRoundProgress(runningBanner, null, visible = false)
+    }
+
+    private fun applyToolRoundProgress(bar: View?, text: String?, visible: Boolean) {
+        val tv = bar?.findViewById<TextView>(R.id.ai_agent_tool_rounds_progress) ?: return
+        if (visible && !text.isNullOrBlank()) {
+            tv.text = text
+            tv.visibility = View.VISIBLE
+        } else {
+            tv.visibility = View.GONE
+        }
     }
 
     /** 打断/结束后恢复输入框可聚焦状态（部分机型 disable 后再 enable 会丢 focusable）。 */

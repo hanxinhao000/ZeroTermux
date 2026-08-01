@@ -75,16 +75,18 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_agent_skill" />
             </LinearLayout>
-            <include
-                android:id="@+id/ai_agent_panel_stop_bar"
-                layout="@layout/view_ai_agent_stop_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="6dp"
-                android:layout_marginTop="2dp"
-                android:visibility="visible" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
+
+    <!-- 打断条在标题下方文档流中，避免塞进 50dp 标题栏被裁切 -->
+    <include
+        android:id="@+id/ai_agent_panel_stop_bar"
+        layout="@layout/view_ai_agent_stop_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="2dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

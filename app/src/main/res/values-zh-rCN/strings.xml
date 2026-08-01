@@ -1235,6 +1235,7 @@
     <string name="zt_ai_agent_panel_summary">将右侧面板调整唤醒为AI智能体，可控制终端自动下发命令</string>
     <string name="zt_ai_agent_panel_title_bar">AI 智能体</string>
     <string name="zt_ai_agent_running_banner">AI 智能体正在运行…</string>
+    <string name="zt_ai_agent_tool_rounds_progress">工具轮次 %1$d/%2$d</string>
     <string name="zt_ai_agent_stop">打断</string>
     <string name="zt_ai_agent_stopped">（已打断）</string>
     <string name="zt_ai_agent_panel_hint">在此与 AI 对话…</string>

@@ -15,6 +15,8 @@ class ZtAgentAiAgentRunner(
 ) {
     interface Callback {
         fun onToolStep(label: String, detail: String)
+        /** 工具调用轮次进度：current 为已执行轮数，max 为设置中的上限。 */
+        fun onToolRoundProgress(current: Int, max: Int) {}
         fun onComplete(content: String)
         fun onError(message: String)
         fun isCancelled(): Boolean
@@ -58,6 +60,7 @@ class ZtAgentAiAgentRunner(
         }
         var rounds = 0
         val maxToolRounds = ZtAgentAiConfigHelper.maxToolRounds()
+        post { callback.onToolRoundProgress(0, maxToolRounds) }
         while (rounds < maxToolRounds) {
             if (callback.isCancelled()) return
             if (terminalEnabled) {
@@ -74,6 +77,8 @@ class ZtAgentAiAgentRunner(
                 return
             }
             if (result.toolCalls.isNotEmpty()) {
+                rounds++
+                post { callback.onToolRoundProgress(rounds, maxToolRounds) }
                 workingMessages.add(
                     ZtAgentAiChatClient.ChatMessage(
                         role = ROLE_ASSISTANT,
@@ -85,7 +90,6 @@ class ZtAgentAiAgentRunner(
                     if (callback.isCancelled()) return
                     executeToolCallWithUi(toolCall, callback, workingMessages)
                 }
-                rounds++
                 continue
             }
             val reply = result.content?.trim().orEmpty()

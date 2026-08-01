@@ -1114,6 +1114,7 @@ Reset successfully</string>
     <string name="zt_ai_agent_panel_summary">Wake the right panel as an AI agent; can read/control the terminal and send commands</string>
     <string name="zt_ai_agent_panel_title_bar">AI Agent</string>
     <string name="zt_ai_agent_running_banner">AI agent is running…</string>
+    <string name="zt_ai_agent_tool_rounds_progress">Tool rounds %1$d/%2$d</string>
     <string name="zt_ai_agent_stop">Stop</string>
     <string name="zt_ai_agent_stopped">(Stopped)</string>
     <string name="zt_ai_agent_panel_hint">Chat with AI here…</string>
