@@ -38,6 +38,11 @@ object ZtAiDebugEditorLspHelper {
                     "installer_marks_installed" to installer.isPackageInstalled(EditorClangdSupport.PACKAGE_ID),
                     "clangd_exec" to EditorClangdSupport.resolveClangdExecutable()
                 ),
+                "python_pyright" to mapOf(
+                    "package_id" to EditorLspInstaller.PYTHON_PACKAGE_ID,
+                    "installed" to installer.isPackageInstalled(EditorLspInstaller.PYTHON_PACKAGE_ID),
+                    "command" to "pyright-langserver --stdio"
+                ),
                 "manager" to (manager?.debugStatus() ?: mapOf("active" to false)),
                 "last_fatal_error" to EditorLspDebugStore.lastFatalError,
                 "diagnostics" to EditorLspDebugStore.diagnosticsSnapshot(),

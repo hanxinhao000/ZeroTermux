@@ -78,6 +78,7 @@ object EditorLspCommandResolver {
             )
             EditorLspManager.LANGUAGE_JAVA -> EditorJdtLsSupport.environmentExtras()
             EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> emptyMap()
+            EditorLspManager.LANGUAGE_PYTHON -> emptyMap()
             else -> emptyMap()
         }
     }
@@ -96,6 +97,7 @@ object EditorLspCommandResolver {
                         .put("autobuild", JSONObject().put("enabled", true))
                         .put("completion", JSONObject().put("enabled", true))
                 ))
+            EditorLspManager.LANGUAGE_PYTHON -> EditorPyrightSupport.initializationOptions()
             EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> null
             else -> null
         }
@@ -163,6 +165,7 @@ object EditorLspCommandResolver {
         return when (commandName) {
             "vscode-json-language-server" -> listOf("bin/vscode-json-language-server")
             "pyright-langserver" -> listOf(
+                "langserver.index.js",
                 "langserver/index.js",
                 "langserver/pyright-langserver.js",
                 "dist/pyright-langserver.js"

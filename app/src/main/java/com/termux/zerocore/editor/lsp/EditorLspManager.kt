@@ -257,6 +257,7 @@ class EditorLspManager(private val context: Context) {
                 when (languageId) {
                     LANGUAGE_JAVA -> "Java LSP 未安装，请在编辑器设置 → LSP 中安装"
                     LANGUAGE_C, LANGUAGE_CPP -> "C/C++ LSP (clangd) 未安装，请在编辑器设置 → LSP 中安装"
+                    LANGUAGE_PYTHON -> "Python LSP 未安装，请在编辑器设置 → LSP 中安装"
                     else -> "LSP 服务器未安装，请先在设置中安装对应语言包"
                 }
             )
@@ -265,6 +266,7 @@ class EditorLspManager(private val context: Context) {
         val projectRoot = when (languageId) {
             LANGUAGE_JAVA -> EditorJdtLsSupport.findProjectRoot(file)
             LANGUAGE_C, LANGUAGE_CPP -> EditorClangdSupport.findProjectRoot(file)
+            LANGUAGE_PYTHON -> EditorPyrightSupport.findProjectRoot(file)
             else -> file.parentFile
         }
         val launchSpec = lspInstaller.launchSpecForLanguage(languageId, projectRoot)
@@ -273,6 +275,7 @@ class EditorLspManager(private val context: Context) {
                 when (languageId) {
                     LANGUAGE_JAVA -> "jdt-ls 启动失败：请确认已安装 openjdk-21，并重新安装 Java LSP"
                     LANGUAGE_C, LANGUAGE_CPP -> "clangd 启动失败：请确认已执行 pkg install clang，并重新安装 C/C++ LSP"
+                    LANGUAGE_PYTHON -> "Pyright 启动失败：请确认已安装 node/npm，并重新安装 Python LSP"
                     else -> "LSP 服务器命令未找到，请重新安装对应语言包"
                 }
             )
@@ -295,6 +298,7 @@ class EditorLspManager(private val context: Context) {
         val timeout = when (languageId) {
             LANGUAGE_JAVA -> maxOf(settings.timeoutMillis, EditorJdtLsSupport.INIT_TIMEOUT_MILLIS)
             LANGUAGE_C, LANGUAGE_CPP -> maxOf(settings.timeoutMillis, EditorClangdSupport.INIT_TIMEOUT_MILLIS)
+            LANGUAGE_PYTHON -> maxOf(settings.timeoutMillis, EditorPyrightSupport.INIT_TIMEOUT_MILLIS)
             else -> settings.timeoutMillis
         }
         val client = EditorLspClient(

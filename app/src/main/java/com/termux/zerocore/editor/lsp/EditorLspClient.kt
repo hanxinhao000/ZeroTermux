@@ -199,11 +199,17 @@ class EditorLspClient(
             )
         val capabilities = JSONObject()
             .put("textDocument", textDocument)
-            .put("workspace", JSONObject().put("workspaceFolders", true))
+            .put(
+                "workspace",
+                JSONObject()
+                    .put("workspaceFolders", true)
+                    .put("configuration", true)
+                    .put("didChangeConfiguration", JSONObject().put("dynamicRegistration", false))
+            )
         val safeRoot = rootDirectory?.takeIf {
             it.isDirectory && it.absolutePath != "/" && it.canRead()
         } ?: TermuxConstants.TERMUX_HOME_DIR
-        val rootUri = safeRoot.toURI().toString()
+        val rootUri = EditorLspUris.forFile(safeRoot)
         val params = JSONObject()
             .put("processId", Process.myPid())
             .put("rootUri", rootUri)
@@ -219,6 +225,13 @@ class EditorLspClient(
         initializationOptions?.let { params.put("initializationOptions", it) }
         val response = request("initialize", params) ?: return false
         notify("initialized", JSONObject())
+        // Pyright 等依赖 workspace 配置；initialize 后主动推送一次
+        initializationOptions?.let { opts ->
+            if (opts.has("python") || opts.has("settings")) {
+                val settings = opts.optJSONObject("settings") ?: opts
+                notify("workspace/didChangeConfiguration", JSONObject().put("settings", settings))
+            }
+        }
         return response is JSONObject
     }
 
@@ -340,21 +353,53 @@ class EditorLspClient(
                 pendingRequest.result = if (message.has("result")) message.opt("result") else null
                 pendingRequest.latch.countDown()
             } else if (method.isNotEmpty()) {
-                respondToServerRequest(id.toInt())
+                respondToServerRequest(id.toInt(), method, message.opt("params"))
             }
         }
     }
 
-    private fun respondToServerRequest(id: Int) {
+    private fun respondToServerRequest(id: Int, method: String, params: Any?) {
         try {
+            val result: Any? = when (method) {
+                "workspace/configuration" -> resolveWorkspaceConfiguration(params)
+                "workspace/workspaceFolders" -> {
+                    val safeRoot = rootDirectory?.takeIf {
+                        it.isDirectory && it.absolutePath != "/" && it.canRead()
+                    } ?: TermuxConstants.TERMUX_HOME_DIR
+                    val rootUri = EditorLspUris.forFile(safeRoot)
+                    org.json.JSONArray().put(
+                        JSONObject().put("uri", rootUri).put("name", safeRoot.name.ifEmpty { "workspace" })
+                    )
+                }
+                "client/registerCapability",
+                "client/unregisterCapability",
+                "window/workDoneProgress/create" -> JSONObject()
+                else -> JSONObject.NULL
+            }
             writeMessage(
                 JSONObject()
                     .put("jsonrpc", "2.0")
                     .put("id", id)
-                    .put("result", JSONObject.NULL)
+                    .put("result", result ?: JSONObject.NULL)
             )
         } catch (_: Exception) {
         }
+    }
+
+    private fun resolveWorkspaceConfiguration(params: Any?): org.json.JSONArray {
+        val items = (params as? JSONObject)?.optJSONArray("items") ?: org.json.JSONArray()
+        val result = org.json.JSONArray()
+        for (i in 0 until items.length()) {
+            val section = items.optJSONObject(i)?.optString("section").orEmpty()
+            result.put(
+                when {
+                    section.startsWith("python") || section.isEmpty() && initializationOptions?.has("python") == true ->
+                        EditorPyrightSupport.configurationForSection(section.ifEmpty { "python" })
+                    else -> JSONObject.NULL
+                }
+            )
+        }
+        return result
     }
 
     private fun readMessage(inputStream: InputStream): JSONObject? {

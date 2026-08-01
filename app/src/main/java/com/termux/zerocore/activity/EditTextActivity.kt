@@ -71,6 +71,7 @@ import com.termux.zerocore.editor.EditorX11Panel
 import com.termux.zerocore.editor.EditorX11Environment
 import com.termux.zerocore.editor.lsp.EditorClangdSupport
 import com.termux.zerocore.editor.lsp.EditorJdtLsSupport
+import com.termux.zerocore.editor.lsp.EditorLspInstaller
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
@@ -532,8 +533,9 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         mEditorMenuButton?.setOnClickListener {
             toggleSidebar()
         }
-        mEditorFilesButton?.setOnClickListener { view ->
-            showEditorFileMenu(view)
+        mEditorFilesButton?.setOnClickListener {
+            saveFile()
+            updateEditorActionButtons()
         }
         mEditorUndoButton?.setOnClickListener {
             invokeEditorAction("undo")
@@ -1053,20 +1055,6 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             .show()
     }
 
-    private fun showEditorFileMenu(anchor: View) {
-        PopupMenu(this, anchor).apply {
-            menu.add(0, 1, 0, getString(R.string.edit_save))
-            setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    1 -> saveFile()
-                }
-                updateEditorActionButtons()
-                true
-            }
-            show()
-        }
-    }
-
     private fun showEditorMoreMenu(anchor: View) {
         PopupMenu(this, anchor).apply {
             menu.add(0, 1, 0, getString(R.string.notification_action_exit))
@@ -1182,11 +1170,12 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         }
     }
 
-    /** 仅 Java / C·C++：未安装对应 LSP 时弹一次安装提示。 */
+    /** Java / C·C++ / Python：未安装对应 LSP 时弹一次安装提示。 */
     private fun lspOptionalPackageId(languageId: String): String? {
         return when (languageId) {
             EditorLspManager.LANGUAGE_JAVA -> EditorJdtLsSupport.PACKAGE_ID
             EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> EditorClangdSupport.PACKAGE_ID
+            EditorLspManager.LANGUAGE_PYTHON -> EditorLspInstaller.PYTHON_PACKAGE_ID
             else -> null
         }
     }

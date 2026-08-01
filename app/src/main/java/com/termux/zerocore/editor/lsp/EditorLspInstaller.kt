@@ -314,6 +314,7 @@ class EditorLspInstaller(private val context: Context) {
 
     companion object {
         const val SHELL_BASIC_ID = "shell-basic"
+        const val PYTHON_PACKAGE_ID = "python"
         const val INSTALL_KIND_NPM = "npm"
         const val INSTALL_KIND_JDTLS = "jdtls"
         const val INSTALL_KIND_CLANGD = "clangd"
@@ -358,9 +359,9 @@ class EditorLspInstaller(private val context: Context) {
                 )
             ),
             ServerPackage(
-                id = "python",
-                displayName = "Python LSP",
-                description = "提供 Python 补全",
+                id = PYTHON_PACKAGE_ID,
+                displayName = "Python LSP (Pyright)",
+                description = "打开 .py 可提示安装；提供补全与类型/语法诊断（需 npm）",
                 languageIds = listOf(EditorLspManager.LANGUAGE_PYTHON),
                 npmPackages = listOf("pyright"),
                 commands = mapOf(EditorLspManager.LANGUAGE_PYTHON to "pyright-langserver --stdio")
@@ -376,7 +377,7 @@ class EditorLspInstaller(private val context: Context) {
             ServerPackage(
                 id = EditorJdtLsSupport.PACKAGE_ID,
                 displayName = "Java LSP (Eclipse JDT.LS)",
-                description = "打开 .java 自动启动；提供类/方法/import 补全（需 OpenJDK 21+，包体较大）",
+                description = "打开 .java 可提示安装；提供类/方法/import 补全与诊断（需 OpenJDK 21+，包体较大）",
                 languageIds = listOf(EditorLspManager.LANGUAGE_JAVA),
                 npmPackages = emptyList(),
                 commands = mapOf(EditorLspManager.LANGUAGE_JAVA to "jdtls --stdio"),
@@ -385,7 +386,7 @@ class EditorLspInstaller(private val context: Context) {
             ServerPackage(
                 id = EditorClangdSupport.PACKAGE_ID,
                 displayName = "C/C++ LSP (clangd)",
-                description = "打开 .c/.h/.cpp 自动启动；补全与语法诊断（pkg install clang，体积较大）",
+                description = "打开 .c/.h/.cpp 可提示安装；补全与语法诊断（pkg install clang，体积较大）",
                 languageIds = listOf(EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP),
                 npmPackages = emptyList(),
                 commands = mapOf(
