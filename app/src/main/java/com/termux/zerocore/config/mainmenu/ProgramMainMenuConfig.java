@@ -24,6 +24,7 @@ public class ProgramMainMenuConfig {
     public static ArrayList<MainMenuCategoryData> getProgramMainMenuCategoryDatas(Context context) {
         ArrayList<MainMenuCategoryData> result = new ArrayList<>();
         List<XMLMainMenuConfig.GroupItem> groups = parseAssetsMenuGroups(context);
+        int groupIndex = 0;
         for (XMLMainMenuConfig.GroupItem group : groups) {
             ArrayList<MainMenuClickConfig> configs = new ArrayList<>();
             for (XMLMainMenuConfig.MenuItem item : group.getItems()) {
@@ -47,15 +48,91 @@ public class ProgramMainMenuConfig {
                 }
             }
             if (!configs.isEmpty()) {
-                int groupId = configs.get(0).getType();
+                // 标题以 assets 分组名为准；不能用 configs[0].getType()——多数 Config 默认是「常用功能」
+                String xmlTitle = group.getGroupName();
+                int groupId = resolveGroupId(context, xmlTitle, groupIndex);
                 result.add(new MainMenuCategoryData(
-                    localizedGroupTitle(context, groupId, group.getGroupName()),
+                    localizedGroupTitle(context, groupId, xmlTitle),
                     groupId,
                     configs
                 ));
+                groupIndex++;
             }
         }
         return result;
+    }
+
+    /**
+     * 按 XML 分组名解析稳定 id（展开状态持久化用）。
+     * 勿用条目 getType()：BaseMenuClickConfig 默认返回 CODE_COMMON_FUNCTIONS。
+     */
+    private static int resolveGroupId(Context context, String groupName, int groupIndex) {
+        if (groupNameMatches(context, groupName, R.string.common_functions,
+            "常用功能", "Common Functions")) {
+            return MainMenuConfig.CODE_COMMON_FUNCTIONS;
+        }
+        if (groupNameMatches(context, groupName, R.string.menu_create_project,
+            "创建项目", "Create Project")) {
+            return MainMenuConfig.CODE_CREATE_PROJECT;
+        }
+        if (groupNameMatches(context, groupName, R.string.x11_features,
+            "X11功能", "X11 Functions")) {
+            return MainMenuConfig.CODE_X11_FEATURES;
+        }
+        if (groupNameMatches(context, groupName, R.string.beautification_function,
+            "美化/UI 功能", "Beautification/UI Functions", "美化/UI")) {
+            return MainMenuConfig.CODE_BEAUTIFICATION_FUNCTION;
+        }
+        if (groupNameMatches(context, groupName, R.string.zt_engine,
+            "需要插件/引擎(安装完成请重启APP)",
+            "Requires Plugin/Engine (Restart APP after installation)")) {
+            return MainMenuConfig.CODE_ZT_ENGINE;
+        }
+        if (groupNameMatches(context, groupName, R.string.zt_root_fun,
+            "ROOT功能", "ROOT Functions")) {
+            return MainMenuConfig.CODE_ZT_ROOT;
+        }
+        if (groupNameMatches(context, groupName, R.string.online_features,
+            "线上功能", "Online Functions")) {
+            return MainMenuConfig.CODE_ONLINE_FEATURES;
+        }
+        if (groupNameMatches(context, groupName, R.string.zt_menu_title_config,
+            "配置终端", "Configure Terminal")) {
+            return MainMenuConfig.CODE_ZT_CONFIG;
+        }
+        if (groupNameMatches(context, groupName, R.string.zt_features,
+            "ZT功能", "ZT 功能", "ZT Functions")) {
+            return MainMenuConfig.CODE_ZT_FEATURES;
+        }
+        // 未知分组：保证 id 互不冲突，避免展开状态串组
+        return 1000 + groupIndex;
+    }
+
+    private static boolean groupNameMatches(Context context, String groupName, int stringRes, String... aliases) {
+        if (TextUtils.isEmpty(groupName)) {
+            return false;
+        }
+        String localized = context.getString(stringRes);
+        if (namesEqualLoose(groupName, localized)) {
+            return true;
+        }
+        for (String alias : aliases) {
+            if (namesEqualLoose(groupName, alias)) {
+                return true;
+            }
+        }
+        // 兼容「美化/UI」与「美化/UI 功能」、「ZT」与「ZT Functions」等
+        String g = normalizeGroupName(groupName);
+        String l = normalizeGroupName(localized);
+        return (!l.isEmpty() && (g.startsWith(l) || l.startsWith(g) || g.contains(l)));
+    }
+
+    private static boolean namesEqualLoose(String a, String b) {
+        return normalizeGroupName(a).equals(normalizeGroupName(b));
+    }
+
+    private static String normalizeGroupName(String name) {
+        return name == null ? "" : name.replace(" ", "").trim();
     }
 
     private static String localizedGroupTitle(Context context, int groupId, String fallback) {
