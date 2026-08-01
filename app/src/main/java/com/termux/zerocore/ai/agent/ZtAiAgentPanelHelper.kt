@@ -522,7 +522,7 @@ class ZtAiAgentPanelHelper(
         }
     }
 
-    /** 抽屉开合变化时刷新打断条（运行中且抽屉关闭时显示顶栏）。 */
+    /** 抽屉开合变化时刷新打断条（运行中且抽屉关闭/正在关闭时显示顶栏）。 */
     fun onDrawerVisibilityChanged() {
         updateStopBarsVisibility()
         updateImeLiftPadding()

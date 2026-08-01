@@ -1142,6 +1142,27 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public SlidingConsumer getDrawer() {
         return mSlidingConsumer;
     }
+
+    /**
+     * 抽屉开合进度超过阈值才视为「打开」。关闭过程中进度一降下来就显示 AI 顶栏，
+     * 不必等 onSwipeClosed。
+     */
+    private boolean isAiDrawerEffectivelyOpen() {
+        return mDrawerEffectivelyOpen;
+    }
+
+    private void updateDrawerOpenProgress(float progress) {
+        mDrawerSwipeProgress = Math.max(0f, Math.min(1f, progress));
+        // 关闭一开始（进度略低于全开）即视为未打开，顶栏立刻出现并播放动画。
+        boolean effectivelyOpen = mDrawerSwipeProgress >= 0.85f;
+        if (effectivelyOpen == mDrawerEffectivelyOpen) {
+            return;
+        }
+        mDrawerEffectivelyOpen = effectivelyOpen;
+        if (mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.onDrawerVisibilityChanged();
+        }
+    }
 	// @}
 
 
@@ -1402,6 +1423,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     LocalReceiver localReceiver;
     // ZeroTermux add {@
     private ZtAiAgentPanelHelper mAiAgentPanelHelper;
+    /** 右侧/左侧抽屉当前开合进度 0~1；用于 AI 顶栏尽早出现，不必等抽屉完全关完。 */
+    private float mDrawerSwipeProgress;
+    private boolean mDrawerEffectivelyOpen;
     // @}
 
     private void initZeroView() {
@@ -1502,7 +1526,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 this,
                 () -> getDrawer().smoothClose(),
                 this::prepareAiAgentTabInDrawer,
-                () -> getDrawer().isOpened()
+                this::isAiDrawerEffectivelyOpen
             );
         }
         // @}
@@ -2795,12 +2819,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         SmartSwipeWrapper rightHorizontalMenuWrapper = SmartSwipe.wrap(mIncludeRightMenu).addConsumer(new DrawerConsumer()).enableVertical().getWrapper();
         SimpleSwipeListener listener = new SimpleSwipeListener() {
             @Override
+            public void onSwipeProcess(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction, boolean settling, float progress) {
+                super.onSwipeProcess(wrapper, consumer, direction, settling, progress);
+                updateDrawerOpenProgress(progress);
+            }
+
+            @Override
             public void onSwipeOpened(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeOpened(wrapper, consumer, direction);
+                updateDrawerOpenProgress(1f);
                 mTerminalView.clearFocus();
-                if (mAiAgentPanelHelper != null) {
-                    mAiAgentPanelHelper.onDrawerVisibilityChanged();
-                }
                 if (!UserSetManage.Companion.get().getZTUserBean().isHideGuideLayout()) {
                     mGuideLayout.setVisibility(View.GONE);
                     ZTUserBean ztUserBean = UserSetManage.Companion.get().getZTUserBean();
@@ -2812,9 +2840,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onSwipeClosed(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeClosed(wrapper, consumer, direction);
-                if (mAiAgentPanelHelper != null) {
-                    mAiAgentPanelHelper.onDrawerVisibilityChanged();
-                }
+                updateDrawerOpenProgress(0f);
                 mTerminalView.requestFocus();
             }
         };
