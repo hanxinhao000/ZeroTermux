@@ -1167,19 +1167,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private fun syncLspDocument(file: File, extension: String, content: String) {
         if (!lspEnabled || !::lspManager.isInitialized) return
         val languageId = lspLanguageId(extension) ?: return
-        if (!lspManager.isLanguageInstalled(languageId)) {
-            when (languageId) {
-                EditorLspManager.LANGUAGE_SHELL -> lspManager.ensureBasicShellInstalled()
-                EditorLspManager.LANGUAGE_JAVA -> lspManager.ensureJavaJdtLsInstalled { success ->
-                    if (success) {
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            lspManager.openDocument(file, languageId, content)
-                        }
-                    }
-                }
-            }
-            return
-        }
+        // 未安装则不自动下载；由设置页 LSP 列表统一管理安装
+        if (!lspManager.isLanguageInstalled(languageId)) return
         lifecycleScope.launch(Dispatchers.IO) {
             lspManager.openDocument(file, languageId, content)
         }
@@ -1396,11 +1385,6 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 applyEditorFont(true)
                 applyLspSettings()
                 reloadCurrentEditorLanguage()
-                if (lspEnabled) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        lspManager.ensureBasicShellInstalled()
-                    }
-                }
                 dialog.dismiss()
             }
             dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {

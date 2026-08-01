@@ -2,6 +2,7 @@ package com.termux.zerocore.aidebug
 
 import android.content.Context
 import com.google.gson.Gson
+import com.termux.zerocore.editor.lsp.EditorClangdSupport
 import com.termux.zerocore.editor.lsp.EditorJdtLsSupport
 import com.termux.zerocore.editor.lsp.EditorLspDebugStore
 import com.termux.zerocore.editor.lsp.EditorLspInstaller
@@ -30,6 +31,12 @@ object ZtAiDebugEditorLspHelper {
                     "config_template" to EditorJdtLsSupport.findConfigTemplateDir()?.absolutePath,
                     "config_runtime" to EditorJdtLsSupport.ensureRuntimeConfigDir()?.absolutePath,
                     "arch" to (System.getProperty("os.arch") ?: "unknown")
+                ),
+                "c_clangd" to mapOf(
+                    "package_id" to EditorClangdSupport.PACKAGE_ID,
+                    "installed" to EditorClangdSupport.isInstalled(),
+                    "installer_marks_installed" to installer.isPackageInstalled(EditorClangdSupport.PACKAGE_ID),
+                    "clangd_exec" to EditorClangdSupport.resolveClangdExecutable()
                 ),
                 "manager" to (manager?.debugStatus() ?: mapOf("active" to false)),
                 "last_fatal_error" to EditorLspDebugStore.lastFatalError,

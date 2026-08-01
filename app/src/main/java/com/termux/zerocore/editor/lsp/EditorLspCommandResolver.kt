@@ -77,6 +77,7 @@ object EditorLspCommandResolver {
                 "ENABLE_SOURCE_ERROR_DIAGNOSTICS" to "false"
             )
             EditorLspManager.LANGUAGE_JAVA -> EditorJdtLsSupport.environmentExtras()
+            EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> emptyMap()
             else -> emptyMap()
         }
     }
@@ -95,6 +96,7 @@ object EditorLspCommandResolver {
                         .put("autobuild", JSONObject().put("enabled", true))
                         .put("completion", JSONObject().put("enabled", true))
                 ))
+            EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> null
             else -> null
         }
     }

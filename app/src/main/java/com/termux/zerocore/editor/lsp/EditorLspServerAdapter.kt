@@ -90,6 +90,7 @@ class EditorLspServerAdapter(
             "python" -> "Py"
             "yaml" -> "Ym"
             EditorJdtLsSupport.PACKAGE_ID -> "Jv"
+            EditorClangdSupport.PACKAGE_ID -> "C"
             else -> serverPackage.displayName.take(2)
         }
     }
@@ -105,6 +106,8 @@ class EditorLspServerAdapter(
                 EditorLspManager.LANGUAGE_PYTHON -> "Python"
                 EditorLspManager.LANGUAGE_YAML -> "YAML"
                 EditorLspManager.LANGUAGE_JAVA -> "Java (.java)"
+                EditorLspManager.LANGUAGE_C -> "C (.c/.h)"
+                EditorLspManager.LANGUAGE_CPP -> "C++ (.cpp/.hpp)"
                 else -> languageId
             }
         }

@@ -85,8 +85,9 @@ class EditorLspInstaller(private val context: Context) {
 
     fun isPackageInstalled(packageId: String): Boolean {
         val serverPackage = packageById(packageId) ?: return false
-        if (serverPackage.installKind == INSTALL_KIND_JDTLS) {
-            return EditorJdtLsSupport.isInstalled()
+        when (serverPackage.installKind) {
+            INSTALL_KIND_JDTLS -> return EditorJdtLsSupport.isInstalled()
+            INSTALL_KIND_CLANGD -> return EditorClangdSupport.isInstalled()
         }
         return serverPackage.commands.values.all { command ->
             EditorLspCommandResolver.isCommandAvailable(command)
@@ -109,17 +110,24 @@ class EditorLspInstaller(private val context: Context) {
         val serverPackage = PACKAGES.firstOrNull { pkg ->
             languageId in pkg.languageIds && isPackageInstalled(pkg.id)
         } ?: return null
-        if (serverPackage.installKind == INSTALL_KIND_JDTLS) {
-            return EditorJdtLsSupport.resolveLaunchSpec(projectRoot)
+        when (serverPackage.installKind) {
+            INSTALL_KIND_JDTLS -> return EditorJdtLsSupport.resolveLaunchSpec(projectRoot)
+            INSTALL_KIND_CLANGD -> return EditorClangdSupport.resolveLaunchSpec(projectRoot)
         }
         val raw = serverPackage.commands[languageId] ?: return null
         return EditorLspCommandResolver.resolveLaunchSpec(raw)
     }
 
     private fun installPackageWorker(serverPackage: ServerPackage) {
-        if (serverPackage.installKind == INSTALL_KIND_JDTLS) {
-            installJdtLs(serverPackage)
-            return
+        when (serverPackage.installKind) {
+            INSTALL_KIND_JDTLS -> {
+                installJdtLs(serverPackage)
+                return
+            }
+            INSTALL_KIND_CLANGD -> {
+                installClangd(serverPackage)
+                return
+            }
         }
         ensureNpmReady()
         if (canUseTerminal()) {
@@ -148,6 +156,25 @@ class EditorLspInstaller(private val context: Context) {
             runShellScript(script)
             if (!isPackageInstalled(serverPackage.id)) {
                 throw IllegalStateException("jdt-ls 未就绪：请确认 openjdk-21 与 ~/.zerotermux/editor-lsp/jdtls 已安装")
+            }
+        }
+    }
+
+    private fun installClangd(serverPackage: ServerPackage) {
+        val script = EditorClangdSupport.installShellScript()
+        if (canUseTerminal()) {
+            sendToTerminal("echo '[ZeroTermux Editor] Installing LSP: ${serverPackage.displayName}'\n")
+            val scriptFile = File(baseDir(), "install-clangd.sh")
+            baseDir().mkdirs()
+            scriptFile.writeText(script + "\n")
+            sendToTerminal("sh ${shellQuote(scriptFile.absolutePath)}\n")
+            if (!waitForCondition({ isPackageInstalled(serverPackage.id) }, CLANGD_INSTALL_WAIT_MS)) {
+                throw IllegalStateException("clangd 安装超时，请在 Termux 中确认: pkg install -y clang")
+            }
+        } else {
+            runShellScript(script)
+            if (!isPackageInstalled(serverPackage.id)) {
+                throw IllegalStateException("clangd 未就绪：请执行 pkg install -y clang")
             }
         }
     }
@@ -289,22 +316,24 @@ class EditorLspInstaller(private val context: Context) {
         const val SHELL_BASIC_ID = "shell-basic"
         const val INSTALL_KIND_NPM = "npm"
         const val INSTALL_KIND_JDTLS = "jdtls"
+        const val INSTALL_KIND_CLANGD = "clangd"
         private const val MAX_OUTPUT_LENGTH = 4000
         private const val POLL_INTERVAL_MS = 2000L
         private const val NPM_INSTALL_WAIT_MS = 10 * 60 * 1000L
         private const val LSP_INSTALL_WAIT_MS = 15 * 60 * 1000L
         private const val JDTLS_INSTALL_WAIT_MS = 30 * 60 * 1000L
+        private const val CLANGD_INSTALL_WAIT_MS = 30 * 60 * 1000L
         private val installingPackages = LinkedHashSet<String>()
 
         private val PACKAGES = listOf(
             ServerPackage(
                 id = SHELL_BASIC_ID,
                 displayName = "Shell 基础 LSP (bash/zsh/fish)",
-                description = "首次打开编辑器自动初始化，提供 shell 脚本基础补全",
+                description = "在 LSP 列表中安装后提供 shell 脚本基础补全",
                 languageIds = listOf(EditorLspManager.LANGUAGE_SHELL),
                 npmPackages = listOf("bash-language-server"),
                 commands = mapOf(EditorLspManager.LANGUAGE_SHELL to "bash-language-server start"),
-                requiredOnFirstOpen = true
+                requiredOnFirstOpen = false
             ),
             ServerPackage(
                 id = "json",
@@ -352,6 +381,18 @@ class EditorLspInstaller(private val context: Context) {
                 npmPackages = emptyList(),
                 commands = mapOf(EditorLspManager.LANGUAGE_JAVA to "jdtls --stdio"),
                 installKind = INSTALL_KIND_JDTLS
+            ),
+            ServerPackage(
+                id = EditorClangdSupport.PACKAGE_ID,
+                displayName = "C/C++ LSP (clangd)",
+                description = "打开 .c/.h/.cpp 自动启动；补全与语法诊断（pkg install clang，体积较大）",
+                languageIds = listOf(EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP),
+                npmPackages = emptyList(),
+                commands = mapOf(
+                    EditorLspManager.LANGUAGE_C to "clangd",
+                    EditorLspManager.LANGUAGE_CPP to "clangd"
+                ),
+                installKind = INSTALL_KIND_CLANGD
             )
         )
 

@@ -122,7 +122,7 @@ class EditorLspManager(private val context: Context) {
                 if (opened.languageId == languageId) {
                     changeDocumentLocked(file, languageId, text, true)
                 } else {
-                    clients[opened.languageId]?.didClose(uri)
+                    clients[clientCacheKey(opened.languageId)]?.didClose(uri)
                     openDocuments.remove(uri)
                     openDocumentLocked(file, languageId, text)
                 }
@@ -143,7 +143,7 @@ class EditorLspManager(private val context: Context) {
         val uri = EditorLspUris.forFile(file)
         synchronized(this) {
             val opened = openDocuments.remove(uri) ?: return
-            clients[opened.languageId]?.didClose(uri)
+            clients[clientCacheKey(opened.languageId)]?.didClose(uri)
             clearDiagnostics(uri)
         }
     }
@@ -183,6 +183,19 @@ class EditorLspManager(private val context: Context) {
             if (success) {
                 synchronized(failedLanguages) {
                     failedLanguages.remove(LANGUAGE_JAVA)
+                }
+            }
+            onFinished?.invoke(success)
+        }
+    }
+
+    fun ensureClangdInstalled(onFinished: ((Boolean) -> Unit)? = null) {
+        lspInstaller.installPackage(EditorClangdSupport.PACKAGE_ID, quietIfInstalled = true) { success, _ ->
+            if (success) {
+                synchronized(failedLanguages) {
+                    failedLanguages.remove(CLIENT_KEY_CLANGD)
+                    failedLanguages.remove(LANGUAGE_C)
+                    failedLanguages.remove(LANGUAGE_CPP)
                 }
             }
             onFinished?.invoke(success)
@@ -237,52 +250,52 @@ class EditorLspManager(private val context: Context) {
 
     private fun clientFor(file: File, languageId: String): EditorLspClient? {
         if (!settings.enabled) return null
+        val cacheKey = clientCacheKey(languageId)
         if (!lspInstaller.isLanguageInstalled(languageId)) {
-            when (languageId) {
-                LANGUAGE_SHELL -> lspInstaller.ensureBasicShellInstalled()
-                LANGUAGE_JAVA -> ensureJavaJdtLsInstalled()
-            }
+            // 不自动安装：统一走编辑器设置 → LSP 列表手动安装
             showErrorOnce(
-                if (languageId == LANGUAGE_JAVA) {
-                    "Java LSP (jdt-ls) 未安装，正在尝试安装；也可在编辑器设置 → LSP 中手动安装"
-                } else {
-                    "LSP 服务器未安装，请先在设置中安装对应语言包"
+                when (languageId) {
+                    LANGUAGE_JAVA -> "Java LSP 未安装，请在编辑器设置 → LSP 中安装"
+                    LANGUAGE_C, LANGUAGE_CPP -> "C/C++ LSP (clangd) 未安装，请在编辑器设置 → LSP 中安装"
+                    else -> "LSP 服务器未安装，请先在设置中安装对应语言包"
                 }
             )
             return null
         }
-        val projectRoot = if (languageId == LANGUAGE_JAVA) {
-            EditorJdtLsSupport.findProjectRoot(file)
-        } else {
-            file.parentFile
+        val projectRoot = when (languageId) {
+            LANGUAGE_JAVA -> EditorJdtLsSupport.findProjectRoot(file)
+            LANGUAGE_C, LANGUAGE_CPP -> EditorClangdSupport.findProjectRoot(file)
+            else -> file.parentFile
         }
         val launchSpec = lspInstaller.launchSpecForLanguage(languageId, projectRoot)
         if (launchSpec == null) {
             showErrorOnce(
-                if (languageId == LANGUAGE_JAVA) {
-                    "jdt-ls 启动失败：请确认已安装 openjdk-21，并重新安装 Java LSP"
-                } else {
-                    "LSP 服务器命令未找到，请重新安装对应语言包"
+                when (languageId) {
+                    LANGUAGE_JAVA -> "jdt-ls 启动失败：请确认已安装 openjdk-21，并重新安装 Java LSP"
+                    LANGUAGE_C, LANGUAGE_CPP -> "clangd 启动失败：请确认已执行 pkg install clang，并重新安装 C/C++ LSP"
+                    else -> "LSP 服务器命令未找到，请重新安装对应语言包"
                 }
             )
             return null
         }
         synchronized(failedLanguages) {
-            if (failedLanguages.contains(languageId)) return null
+            if (failedLanguages.contains(cacheKey)) return null
         }
-        clients[languageId]?.let { client ->
+        clients[cacheKey]?.let { client ->
             if (client.isRunning()) return client
-            clients.remove(languageId)
-            val staleUris = openDocuments.filterValues { it.languageId == languageId }.keys.toList()
+            clients.remove(cacheKey)
+            val staleUris = openDocuments.filterValues {
+                clientCacheKey(it.languageId) == cacheKey
+            }.keys.toList()
             staleUris.forEach { uri ->
                 openDocuments.remove(uri)
                 clearDiagnostics(uri)
             }
         }
-        val timeout = if (languageId == LANGUAGE_JAVA) {
-            maxOf(settings.timeoutMillis, EditorJdtLsSupport.INIT_TIMEOUT_MILLIS)
-        } else {
-            settings.timeoutMillis
+        val timeout = when (languageId) {
+            LANGUAGE_JAVA -> maxOf(settings.timeoutMillis, EditorJdtLsSupport.INIT_TIMEOUT_MILLIS)
+            LANGUAGE_C, LANGUAGE_CPP -> maxOf(settings.timeoutMillis, EditorClangdSupport.INIT_TIMEOUT_MILLIS)
+            else -> settings.timeoutMillis
         }
         val client = EditorLspClient(
             context.applicationContext,
@@ -295,13 +308,21 @@ class EditorLspManager(private val context: Context) {
             ::handleServerNotification
         )
         return if (client.start()) {
-            clients[languageId] = client
+            clients[cacheKey] = client
             client
         } else {
             synchronized(failedLanguages) {
-                failedLanguages.add(languageId)
+                failedLanguages.add(cacheKey)
             }
             null
+        }
+    }
+
+    /** C/C++ 共用一个 clangd 进程。 */
+    private fun clientCacheKey(languageId: String): String {
+        return when (languageId) {
+            LANGUAGE_C, LANGUAGE_CPP -> CLIENT_KEY_CLANGD
+            else -> languageId
         }
     }
 
@@ -569,6 +590,9 @@ class EditorLspManager(private val context: Context) {
         const val LANGUAGE_SHELL = "shellscript"
         const val LANGUAGE_YAML = "yaml"
         const val LANGUAGE_JAVA = "java"
+        const val LANGUAGE_C = "c"
+        const val LANGUAGE_CPP = "cpp"
+        private const val CLIENT_KEY_CLANGD = "clangd"
         const val DEFAULT_TIMEOUT_MILLIS = 3000L
         private const val MAX_LSP_TEXT_LENGTH = 1024 * 1024
         private const val MAX_COMPLETION_ITEMS = 120
@@ -583,6 +607,8 @@ class EditorLspManager(private val context: Context) {
                 "sh", "bash", "zsh", "fish", "profile", "bashrc", "zshrc" -> LANGUAGE_SHELL
                 "yaml", "yml" -> LANGUAGE_YAML
                 "java" -> LANGUAGE_JAVA
+                "c", "h" -> LANGUAGE_C
+                "cpp", "cc", "cxx", "c++", "hpp", "hh", "hxx", "h++" -> LANGUAGE_CPP
                 else -> null
             }
         }
