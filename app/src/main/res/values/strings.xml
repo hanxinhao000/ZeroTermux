@@ -1561,6 +1561,7 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_agent_ai_skills_create_name_hint">e.g. my-workflow</string>
     <string name="zt_agent_ai_skills_create_name_required">Please enter a skill name</string>
     <string name="zt_agent_ai_skills_created">Skill created: %1$s</string>
+    <string name="zt_agent_ai_skills_new_template"># %1$s\n\n## Overview\nDescribe when this skill should be used and what it does.\n\n## Steps\n1. </string>
     <string name="zt_agent_ai_skills_invalid_id">Invalid name. Use lowercase letters, digits, and hyphens.</string>
     <string name="zt_agent_ai_skills_already_exists">This skill already exists</string>
     <string name="zt_agent_ai_skills_create_failed">Failed to create skill</string>

@@ -73,6 +73,8 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
         if (MainMenuPackageManager.isDefaultMenuActive(mContext)) {
             MainMenuPackageManager.applyDefaultFromAssets(mContext);
         }
+        // Refresh built-in menu titles (程序菜单 / Program menu, etc.) for new locale.
+        MainMenuPackageManager.refreshLocalizableActiveLabel(mContext);
 
         if (mContext instanceof TermuxActivity) {
             ((TermuxActivity) mContext).restartActivity();

@@ -93,7 +93,7 @@ object MainMenuPackageManager {
         items.add(
             MainMenuPackageInfo(
                 id = MainMenuPackageInfo.ID_PROGRAM,
-                label = UUtils.getString(R.string.menu_package_program_label),
+                label = context.getString(R.string.menu_package_program_label),
                 type = MainMenuPackageInfo.TYPE_PROGRAM,
                 isActive = isProgramMenuActive(activeId)
             )
@@ -103,7 +103,7 @@ object MainMenuPackageManager {
         items.add(
             MainMenuPackageInfo(
                 id = latestNetworkDir?.name ?: MainMenuPackageInfo.ID_NETWORK,
-                label = UUtils.getString(R.string.menu_package_default_label),
+                label = context.getString(R.string.menu_package_default_label),
                 installTime = latestNetworkDir?.lastModified() ?: 0L,
                 packageDir = latestNetworkDir,
                 type = MainMenuPackageInfo.TYPE_DEFAULT,
@@ -115,7 +115,7 @@ object MainMenuPackageManager {
             items.add(
                 MainMenuPackageInfo(
                     id = dir.name,
-                    label = resolvePackageDisplayLabel(dir.name),
+                    label = resolvePackageDisplayLabel(dir.name, context),
                     installTime = dir.lastModified(),
                     packageDir = dir,
                     type = MainMenuPackageInfo.TYPE_INSTALLED,
@@ -127,7 +127,7 @@ object MainMenuPackageManager {
         items.add(
             MainMenuPackageInfo(
                 id = MainMenuPackageInfo.ID_INSTALL,
-                label = UUtils.getString(R.string.menu_package_install),
+                label = context.getString(R.string.menu_package_install),
                 type = MainMenuPackageInfo.TYPE_INSTALL
             )
         )
@@ -150,7 +150,7 @@ object MainMenuPackageManager {
                 val packageName = NETWORK_PACKAGE_NAME + "_" + System.currentTimeMillis()
                 val installed = installFromZip(context, tempZip, packageName)
                 tempZip.delete()
-                if (installed && applyPackage(context, packageName, UUtils.getString(R.string.menu_package_default_label))) {
+                if (installed && applyPackage(context, packageName, context.getString(R.string.menu_package_default_label))) {
                     UUtils.runOnUIThread {
                         callback.onResult(true, UUtils.getString(R.string.menu_package_network_success))
                     }
@@ -190,6 +190,18 @@ object MainMenuPackageManager {
     @JvmStatic
     fun getActivePackageLabel(context: Context): String {
         return try {
+            val packageId = getActivePackageId(context)
+            if (packageId.isEmpty()) {
+                return context.getString(R.string.menu_package_program_label)
+            }
+            // Built-in menus must follow current UI language; do not reuse a
+            // previously saved Chinese/English label from active_label.txt.
+            if (isLocalizablePackageId(packageId)) {
+                return resolveLabelFromPackageId(context, packageId)
+            }
+            if (isAiPackageId(packageId)) {
+                return resolveAiPackageLabel(packageId, context)
+            }
             val labelFile = File(ensureMenuStateDir(context), ACTIVE_LABEL_FILE)
             if (labelFile.exists()) {
                 val label = labelFile.readText().trim()
@@ -197,15 +209,20 @@ object MainMenuPackageManager {
                     return label
                 }
             }
-            val packageId = getActivePackageId(context)
-            if (packageId.isEmpty()) {
-                return UUtils.getString(R.string.menu_package_program_label)
-            }
-            resolveLabelFromPackageId(packageId)
+            resolveLabelFromPackageId(context, packageId)
         } catch (e: Exception) {
             android.util.Log.e("MainMenuPackageManager", "getActivePackageLabel failed", e)
-            UUtils.getString(R.string.menu_package_program_label)
+            context.getString(R.string.menu_package_program_label)
         }
+    }
+
+    /** Program / default / assets menus whose display name is a string resource. */
+    private fun isLocalizablePackageId(packageId: String): Boolean {
+        return packageId == MainMenuPackageInfo.ID_PROGRAM
+            || packageId == MainMenuPackageInfo.ID_DEFAULT_XML
+            || packageId == MainMenuPackageInfo.ID_NETWORK
+            || packageId.startsWith("assets_default")
+            || packageId.startsWith(NETWORK_PACKAGE_NAME)
     }
 
     @JvmStatic
@@ -326,7 +343,7 @@ object MainMenuPackageManager {
         return try {
             File(dir, MENU_XML_FILE).writeText(xmlContent)
             if (applyIfActive && getActivePackageId(context) == packageId) {
-                applyPackage(context, packageId, resolveAiPackageLabel(packageId))
+                applyPackage(context, packageId, resolveAiPackageLabel(packageId, context))
             } else {
                 true
             }
@@ -345,7 +362,7 @@ object MainMenuPackageManager {
         if (!hasMenuXml(dir)) {
             return false
         }
-        return applyPackage(context, packageId, resolveAiPackageLabel(packageId))
+        return applyPackage(context, packageId, resolveAiPackageLabel(packageId, context))
     }
 
     /** @deprecated 使用 [applyAiMenuPackage] */
@@ -356,23 +373,25 @@ object MainMenuPackageManager {
     }
 
     @JvmStatic
-    fun resolveAiPackageLabel(packageId: String): String {
+    @JvmOverloads
+    fun resolveAiPackageLabel(packageId: String, context: Context = UUtils.getContext()): String {
         if (packageId == MainMenuPackageInfo.ID_AI_CREATED) {
-            return UUtils.getString(R.string.menu_package_ai_created_label)
+            return context.getString(R.string.menu_package_ai_created_label)
         }
         if (packageId.startsWith("${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_")) {
             val suffix = packageId.removePrefix("${MainMenuPackageInfo.ID_AI_CREATED_PREFIX}_")
             if (suffix.isNotEmpty()) {
-                return UUtils.getString(R.string.menu_package_ai_created_label) + suffix
+                return context.getString(R.string.menu_package_ai_created_label) + suffix
             }
         }
         return packageId
     }
 
     @JvmStatic
-    fun resolvePackageDisplayLabel(packageId: String): String {
+    @JvmOverloads
+    fun resolvePackageDisplayLabel(packageId: String, context: Context = UUtils.getContext()): String {
         if (isAiPackageId(packageId)) {
-            return resolveAiPackageLabel(packageId)
+            return resolveAiPackageLabel(packageId, context)
         }
         return packageId
     }
@@ -445,14 +464,14 @@ object MainMenuPackageManager {
             }
         }
         saveActivePackageId(context, MainMenuPackageInfo.ID_DEFAULT_XML)
-        saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_default_label))
+        saveActivePackageLabel(context, context.getString(R.string.menu_package_default_label))
         return true
     }
 
     @JvmStatic
     fun applyProgramMenu(context: Context): Boolean {
         saveActivePackageId(context, MainMenuPackageInfo.ID_PROGRAM)
-        saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_program_label))
+        saveActivePackageLabel(context, context.getString(R.string.menu_package_program_label))
         return true
     }
 
@@ -470,7 +489,7 @@ object MainMenuPackageManager {
     fun applyLatestNetworkPackage(context: Context): Boolean {
         val latestId = getLatestNetworkPackageId(context)
         if (latestId != null) {
-            return applyPackage(context, latestId, UUtils.getString(R.string.menu_package_default_label))
+            return applyPackage(context, latestId, context.getString(R.string.menu_package_default_label))
         }
         return applyDefaultFromAssets(context)
     }
@@ -516,7 +535,7 @@ object MainMenuPackageManager {
             }
         }
         saveActivePackageId(context, packageId)
-        saveActivePackageLabel(context, displayLabel ?: resolveLabelFromPackageId(packageId))
+        saveActivePackageLabel(context, displayLabel ?: resolveLabelFromPackageId(context, packageId))
         return true
     }
 
@@ -529,7 +548,7 @@ object MainMenuPackageManager {
         activeXml.parentFile?.mkdirs()
         UUtils.writerFile(assetPath, activeXml)
         saveActivePackageId(context, "assets_default_$lang")
-        saveActivePackageLabel(context, UUtils.getString(R.string.menu_package_default_label))
+        saveActivePackageLabel(context, context.getString(R.string.menu_package_default_label))
         snapshotDefaultMenuStore(context)
         return activeXml.exists()
     }
@@ -646,24 +665,43 @@ object MainMenuPackageManager {
         }
     }
 
-    private fun resolveLabelFromPackageId(packageId: String): String {
+    /** Rewrite active_label.txt for built-in menus after UI language changes. */
+    @JvmStatic
+    fun refreshLocalizableActiveLabel(context: Context) {
+        try {
+            val packageId = getActivePackageId(context)
+            if (packageId.isEmpty()) {
+                return
+            }
+            val label = when {
+                isLocalizablePackageId(packageId) -> resolveLabelFromPackageId(context, packageId)
+                isAiPackageId(packageId) -> resolveAiPackageLabel(packageId, context)
+                else -> return
+            }
+            saveActivePackageLabel(context, label)
+        } catch (e: Exception) {
+            android.util.Log.e("MainMenuPackageManager", "refreshLocalizableActiveLabel failed", e)
+        }
+    }
+
+    private fun resolveLabelFromPackageId(context: Context, packageId: String): String {
         if (packageId == MainMenuPackageInfo.ID_PROGRAM) {
-            return UUtils.getString(R.string.menu_package_program_label)
+            return context.getString(R.string.menu_package_program_label)
         }
         if (packageId == MainMenuPackageInfo.ID_AI_CREATED) {
-            return UUtils.getString(R.string.menu_package_ai_created_label)
+            return context.getString(R.string.menu_package_ai_created_label)
         }
         if (packageId == MainMenuPackageInfo.ID_DEFAULT_XML) {
-            return UUtils.getString(R.string.menu_package_default_label)
+            return context.getString(R.string.menu_package_default_label)
         }
         if (packageId.startsWith("assets_default")) {
-            return UUtils.getString(R.string.menu_package_default_label)
+            return context.getString(R.string.menu_package_default_label)
         }
         if (packageId.startsWith(NETWORK_PACKAGE_NAME)) {
-            return UUtils.getString(R.string.menu_package_default_label)
+            return context.getString(R.string.menu_package_default_label)
         }
         if (packageId.startsWith("local_")) {
-            return UUtils.getString(R.string.menu_package_local_label)
+            return context.getString(R.string.menu_package_local_label)
         }
         if (packageId.startsWith("zip_")) {
             val parts = packageId.removePrefix("zip_").split("_")

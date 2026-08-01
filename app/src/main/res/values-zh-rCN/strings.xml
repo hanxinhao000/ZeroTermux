@@ -1699,6 +1699,7 @@
     <string name="zt_agent_ai_skills_create_name_hint">例如 my-workflow</string>
     <string name="zt_agent_ai_skills_create_name_required">请输入 Skill 名称</string>
     <string name="zt_agent_ai_skills_created">已创建 Skill：%1$s</string>
+    <string name="zt_agent_ai_skills_new_template"># %1$s\n\n## 说明\n在此编写该 Skill 的用途与触发场景。\n\n## 步骤\n1. </string>
     <string name="zt_agent_ai_skills_invalid_id">名称无效，请使用小写字母、数字和连字符</string>
     <string name="zt_agent_ai_skills_already_exists">该 Skill 已存在</string>
     <string name="zt_agent_ai_skills_create_failed">创建 Skill 失败</string>

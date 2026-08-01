@@ -350,15 +350,8 @@ object ZtAgentAiSkillHelper {
         return Result.success(Unit)
     }
 
-    private fun newSkillTemplateBody(displayName: String): String = """
-        # $displayName
-
-        ## 说明
-        在此编写该 Skill 的用途与触发场景。
-
-        ## 步骤
-        1. 
-    """.trimIndent()
+    private fun newSkillTemplateBody(displayName: String): String =
+        ZtLocaleStrings.getString(R.string.zt_agent_ai_skills_new_template, displayName)
 
     private fun ensureSkillsRoot() {
         skillsRoot().mkdirs()
