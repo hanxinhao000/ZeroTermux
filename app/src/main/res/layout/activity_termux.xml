@@ -2,14 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_termux_root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipChildren="false">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:fitsSystemWindows="true"
-        android:layout_height="match_parent">
+        android:clipChildren="false">
 
+        <!-- 放在 fitsSystemWindows 容器内，自动避开状态栏 -->
         <include
             android:id="@+id/ai_agent_running_banner"
             layout="@layout/view_ai_agent_stop_bar"
@@ -17,12 +20,14 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
             android:layout_marginTop="2dp"
+            android:elevation="24dp"
             android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/activity_termux_root_relative_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginHorizontal="3dp"
             android:layout_marginVertical="0dp"
             android:orientation="vertical">

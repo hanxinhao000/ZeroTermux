@@ -77,6 +77,7 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- 文档流内置顶，不遮挡下方对话内容 -->
     <include
         android:id="@+id/ai_agent_panel_stop_bar"
         layout="@layout/view_ai_agent_stop_bar"
@@ -125,12 +126,15 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:fillViewport="true">
+            android:clipToPadding="false"
+            android:fillViewport="false"
+            android:overScrollMode="ifContentScrolls">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="12dp">
 
                 <TextView
                     android:id="@+id/ai_agent_panel_empty"

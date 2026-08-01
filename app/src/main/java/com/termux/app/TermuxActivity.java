@@ -1144,24 +1144,32 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
 
     /**
-     * 抽屉开合进度超过阈值才视为「打开」。关闭过程中进度一降下来就显示 AI 顶栏，
-     * 不必等 onSwipeClosed。
+     * 侧栏是否处于「有效打开」：完全打开，或拖动/关闭动画中进度仍较高。
+     * 进度降到阈值以下即视为关闭，以便主界面顶栏立刻出现。
      */
     private boolean isAiDrawerEffectivelyOpen() {
-        return mDrawerEffectivelyOpen;
+        if (mSlidingConsumer == null || mSlidingConsumer.isClosed()) {
+            return false;
+        }
+        if (mSlidingConsumer.isOpened()) {
+            return true;
+        }
+        // 拖动/动画过程中既不是 isOpened 也不是 isClosed，用进度判断。
+        return mDrawerSwipeProgress >= 0.85f;
+    }
+
+    private void updateDrawerOpenProgress(float progress, boolean forceNotify) {
+        float old = mDrawerSwipeProgress;
+        mDrawerSwipeProgress = Math.max(0f, Math.min(1f, progress));
+        boolean wasOpen = old >= 0.85f;
+        boolean nowOpen = mDrawerSwipeProgress >= 0.85f;
+        if ((wasOpen != nowOpen || forceNotify) && mAiAgentPanelHelper != null) {
+            mAiAgentPanelHelper.onDrawerVisibilityChanged();
+        }
     }
 
     private void updateDrawerOpenProgress(float progress) {
-        mDrawerSwipeProgress = Math.max(0f, Math.min(1f, progress));
-        // 关闭一开始（进度略低于全开）即视为未打开，顶栏立刻出现并播放动画。
-        boolean effectivelyOpen = mDrawerSwipeProgress >= 0.85f;
-        if (effectivelyOpen == mDrawerEffectivelyOpen) {
-            return;
-        }
-        mDrawerEffectivelyOpen = effectivelyOpen;
-        if (mAiAgentPanelHelper != null) {
-            mAiAgentPanelHelper.onDrawerVisibilityChanged();
-        }
+        updateDrawerOpenProgress(progress, false);
     }
 	// @}
 
@@ -1425,7 +1433,6 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private ZtAiAgentPanelHelper mAiAgentPanelHelper;
     /** 右侧/左侧抽屉当前开合进度 0~1；用于 AI 顶栏尽早出现，不必等抽屉完全关完。 */
     private float mDrawerSwipeProgress;
-    private boolean mDrawerEffectivelyOpen;
     // @}
 
     private void initZeroView() {
@@ -1520,13 +1527,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         setEgInstallStatus();
         // ZeroTermux add {@
         View aiPanelHost = findViewById(R.id.ai_agent_panel_host);
+        View aiRunningBanner = findViewById(R.id.ai_agent_running_banner);
         if (aiPanelHost != null) {
             mAiAgentPanelHelper = new ZtAiAgentPanelHelper(
                 aiPanelHost,
                 this,
                 () -> getDrawer().smoothClose(),
                 this::prepareAiAgentTabInDrawer,
-                this::isAiDrawerEffectivelyOpen
+                // 侧栏打开时用面板内打断；关闭（含正在关闭）时用主界面顶栏
+                this::isAiDrawerEffectivelyOpen,
+                aiRunningBanner
             );
         }
         // @}
@@ -2827,7 +2837,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onSwipeOpened(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeOpened(wrapper, consumer, direction);
-                updateDrawerOpenProgress(1f);
+                updateDrawerOpenProgress(1f, true);
                 mTerminalView.clearFocus();
                 if (!UserSetManage.Companion.get().getZTUserBean().isHideGuideLayout()) {
                     mGuideLayout.setVisibility(View.GONE);
@@ -2840,8 +2850,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             @Override
             public void onSwipeClosed(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
                 super.onSwipeClosed(wrapper, consumer, direction);
-                updateDrawerOpenProgress(0f);
-                mTerminalView.requestFocus();
+                // forceNotify：确保关闭后一定刷新主界面顶部打断条。
+                updateDrawerOpenProgress(0f, true);
+                // 与原版 termux-app 一致：关闭侧栏不 requestFocus，避免焦点变化自动弹出软键盘。
             }
         };
 

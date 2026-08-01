@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,6 +20,9 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.termux.R
+import com.termux.app.TermuxActivity
+import com.termux.view.TerminalView
+import com.termux.zerocore.ai.deepseek.utils.SpannableTextUtil
 import com.termux.zerocore.utils.SingletonCommunicationUtils
 import io.noties.markwon.Markwon
 
@@ -30,7 +35,8 @@ class ZtAiAgentPanelHelper(
     private val hostActivity: Activity,
     private val onCloseDrawer: Runnable? = null,
     private val onOpenAiTab: Runnable? = null,
-    private val isDrawerOpen: (() -> Boolean)? = null
+    private val isDrawerOpen: (() -> Boolean)? = null,
+    topRunningBanner: View? = null
 ) {
     private val panelCard: View = panelHost
     private val contextLabel: TextView = panelHost.findViewById(R.id.ai_agent_panel_context_label)
@@ -70,9 +76,8 @@ class ZtAiAgentPanelHelper(
 
     private val markwon: Markwon by lazy { ZtAgentMarkwon.get(panelCard.context) }
 
-    private val runningBanner: View? by lazy {
-        panelCard.rootView.findViewById(R.id.ai_agent_running_banner)
-    }
+    private val runningBanner: View? =
+        topRunningBanner ?: hostActivity.findViewById(R.id.ai_agent_running_banner)
 
     init {
         panelHost.findViewById<View>(R.id.ai_agent_panel_skills).setOnClickListener {
@@ -126,7 +131,7 @@ class ZtAiAgentPanelHelper(
         }
     }
 
-    /** 打断 AI 自动执行（不关闭面板）。 */
+    /** 打断 AI 自动执行（不关闭面板）：停请求 + 向终端发 Ctrl+C。 */
     fun stopAgentExecution() {
         if (!isSending) return
         agentCancelled = true
@@ -140,13 +145,29 @@ class ZtAiAgentPanelHelper(
         pendingAssistantRow = null
     }
 
+    /** 与迁到侧栏前一致：始终向终端发送 Ctrl+C（不依赖终端工具开关）。 */
     private fun sendTerminalInterrupt() {
-        if (!ZtAgentAiConfigHelper.isTerminalEnabled()) return
-        val utils = SingletonCommunicationUtils.getInstance()
-        if (!utils.hasTerminalListener()) return
-        try {
-            utils.getmSingletonCommunicationListener()?.sendTextToTerminalCtrl("c", true)
-        } catch (_: Exception) {
+        val sendOnce = Runnable {
+            try {
+                val listener = SingletonCommunicationUtils.getInstance().getmSingletonCommunicationListener()
+                if (listener != null) {
+                    listener.sendTextToTerminalCtrl("c", true)
+                    return@Runnable
+                }
+                val terminal = (hostActivity as? TermuxActivity)?.getTerminalView()
+                    ?: hostActivity.findViewById<TerminalView>(R.id.terminal_view)
+                terminal?.sendTextToTerminalCtrl("c", true)
+            } catch (_: Exception) {
+            }
+        }
+        val main = Handler(Looper.getMainLooper())
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            sendOnce.run()
+            // 部分长命令需连发两次才能中断
+            main.postDelayed(sendOnce, 120)
+        } else {
+            main.post(sendOnce)
+            main.postDelayed(sendOnce, 120)
         }
     }
 
@@ -307,7 +328,7 @@ class ZtAiAgentPanelHelper(
         chatClient!!.chat(requestMessages, stream = true, listener = object : ZtAgentAiChatClient.Listener {
             override fun onChunk(text: String) {
                 renderMarkdown(assistantView, text)
-                scrollToBottom()
+                scrollToBottomDelayed()
             }
 
             override fun onError(message: String) {
@@ -331,7 +352,8 @@ class ZtAiAgentPanelHelper(
             renderMarkdown(assistantView, fullText)
             conversationHistory.add(ZtAgentAiChatClient.ChatMessage(ROLE_ASSISTANT, fullText))
             ZtAgentAiChatStore.save(conversationHistory)
-            scrollToBottom()
+            // Markdown 排版后再滚到底，避免最新回复底部被裁切
+            scrollToBottomDelayed()
         } else {
             removeMessageView(assistantView)
         }
@@ -447,9 +469,30 @@ class ZtAiAgentPanelHelper(
     }
 
     private fun renderMarkdown(textView: TextView, markdown: String) {
+        // textIsSelectable=true 会连带打开横向滚动，量高只剩一行，长回复只显示首句。
+        val selectable = textView.isTextSelectable
+        if (selectable) {
+            textView.setTextIsSelectable(false)
+        }
+        textView.setSingleLine(false)
+        textView.maxLines = Integer.MAX_VALUE
+        textView.ellipsize = null
+        textView.setHorizontallyScrolling(false)
         val spanned = markwon.toMarkdown(markdown)
-        markwon.setParsedMarkdown(textView, spanned)
+        val finalSpanned = SpannableTextUtil.createClickableSpannableString(spanned, panelCard.context)
+        markwon.setParsedMarkdown(textView, finalSpanned)
+        if (selectable) {
+            textView.setTextIsSelectable(true)
+        }
+        textView.setHorizontallyScrolling(false)
         textView.movementMethod = ZtAgentSelectionLinkMovementMethod
+        textView.post {
+            textView.requestLayout()
+            (textView.parent as? View)?.requestLayout()
+            messagesContainer.requestLayout()
+            scrollView.requestLayout()
+            performScrollToBottom()
+        }
     }
 
     private fun inflateMessageItem(isUser: Boolean): View {
@@ -457,14 +500,18 @@ class ZtAiAgentPanelHelper(
             .inflate(R.layout.view_agent_ai_message_item, messagesContainer, false)
         val content = itemView.findViewById<TextView>(R.id.agent_message_content)
         val lp = content.layoutParams as LinearLayout.LayoutParams
+        val maxBubble = (260 * panelCard.resources.displayMetrics.density).toInt()
         if (isUser) {
             content.setBackgroundResource(R.drawable.shape_agent_msg_user)
             lp.gravity = Gravity.END
+            lp.width = LinearLayout.LayoutParams.WRAP_CONTENT
+            content.maxWidth = maxBubble
         } else {
             content.setBackgroundResource(R.drawable.shape_agent_msg_assistant)
             lp.gravity = Gravity.START
             lp.width = LinearLayout.LayoutParams.MATCH_PARENT
             content.maxWidth = Int.MAX_VALUE
+            content.minWidth = 0
         }
         content.layoutParams = lp
         return itemView
@@ -480,17 +527,25 @@ class ZtAiAgentPanelHelper(
     }
 
     private fun scrollToBottomDelayed() {
-        scrollToBottom()
         scrollView.removeCallbacks(scrollBottomRunnable1)
         scrollView.removeCallbacks(scrollBottomRunnable2)
-        scrollView.postDelayed(scrollBottomRunnable1, 100)
-        scrollView.postDelayed(scrollBottomRunnable2, 280)
+        scrollToBottom()
+        scrollView.postDelayed(scrollBottomRunnable1, 80)
+        scrollView.postDelayed(scrollBottomRunnable2, 220)
+        // 再补一次，覆盖 Markdown/图片异步撑高后的高度
+        scrollView.postDelayed({ performScrollToBottom() }, 480)
     }
 
     private fun performScrollToBottom() {
         val child = scrollView.getChildAt(0) ?: return
-        val target = (child.height - scrollView.height + scrollView.paddingBottom).coerceAtLeast(0)
+        child.measure(
+            View.MeasureSpec.makeMeasureSpec(scrollView.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val contentHeight = child.measuredHeight.coerceAtLeast(child.height)
+        val target = (contentHeight - scrollView.height + scrollView.paddingBottom).coerceAtLeast(0)
         scrollView.scrollTo(0, target)
+        scrollView.fullScroll(View.FOCUS_DOWN)
     }
 
     private fun setSending(sending: Boolean) {
@@ -561,16 +616,41 @@ class ZtAiAgentPanelHelper(
         }
     }
 
+    /**
+     * 与迁到侧栏前一致的简单逻辑：
+     * - 侧栏打开且 AI 页可见 → 显示面板内打断条
+     * - 侧栏关闭（或未在 AI 页）且仍在执行 → 显示主界面顶栏
+     * 不用 bringChildToFront（会破坏 LinearLayout 顺序导致顶栏“消失”）。
+     */
     private fun updateStopBarsVisibility() {
-        val drawerOpen = isDrawerOpen?.invoke() != false
+        val drawerOpen = isDrawerOpen?.invoke() == true
         val showPanelBar = isSending && isPanelShown && drawerOpen
         val showTopBar = isSending && (!isPanelShown || !drawerOpen)
         panelStopBar?.visibility = if (showPanelBar) View.VISIBLE else View.GONE
         val bar = runningBanner ?: return
-        if (showTopBar) {
-            ZtAiAgentTopBannerAnimator.show(bar)
+        val apply = Runnable {
+            if (showTopBar) {
+                // 直接显示，避免复杂动画把高度置 0 后卡住
+                bar.animate().cancel()
+                bar.alpha = 1f
+                bar.translationY = 0f
+                val lp = bar.layoutParams
+                if (lp != null && lp.height == 0) {
+                    lp.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    bar.layoutParams = lp
+                }
+                bar.visibility = View.VISIBLE
+            } else {
+                bar.animate().cancel()
+                bar.visibility = View.GONE
+                bar.alpha = 1f
+                bar.translationY = 0f
+            }
+        }
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            apply.run()
         } else {
-            ZtAiAgentTopBannerAnimator.hide(bar)
+            bar.post(apply)
         }
     }
 

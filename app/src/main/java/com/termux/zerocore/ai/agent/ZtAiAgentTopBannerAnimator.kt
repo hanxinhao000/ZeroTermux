@@ -30,8 +30,8 @@ object ZtAiAgentTopBannerAnimator {
         ) {
             return
         }
-        // GONE 时先改为 INVISIBLE，保证 measure 能拿到真实高度，动画才有起点。
-        if (banner.visibility == View.GONE) {
+        // GONE 时先改为 INVISIBLE，保证 measure 能拿到真实高度。
+        if (banner.visibility != View.VISIBLE) {
             banner.alpha = 0f
             banner.translationY = 0f
             banner.visibility = View.INVISIBLE
@@ -42,12 +42,7 @@ object ZtAiAgentTopBannerAnimator {
                 pendingShow = null
                 val height = measureHeight(banner)
                 if (height <= 0) {
-                    banner.visibility = View.VISIBLE
-                    banner.alpha = 1f
-                    banner.translationY = 0f
-                    val params = banner.layoutParams ?: return@Runnable
-                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                    banner.layoutParams = params
+                    forceVisible(banner)
                 } else {
                     animateShow(banner, height)
                 }
@@ -61,7 +56,8 @@ object ZtAiAgentTopBannerAnimator {
 
     fun hide(banner: View) {
         cancelRunning(banner)
-        if (banner.visibility != View.VISIBLE && banner.visibility != View.INVISIBLE) {
+        if (banner.visibility == View.GONE) {
+            resetHidden(banner)
             return
         }
         val startHeight = banner.height.takeIf { it > 0 } ?: measureHeight(banner)
@@ -69,7 +65,10 @@ object ZtAiAgentTopBannerAnimator {
             resetHidden(banner)
             return
         }
-        val params = banner.layoutParams ?: return
+        val params = banner.layoutParams ?: run {
+            resetHidden(banner)
+            return
+        }
         params.height = startHeight
         banner.layoutParams = params
         banner.visibility = View.VISIBLE
@@ -98,7 +97,10 @@ object ZtAiAgentTopBannerAnimator {
     }
 
     private fun animateShow(banner: View, targetHeight: Int) {
-        val params = banner.layoutParams ?: return
+        val params = banner.layoutParams ?: run {
+            forceVisible(banner)
+            return
+        }
         banner.visibility = View.VISIBLE
         banner.alpha = 0f
         banner.translationY = -targetHeight.toFloat()
@@ -122,6 +124,7 @@ object ZtAiAgentTopBannerAnimator {
                     banner.layoutParams = params
                     banner.alpha = 1f
                     banner.translationY = 0f
+                    banner.visibility = View.VISIBLE
                 }
 
                 override fun onAnimationCancel(animation: android.animation.Animator) {
@@ -130,6 +133,17 @@ object ZtAiAgentTopBannerAnimator {
             })
             start()
         }
+    }
+
+    private fun forceVisible(banner: View) {
+        val params = banner.layoutParams
+        if (params != null) {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            banner.layoutParams = params
+        }
+        banner.alpha = 1f
+        banner.translationY = 0f
+        banner.visibility = View.VISIBLE
     }
 
     private fun resetHidden(banner: View) {

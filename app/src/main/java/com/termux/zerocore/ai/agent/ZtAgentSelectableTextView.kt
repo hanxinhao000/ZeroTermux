@@ -14,6 +14,18 @@ class ZtAgentSelectableTextView @JvmOverloads constructor(
         ZtInvertSelectionSpanHelper.applyHighlightStyle(this)
         linksClickable = true
         setLinkTextColor(0xFF4EA1F3.toInt())
+        setSingleLine(false)
+        maxLines = Integer.MAX_VALUE
+        ellipsize = null
+        // textIsSelectable 会打开横向滚动，量高变成单行，长 Markdown 只露首行。
+        setHorizontallyScrolling(false)
+    }
+
+    override fun setTextIsSelectable(selectable: Boolean) {
+        super.setTextIsSelectable(selectable)
+        if (selectable) {
+            setHorizontallyScrolling(false)
+        }
     }
 
     override fun onSelectionChanged(selStart: Int, selEnd: Int) {

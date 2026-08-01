@@ -39,9 +39,15 @@ object ZtTerminalWaitHelper {
         captureSnapshot: () -> String
     ): WaitResult {
         val cappedMax = maxWaitMs.coerceIn(MIN_MAX_WAIT_MS, ABSOLUTE_MAX_WAIT_MS)
+        if (Thread.currentThread().isInterrupted) {
+            throw InterruptedException("terminal wait cancelled")
+        }
         Thread.sleep(initialWaitMs)
         var waited = initialWaitMs
         while (waited < cappedMax) {
+            if (Thread.currentThread().isInterrupted) {
+                throw InterruptedException("terminal wait cancelled")
+            }
             val snap = captureSnapshot()
             if (isSnapshotAwaitingConfirmation(snap) && waited >= initialWaitMs + pollIntervalMs) {
                 return WaitResult(
