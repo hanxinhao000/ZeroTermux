@@ -104,6 +104,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.LinkedHashSet
 import java.util.Locale
 import java.util.regex.Matcher
@@ -3163,17 +3165,24 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private fun showFileTreeItemMenu(node: FileTreeNode, anchor: View) {
         PopupMenu(this, anchor).apply {
             if (node.kind == FileTreeEntryKind.NORMAL) {
-                menu.add(0, 14, 0, getString(R.string.editor_sidebar_open_terminal))
-                menu.add(0, 10, 1, getString(R.string.editor_sidebar_copy))
-                menu.add(0, 11, 2, getString(R.string.editor_sidebar_cut))
-                menu.add(0, 13, 3, getString(R.string.editor_sidebar_delete))
+                var order = 0
+                if (node.file.isDirectory) {
+                    menu.add(0, 1, order++, getString(R.string.editor_sidebar_create_folder))
+                    menu.add(0, 2, order++, getString(R.string.editor_sidebar_create_file))
+                }
+                menu.add(0, 14, order++, getString(R.string.editor_sidebar_open_terminal))
+                menu.add(0, 10, order++, getString(R.string.editor_sidebar_copy))
+                menu.add(0, 11, order++, getString(R.string.editor_sidebar_cut))
+                menu.add(0, 13, order++, getString(R.string.editor_sidebar_delete))
             }
             if (EditorFileTreeClipboard.hasContent()) {
-                menu.add(0, 12, 4, getString(R.string.editor_sidebar_paste))
+                menu.add(0, 12, menu.size(), getString(R.string.editor_sidebar_paste))
             }
             if (menu.size() == 0) return
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
+                    1 -> showCreateFileTreeEntryDialog(isFolder = true, targetDir = node.file)
+                    2 -> showCreateFileTreeEntryDialog(isFolder = false, targetDir = node.file)
                     14 -> openTerminalAtDirectory(node.file)
                     10 -> copyFileTreeEntry(node.file)
                     11 -> cutFileTreeEntry(node.file)
@@ -3386,8 +3395,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         }
     }
 
-    private fun showCreateFileTreeEntryDialog(isFolder: Boolean) {
-        val root = fileTreeCurrentDir ?: fileTreeRoot ?: return
+    private fun showCreateFileTreeEntryDialog(isFolder: Boolean, targetDir: File? = null) {
+        val root = when {
+            targetDir != null && targetDir.isDirectory -> targetDir
+            else -> fileTreeCurrentDir ?: fileTreeRoot
+        } ?: return
         val input = EditText(this).apply {
             hint = getString(R.string.editor_sidebar_create_name_hint)
             setTextColor(ContextCompat.getColor(this@EditTextActivity, R.color.color_ffffff))
@@ -3424,17 +3436,35 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         val success = if (isFolder) {
             target.mkdirs()
         } else {
-            runCatching { target.createNewFile() }.getOrDefault(false)
+            runCatching {
+                val template = initialContentForNewFile(name)
+                if (template != null) {
+                    target.writeText(template)
+                    true
+                } else {
+                    target.createNewFile()
+                }
+            }.getOrDefault(false)
         }
         if (!success) {
             UUtils.showMsg(getString(R.string.editor_sidebar_create_failed))
             return
         }
-        refreshFileTree()
-        updateSidebarProjectPath()
+        // 在目标文件夹内创建后展开，便于立刻看到新项
+        expandedDirectories.add(root.absolutePath)
+        refreshFileTreeAfterMutation()
         if (!isFolder && canOpenFile(target)) {
             loadFile(target)
         }
+    }
+
+    /** 新建文件时的初始内容；目前仅 .java 写入模板（文案走多语言）。 */
+    private fun initialContentForNewFile(fileName: String): String? {
+        if (!fileName.lowercase(Locale.ROOT).endsWith(".java")) return null
+        val className = fileName.substringBeforeLast('.').trim()
+        if (className.isEmpty()) return null
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+        return getString(R.string.editor_sidebar_java_file_template, date, className)
     }
 
     private fun refreshFileTree() {

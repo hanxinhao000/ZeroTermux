@@ -930,6 +930,8 @@
     <string name="editor_sidebar_create_name_hint">名称</string>
     <string name="editor_sidebar_create_exists">已存在：%1$s</string>
     <string name="editor_sidebar_create_failed">创建失败</string>
+    <!-- %1$s = 日期 (yyyy-MM-dd)，%2$s = 类名 -->
+    <string name="editor_sidebar_java_file_template">"/**\n手动创建java文件\n创建日期：%1$s\n**/\nclass %2$s {\n}\n"</string>
     <string name="editor_sidebar_copy">复制</string>
     <string name="editor_sidebar_cut">剪切</string>
     <string name="editor_sidebar_paste">粘贴</string>

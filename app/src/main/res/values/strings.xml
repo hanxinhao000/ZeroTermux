@@ -896,6 +896,8 @@ Reset successfully</string>
     <string name="editor_sidebar_create_name_hint">Name</string>
     <string name="editor_sidebar_create_exists">Already exists: %1$s</string>
     <string name="editor_sidebar_create_failed">Create failed</string>
+    <!-- %1$s = date (yyyy-MM-dd), %2$s = class name -->
+    <string name="editor_sidebar_java_file_template">"/**\nManually created Java file\nCreated: %1$s\n**/\nclass %2$s {\n}\n"</string>
     <string name="editor_sidebar_copy">Copy</string>
     <string name="editor_sidebar_cut">Cut</string>
     <string name="editor_sidebar_paste">Paste</string>
