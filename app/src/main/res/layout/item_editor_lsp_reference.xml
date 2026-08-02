@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_editor_lsp_ref_item_selector"
+    android:gravity="center_vertical"
+    android:minHeight="32dp"
+    android:orientation="horizontal"
+    android:paddingLeft="10dp"
+    android:paddingTop="4dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="4dp">
+
+    <ImageView
+        android:id="@+id/lsp_ref_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_editor_lsp_usage" />
+
+    <TextView
+        android:id="@+id/lsp_ref_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:maxWidth="110dp"
+        android:maxLines="1"
+        android:textColor="#FFE8E8E8"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/lsp_ref_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="8dp"
+        android:textColor="#FF8A8A8A"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/lsp_ref_snippet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="#FFB0B0B0"
+        android:textSize="12sp" />
+</LinearLayout>

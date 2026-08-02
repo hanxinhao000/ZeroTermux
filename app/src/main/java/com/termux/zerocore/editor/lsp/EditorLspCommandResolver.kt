@@ -90,17 +90,103 @@ object EditorLspCommandResolver {
                 .put("globPattern", "")
                 .put("backgroundAnalysisMaxFiles", 0)
             EditorLspManager.LANGUAGE_JAVA -> JSONObject()
-                .put("settings", JSONObject().put(
-                    "java",
+                .put(
+                    "extendedClientCapabilities",
                     JSONObject()
-                        .put("configuration", JSONObject().put("updateBuildConfiguration", "automatic"))
-                        .put("autobuild", JSONObject().put("enabled", true))
-                        .put("completion", JSONObject().put("enabled", true))
-                ))
+                        .put("resolveAdditionalTextEditsSupport", true)
+                        .put("classFileContentsSupport", true)
+                        .put("overrideMethodsPromptSupport", true)
+                )
+                .put("settings", javaSettings())
             EditorLspManager.LANGUAGE_PYTHON -> EditorPyrightSupport.initializationOptions()
             EditorLspManager.LANGUAGE_C, EditorLspManager.LANGUAGE_CPP -> null
             else -> null
         }
+    }
+
+    /** jdt-ls workspace/configuration 与 initializationOptions.settings 共用。 */
+    fun javaSettings(): JSONObject {
+        val configuration = JSONObject()
+            .put("updateBuildConfiguration", "automatic")
+        val javaHome = EditorJdtLsSupport.resolveJavaHome()
+        if (!javaHome.isNullOrBlank()) {
+            val runtimeName = when {
+                javaHome.contains("21") -> "JavaSE-21"
+                javaHome.contains("17") -> "JavaSE-17"
+                javaHome.contains("11") -> "JavaSE-11"
+                else -> "JavaSE-21"
+            }
+            configuration.put(
+                "runtimes",
+                org.json.JSONArray().put(
+                    JSONObject()
+                        .put("name", runtimeName)
+                        .put("path", javaHome)
+                        .put("default", true)
+                )
+            )
+        }
+        val java = JSONObject()
+            .put("configuration", configuration)
+            .put("autobuild", JSONObject().put("enabled", true))
+            .put(
+                "completion",
+                JSONObject()
+                    .put("enabled", true)
+                    .put("postfix", JSONObject().put("enabled", true))
+                    .put(
+                        "importOrder",
+                        org.json.JSONArray().put("java").put("javax").put("org").put("com")
+                    )
+            )
+            // 缺 classpath 时也要提示，避免「能补全却不报错」
+            .put(
+                "errors",
+                JSONObject().put(
+                    "incompleteClasspath",
+                    JSONObject().put("severity", "warning")
+                )
+            )
+            .put(
+                "sources",
+                JSONObject().put(
+                    "organizeImports",
+                    JSONObject().put("starThreshold", 99).put("staticStarThreshold", 99)
+                )
+            )
+            // 引用/定义可落到反编译源码（无附着 sources.jar 时）
+            .put(
+                "references",
+                JSONObject().put("includeDecompiledSources", true)
+            )
+        if (!javaHome.isNullOrBlank()) {
+            // 供 jdt-ls 自身/项目使用的 JDK
+            java.put("home", javaHome)
+            java.put(
+                "jdt",
+                JSONObject().put("ls", JSONObject().put("java", JSONObject().put("home", javaHome)))
+            )
+        }
+        return JSONObject().put("java", java)
+    }
+
+    /** 按 section 返回配置片段，供 workspace/configuration 使用。 */
+    fun javaConfigurationForSection(section: String): Any {
+        val root = javaSettings()
+        val java = root.optJSONObject("java") ?: return root
+        // section "java" → 返回 java 节点本身；"java.completion" → 子节点
+        if (section.isEmpty()) return root
+        if (section == "java") return java
+        if (!section.startsWith("java.")) return JSONObject.NULL
+        val path = section.removePrefix("java.").split('.')
+        var current: Any? = java
+        for (part in path) {
+            current = when (current) {
+                is JSONObject -> if (current.has(part)) current.get(part) else return JSONObject.NULL
+                else -> return JSONObject.NULL
+            }
+        }
+        return current ?: JSONObject.NULL
     }
 
     fun buildPath(existingPath: String?): String {

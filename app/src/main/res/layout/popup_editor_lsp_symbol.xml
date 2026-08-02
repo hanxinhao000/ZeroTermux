@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_editor_lsp_popup_bg"
+    android:elevation="8dp"
+    android:orientation="vertical"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/lsp_popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="4dp"
+        android:textColor="#FFE8E8E8"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/lsp_popup_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:indeterminate="true" />
+
+    <TextView
+        android:id="@+id/lsp_popup_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadeScrollbars="false"
+        android:overScrollMode="ifContentScrolls"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical"
+        android:textColor="#FFE0E0E0"
+        android:textIsSelectable="true"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/lsp_popup_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/lsp_popup_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF2A2A2A"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:paddingLeft="12dp"
+        android:paddingTop="6dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/editor_lsp_popup_tip"
+        android:textColor="#FF8A8A8A"
+        android:textSize="10sp" />
+</LinearLayout>

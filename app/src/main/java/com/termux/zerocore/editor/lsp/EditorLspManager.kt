@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import com.example.xh_lib.utils.UUtils
+import com.termux.R
 import io.github.rosemoe.sora.lang.diagnostic.DiagnosticDetail
 import io.github.rosemoe.sora.lang.diagnostic.DiagnosticRegion
 import io.github.rosemoe.sora.lang.diagnostic.DiagnosticsContainer
@@ -30,6 +31,14 @@ class EditorLspManager(private val context: Context) {
         val timeoutMillis: Long
     )
 
+    data class LspTextEdit(
+        val startLine: Int,
+        val startColumn: Int,
+        val endLine: Int,
+        val endColumn: Int,
+        val newText: String
+    )
+
     data class CompletionCandidate(
         val label: String,
         val detail: String?,
@@ -40,7 +49,14 @@ class EditorLspManager(private val context: Context) {
         val endColumn: Int,
         val sortText: String?,
         val filterText: String?,
-        val prefixLength: Int
+        val prefixLength: Int,
+        /** 选中后额外编辑（如 import），可能需 resolve 后才有。 */
+        val additionalEdits: List<LspTextEdit> = emptyList(),
+        /** 原始 CompletionItem，用于 completionItem/resolve。 */
+        val resolvePayload: JSONObject? = null,
+        val languageId: String? = null,
+        /** LSP CompletionItemKind（1=Text …），用于 IDEA 风格图标。 */
+        val lspKind: Int? = null
     )
 
     private data class OpenDocument(
@@ -55,7 +71,9 @@ class EditorLspManager(private val context: Context) {
     private val clients = ConcurrentHashMap<String, EditorLspClient>()
     private val openDocuments = ConcurrentHashMap<String, OpenDocument>()
     private val diagnosticsByUri = ConcurrentHashMap<String, DiagnosticsContainer>()
-    private val failedLanguages = LinkedHashSet<String>()
+    private val rawDiagnosticsByUri = ConcurrentHashMap<String, JSONArray>()
+    /** languageKey → 上次启动失败时间；冷却后允许重试，避免整会话永久无补全。 */
+    private val failedLanguages = LinkedHashMap<String, Long>()
     private val suppressedErrors = LinkedHashSet<String>()
     private val diagnosticIdSeq = AtomicLong(1)
 
@@ -67,6 +85,22 @@ class EditorLspManager(private val context: Context) {
 
     fun setDiagnosticsListener(listener: DiagnosticsListener?) {
         diagnosticsListener = listener
+    }
+
+    /**
+     * 由编辑器 Activity 实现：应用 WorkspaceEdit、弹出 CodeAction 选择等。
+     */
+    interface HostCallbacks {
+        fun applyFileEdits(file: File, edits: List<LspTextEdit>)
+        fun showCodeActionChoices(title: String, actions: List<EditorLspCodeAction>, onChosen: (EditorLspCodeAction) -> Unit)
+        fun runOnUi(block: () -> Unit)
+    }
+
+    @Volatile
+    private var hostCallbacks: HostCallbacks? = null
+
+    fun setHostCallbacks(callbacks: HostCallbacks?) {
+        hostCallbacks = callbacks
     }
 
     fun diagnosticsFor(file: File): DiagnosticsContainer? {
@@ -83,7 +117,7 @@ class EditorLspManager(private val context: Context) {
             "open_documents" to openDocuments.keys.toList(),
             "clients" to clients.mapValues { (_, client) -> client.isRunning() },
             "diagnostics_uris" to diagnosticsByUri.keys.toList(),
-            "failed_languages" to synchronized(failedLanguages) { failedLanguages.toList() }
+            "failed_languages" to synchronized(failedLanguages) { failedLanguages.keys.toList() }
         )
     }
 
@@ -150,13 +184,313 @@ class EditorLspManager(private val context: Context) {
 
     fun completion(file: File, languageId: String, content: ContentReference, position: CharPosition): List<CompletionCandidate> {
         val text = contentToString(content)
-        if (!canUseLsp(languageId, text)) return emptyList()
+        val createMethod = if (languageId == LANGUAGE_JAVA) {
+            runCatching {
+                EditorJavaCreateMethodCompletions.build(
+                    text,
+                    position,
+                    context.getString(R.string.editor_java_create_method)
+                )
+            }.getOrDefault(emptyList())
+        } else {
+            emptyList()
+        }
+        val postfix = if (languageId == LANGUAGE_JAVA) {
+            runCatching { EditorJavaPostfixCompletions.build(text, position) }.getOrDefault(emptyList())
+        } else {
+            emptyList()
+        }
+        if (!canUseLsp(languageId, text)) {
+            return (createMethod + postfix).take(MAX_COMPLETION_ITEMS)
+        }
         val uri = EditorLspUris.forFile(file)
         synchronized(this) {
             changeDocumentLocked(file, languageId, text, true)
         }
-        val result = clientFor(file, languageId)?.completion(uri, position.line, position.column) ?: return emptyList()
-        return parseCompletionResult(result, content, position).take(MAX_COMPLETION_ITEMS)
+        val (triggerKind, triggerCharacter) = detectCompletionTrigger(text, position)
+        val result = runCatching {
+            clientFor(file, languageId)?.completion(
+                uri,
+                position.line,
+                position.column,
+                triggerKind,
+                triggerCharacter
+            )
+        }.getOrNull()
+        val lspItems = if (result != null) {
+            parseCompletionResult(result, content, position, languageId)
+        } else {
+            emptyList()
+        }
+        val merged = mergeCompletionItems(postfix, lspItems, preferLspFirst = triggerCharacter == ".")
+        // 快捷创建方法始终置顶
+        return (createMethod + merged).take(MAX_COMPLETION_ITEMS)
+    }
+
+    /** 输入 `.` / `::` 等触发字符时走 TriggerCharacter，便于 jdt-ls 给出成员方法。 */
+    private fun detectCompletionTrigger(text: String, position: CharPosition): Pair<Int, String?> {
+        val lineText = lineAt(text, position.line) ?: return 1 to null
+        val column = position.column.coerceIn(0, lineText.length)
+        if (column <= 0) return 1 to null
+        val ch = lineText[column - 1]
+        // 仅在「触发符后尚无标识符前缀」时用 TriggerCharacter，例如 `a.` / `a.fo` 仍用 Invoked 过滤
+        val prefixLen = computePrefixLength(lineText, column)
+        if (prefixLen > 0) return 1 to null
+        return when (ch) {
+            '.', '(' -> 2 to ch.toString()
+            else -> 1 to null
+        }
+    }
+
+    private fun lineAt(text: String, line: Int): String? {
+        if (line < 0) return null
+        var current = 0
+        var start = 0
+        var i = 0
+        while (i < text.length) {
+            if (text[i] == '\n') {
+                if (current == line) return text.substring(start, i)
+                current++
+                start = i + 1
+            }
+            i++
+        }
+        return if (current == line) text.substring(start) else null
+    }
+
+    private fun mergeCompletionItems(
+        postfix: List<CompletionCandidate>,
+        lspItems: List<CompletionCandidate>,
+        preferLspFirst: Boolean
+    ): List<CompletionCandidate> {
+        if (postfix.isEmpty()) return lspItems
+        if (lspItems.isEmpty()) return postfix
+        val postfixLabels = postfix.map { it.label.lowercase(Locale.ROOT) }.toHashSet()
+        val filteredLsp = lspItems.filter { item ->
+            val label = item.label.lowercase(Locale.ROOT)
+            // Prefer client loop templates when both sides offer for/fori/forr/…
+            label !in postfixLabels && label !in EditorJavaPostfixCompletions.CLIENT_LABELS
+        }
+        // `a.` 成员补全：方法优先，postfix 放后面，避免只看到 for/fori/forr
+        return if (preferLspFirst) filteredLsp + postfix else postfix + filteredLsp
+    }
+
+    /**
+     * 选中补全项时解析并合并 additionalTextEdits（Java 自动 import）。
+     * 返回用于实际插入的候选（已带上 import 编辑）。
+     */
+    fun resolveCompletionCandidate(candidate: CompletionCandidate): CompletionCandidate {
+        val payload = candidate.resolvePayload ?: return candidate
+        val languageId = candidate.languageId ?: return candidate
+        if (candidate.additionalEdits.isNotEmpty()) return candidate
+        val client = clients[clientCacheKey(languageId)] ?: return candidate
+        if (!client.isRunning()) return candidate
+        val resolved = client.resolveCompletionItem(payload) ?: return candidate
+        val additional = parseAdditionalTextEdits(resolved)
+        val textEdit = resolved.optJSONObject("textEdit")
+        val editRange = textEdit?.optJSONObject("range") ?: textEdit?.optJSONObject("replace")
+        val rangeStart = editRange?.optJSONObject("start")
+        val rangeEnd = editRange?.optJSONObject("end")
+        val format = resolved.optInt("insertTextFormat", 1)
+        val rawInsert = when {
+            textEdit?.has("newText") == true -> textEdit.optString("newText")
+            resolved.optString("textEditText").isNotBlank() -> resolved.optString("textEditText")
+            resolved.optString("insertText").isNotBlank() -> resolved.optString("insertText")
+            else -> candidate.insertText
+        }
+        val merged = candidate.copy(
+            insertText = sanitizeInsertText(rawInsert, format).ifBlank { candidate.insertText },
+            startLine = rangeStart?.optInt("line") ?: candidate.startLine,
+            startColumn = rangeStart?.optInt("character") ?: candidate.startColumn,
+            endLine = rangeEnd?.optInt("line") ?: candidate.endLine,
+            endColumn = rangeEnd?.optInt("character") ?: candidate.endColumn,
+            detail = buildDetail(resolved) ?: candidate.detail,
+            additionalEdits = additional.ifEmpty { candidate.additionalEdits },
+            resolvePayload = null
+        )
+        return if (merged.label.lowercase(Locale.ROOT) in EditorJavaPostfixCompletions.CLIENT_LABELS) {
+            mergePostfixDeletion(merged)
+        } else {
+            merged
+        }
+    }
+
+    fun hover(file: File, languageId: String, line: Int, column: Int): String? {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return null
+        val client = clientFor(file, languageId) ?: return null
+        val uri = EditorLspUris.forFile(file)
+        return EditorLspProtocol.parseHoverText(client.hover(uri, line, column))
+    }
+
+    fun definition(file: File, languageId: String, line: Int, column: Int): List<EditorLspLocation> {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return emptyList()
+        val client = clientFor(file, languageId) ?: return emptyList()
+        val uri = EditorLspUris.forFile(file)
+        return EditorLspProtocol.parseLocations(client.definition(uri, line, column))
+    }
+
+    fun references(file: File, languageId: String, line: Int, column: Int): List<EditorLspLocation> {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return emptyList()
+        val client = clientFor(file, languageId) ?: return emptyList()
+        val uri = EditorLspUris.forFile(file)
+        return EditorLspProtocol.parseLocations(client.references(uri, line, column))
+    }
+
+    /**
+     * 普通路径直接返回；jdt:// / *.class 则拉取源码到本地缓存后再导航。
+     * @param workspaceFile 当前工作区中的已打开文件，用于定位同一 jdt-ls 会话
+     */
+    fun resolveNavigationLocation(
+        workspaceFile: File,
+        languageId: String,
+        location: EditorLspLocation
+    ): EditorLspLocation? {
+        if (!EditorJdtClassFileSupport.needsClassFileContents(location)) {
+            return location.takeIf { it.file.isFile }
+        }
+        if (languageId != LANGUAGE_JAVA) return null
+        val client = clientFor(workspaceFile, languageId) ?: return null
+        return EditorJdtClassFileSupport.resolve(client, location)
+    }
+
+    fun codeActions(
+        file: File,
+        languageId: String,
+        startLine: Int,
+        startColumn: Int,
+        endLine: Int,
+        endColumn: Int,
+        diagnostics: JSONArray = JSONArray(),
+        only: List<String>? = null
+    ): List<EditorLspCodeAction> {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return emptyList()
+        val client = clientFor(file, languageId) ?: return emptyList()
+        val uri = EditorLspUris.forFile(file)
+        return EditorLspProtocol.parseCodeActions(
+            client.codeAction(uri, startLine, startColumn, endLine, endColumn, diagnostics, only)
+        )
+    }
+
+    fun organizeImports(file: File, languageId: String): Boolean {
+        val uri = EditorLspUris.forFile(file)
+        val text = openDocuments[uri]?.text
+            ?: openDocuments.entries.firstOrNull { EditorLspUris.same(it.key, uri) }?.value?.text
+            ?: runCatching { file.readText() }.getOrDefault("")
+        val endLine = text.count { it == '\n' }
+        val endCol = if (text.isEmpty()) 0 else text.length - text.lastIndexOf('\n') - 1
+        val actions = codeActions(
+            file,
+            languageId,
+            0,
+            0,
+            endLine,
+            endCol.coerceAtLeast(0),
+            only = listOf("source.organizeImports")
+        )
+        val action = actions.firstOrNull {
+            it.kind?.contains("organizeImports", ignoreCase = true) == true ||
+                it.title.contains("Organize Import", ignoreCase = true) ||
+                it.title.contains("组织", ignoreCase = false)
+        } ?: actions.firstOrNull() ?: return false
+        return applyCodeAction(file, languageId, action)
+    }
+
+    fun applyCodeAction(file: File, languageId: String, action: EditorLspCodeAction): Boolean {
+        var applied = false
+        if (action.fileEdits.isNotEmpty()) {
+            applyFileEdits(action.fileEdits)
+            applied = true
+        }
+        val command = action.command ?: return applied
+        val cmdName = command.optString("command").ifBlank {
+            command.optJSONObject("command")?.optString("command").orEmpty()
+        }
+        val args = when (val raw = command.opt("arguments")) {
+            is JSONArray -> raw
+            else -> command.optJSONObject("command")?.optJSONArray("arguments")
+        }
+        if (cmdName.isBlank()) return applied
+        val client = clients[clientCacheKey(languageId)] ?: return applied
+        val result = client.executeCommand(cmdName, args)
+        when (result) {
+            is JSONObject -> {
+                // 部分 jdt-ls command 直接返回 WorkspaceEdit
+                if (result.has("changes") || result.has("documentChanges")) {
+                    applyFileEdits(EditorLspProtocol.parseWorkspaceEdit(result))
+                    applied = true
+                }
+            }
+        }
+        return applied
+    }
+
+    fun didSave(file: File, languageId: String, text: String) {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return
+        val client = clients[clientCacheKey(languageId)] ?: return
+        if (!client.isRunning()) return
+        client.didSave(EditorLspUris.forFile(file), text)
+    }
+
+    fun handleServerApplyEdit(edit: JSONObject): Boolean {
+        val fileEdits = EditorLspProtocol.parseWorkspaceEdit(edit)
+        if (fileEdits.isEmpty()) return false
+        applyFileEdits(fileEdits)
+        return true
+    }
+
+    private fun applyFileEdits(fileEdits: List<Pair<File, List<LspTextEdit>>>) {
+        val host = hostCallbacks
+        if (host != null) {
+            host.runOnUi {
+                fileEdits.forEach { (file, edits) ->
+                    host.applyFileEdits(file, edits)
+                }
+            }
+            return
+        }
+        // 无 Host 时直接写盘（后台）
+        fileEdits.forEach { (file, edits) ->
+            runCatching {
+                val original = if (file.isFile) file.readText() else ""
+                file.writeText(applyEditsToString(original, edits))
+            }
+        }
+    }
+
+    fun applyEditsToString(original: String, edits: List<LspTextEdit>): String {
+        if (edits.isEmpty()) return original
+        // 转为行列表以便按行列替换；从后往前
+        val lines = original.split('\n').toMutableList()
+        val ordered = edits.sortedWith(
+            compareByDescending<LspTextEdit> { it.startLine }.thenByDescending { it.startColumn }
+        )
+        for (edit in ordered) {
+            val startLine = edit.startLine.coerceIn(0, (lines.size - 1).coerceAtLeast(0))
+            val endLine = edit.endLine.coerceIn(0, (lines.size - 1).coerceAtLeast(0))
+            val startCol = edit.startColumn.coerceIn(0, lines.getOrNull(startLine)?.length ?: 0)
+            val endCol = edit.endColumn.coerceIn(0, lines.getOrNull(endLine)?.length ?: 0)
+            if (lines.isEmpty()) {
+                lines.add(edit.newText)
+                continue
+            }
+            val prefix = lines[startLine].substring(0, startCol)
+            val suffix = lines[endLine].substring(endCol)
+            val inserted = edit.newText.split('\n')
+            if (inserted.size == 1) {
+                lines[startLine] = prefix + inserted[0] + suffix
+                if (endLine > startLine) {
+                    for (i in endLine downTo startLine + 1) lines.removeAt(i)
+                }
+            } else {
+                val newLines = ArrayList<String>()
+                newLines.add(prefix + inserted.first())
+                for (i in 1 until inserted.lastIndex) newLines.add(inserted[i])
+                newLines.add(inserted.last() + suffix)
+                for (i in endLine downTo startLine) lines.removeAt(i)
+                lines.addAll(startLine, newLines)
+            }
+        }
+        return lines.joinToString("\n")
     }
 
     fun closeAll() {
@@ -165,6 +499,7 @@ class EditorLspManager(private val context: Context) {
             uris = diagnosticsByUri.keys.toList()
             openDocuments.clear()
             diagnosticsByUri.clear()
+            rawDiagnosticsByUri.clear()
             EditorLspDebugStore.clearAllDiagnostics()
             clients.values.forEach { it.shutdown() }
             clients.clear()
@@ -282,7 +617,13 @@ class EditorLspManager(private val context: Context) {
             return null
         }
         synchronized(failedLanguages) {
-            if (failedLanguages.contains(cacheKey)) return null
+            val failedAt = failedLanguages[cacheKey]
+            if (failedAt != null) {
+                if (System.currentTimeMillis() - failedAt < FAILED_LANGUAGE_RETRY_MS) {
+                    return null
+                }
+                failedLanguages.remove(cacheKey)
+            }
         }
         clients[cacheKey]?.let { client ->
             if (client.isRunning()) return client
@@ -295,7 +636,12 @@ class EditorLspManager(private val context: Context) {
                 clearDiagnostics(uri)
             }
         }
-        val timeout = when (languageId) {
+        // 补全等 RPC 用短超时；initialize 单独加长。勿用 maxOf(设置值)，否则会把补全拖成几十秒。
+        val requestTimeout = when (languageId) {
+            LANGUAGE_JAVA -> EditorJdtLsSupport.COMPLETION_TIMEOUT_MILLIS
+            else -> settings.timeoutMillis
+        }
+        val initTimeout = when (languageId) {
             LANGUAGE_JAVA -> maxOf(settings.timeoutMillis, EditorJdtLsSupport.INIT_TIMEOUT_MILLIS)
             LANGUAGE_C, LANGUAGE_CPP -> maxOf(settings.timeoutMillis, EditorClangdSupport.INIT_TIMEOUT_MILLIS)
             LANGUAGE_PYTHON -> maxOf(settings.timeoutMillis, EditorPyrightSupport.INIT_TIMEOUT_MILLIS)
@@ -305,18 +651,20 @@ class EditorLspManager(private val context: Context) {
             context.applicationContext,
             launchSpec,
             projectRoot,
-            timeout,
+            requestTimeout,
             ::showErrorOnce,
             EditorLspCommandResolver.environmentForLanguage(languageId),
             EditorLspCommandResolver.initializationOptionsForLanguage(languageId),
-            ::handleServerNotification
+            ::handleServerNotification,
+            initTimeoutMillis = initTimeout
         )
         return if (client.start()) {
+            synchronized(failedLanguages) { failedLanguages.remove(cacheKey) }
             clients[cacheKey] = client
             client
         } else {
             synchronized(failedLanguages) {
-                failedLanguages.add(cacheKey)
+                failedLanguages[cacheKey] = System.currentTimeMillis()
             }
             null
         }
@@ -347,6 +695,11 @@ class EditorLspManager(private val context: Context) {
             "publishDiagnostics count=${items.length()} textLen=${text.length}",
             mapOf("uri" to uri, "count" to items.length(), "text_len" to text.length)
         )
+        if (items.length() == 0) {
+            rawDiagnosticsByUri.remove(uri)
+        } else {
+            rawDiagnosticsByUri[uri] = items
+        }
         val container = buildDiagnosticsContainer(text, items)
         if (container == null) {
             diagnosticsByUri.remove(uri)
@@ -360,6 +713,7 @@ class EditorLspManager(private val context: Context) {
 
     private fun clearDiagnostics(uri: String) {
         diagnosticsByUri.remove(uri)
+        rawDiagnosticsByUri.remove(uri)
         EditorLspDebugStore.clearDiagnostics(uri)
         mainHandler.post {
             diagnosticsListener?.onDiagnosticsChanged(uri, null)
@@ -385,7 +739,10 @@ class EditorLspManager(private val context: Context) {
         return out
     }
 
-    private fun buildDiagnosticsContainer(text: String, items: JSONArray): DiagnosticsContainer? {
+    private fun buildDiagnosticsContainer(
+        text: String,
+        items: JSONArray
+    ): DiagnosticsContainer? {
         if (items.length() == 0) return null
         val container = DiagnosticsContainer(true)
         val regions = ArrayList<DiagnosticRegion>(items.length())
@@ -411,13 +768,14 @@ class EditorLspManager(private val context: Context) {
             val message = item.optString("message").trim().ifEmpty { "Issue" }
             val source = item.optString("source").trim()
             val brief = if (source.isNotEmpty()) "$source: $message" else message
+            // QuickFix 类在部分 editor 依赖解析环境下不可见；修复入口走长按「代码操作」
             regions.add(
                 DiagnosticRegion(
                     startIndex,
                     endIndex,
                     severity,
                     diagnosticIdSeq.getAndIncrement(),
-                    DiagnosticDetail(brief, message)
+                    DiagnosticDetail(brief, message, null, item)
                 )
             )
         }
@@ -466,45 +824,191 @@ class EditorLspManager(private val context: Context) {
             text.length <= MAX_LSP_TEXT_LENGTH
     }
 
-    private fun parseCompletionResult(result: Any?, content: ContentReference, position: CharPosition): List<CompletionCandidate> {
+    private fun parseCompletionResult(
+        result: Any?,
+        content: ContentReference,
+        position: CharPosition,
+        languageId: String
+    ): List<CompletionCandidate> {
+        val listObj = result as? JSONObject
         val items = when (result) {
             is JSONArray -> result
             is JSONObject -> result.optJSONArray("items") ?: JSONArray()
             else -> JSONArray()
         }
+        val itemDefaults = listObj?.optJSONObject("itemDefaults")
+        val defaultFormat = itemDefaults?.optInt("insertTextFormat", 1) ?: 1
+        val defaultRange = resolveDefaultEditRange(itemDefaults)
         val lineText = runCatching { content.getLine(position.line) }.getOrDefault("")
         val prefixLength = computePrefixLength(lineText, position.column)
         val candidates = ArrayList<CompletionCandidate>()
         for (index in 0 until items.length()) {
             val item = items.optJSONObject(index) ?: continue
-            val label = item.optString("label").trim()
-            if (label.isEmpty()) continue
-            val textEdit = item.optJSONObject("textEdit")
-            val editRange = textEdit?.optJSONObject("range")
-            val rangeStart = editRange?.optJSONObject("start")
-            val rangeEnd = editRange?.optJSONObject("end")
-            val editText = if (textEdit?.has("newText") == true) textEdit.optString("newText") else null
-            val insertText = sanitizeInsertText(editText ?: item.optString("insertText", label), item.optInt("insertTextFormat", 1))
-            val startLine = rangeStart?.optInt("line") ?: position.line
-            val startColumn = rangeStart?.optInt("character") ?: (position.column - prefixLength).coerceAtLeast(0)
-            val endLine = rangeEnd?.optInt("line") ?: position.line
-            val endColumn = rangeEnd?.optInt("character") ?: position.column
-            candidates.add(
-                CompletionCandidate(
-                    label = label,
-                    detail = buildDetail(item),
-                    insertText = insertText,
-                    startLine = startLine,
-                    startColumn = startColumn,
-                    endLine = endLine,
-                    endColumn = endColumn,
-                    sortText = item.optString("sortText").takeIf { it.isNotBlank() },
-                    filterText = item.optString("filterText").takeIf { it.isNotBlank() },
-                    prefixLength = prefixLength
+            // 单条失败不影响其余成员方法
+            val candidate = runCatching {
+                parseOneCompletionItem(item, position, languageId, prefixLength, defaultFormat, defaultRange)
+            }.getOrNull() ?: continue
+            candidates.add(candidate)
+        }
+        return candidates.sortedWith(
+            compareBy<CompletionCandidate> { it.sortText ?: it.label.lowercase(Locale.ROOT) }
+                .thenBy { it.label }
+        )
+    }
+
+    private fun parseOneCompletionItem(
+        item: JSONObject,
+        position: CharPosition,
+        languageId: String,
+        prefixLength: Int,
+        defaultFormat: Int,
+        defaultRange: JSONObject?
+    ): CompletionCandidate? {
+        val label = resolveCompletionLabel(item)
+        if (label.isEmpty()) return null
+        val textEdit = item.optJSONObject("textEdit")
+        val editRange = textEdit?.optJSONObject("range")
+            ?: textEdit?.optJSONObject("replace")
+            ?: defaultRange
+        val rangeStart = editRange?.optJSONObject("start")
+        val rangeEnd = editRange?.optJSONObject("end")
+        val rawInsert = when {
+            textEdit?.has("newText") == true -> textEdit.optString("newText")
+            item.optString("textEditText").isNotBlank() -> item.optString("textEditText")
+            item.optString("insertText").isNotBlank() -> item.optString("insertText")
+            else -> label
+        }
+        val format = when {
+            item.has("insertTextFormat") -> item.optInt("insertTextFormat", 1)
+            else -> defaultFormat
+        }
+        val insertText = sanitizeInsertText(rawInsert, format).ifBlank { label }
+        val startLine = rangeStart?.optInt("line") ?: position.line
+        val startColumn = rangeStart?.optInt("character")
+            ?: (position.column - prefixLength).coerceAtLeast(0)
+        val endLine = rangeEnd?.optInt("line") ?: position.line
+        val endColumn = rangeEnd?.optInt("character") ?: position.column
+        val additional = parseAdditionalTextEdits(item)
+        // jdt-ls：import 常在 resolve 阶段才给出；有 data 时保留原文供 resolve
+        val needsResolve = additional.isEmpty() && item.has("data")
+        val lspKind = if (item.has("kind")) item.optInt("kind") else null
+        val (displayLabel, displayDesc) = splitCompletionDisplay(label, buildDetail(item))
+        val candidate = CompletionCandidate(
+            label = displayLabel,
+            detail = displayDesc,
+            insertText = insertText,
+            startLine = startLine,
+            startColumn = startColumn,
+            endLine = endLine,
+            endColumn = endColumn,
+            sortText = item.optString("sortText").takeIf { it.isNotBlank() },
+            filterText = item.optString("filterText").takeIf { it.isNotBlank() } ?: label,
+            prefixLength = prefixLength.coerceIn(0, position.column.coerceAtLeast(0)),
+            additionalEdits = additional,
+            resolvePayload = if (needsResolve) item else null,
+            languageId = languageId,
+            lspKind = lspKind
+        )
+        return if (label.lowercase(Locale.ROOT) in EditorJavaPostfixCompletions.CLIENT_LABELS) {
+            mergePostfixDeletion(candidate).let { merged ->
+                merged.copy(
+                    prefixLength = merged.prefixLength.coerceIn(0, position.column.coerceAtLeast(0))
+                )
+            }
+        } else {
+            candidate
+        }
+    }
+
+    private fun resolveCompletionLabel(item: JSONObject): String {
+        val raw = item.opt("label") ?: return ""
+        val base = when (raw) {
+            is String -> raw.trim()
+            is JSONObject -> raw.optString("label").trim().ifBlank {
+                raw.optString("name").trim()
+            }
+            else -> raw.toString().trim()
+        }
+        // labelDetails.detail 常为参数表，拼到名称后更接近 IDEA
+        val details = item.optJSONObject("labelDetails")
+        val detailPart = details?.optString("detail")?.takeIf { it.isNotBlank() }
+        return if (detailPart != null && !base.contains('(') && detailPart.startsWith("(")) {
+            base + detailPart
+        } else {
+            base
+        }
+    }
+
+    /**
+     * 将 `method(args) : ReturnType` 拆成左侧签名 + 右侧类型；
+     * 否则右侧用 detail（如包名 java.util）。
+     */
+    private fun splitCompletionDisplay(label: String, detail: String?): Pair<String, String?> {
+        val sep = " : "
+        val idx = label.lastIndexOf(sep)
+        if (idx > 0) {
+            val left = label.substring(0, idx).trim()
+            val right = label.substring(idx + sep.length).trim()
+            if (left.isNotEmpty() && right.isNotEmpty()) {
+                return left to right
+            }
+        }
+        return label to detail?.takeIf { it.isNotBlank() && it != label }
+    }
+
+    private fun resolveDefaultEditRange(itemDefaults: JSONObject?): JSONObject? {
+        if (itemDefaults == null) return null
+        val editRange = itemDefaults.opt("editRange") ?: return null
+        return when (editRange) {
+            is JSONObject -> editRange.optJSONObject("replace") ?: editRange
+            else -> null
+        }
+    }
+
+    /**
+     * jdt-ls postfix completions insert the snippet at the cursor and delete `expr.postfix`
+     * via an empty additionalTextEdit. Merge into a single replace so apply order stays correct.
+     */
+    private fun mergePostfixDeletion(candidate: CompletionCandidate): CompletionCandidate {
+        if (candidate.additionalEdits.isEmpty()) return candidate
+        val deletion = candidate.additionalEdits.firstOrNull { edit ->
+            edit.newText.isEmpty() &&
+                edit.startLine == candidate.endLine &&
+                edit.endLine == candidate.endLine &&
+                edit.endColumn >= candidate.endColumn &&
+                edit.startColumn < candidate.startColumn
+        } ?: return candidate
+        // prefixLength 只能覆盖光标前前缀；过大会让 sora filterCompletionItems 越界，整表补全失败
+        val span = (deletion.endColumn - deletion.startColumn).coerceAtLeast(0)
+        return candidate.copy(
+            startLine = deletion.startLine,
+            startColumn = deletion.startColumn,
+            endLine = deletion.endLine,
+            endColumn = deletion.endColumn,
+            prefixLength = span.coerceAtMost(candidate.endColumn.coerceAtLeast(0)),
+            additionalEdits = candidate.additionalEdits.filterNot { it === deletion }
+        )
+    }
+
+    private fun parseAdditionalTextEdits(item: JSONObject): List<LspTextEdit> {
+        val array = item.optJSONArray("additionalTextEdits") ?: return emptyList()
+        val edits = ArrayList<LspTextEdit>(array.length())
+        for (i in 0 until array.length()) {
+            val edit = array.optJSONObject(i) ?: continue
+            val range = edit.optJSONObject("range") ?: continue
+            val start = range.optJSONObject("start") ?: continue
+            val end = range.optJSONObject("end") ?: continue
+            edits.add(
+                LspTextEdit(
+                    startLine = start.optInt("line", 0),
+                    startColumn = start.optInt("character", 0),
+                    endLine = end.optInt("line", 0),
+                    endColumn = end.optInt("character", 0),
+                    newText = edit.optString("newText", "")
                 )
             )
         }
-        return candidates.sortedWith(compareBy<CompletionCandidate> { it.sortText ?: it.label.lowercase(Locale.ROOT) }.thenBy { it.label })
+        return edits
     }
 
     private fun buildDetail(item: JSONObject): String? {
@@ -520,9 +1024,21 @@ class EditorLspManager(private val context: Context) {
 
     private fun sanitizeInsertText(text: String, insertTextFormat: Int): String {
         if (insertTextFormat != 2) return text
-        return text
-            .replace(Regex("\\$\\{\\d+:([^}]*)}"), "$1")
-            .replace(Regex("\\$\\d+"), "")
+        // Expand LSP snippets to plain text (tab-stops / placeholders → defaults).
+        var result = text
+        // ${1|one,two|} choice → first option
+        result = result.replace(Regex("\\$\\{\\d+\\|([^|}]+)\\|?}")) { match ->
+            match.groupValues[1].substringBefore(',')
+        }
+        // ${1:default} / nested-ish simple form
+        var previous: String
+        do {
+            previous = result
+            result = result.replace(Regex("\\$\\{\\d+:([^{}]*)}"), "$1")
+        } while (result != previous)
+        result = result.replace(Regex("\\$\\{\\d+}"), "")
+        result = result.replace(Regex("\\$\\d+"), "")
+        return result
     }
 
     private fun computePrefixLength(lineText: String, column: Int): Int {
@@ -600,6 +1116,8 @@ class EditorLspManager(private val context: Context) {
         const val DEFAULT_TIMEOUT_MILLIS = 3000L
         private const val MAX_LSP_TEXT_LENGTH = 1024 * 1024
         private const val MAX_COMPLETION_ITEMS = 120
+        /** jdt-ls 等启动失败后的重试冷却，避免一次失败整会话无补全。 */
+        private const val FAILED_LANGUAGE_RETRY_MS = 15_000L
 
         fun languageIdForExtension(extension: String): String? {
             return when (extension.lowercase(Locale.ROOT)) {

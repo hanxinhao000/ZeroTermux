@@ -70,13 +70,18 @@ import com.termux.zerocore.editor.EditorTerminalPanel
 import com.termux.zerocore.editor.EditorX11Panel
 import com.termux.zerocore.editor.EditorX11Environment
 import com.termux.zerocore.editor.lsp.EditorClangdSupport
+import com.termux.zerocore.editor.lsp.EditorJdtClassFileSupport
 import com.termux.zerocore.editor.lsp.EditorJdtLsSupport
+import com.termux.zerocore.editor.lsp.EditorLspCodeAction
 import com.termux.zerocore.editor.lsp.EditorLspInstaller
 import com.termux.zerocore.editor.lsp.EditorLspLanguage
+import com.termux.zerocore.editor.lsp.EditorLspLocation
 import com.termux.zerocore.editor.lsp.EditorLspManager
 import com.termux.zerocore.editor.lsp.EditorLspServerAdapter
+import com.termux.zerocore.editor.lsp.EditorLspSymbolPopup
 import com.termux.zerocore.editor.lsp.EditorLspUris
 import com.termux.zerocore.ftp.utils.UserSetManage
+import io.github.rosemoe.sora.event.ClickEvent
 import io.github.rosemoe.sora.event.ContentChangeEvent
 import io.github.rosemoe.sora.lang.Language
 import io.github.rosemoe.sora.lang.diagnostic.DiagnosticsContainer
@@ -87,13 +92,16 @@ import io.github.rosemoe.sora.langs.textmate.registry.GrammarRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
+import io.github.rosemoe.sora.text.Content
 import io.github.rosemoe.sora.text.LineSeparator
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.EditorSearcher
 import io.github.rosemoe.sora.widget.SymbolInputView
 import com.termux.shared.view.KeyboardUtils
 import com.termux.view.TerminalView
+import com.termux.zerocore.editor.EditorIdeaCompletionItemAdapter
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
+import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -105,6 +113,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
+import java.util.ArrayDeque
 import java.util.Date
 import java.util.LinkedHashSet
 import java.util.Locale
@@ -304,7 +313,12 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private val dirtyCheckHandler = Handler(Looper.getMainLooper())
     private val editorTabs = ArrayList<EditorTab>()
     private var lspContentChangeSubscribed = false
+    private var lspInteractionSubscribed = false
     private val lspDocumentChangeRunnable = Runnable { flushLspDocumentChange() }
+    private data class LspNavMark(val file: File, val line: Int, val column: Int)
+    private val lspNavStack = ArrayDeque<LspNavMark>()
+    private var lspSymbolPopup: EditorLspSymbolPopup? = null
+    private var lspReferenceHighlightActive = false
     private val dirtyCheckRunnable = object : Runnable {
         override fun run() {
             updateDirtyState()
@@ -490,7 +504,12 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             setSoftKeyboardEnabled(true)
             setDisableSoftKbdIfHardKbdAvailable(false)
             isFocusableInTouchMode = true
-            getComponent(EditorAutoCompletion::class.java)?.isEnabled = true
+            getComponent(EditorAutoCompletion::class.java)?.let { autoComplete ->
+                autoComplete.isEnabled = true
+                // IDEA / Android Studio 风格补全列表
+                autoComplete.setAdapter(EditorIdeaCompletionItemAdapter())
+            }
+            applyIdeaCompletionColors()
             // 诊断波浪线：默认幅度 4dp 偏大，略压低起伏
             props.indicatorWaveAmplitude = 1.8f
             props.indicatorWaveLength = 14f
@@ -506,6 +525,16 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 subscribeEvent(ContentChangeEvent::class.java) { _, _ ->
                     scheduleLspDocumentChange()
                 }
+            }
+            if (!lspInteractionSubscribed) {
+                lspInteractionSubscribed = true
+                lspSymbolPopup = EditorLspSymbolPopup(this)
+                subscribeEvent(ClickEvent::class.java) { event, _ ->
+                    if (!lspEnabled || cursor.isSelected) return@subscribeEvent
+                    // 点击标识符：整词高亮(下划线感) + 悬浮窗查引用
+                    maybeOpenReferencesOnClick(event.line, event.column)
+                }
+                // 长按留给系统选区/复制/剪切；悬停信息请用编辑器菜单「悬停」
             }
         }
     }
@@ -1059,14 +1088,34 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
 
     private fun showEditorMoreMenu(anchor: View) {
         PopupMenu(this, anchor).apply {
-            menu.add(0, 1, 0, getString(R.string.notification_action_exit))
-            menu.add(0, 2, 1, getString(R.string.editor_settings))
-            menu.add(0, 3, 2, getString(R.string.editor_symbol_customize))
+            var order = 0
+            menu.add(0, 1, order++, getString(R.string.notification_action_exit))
+            menu.add(0, 2, order++, getString(R.string.editor_settings))
+            menu.add(0, 3, order++, getString(R.string.editor_symbol_customize))
+            if (lspEnabled && currentFile != null) {
+                menu.add(0, 20, order++, getString(R.string.editor_lsp_organize_imports))
+                menu.add(0, 21, order++, getString(R.string.editor_lsp_goto_definition))
+                menu.add(0, 23, order++, getString(R.string.editor_lsp_find_references))
+                menu.add(0, 24, order++, getString(R.string.editor_lsp_code_actions))
+                menu.add(0, 25, order++, getString(R.string.editor_lsp_hover))
+                if (lspNavStack.isNotEmpty()) {
+                    menu.add(0, 22, order++, getString(R.string.editor_lsp_go_back))
+                }
+            }
             setOnMenuItemClickListener { item ->
+                val editor = code_editor
+                val line = editor?.cursor?.leftLine ?: 0
+                val column = editor?.cursor?.leftColumn ?: 0
                 when (item.itemId) {
                     1 -> confirmExitIfDirty()
                     2 -> showEditorSettingsDialog()
                     3 -> showSymbolCustomizeDialog()
+                    20 -> runOrganizeImports()
+                    21 -> runGotoDefinition(line, column)
+                    22 -> runLspGoBack()
+                    23 -> runFindReferences(line, column)
+                    24 -> runCodeActionsAtCursor(line, column)
+                    25 -> runLspHover(line, column)
                 }
                 true
             }
@@ -1122,6 +1171,30 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         lspManager.setDiagnosticsListener { uri, diagnostics ->
             applyLspDiagnosticsToEditor(uri, diagnostics)
         }
+        lspManager.setHostCallbacks(object : EditorLspManager.HostCallbacks {
+            override fun applyFileEdits(file: File, edits: List<EditorLspManager.LspTextEdit>) {
+                applyLspFileEdits(file, edits)
+            }
+
+            override fun showCodeActionChoices(
+                title: String,
+                actions: List<EditorLspCodeAction>,
+                onChosen: (EditorLspCodeAction) -> Unit
+            ) {
+                val labels = actions.map { it.title }.toTypedArray()
+                AlertDialog.Builder(this@EditTextActivity)
+                    .setTitle(title)
+                    .setItems(labels) { _, which ->
+                        actions.getOrNull(which)?.let(onChosen)
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+
+            override fun runOnUi(block: () -> Unit) {
+                runOnUiThread(block)
+            }
+        })
         lspManager.updateSettings(EditorLspManager.Settings(lspEnabled, lspTimeoutMillis))
         if (!lspEnabled) {
             code_editor?.diagnostics = null
@@ -1933,6 +2006,8 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
 
     private fun loadFile(file: File, storeCurrent: Boolean = true) {
         if (!canOpenFile(file)) return
+        lspSymbolPopup?.dismiss()
+        clearLspReferenceHighlight()
         if (storeCurrent) storeCurrentTabState()
         try {
             val tab = findOrCreateTab(file)
@@ -2237,11 +2312,341 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             }
             isDirty = false
             renderEditorTabs()
+            notifyLspDidSave(file, toString)
             UUtils.showMsg(UUtils.getString(R.string.保存成功))
             true
         } else {
             UUtils.showMsg(UUtils.getString(R.string.save_error_))
             false
+        }
+    }
+
+    private fun notifyLspDidSave(file: File, text: String) {
+        if (!::lspManager.isInitialized || !lspEnabled) return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        if (!lspManager.isLanguageInstalled(languageId)) return
+        Thread {
+            lspManager.didSave(file, languageId, text)
+        }.apply {
+            name = "ZT-LSP-DidSave"
+            isDaemon = true
+            start()
+        }
+    }
+
+    private fun maybeOpenReferencesOnClick(line: Int, column: Int) {
+        if (!lspEnabled || !::lspManager.isInitialized) return
+        val editor = code_editor ?: return
+        val file = currentFile ?: return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        if (!lspManager.isLanguageInstalled(languageId)) return
+        val hit = EditorLspSymbolPopup.findIdentifierAt(editor, line, column) ?: return
+        // 关键字太短/纯数字一般不是符号引用
+        if (hit.word.length < 2 || hit.word.all { it.isDigit() }) return
+        openReferencesPopup(hit.line, hit.startColumn, hit.word)
+    }
+
+    private fun clearLspReferenceHighlight() {
+        if (!lspReferenceHighlightActive) return
+        lspReferenceHighlightActive = false
+        runCatching { code_editor?.searcher?.stopSearch() }
+    }
+
+    private fun highlightIdentifierWord(word: String) {
+        val editor = code_editor ?: return
+        runCatching {
+            editor.searcher.search(
+                word,
+                EditorSearcher.SearchOptions(EditorSearcher.SearchOptions.TYPE_WHOLE_WORD, false)
+            )
+            lspReferenceHighlightActive = true
+        }
+    }
+
+    private fun openReferencesPopup(line: Int, column: Int, wordHint: String? = null) {
+        val editor = code_editor ?: return
+        val file = currentFile ?: return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        if (!lspManager.isLanguageInstalled(languageId)) return
+        val popup = lspSymbolPopup ?: EditorLspSymbolPopup(editor).also { lspSymbolPopup = it }
+        val hit = EditorLspSymbolPopup.findIdentifierAt(editor, line, column)
+        val word = wordHint ?: hit?.word
+        val anchorLine = hit?.line ?: line
+        val anchorCol = hit?.startColumn ?: column
+        flushLspDocumentChange()
+        if (!word.isNullOrBlank()) {
+            highlightIdentifierWord(word)
+        }
+        val title = if (word.isNullOrBlank()) {
+            getString(R.string.editor_lsp_find_references)
+        } else {
+            getString(R.string.editor_lsp_references_for, word)
+        }
+        val token = popup.showLoadingNear(anchorLine, anchorCol, title) {
+            clearLspReferenceHighlight()
+        }
+        Thread {
+            val locations = lspManager.references(file, languageId, line, column)
+            val items = locations.map { loc ->
+                EditorLspSymbolPopup.buildReferenceItem(loc, word)
+            }
+            runOnUiThread {
+                if (!popup.isTokenActive(token)) {
+                    // 用户已点别处取消
+                    return@runOnUiThread
+                }
+                if (locations.isEmpty()) {
+                    popup.showEmpty(token, title, getString(R.string.editor_lsp_no_references))
+                    return@runOnUiThread
+                }
+                popup.showReferenceList(
+                    token,
+                    getString(R.string.editor_lsp_references_title, locations.size),
+                    items
+                ) { index ->
+                    val editorNow = code_editor
+                    val cur = currentFile
+                    val loc = locations.getOrNull(index) ?: return@showReferenceList
+                    if (editorNow != null && cur != null) {
+                        pushLspNavMark(cur, editorNow.cursor.leftLine, editorNow.cursor.leftColumn)
+                    }
+                    navigateToLspLocationResolved(cur, languageId, loc)
+                }
+            }
+        }.apply {
+            name = "ZT-LSP-References"
+            isDaemon = true
+            start()
+        }
+    }
+
+    private fun runLspHover(line: Int, column: Int) {
+        val file = currentFile ?: return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        val editor = code_editor ?: return
+        if (!lspManager.isLanguageInstalled(languageId)) return
+        val popup = lspSymbolPopup ?: EditorLspSymbolPopup(editor).also { lspSymbolPopup = it }
+        val hit = EditorLspSymbolPopup.findIdentifierAt(editor, line, column)
+        val title = hit?.word?.let { getString(R.string.editor_lsp_hover_for, it) }
+            ?: getString(R.string.editor_lsp_hover)
+        flushLspDocumentChange()
+        val token = popup.showLoadingNear(hit?.line ?: line, hit?.startColumn ?: column, title)
+        Thread {
+            val text = lspManager.hover(file, languageId, line, column)
+            runOnUiThread {
+                if (!popup.isTokenActive(token)) return@runOnUiThread
+                if (text.isNullOrBlank()) {
+                    popup.showEmpty(token, title, getString(R.string.editor_lsp_no_hover))
+                } else {
+                    popup.showMessage(token, title, text)
+                }
+            }
+        }.apply {
+            name = "ZT-LSP-Hover"
+            isDaemon = true
+            start()
+        }
+    }
+
+    private fun runGotoDefinition(line: Int, column: Int) {
+        val file = currentFile ?: return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        val editor = code_editor ?: return
+        flushLspDocumentChange()
+        UUtils.showMsg(getString(R.string.editor_lsp_working))
+        Thread {
+            val locations = lspManager.definition(file, languageId, line, column)
+            if (locations.isEmpty()) {
+                runOnUiThread { UUtils.showMsg(getString(R.string.editor_lsp_no_definition)) }
+                return@Thread
+            }
+            // 多结果时先跳第一个；完整列表可后续再做
+            val raw = locations[0]
+            val target = lspManager.resolveNavigationLocation(file, languageId, raw)
+            runOnUiThread {
+                if (target == null || !target.file.isFile) {
+                    UUtils.showMsg(
+                        getString(
+                            if (EditorJdtClassFileSupport.needsClassFileContents(raw)) {
+                                R.string.editor_lsp_class_source_failed
+                            } else {
+                                R.string.editor_lsp_no_definition
+                            }
+                        )
+                    )
+                    return@runOnUiThread
+                }
+                pushLspNavMark(file, editor.cursor.leftLine, editor.cursor.leftColumn)
+                navigateToLspLocation(target)
+            }
+        }.start()
+    }
+
+    private fun runFindReferences(line: Int, column: Int) {
+        openReferencesPopup(line, column)
+    }
+
+    private fun runCodeActionsAtCursor(line: Int, column: Int) {
+        val file = currentFile ?: return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        flushLspDocumentChange()
+        UUtils.showMsg(getString(R.string.editor_lsp_working))
+        Thread {
+            val actions = lspManager.codeActions(file, languageId, line, column, line, column)
+            runOnUiThread {
+                if (actions.isEmpty()) {
+                    UUtils.showMsg(getString(R.string.editor_lsp_no_code_action))
+                    return@runOnUiThread
+                }
+                val labels = actions.map { it.title }.toTypedArray()
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.editor_lsp_code_actions)
+                    .setItems(labels) { _, which ->
+                        val action = actions.getOrNull(which) ?: return@setItems
+                        Thread {
+                            val ok = lspManager.applyCodeAction(file, languageId, action)
+                            runOnUiThread {
+                                if (!ok) UUtils.showMsg(getString(R.string.editor_lsp_no_code_action))
+                                else {
+                                    flushLspDocumentChange()
+                                    updateDirtyState()
+                                }
+                            }
+                        }.start()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+        }.start()
+    }
+
+    private fun runOrganizeImports() {
+        val file = currentFile ?: return
+        val languageId = lspLanguageId(getFileExtension(file)) ?: return
+        if (languageId != EditorLspManager.LANGUAGE_JAVA) {
+            UUtils.showMsg(getString(R.string.editor_lsp_organize_imports_failed))
+            return
+        }
+        flushLspDocumentChange()
+        UUtils.showMsg(getString(R.string.editor_lsp_working))
+        Thread {
+            val ok = lspManager.organizeImports(file, languageId)
+            runOnUiThread {
+                UUtils.showMsg(
+                    getString(
+                        if (ok) R.string.editor_lsp_organize_imports_done
+                        else R.string.editor_lsp_organize_imports_failed
+                    )
+                )
+                if (ok) {
+                    flushLspDocumentChange()
+                    updateDirtyState()
+                }
+            }
+        }.start()
+    }
+
+    private fun pushLspNavMark(file: File, line: Int, column: Int) {
+        lspNavStack.addLast(LspNavMark(file, line, column))
+        while (lspNavStack.size > 32) lspNavStack.removeFirst()
+    }
+
+    private fun runLspGoBack() {
+        if (lspNavStack.isEmpty()) return
+        val mark = lspNavStack.removeLast()
+        navigateToLspLocation(EditorLspLocation(mark.file, mark.line, mark.column))
+    }
+
+    private fun navigateToLspLocationResolved(
+        workspaceFile: File?,
+        languageId: String?,
+        location: EditorLspLocation
+    ) {
+        if (workspaceFile != null &&
+            languageId != null &&
+            EditorJdtClassFileSupport.needsClassFileContents(location)
+        ) {
+            UUtils.showMsg(getString(R.string.editor_lsp_loading_class_source))
+            Thread {
+                val resolved = lspManager.resolveNavigationLocation(workspaceFile, languageId, location)
+                runOnUiThread {
+                    if (resolved == null || !resolved.file.isFile) {
+                        UUtils.showMsg(getString(R.string.editor_lsp_class_source_failed))
+                    } else {
+                        navigateToLspLocation(resolved)
+                    }
+                }
+            }.apply {
+                name = "ZT-LSP-ClassSource"
+                isDaemon = true
+                start()
+            }
+            return
+        }
+        navigateToLspLocation(location)
+    }
+
+    private fun navigateToLspLocation(location: EditorLspLocation) {
+        if (!location.file.isFile) {
+            UUtils.showMsg(
+                getString(
+                    if (EditorJdtClassFileSupport.needsClassFileContents(location)) {
+                        R.string.editor_lsp_class_source_failed
+                    } else {
+                        R.string.editor_lsp_no_definition
+                    }
+                )
+            )
+            return
+        }
+        val sameFile = currentFile?.absolutePath == location.file.absolutePath
+        if (!sameFile) {
+            loadFile(location.file)
+        }
+        code_editor?.post {
+            val editor = code_editor ?: return@post
+            val line = location.line.coerceIn(0, (editor.lineCount - 1).coerceAtLeast(0))
+            val column = location.column.coerceIn(0, editor.text.getColumnCount(line))
+            editor.setSelection(line, column, true)
+            updatePositionText()
+        }
+    }
+
+    private fun applyLspFileEdits(file: File, edits: List<EditorLspManager.LspTextEdit>) {
+        if (edits.isEmpty()) return
+        val editor = code_editor
+        val isCurrent = currentFile?.absolutePath == file.absolutePath && editor != null
+        if (isCurrent && editor != null) {
+            applyEditsToContent(editor.text, edits)
+            updateDirtyState()
+            flushLspDocumentChange()
+            return
+        }
+        val original = runCatching { if (file.isFile) file.readText() else "" }.getOrDefault("")
+        val updated = lspManager.applyEditsToString(original, edits)
+        runCatching { file.writeText(updated) }
+        editorTabs.firstOrNull { it.file.absolutePath == file.absolutePath }?.let { tab ->
+            tab.content = updated
+            tab.dirty = updated != tab.savedContent
+        }
+        renderEditorTabs()
+    }
+
+    private fun applyEditsToContent(text: Content, edits: List<EditorLspManager.LspTextEdit>) {
+        val ordered = edits.sortedWith(
+            compareByDescending<EditorLspManager.LspTextEdit> { it.startLine }
+                .thenByDescending { it.startColumn }
+        )
+        for (edit in ordered) {
+            val startLine = edit.startLine.coerceIn(0, text.lineCount - 1)
+            var endLine = edit.endLine.coerceIn(0, text.lineCount - 1)
+            val startColumn = edit.startColumn.coerceIn(0, text.getColumnCount(startLine))
+            var endColumn = edit.endColumn.coerceIn(0, text.getColumnCount(endLine))
+            if (endLine < startLine || (endLine == startLine && endColumn < startColumn)) {
+                endLine = startLine
+                endColumn = startColumn
+            }
+            text.replace(startLine, startColumn, endLine, endColumn, edit.newText)
         }
     }
 
@@ -3835,10 +4240,27 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private fun ensureTextmateTheme() {
         val editor = code_editor ?: return
         editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
+        applyIdeaCompletionColors()
     }
 
     private fun resetColorScheme() {
         ensureTextmateTheme()
+    }
+
+    /** 补全/诊断悬浮窗配色贴近 Android Studio 深色面板。 */
+    private fun applyIdeaCompletionColors() {
+        val scheme = code_editor?.colorScheme ?: return
+        scheme.setColor(EditorColorScheme.COMPLETION_WND_BACKGROUND, 0xF2252525.toInt())
+        scheme.setColor(EditorColorScheme.COMPLETION_WND_CORNER, 0xFF3C3C3C.toInt())
+        scheme.setColor(EditorColorScheme.COMPLETION_WND_TEXT_PRIMARY, 0xFFE8E8E8.toInt())
+        scheme.setColor(EditorColorScheme.COMPLETION_WND_TEXT_SECONDARY, 0xFF8A8A8A.toInt())
+        scheme.setColor(EditorColorScheme.COMPLETION_WND_TEXT_MATCHED, 0xFF4DAAFC.toInt())
+        scheme.setColor(EditorColorScheme.COMPLETION_WND_ITEM_CURRENT, 0xFF2F5F98.toInt())
+        scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_BACKGROUND, 0xF2252525.toInt())
+        scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_BRIEF_MSG, 0xFFE8E8E8.toInt())
+        scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_DETAILED_MSG, 0xFFB0B0B0.toInt())
+        scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_ACTION, 0xFF4DAAFC.toInt())
+        code_editor?.getComponent(EditorAutoCompletion::class.java)?.applyColorScheme()
     }
 
     private /*suspend*/ fun loadDefaultThemes() /*= withContext(Dispatchers.IO)*/ {
