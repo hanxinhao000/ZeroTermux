@@ -100,7 +100,9 @@ import io.github.rosemoe.sora.widget.SymbolInputView
 import com.termux.shared.view.KeyboardUtils
 import com.termux.view.TerminalView
 import com.termux.zerocore.editor.EditorIdeaCompletionItemAdapter
+import com.termux.zerocore.editor.SafeEditorDiagnosticTooltipWindow
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
+import io.github.rosemoe.sora.widget.component.EditorDiagnosticTooltipWindow
 import io.github.rosemoe.sora.widget.schemes.EditorColorScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -509,6 +511,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                 // IDEA / Android Studio 风格补全列表
                 autoComplete.setAdapter(EditorIdeaCompletionItemAdapter())
             }
+            // 避免 AI/整文件替换后诊断气泡用旧行号定位崩溃
+            replaceComponent(
+                EditorDiagnosticTooltipWindow::class.java,
+                SafeEditorDiagnosticTooltipWindow(this)
+            )
             applyIdeaCompletionColors()
             // 诊断波浪线：默认幅度 4dp 偏大，略压低起伏
             props.indicatorWaveAmplitude = 1.8f
@@ -4433,6 +4440,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun replaceAll(text: String): String {
         val editor = code_editor ?: return "Error: editor unavailable"
         if (!isEditorReady()) return getString(R.string.zt_editor_ai_unavailable)
+        // 先清掉诊断与气泡，避免 setText 后旧行号触发布局崩溃
+        editor.diagnostics = null
+        runCatching {
+            editor.getComponent(EditorDiagnosticTooltipWindow::class.java)?.dismiss()
+        }
         editor.setText(text)
         updateDirtyState()
         return "Replaced entire content (${text.length} chars)"
