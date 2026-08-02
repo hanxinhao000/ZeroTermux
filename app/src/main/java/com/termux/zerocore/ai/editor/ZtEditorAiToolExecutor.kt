@@ -48,7 +48,7 @@ object ZtEditorAiToolExecutor {
                         }
                         val preview = buildInsertPreview(text)
                         val label = statusLabel(toolCall.name)
-                        host.requestCodeEditConfirmation(label, preview) { approved ->
+                        host.requestCodeEditConfirmation(label, preview.summary, preview.body) { approved ->
                             if (!approved) {
                                 result.set(UUtils.getString(R.string.zt_editor_ai_edit_rejected))
                             } else {
@@ -71,9 +71,16 @@ object ZtEditorAiToolExecutor {
                         val start = args.getInt("start")
                         val end = args.getInt("end")
                         val text = args.optString("text", "")
-                        val preview = buildReplaceRangePreview(start, end, text)
+                        val full = host.getCurrentEditorText().orEmpty()
+                        if (start < 0 || end < start || end > full.length) {
+                            result.set("Error: invalid range $start..$end (length ${full.length})")
+                            latch.countDown()
+                            return@post
+                        }
+                        val oldSlice = full.substring(start, end)
+                        val preview = buildReplaceRangePreview(start, end, oldSlice, text)
                         val label = statusLabel(toolCall.name)
-                        host.requestCodeEditConfirmation(label, preview) { approved ->
+                        host.requestCodeEditConfirmation(label, preview.summary, preview.body) { approved ->
                             if (!approved) {
                                 result.set(UUtils.getString(R.string.zt_editor_ai_edit_rejected))
                             } else {
@@ -94,9 +101,10 @@ object ZtEditorAiToolExecutor {
                             latch.countDown()
                             return@post
                         }
-                        val preview = buildReplaceAllPreview(text)
+                        val old = host.getCurrentEditorText().orEmpty()
+                        val preview = buildReplaceAllPreview(old, text)
                         val label = statusLabel(toolCall.name)
-                        host.requestCodeEditConfirmation(label, preview) { approved ->
+                        host.requestCodeEditConfirmation(label, preview.summary, preview.body) { approved ->
                             if (!approved) {
                                 result.set(UUtils.getString(R.string.zt_editor_ai_edit_rejected))
                             } else {
@@ -201,19 +209,43 @@ object ZtEditorAiToolExecutor {
         }
     }
 
-    private fun buildInsertPreview(text: String): String {
-        val shown = if (text.length > 600) text.take(600) + "\n…" else text
-        return ZtLocaleStrings.getString(R.string.zt_editor_ai_edit_preview_insert, shown)
+    private data class Preview(val summary: String, val body: CharSequence)
+
+    private fun buildInsertPreview(text: String): Preview {
+        val diff = ZtEditorAiEditDiff.additionsOnly(text)
+        val summary = ZtLocaleStrings.getString(
+            R.string.zt_editor_ai_edit_preview_insert_diff,
+            diff.added
+        )
+        return Preview(summary, diff.body)
     }
 
-    private fun buildReplaceRangePreview(start: Int, end: Int, text: String): String {
-        val shown = if (text.length > 500) text.take(500) + "\n…" else text
-        return ZtLocaleStrings.getString(R.string.zt_editor_ai_edit_preview_range, start, end, shown)
+    private fun buildReplaceRangePreview(
+        start: Int,
+        end: Int,
+        oldSlice: String,
+        newText: String
+    ): Preview {
+        val diff = ZtEditorAiEditDiff.diff(oldSlice, newText)
+        val summary = ZtLocaleStrings.getString(
+            R.string.zt_editor_ai_edit_preview_range_diff,
+            start,
+            end,
+            diff.added,
+            diff.removed
+        )
+        return Preview(summary, diff.body)
     }
 
-    private fun buildReplaceAllPreview(text: String): String {
-        val lineCount = text.lines().size
-        val shown = if (text.length > 500) text.take(500) + "\n…" else text
-        return ZtLocaleStrings.getString(R.string.zt_editor_ai_edit_preview_replace_all, lineCount, shown)
+    private fun buildReplaceAllPreview(oldText: String, newText: String): Preview {
+        val diff = ZtEditorAiEditDiff.diff(oldText, newText)
+        val lineCount = newText.lines().size
+        val summary = ZtLocaleStrings.getString(
+            R.string.zt_editor_ai_edit_preview_replace_all_diff,
+            lineCount,
+            diff.added,
+            diff.removed
+        )
+        return Preview(summary, diff.body)
     }
 }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingTop="8dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/editor_ai_edit_confirm_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:textColor="#FFB0B0B0"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/editor_ai_edit_confirm_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="#FFE8E8E8"
+        android:textSize="13sp" />
+
+    <ScrollView
+        android:id="@+id/editor_ai_edit_confirm_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginTop="10dp"
+        android:background="#FF1A1A1A"
+        android:fadeScrollbars="false"
+        android:fillViewport="false"
+        android:overScrollMode="ifContentScrolls"
+        android:padding="8dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/editor_ai_edit_confirm_diff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:lineSpacingExtra="2dp"
+            android:textColor="#FFE0E0E0"
+            android:textIsSelectable="true"
+            android:textSize="12sp" />
+    </ScrollView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/zt_editor_ai_edit_diff_hint"
+        android:textColor="#FF757575"
+        android:textSize="11sp" />
+</LinearLayout>

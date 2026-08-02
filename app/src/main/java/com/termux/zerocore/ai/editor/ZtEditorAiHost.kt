@@ -29,9 +29,19 @@ interface ZtEditorAiHost {
     /** 当前打开且可编辑的文件绝对路径；预览/不可编辑时返回 null。 */
     fun getCurrentEditorFilePath(): String?
 
+    /** 当前编辑器全文；不可用时返回 null。 */
+    fun getCurrentEditorText(): String?
+
     /**
      * 修改当前打开文件前请求用户确认（异步，不可阻塞主线程）。
+     * @param summary 变更摘要（新增/删除行数等）
+     * @param diffBody 可滚动的行级 diff（红删绿增）
      * @param onResult 在主线程回调，参数 true 表示用户同意
      */
-    fun requestCodeEditConfirmation(actionLabel: String, preview: String, onResult: (approved: Boolean) -> Unit)
+    fun requestCodeEditConfirmation(
+        actionLabel: String,
+        summary: String,
+        diffBody: CharSequence,
+        onResult: (approved: Boolean) -> Unit
+    )
 }

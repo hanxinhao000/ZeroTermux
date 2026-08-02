@@ -4397,17 +4397,37 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     override fun replaceRange(start: Int, end: Int, text: String): String {
         val editor = code_editor ?: return "Error: editor unavailable"
         if (!isEditorReady()) return getString(R.string.zt_editor_ai_unavailable)
-        val full = editor.text.toString()
-        if (start < 0 || end < start || end > full.length) {
-            return "Error: invalid range $start..$end (length ${full.length})"
-        }
-        val lineStarts = buildLineStarts(full)
-        val startPos = offsetToLineColumn(lineStarts, start)
-        val endPos = offsetToLineColumn(lineStarts, end)
         val content = editor.text
-        content.replace(startPos.first, startPos.second, endPos.first, endPos.second, text)
-        updateDirtyState()
-        return "Replaced $start..$end with ${text.length} chars"
+        val length = content.length
+        if (start < 0 || end < start || end > length) {
+            return "Error: invalid range $start..$end (length $length)"
+        }
+        return try {
+            // 必须用 Content indexer：偏移落在 \r\n 分隔符上时，列会大于行长，
+            // 直接 replace(line,col) 会抛 Column out of bounds for CURSOR。
+            val startPos = cursorPositionForIndex(content, start)
+            val endPos = cursorPositionForIndex(content, end)
+            content.replace(startPos.first, startPos.second, endPos.first, endPos.second, text)
+            updateDirtyState()
+            "Replaced $start..$end with ${text.length} chars"
+        } catch (e: Exception) {
+            "Error: replace failed: ${e.message ?: "invalid range"}"
+        }
+    }
+
+    /**
+     * 将字符偏移转为可安全用于 Content.replace/delete 的光标行列。
+     * indexer 在行分隔符上会给出 column > lineLength，需归一到行尾或下一行行首。
+     */
+    private fun cursorPositionForIndex(content: Content, index: Int): Pair<Int, Int> {
+        val idx = index.coerceIn(0, content.length)
+        val pos = content.indexer.getCharPosition(idx)
+        val lineLen = content.getColumnCount(pos.line)
+        return when {
+            pos.column <= lineLen -> pos.line to pos.column
+            pos.line + 1 < content.lineCount -> (pos.line + 1) to 0
+            else -> pos.line to lineLen
+        }
     }
 
     override fun replaceAll(text: String): String {
@@ -4424,26 +4444,45 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         return tab.file.absolutePath
     }
 
+    override fun getCurrentEditorText(): String? {
+        if (!isEditorReady()) return null
+        return code_editor?.text?.toString()
+    }
+
     override fun requestCodeEditConfirmation(
         actionLabel: String,
-        preview: String,
+        summary: String,
+        diffBody: CharSequence,
         onResult: (approved: Boolean) -> Unit
     ) {
         val showDialog = {
             if (isFinishing || isDestroyed) {
                 onResult(false)
             } else {
+                val content = layoutInflater.inflate(R.layout.dialog_zt_editor_ai_edit_confirm, null)
+                val fileView = content.findViewById<android.widget.TextView>(R.id.editor_ai_edit_confirm_file)
+                val summaryView = content.findViewById<android.widget.TextView>(R.id.editor_ai_edit_confirm_summary)
+                val diffView = content.findViewById<android.widget.TextView>(R.id.editor_ai_edit_confirm_diff)
+                val scroll = content.findViewById<android.widget.ScrollView>(R.id.editor_ai_edit_confirm_scroll)
                 val filePath = getCurrentEditorFilePath().orEmpty()
-                val message = buildString {
-                    if (filePath.isNotBlank()) {
-                        append(getString(R.string.zt_editor_ai_edit_confirm_file, filePath))
-                        append("\n\n")
-                    }
-                    append(preview)
+                if (filePath.isBlank()) {
+                    fileView.visibility = android.view.View.GONE
+                } else {
+                    fileView.visibility = android.view.View.VISIBLE
+                    fileView.text = getString(R.string.zt_editor_ai_edit_confirm_file, filePath)
+                }
+                summaryView.text = summary
+                diffView.text = diffBody
+                // 高度随屏幕约 45%，保证长 diff 可滚
+                val maxH = (resources.displayMetrics.heightPixels * 0.45f).toInt().coerceAtLeast(200)
+                scroll.layoutParams = scroll.layoutParams.apply { height = maxH }
+                scroll.setOnTouchListener { v, _ ->
+                    v.parent?.requestDisallowInterceptTouchEvent(true)
+                    false
                 }
                 AlertDialog.Builder(this)
                     .setTitle(getString(R.string.zt_editor_ai_edit_confirm_title, actionLabel))
-                    .setMessage(message)
+                    .setView(content)
                     .setPositiveButton(android.R.string.ok) { _, _ -> onResult(true) }
                     .setNegativeButton(android.R.string.cancel) { _, _ -> onResult(false) }
                     .setOnCancelListener { onResult(false) }

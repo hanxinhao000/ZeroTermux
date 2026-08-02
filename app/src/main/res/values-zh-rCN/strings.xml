@@ -1847,6 +1847,10 @@
     <string name="zt_editor_ai_edit_preview_insert">将插入以下内容：\n\n%1$s</string>
     <string name="zt_editor_ai_edit_preview_range">将替换字符 %1$d..%2$d 为：\n\n%3$s</string>
     <string name="zt_editor_ai_edit_preview_replace_all">将替换整个文件（约 %1$d 行）：\n\n%2$s</string>
+    <string name="zt_editor_ai_edit_preview_insert_diff">将插入 +%1$d 行。绿色为新增：</string>
+    <string name="zt_editor_ai_edit_preview_range_diff">将替换字符 %1$d..%2$d（+%3$d / −%4$d 行）。红色删除，绿色新增：</string>
+    <string name="zt_editor_ai_edit_preview_replace_all_diff">将替换整个文件（约 %1$d 行，+%2$d / −%3$d）。红色删除，绿色新增：</string>
+    <string name="zt_editor_ai_edit_diff_hint">可上下滑动查看完整对比，确认后再点确定。</string>
     <string name="zt_editor_ai_edit_rejected">用户已拒绝此次代码修改</string>
     <string name="zt_editor_ai_edit_no_file">Error: 当前没有可编辑的打开文件，请先在编辑器中打开文本文件</string>
     <string name="zt_editor_ai_build_finished">编译/运行已完成，AI 已自动结束。</string>

@@ -1709,6 +1709,10 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="zt_editor_ai_edit_preview_insert">Insert the following:\n\n%1$s</string>
     <string name="zt_editor_ai_edit_preview_range">Replace characters %1$d..%2$d with:\n\n%3$s</string>
     <string name="zt_editor_ai_edit_preview_replace_all">Replace entire file (~%1$d lines):\n\n%2$s</string>
+    <string name="zt_editor_ai_edit_preview_insert_diff">Will insert +%1$d line(s). Green = added:</string>
+    <string name="zt_editor_ai_edit_preview_range_diff">Replace chars %1$d..%2$d (+%3$d / −%4$d lines). Red = removed, green = added:</string>
+    <string name="zt_editor_ai_edit_preview_replace_all_diff">Replace entire file (~%1$d lines, +%2$d / −%3$d). Red = removed, green = added:</string>
+    <string name="zt_editor_ai_edit_diff_hint">Scroll to review the full diff before confirming.</string>
     <string name="zt_editor_ai_edit_rejected">User rejected this code change</string>
     <string name="zt_editor_ai_edit_no_file">Error: no editable open file; open a text file in the editor first</string>
     <string name="zt_editor_ai_build_finished">Build/run finished. AI session ended automatically.</string>
