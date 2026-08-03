@@ -955,6 +955,7 @@ Reset successfully</string>
     <string name="editor_settings_lsp_supported_languages">Supports: %1$s</string>
     <string name="editor_settings_lsp_status_not_installed">Not installed</string>
     <string name="editor_settings_lsp_action_install">Tap to install</string>
+    <string name="editor_settings_lsp_action_retry">Tap to retry</string>
     <string name="editor_settings_lsp_action_installed">Ready</string>
     <string name="editor_settings_lsp_required_badge">Recommended</string>
     <string name="editor_lsp_install_prompt_title">Language assist</string>

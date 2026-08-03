@@ -49,7 +49,8 @@ class EditorLspServerAdapter(
             installing -> {
                 holder.status.visibility = View.INVISIBLE
                 holder.progress.visibility = View.VISIBLE
-                holder.action.text = context.getString(R.string.editor_settings_lsp_installing)
+                // 中断后可再点一次：取消旧等待并重新往终端发安装命令
+                holder.action.text = context.getString(R.string.editor_settings_lsp_action_retry)
                 holder.action.setTextColor(0xFF48BAF3.toInt())
             }
             installed -> {
@@ -73,10 +74,10 @@ class EditorLspServerAdapter(
         }
 
         holder.itemView.setOnClickListener {
-            if (installed || installing) return@setOnClickListener
+            if (installed) return@setOnClickListener
             onInstallClick(serverPackage)
         }
-        holder.itemView.isClickable = !installed && !installing
+        holder.itemView.isClickable = !installed
         holder.itemView.alpha = if (installed) 0.92f else 1f
     }
 

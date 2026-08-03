@@ -990,6 +990,7 @@
     <string name="editor_settings_lsp_supported_languages">支持：%1$s</string>
     <string name="editor_settings_lsp_status_not_installed">未安装</string>
     <string name="editor_settings_lsp_action_install">点击安装</string>
+    <string name="editor_settings_lsp_action_retry">点击重试</string>
     <string name="editor_settings_lsp_action_installed">已就绪</string>
     <string name="editor_settings_lsp_required_badge">推荐</string>
     <string name="editor_lsp_install_prompt_title">语言提示与纠错</string>
