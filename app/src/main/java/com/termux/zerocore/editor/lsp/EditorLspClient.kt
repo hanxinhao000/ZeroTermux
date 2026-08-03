@@ -168,13 +168,36 @@ class EditorLspClient(
         )
     }
 
-    fun definition(uri: String, line: Int, column: Int): Any? {
+    fun definition(uri: String, line: Int, column: Int, timeout: Long = requestTimeoutMillis): Any? {
         if (!ensureRunning()) return null
         return request(
             "textDocument/definition",
             JSONObject()
                 .put("textDocument", JSONObject().put("uri", uri))
-                .put("position", JSONObject().put("line", line).put("character", column))
+                .put("position", JSONObject().put("line", line).put("character", column)),
+            timeout = timeout
+        )
+    }
+
+    fun typeDefinition(uri: String, line: Int, column: Int, timeout: Long = requestTimeoutMillis): Any? {
+        if (!ensureRunning()) return null
+        return request(
+            "textDocument/typeDefinition",
+            JSONObject()
+                .put("textDocument", JSONObject().put("uri", uri))
+                .put("position", JSONObject().put("line", line).put("character", column)),
+            timeout = timeout
+        )
+    }
+
+    fun declaration(uri: String, line: Int, column: Int, timeout: Long = requestTimeoutMillis): Any? {
+        if (!ensureRunning()) return null
+        return request(
+            "textDocument/declaration",
+            JSONObject()
+                .put("textDocument", JSONObject().put("uri", uri))
+                .put("position", JSONObject().put("line", line).put("character", column)),
+            timeout = timeout
         )
     }
 
@@ -187,7 +210,7 @@ class EditorLspClient(
         val result = request(
             "java/classFileContents",
             JSONObject().put("uri", uri),
-            timeout = 20_000L
+            timeout = EditorJdtLsSupport.NAVIGATION_TIMEOUT_MILLIS
         ) ?: return null
         return when (result) {
             is String -> result
@@ -198,14 +221,31 @@ class EditorLspClient(
         }
     }
 
-    fun references(uri: String, line: Int, column: Int): Any? {
+    fun references(uri: String, line: Int, column: Int, timeout: Long = requestTimeoutMillis): Any? {
         if (!ensureRunning()) return null
         return request(
             "textDocument/references",
             JSONObject()
                 .put("textDocument", JSONObject().put("uri", uri))
                 .put("position", JSONObject().put("line", line).put("character", column))
-                .put("context", JSONObject().put("includeDeclaration", true))
+                .put("context", JSONObject().put("includeDeclaration", true)),
+            timeout = timeout
+        )
+    }
+
+    fun formatting(uri: String, tabSize: Int, insertSpaces: Boolean): Any? {
+        if (!ensureRunning()) return null
+        return request(
+            "textDocument/formatting",
+            JSONObject()
+                .put("textDocument", JSONObject().put("uri", uri))
+                .put(
+                    "options",
+                    JSONObject()
+                        .put("tabSize", tabSize.coerceIn(1, 16))
+                        .put("insertSpaces", insertSpaces)
+                ),
+            timeout = 30_000L
         )
     }
 
@@ -326,7 +366,11 @@ class EditorLspClient(
                 )
             )
             .put("definition", JSONObject().put("linkSupport", true))
+            .put("declaration", JSONObject().put("linkSupport", true))
+            .put("typeDefinition", JSONObject().put("linkSupport", true))
             .put("references", JSONObject())
+            .put("formatting", JSONObject().put("dynamicRegistration", false))
+            .put("rangeFormatting", JSONObject().put("dynamicRegistration", false))
             .put(
                 "codeAction",
                 JSONObject()

@@ -844,6 +844,13 @@ Reset successfully</string>
     <string name="editor_toolbar_redo">Redo</string>
     <string name="editor_toolbar_more">More actions</string>
     <string name="editor_toolbar_terminal">Shell</string>
+    <string name="editor_toolbar_format">Format code</string>
+    <string name="editor_toolbar_duplicate_line">Duplicate line</string>
+    <string name="editor_toolbar_goto_def">Go to definition mode</string>
+    <string name="editor_toolbar_goto_def_on">Tap a symbol to open its definition. Tap the button again to exit.</string>
+    <string name="editor_toolbar_extra_toggle">Terminal / GUI bar</string>
+    <string name="editor_toolbar_extra_show">Show Terminal / GUI bar</string>
+    <string name="editor_toolbar_extra_hide">Hide Terminal / GUI bar</string>
     <string name="editor_terminal_title">Terminal</string>
     <string name="editor_terminal_hide">Hide terminal</string>
     <string name="editor_toolbar_run">Run</string>
@@ -973,7 +980,11 @@ Reset successfully</string>
     <string name="editor_lsp_references_title">References (%1$d)</string>
     <string name="editor_lsp_references_for">References: %1$s</string>
     <string name="editor_lsp_hover_for">Info: %1$s</string>
+    <string name="editor_lsp_format_done">Code formatted</string>
+    <string name="editor_lsp_format_failed">Format failed</string>
     <string name="editor_lsp_working">Working…</string>
+    <string name="editor_lsp_goto_loading">Going to definition, please wait…</string>
+    <string name="editor_lsp_goto_loading_close">Close</string>
     <string name="editor_lsp_install_prompt_cancel">Cancel</string>
     <string name="editor_lsp_install_prompt_never">Don\'t ask again</string>
     <string name="editor_unsaved_title">Unsaved file</string>

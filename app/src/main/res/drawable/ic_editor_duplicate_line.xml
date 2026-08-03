@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Back sheet -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M2,1h8v2H4v9H2V1z" />
+    <!-- Front sheet (left half only) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M5,5h8v14H5c-1.1,0 -2,-0.9 -2,-2V7c0,-1.1 0.9,-2 2,-2zM5,7v10h6V7H5z" />
+    <!-- Down arrow (right half, no overlap) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M17,6h3v7h2l-3.5,4.5L15,13h2V6z" />
+</vector>

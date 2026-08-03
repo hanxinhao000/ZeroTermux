@@ -18,6 +18,7 @@ object EditorJdtClassFileSupport {
         val u = uri.trim()
         if (u.isEmpty()) return false
         if (u.startsWith("jdt:", ignoreCase = true)) return true
+        if (u.startsWith("jar:", ignoreCase = true) && u.contains(".class", ignoreCase = true)) return true
         if (u.contains(".class?", ignoreCase = true)) return true
         if (u.endsWith(".class", ignoreCase = true)) return true
         val path = EditorLspUris.pathOf(u)
@@ -26,7 +27,19 @@ object EditorJdtClassFileSupport {
 
     fun needsClassFileContents(location: EditorLspLocation): Boolean {
         if (location.uri.isNotBlank() && isClassContentUri(location.uri)) return true
-        return location.file.name.endsWith(".class", ignoreCase = true)
+        if (location.file.name.endsWith(".class", ignoreCase = true)) return true
+        // 本地文件不存在时：JDK/依赖里的类型常只有 URI，需走 classFileContents 拉源码
+        if (!location.file.isFile && location.uri.isNotBlank()) {
+            val u = location.uri
+            if (u.startsWith("jdt:", ignoreCase = true)) return true
+            if (u.contains(".class", ignoreCase = true)) return true
+            if (u.startsWith("jar:", ignoreCase = true)) return true
+            // file:///…/src.zip!/java.base/java/lang/System.java
+            if (u.contains("!/") || u.contains(".zip!", ignoreCase = true) || u.contains(".jar!", ignoreCase = true)) {
+                return true
+            }
+        }
+        return false
     }
 
     fun cacheFileFor(uri: String): File {
@@ -60,18 +73,77 @@ object EditorJdtClassFileSupport {
                 ""
             }
         }
-        if (uri.isBlank() || !isClassContentUri(uri)) {
+        if (uri.isBlank()) {
             return location.takeIf { it.file.isFile }
         }
-        val cache = cacheFileFor(uri)
-        if (!cache.isFile || cache.length() == 0L) {
-            val contents = client.classFileContents(uri)?.takeIf { it.isNotBlank() } ?: return null
-            runCatching {
-                cache.parentFile?.mkdirs()
-                cache.writeText(contents)
-            }.getOrElse { return null }
+        if (location.file.isFile && !isClassContentUri(uri) && !uri.contains("!/")) {
+            return location
         }
-        return location.copy(file = cache, uri = uri)
+        // zip/jar 内 .java：优先解压到缓存
+        extractZipEntryToCache(uri)?.let { cached ->
+            return location.copy(file = cached, uri = uri)
+        }
+        // jdt:// 或 *.class：java/classFileContents（反编译或附着源码）
+        if (isClassContentUri(uri) || uri.startsWith("jdt:", ignoreCase = true)) {
+            val cache = cacheFileFor(uri)
+            if (!cache.isFile || cache.length() == 0L) {
+                val contents = client.classFileContents(uri)?.takeIf { it.isNotBlank() }
+                if (contents.isNullOrBlank()) {
+                    EditorLspDebugStore.recordEvent(
+                        "error",
+                        "classFileContents failed",
+                        mapOf("uri" to uri.take(240))
+                    )
+                    return null
+                }
+                runCatching {
+                    cache.parentFile?.mkdirs()
+                    cache.writeText(contents)
+                }.getOrElse { return null }
+            }
+            return location.copy(file = cache, uri = uri)
+        }
+        return location.takeIf { it.file.isFile }
+    }
+
+    /** file:///path/src.zip!/entry 或 jar:file:///path.jar!/entry → 缓存 .java */
+    private fun extractZipEntryToCache(uri: String): File? {
+        val decoded = runCatching {
+            URLDecoder.decode(uri, StandardCharsets.UTF_8.name())
+        }.getOrDefault(uri)
+        val marker = "!/"
+        val idx = decoded.indexOf(marker)
+        if (idx < 0) return null
+        var archivePart = decoded.substring(0, idx)
+        val entryName = decoded.substring(idx + marker.length).trimStart('/')
+        if (entryName.isBlank()) return null
+        if (archivePart.startsWith("jar:", ignoreCase = true)) {
+            archivePart = archivePart.removePrefix("jar:").removePrefix("JAR:")
+        }
+        val archivePath = when {
+            archivePart.startsWith("file:", ignoreCase = true) -> EditorLspUris.pathOf(archivePart)
+            archivePart.startsWith("/") -> archivePart
+            else -> EditorLspUris.pathOf(archivePart)
+        }
+        if (archivePath.isBlank()) return null
+        val archive = File(archivePath)
+        if (!archive.isFile) return null
+        val cache = cacheFileFor(uri)
+        if (cache.isFile && cache.length() > 0L) return cache
+        return runCatching {
+            java.util.zip.ZipFile(archive).use { zip ->
+                val entry = zip.getEntry(entryName)
+                    ?: zip.getEntry(entryName.removePrefix("/"))
+                    ?: return@use null
+                zip.getInputStream(entry).bufferedReader(StandardCharsets.UTF_8).use { reader ->
+                    val text = reader.readText()
+                    if (text.isBlank()) return@use null
+                    cache.parentFile?.mkdirs()
+                    cache.writeText(text)
+                    cache
+                }
+            }
+        }.getOrNull()
     }
 
     private fun sha1Hex(text: String): String {

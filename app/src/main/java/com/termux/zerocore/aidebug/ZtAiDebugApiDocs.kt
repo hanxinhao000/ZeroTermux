@@ -223,6 +223,15 @@ object ZtAiDebugApiDocs {
                 "path" to "/api/editor/lsp/stderr",
                 "desc" to if (lang == "zh") "jdt-ls stderr 尾部 ?lines=" else "jdt-ls stderr tail ?lines="
             ),
+            mapOf(
+                "method" to "POST",
+                "path" to "/api/editor/lsp/definition",
+                "desc" to if (lang == "zh") {
+                    "探测转到定义 {path?,line?,column?,word?,occurrence?}，需编辑器已打开"
+                } else {
+                    "Probe go-to-definition {path?,line?,column?,word?,occurrence?}; editor must be open"
+                }
+            ),
             mapOf("method" to "GET", "path" to "/api/llm/tools", "desc" to if (lang == "zh") "列出全部 LLM/智能体工具名" else "List all LLM agent tool names"),
             mapOf("method" to "POST", "path" to "/api/llm/tool", "desc" to if (lang == "zh") "执行 LLM 工具 {tool, arguments}" else "Run LLM tool {tool, arguments}"),
             mapOf("method" to "POST", "path" to "/api/config/get", "desc" to if (lang == "zh") "读 ZeroTermux 配置 {group?, keys?}" else "Get ZT config {group?, keys?}"),

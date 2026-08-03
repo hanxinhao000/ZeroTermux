@@ -110,6 +110,8 @@ class ZtAiDebugHttpServer(
                     val lines = session.parms["lines"]?.toIntOrNull() ?: 120
                     textResponse(ZtAiDebugEditorLspHelper.stderrJson(lines), MIME_JSON)
                 }
+                uri == "/api/editor/lsp/definition" && method == Method.POST ->
+                    handleEditorLspDefinition(session)
                 uri == "/api/root/status" && method == Method.GET ->
                     textResponse(ZtAiDebugRootHelper.statusJson(appContext), MIME_JSON)
                 uri == "/api/root/exec" && method == Method.POST ->
@@ -636,6 +638,37 @@ class ZtAiDebugHttpServer(
         val autoRun = parseBool(session, body, "auto_run", "autoRun")
         return textResponse(
             ZtAiDebugVncHelper.openEditorJson(appContext, path ?: "", openX11, autoRun),
+            MIME_JSON
+        )
+    }
+
+    private fun handleEditorLspDefinition(session: IHTTPSession): Response {
+        val body = readBody(session)
+        var path: String? = session.parms["path"]
+        var line: Int? = session.parms["line"]?.toIntOrNull()
+        var column: Int? = session.parms["column"]?.toIntOrNull()
+        var word: String? = session.parms["word"]
+        var occurrence = session.parms["occurrence"]?.toIntOrNull() ?: 0
+        var navigate = session.parms["navigate"]?.equals("true", true) == true ||
+            session.parms["navigate"] == "1"
+        if (body.isNotBlank()) {
+            try {
+                val obj = JsonParser.parseString(body).asJsonObject
+                if (obj.has("path")) path = obj.get("path").asString
+                if (obj.has("line") && !obj.get("line").isJsonNull) line = obj.get("line").asInt
+                if (obj.has("column") && !obj.get("column").isJsonNull) column = obj.get("column").asInt
+                if (obj.has("word")) word = obj.get("word").asString
+                if (obj.has("occurrence") && !obj.get("occurrence").isJsonNull) {
+                    occurrence = obj.get("occurrence").asInt
+                }
+                if (obj.has("navigate") && !obj.get("navigate").isJsonNull) {
+                    navigate = obj.get("navigate").asBoolean
+                }
+            } catch (_: Exception) {
+            }
+        }
+        return textResponse(
+            ZtAiDebugEditorLspHelper.definitionJson(path, line, column, word, occurrence, navigate),
             MIME_JSON
         )
     }

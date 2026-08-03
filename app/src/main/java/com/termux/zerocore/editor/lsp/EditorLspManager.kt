@@ -94,6 +94,8 @@ class EditorLspManager(private val context: Context) {
         fun applyFileEdits(file: File, edits: List<LspTextEdit>)
         fun showCodeActionChoices(title: String, actions: List<EditorLspCodeAction>, onChosen: (EditorLspCodeAction) -> Unit)
         fun runOnUi(block: () -> Unit)
+        /** 在宿主编辑器打开 LSP 位置（含 jdt 缓存的 JDK 源码）。 */
+        fun openLspLocation(location: EditorLspLocation) {}
     }
 
     @Volatile
@@ -101,6 +103,13 @@ class EditorLspManager(private val context: Context) {
 
     fun setHostCallbacks(callbacks: HostCallbacks?) {
         hostCallbacks = callbacks
+    }
+
+    /** AI Debug：在前台编辑器打开已解析的 LSP 位置。 */
+    fun openLocationInHost(location: EditorLspLocation): Boolean {
+        val host = hostCallbacks ?: return false
+        host.runOnUi { host.openLspLocation(location) }
+        return true
     }
 
     fun diagnosticsFor(file: File): DiagnosticsContainer? {
@@ -323,17 +332,255 @@ class EditorLspManager(private val context: Context) {
     }
 
     fun definition(file: File, languageId: String, line: Int, column: Int): List<EditorLspLocation> {
-        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return emptyList()
-        val client = clientFor(file, languageId) ?: return emptyList()
+        return definitionDetailed(file, languageId, line, column).locations
+    }
+
+    data class DefinitionProbe(
+        val locations: List<EditorLspLocation>,
+        val source: String,
+        val elapsedMs: Long,
+        val preferType: Boolean,
+        val rawDefinition: String?,
+        val rawTypeDefinition: String?,
+        val rawNull: Boolean
+    )
+
+    fun definitionDetailed(
+        file: File,
+        languageId: String,
+        line: Int,
+        column: Int
+    ): DefinitionProbe {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) {
+            return DefinitionProbe(emptyList(), "disabled", 0, false, null, null, true)
+        }
+        val client = clientFor(file, languageId)
+            ?: return DefinitionProbe(emptyList(), "no_client", 0, false, null, null, true)
         val uri = EditorLspUris.forFile(file)
-        return EditorLspProtocol.parseLocations(client.definition(uri, line, column))
+        val timeout = navigationTimeout(languageId)
+        val started = System.currentTimeMillis()
+        var locations = emptyList<EditorLspLocation>()
+        var source = "definition"
+        var rawDef: Any? = null
+        var rawType: Any? = null
+
+        // 仅对「简单名.」且后面不是方法调用的类型限定（System.xxx）优先 typeDefinition。
+        // println( / out. 中的成员应用 definition 跳到方法/字段。
+        val preferType = languageId == LANGUAGE_JAVA && isTypeQualifierName(file, line, column)
+        if (preferType) {
+            rawType = client.typeDefinition(uri, line, column, timeout)
+            locations = EditorLspProtocol.parseLocations(rawType)
+            source = "typeDefinition_first"
+        }
+        if (locations.isEmpty()) {
+            rawDef = client.definition(uri, line, column, timeout)
+            locations = EditorLspProtocol.parseLocations(rawDef)
+            source = "definition"
+        }
+        // 方法重载：definition 有时返回 LocationLink 列表；若仍空，再试 declaration
+        if (locations.isEmpty() && languageId == LANGUAGE_JAVA) {
+            val rawDecl = client.declaration(uri, line, column, timeout)
+            val declLocs = EditorLspProtocol.parseLocations(rawDecl)
+            if (declLocs.isNotEmpty()) {
+                locations = declLocs
+                source = "declaration"
+                if (rawDef == null) rawDef = rawDecl
+            }
+        }
+        // JDK 方法（println 等）偶发 definition 为空：经接收者类型定位后在源码中搜方法
+        if (locations.isEmpty() && languageId == LANGUAGE_JAVA) {
+            val viaReceiver = resolveMethodViaReceiver(client, file, line, column, timeout)
+            if (viaReceiver != null) {
+                locations = listOf(viaReceiver)
+                source = "method_via_receiver"
+            }
+        }
+        // 类型名（System）等：definition/declaration 都空时回退 typeDefinition
+        if (locations.isEmpty() && languageId == LANGUAGE_JAVA && source != "typeDefinition_first") {
+            rawType = client.typeDefinition(uri, line, column, timeout)
+            locations = EditorLspProtocol.parseLocations(rawType)
+            source = "typeDefinition"
+        }
+        val elapsed = System.currentTimeMillis() - started
+        EditorLspDebugStore.recordEvent(
+            "definition",
+            "goto $source line=$line col=$column count=${locations.size} ${elapsed}ms",
+            mapOf(
+                "uri" to uri,
+                "line" to line,
+                "column" to column,
+                "count" to locations.size,
+                "elapsed_ms" to elapsed,
+                "source" to source,
+                "prefer_type" to preferType,
+                "raw_null" to (rawDef == null && !preferType),
+                "raw_def_kind" to (rawDef?.javaClass?.simpleName ?: "null"),
+                "raw_def_preview" to rawPreview(rawDef),
+                "first_uri" to locations.firstOrNull()?.uri.orEmpty(),
+                "first_file" to (locations.firstOrNull()?.file?.absolutePath.orEmpty()),
+                "first_line" to (locations.firstOrNull()?.line ?: -1),
+                "first_column" to (locations.firstOrNull()?.column ?: -1)
+            )
+        )
+        return DefinitionProbe(
+            locations = locations,
+            source = source,
+            elapsedMs = elapsed,
+            preferType = preferType,
+            rawDefinition = rawPreview(rawDef),
+            rawTypeDefinition = rawPreview(rawType),
+            rawNull = rawDef == null
+        )
+    }
+
+    private fun rawPreview(raw: Any?): String? {
+        if (raw == null) return null
+        val text = raw.toString()
+        return if (text.length <= 1500) text else text.take(1500) + "…"
+    }
+
+    /**
+     * 光标在「类型限定名.」上，且该段不是方法调用名。
+     * System.out → true；out.println → false（out 是字段）；println( → false。
+     */
+    private fun isTypeQualifierName(file: File, line: Int, column: Int): Boolean {
+        val uri = EditorLspUris.forFile(file)
+        val text = openDocuments[uri]?.text
+            ?: openDocuments.entries.firstOrNull { EditorLspUris.same(it.key, uri) }?.value?.text
+            ?: return false
+        val lineText = text.lineSequence().elementAtOrNull(line) ?: return false
+        if (lineText.isEmpty()) return false
+        var index = column.coerceIn(0, lineText.length)
+        if (index == lineText.length) index -= 1
+        if (index < 0) return false
+        if (!lineText[index].isJavaIdentPart()) {
+            if (index > 0 && lineText[index - 1].isJavaIdentPart()) index -= 1 else return false
+        }
+        var start = index
+        while (start > 0 && lineText[start - 1].isJavaIdentPart()) start--
+        var end = index + 1
+        while (end < lineText.length && lineText[end].isJavaIdentPart()) end++
+        var after = end
+        while (after < lineText.length && lineText[after].isWhitespace()) after++
+        if (after >= lineText.length || lineText[after] != '.') return false
+        // 标识符前若还有「.」，多半是成员链中间（out / println），不要优先 typeDefinition
+        var before = start - 1
+        while (before >= 0 && lineText[before].isWhitespace()) before--
+        if (before >= 0 && lineText[before] == '.') return false
+        // 后跟 '.' 且名字首字母大写（类型约定）或已知常见类型别名
+        val name = lineText.substring(start, end)
+        return name.isNotEmpty() && name[0].isUpperCase()
+    }
+
+    private fun Char.isJavaIdentPart(): Boolean {
+        return this.isLetterOrDigit() || this == '_' || this == '$'
+    }
+
+    /**
+     * 当 textDocument/definition 对方法名返回空时：
+     * 取前一段接收者（out / System）→ typeDefinition/definition → 打开类源码 → 定位 methodName。
+     */
+    private fun resolveMethodViaReceiver(
+        client: EditorLspClient,
+        file: File,
+        line: Int,
+        column: Int,
+        timeout: Long
+    ): EditorLspLocation? {
+        val uri = EditorLspUris.forFile(file)
+        val text = openDocuments[uri]?.text
+            ?: openDocuments.entries.firstOrNull { EditorLspUris.same(it.key, uri) }?.value?.text
+            ?: return null
+        val lineText = text.lineSequence().elementAtOrNull(line) ?: return null
+        val method = findIdentSpan(lineText, column) ?: return null
+        // 方法调用：println(
+        var afterMethod = method.second
+        while (afterMethod < lineText.length && lineText[afterMethod].isWhitespace()) afterMethod++
+        if (afterMethod >= lineText.length || lineText[afterMethod] != '(') return null
+        // 接收者：.out. 或 System.
+        var before = method.first - 1
+        while (before >= 0 && lineText[before].isWhitespace()) before--
+        if (before < 0 || lineText[before] != '.') return null
+        before--
+        while (before >= 0 && lineText[before].isWhitespace()) before--
+        if (before < 0 || !lineText[before].isJavaIdentPart()) return null
+        val receiver = findIdentSpan(lineText, before) ?: return null
+        val receiverCol = receiver.first + (receiver.second - receiver.first).coerceAtLeast(1) / 2
+        var typeLocs = EditorLspProtocol.parseLocations(
+            client.typeDefinition(uri, line, receiverCol, timeout)
+        )
+        if (typeLocs.isEmpty()) {
+            typeLocs = EditorLspProtocol.parseLocations(
+                client.definition(uri, line, receiverCol, timeout)
+            )
+        }
+        val typeLoc = typeLocs.firstOrNull() ?: return null
+        val resolved = resolveNavigationLocation(file, LANGUAGE_JAVA, typeLoc) ?: return null
+        if (!resolved.file.isFile) return null
+        val methodName = lineText.substring(method.first, method.second)
+        val anchor = findMethodInJavaSource(resolved.file, methodName) ?: return null
+        return EditorLspLocation(
+            file = resolved.file,
+            line = anchor.first,
+            column = anchor.second,
+            uri = resolved.uri.ifBlank { typeLoc.uri }
+        )
+    }
+
+    private fun findIdentSpan(lineText: String, column: Int): Pair<Int, Int>? {
+        if (lineText.isEmpty()) return null
+        var index = column.coerceIn(0, lineText.length)
+        if (index == lineText.length) index -= 1
+        if (index < 0) return null
+        if (!lineText[index].isJavaIdentPart()) {
+            if (index > 0 && lineText[index - 1].isJavaIdentPart()) index -= 1 else return null
+        }
+        var start = index
+        while (start > 0 && lineText[start - 1].isJavaIdentPart()) start--
+        var end = index + 1
+        while (end < lineText.length && lineText[end].isJavaIdentPart()) end++
+        return start to end
+    }
+
+    /** 在反编译/源码中定位方法名，尽量匹配声明行。 */
+    private fun findMethodInJavaSource(sourceFile: File, methodName: String): Pair<Int, Int>? {
+        val lines = runCatching { sourceFile.readLines() }.getOrNull() ?: return null
+        val decl = Regex(
+            """(?:^|[\s;.{}])(?:public|protected|private|static|final|native|synchronized|default|abstract|\s)+""" +
+                """[\w.<>,\[\]\s]+\s+${Regex.escape(methodName)}\s*\("""
+        )
+        val loose = Regex("""\b${Regex.escape(methodName)}\s*\(""")
+        var fallback: Pair<Int, Int>? = null
+        for (i in lines.indices) {
+            val text = lines[i]
+            if (decl.containsMatchIn(text)) {
+                val col = text.indexOf(methodName).coerceAtLeast(0)
+                return i to col
+            }
+            if (fallback == null) {
+                val at = text.indexOf(methodName)
+                if (at >= 0 && loose.containsMatchIn(text) && !text.trimStart().startsWith("//")) {
+                    fallback = i to at
+                }
+            }
+        }
+        return fallback
     }
 
     fun references(file: File, languageId: String, line: Int, column: Int): List<EditorLspLocation> {
         if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return emptyList()
         val client = clientFor(file, languageId) ?: return emptyList()
         val uri = EditorLspUris.forFile(file)
-        return EditorLspProtocol.parseLocations(client.references(uri, line, column))
+        return EditorLspProtocol.parseLocations(
+            client.references(uri, line, column, navigationTimeout(languageId))
+        )
+    }
+
+    private fun navigationTimeout(languageId: String): Long {
+        return when (languageId) {
+            LANGUAGE_JAVA -> EditorJdtLsSupport.NAVIGATION_TIMEOUT_MILLIS
+            else -> maxOf(settings.timeoutMillis, 8_000L)
+        }
     }
 
     /**
@@ -351,6 +598,7 @@ class EditorLspManager(private val context: Context) {
         if (languageId != LANGUAGE_JAVA) return null
         val client = clientFor(workspaceFile, languageId) ?: return null
         return EditorJdtClassFileSupport.resolve(client, location)
+            ?: location.takeIf { it.file.isFile }
     }
 
     fun codeActions(
@@ -393,6 +641,26 @@ class EditorLspManager(private val context: Context) {
                 it.title.contains("组织", ignoreCase = false)
         } ?: actions.firstOrNull() ?: return false
         return applyCodeAction(file, languageId, action)
+    }
+
+    /** 整文件格式化（LSP textDocument/formatting）。无改动时也返回 true。 */
+    fun formatDocument(
+        file: File,
+        languageId: String,
+        tabSize: Int = 4,
+        insertSpaces: Boolean = true
+    ): Boolean {
+        if (!settings.enabled || !lspInstaller.isLanguageInstalled(languageId)) return false
+        val client = clientFor(file, languageId) ?: return false
+        val uri = EditorLspUris.forFile(file)
+        val result = client.formatting(uri, tabSize, insertSpaces) ?: return false
+        val edits = when (result) {
+            is JSONArray -> EditorLspProtocol.parseTextEditArray(result)
+            else -> emptyList()
+        }
+        if (edits.isEmpty()) return true
+        applyFileEdits(listOf(file to edits))
+        return true
     }
 
     fun applyCodeAction(file: File, languageId: String, action: EditorLspCodeAction): Boolean {
