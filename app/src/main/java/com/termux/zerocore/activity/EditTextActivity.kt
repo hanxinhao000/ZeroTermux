@@ -315,7 +315,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private val dirtyCheckHandler = Handler(Looper.getMainLooper())
     private val editorTabs = ArrayList<EditorTab>()
     private var lspContentChangeSubscribed = false
-    private var lspInteractionSubscribed = false
+    private var lspIdentifierHighlightSubscribed = false
     private val lspDocumentChangeRunnable = Runnable { flushLspDocumentChange() }
     private data class LspNavMark(val file: File, val line: Int, val column: Int)
     private val lspNavStack = ArrayDeque<LspNavMark>()
@@ -533,15 +533,13 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
                     scheduleLspDocumentChange()
                 }
             }
-            if (!lspInteractionSubscribed) {
-                lspInteractionSubscribed = true
-                lspSymbolPopup = EditorLspSymbolPopup(this)
+            if (!lspIdentifierHighlightSubscribed) {
+                lspIdentifierHighlightSubscribed = true
                 subscribeEvent(ClickEvent::class.java) { event, _ ->
                     if (!lspEnabled || cursor.isSelected) return@subscribeEvent
-                    // 点击标识符：整词高亮(下划线感) + 悬浮窗查引用
-                    maybeOpenReferencesOnClick(event.line, event.column)
+                    // 单击只高亮同名标识符，不弹引用悬浮窗（引用请用菜单）
+                    highlightIdentifierOnClick(event.line, event.column)
                 }
-                // 长按留给系统选区/复制/剪切；悬停信息请用编辑器菜单「悬停」
             }
         }
     }
@@ -2341,16 +2339,14 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         }
     }
 
-    private fun maybeOpenReferencesOnClick(line: Int, column: Int) {
-        if (!lspEnabled || !::lspManager.isInitialized) return
+    private fun highlightIdentifierOnClick(line: Int, column: Int) {
         val editor = code_editor ?: return
-        val file = currentFile ?: return
-        val languageId = lspLanguageId(getFileExtension(file)) ?: return
-        if (!lspManager.isLanguageInstalled(languageId)) return
-        val hit = EditorLspSymbolPopup.findIdentifierAt(editor, line, column) ?: return
-        // 关键字太短/纯数字一般不是符号引用
-        if (hit.word.length < 2 || hit.word.all { it.isDigit() }) return
-        openReferencesPopup(hit.line, hit.startColumn, hit.word)
+        val hit = EditorLspSymbolPopup.findIdentifierAt(editor, line, column)
+        if (hit == null || hit.word.length < 2 || hit.word.all { it.isDigit() }) {
+            clearLspReferenceHighlight()
+            return
+        }
+        highlightIdentifierWord(hit.word)
     }
 
     private fun clearLspReferenceHighlight() {
@@ -4267,6 +4263,9 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_BRIEF_MSG, 0xFFE8E8E8.toInt())
         scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_DETAILED_MSG, 0xFFB0B0B0.toInt())
         scheme.setColor(EditorColorScheme.DIAGNOSTIC_TOOLTIP_ACTION, 0xFF4DAAFC.toInt())
+        // 单击标识符高亮：介于亮黄与过暗之间的半透明蓝灰
+        scheme.setColor(EditorColorScheme.MATCHED_TEXT_BACKGROUND, 0x804A6B8A.toInt())
+        scheme.setColor(EditorColorScheme.MATCHED_TEXT_BORDER, 0x004A6FA5.toInt())
         code_editor?.getComponent(EditorAutoCompletion::class.java)?.applyColorScheme()
     }
 
