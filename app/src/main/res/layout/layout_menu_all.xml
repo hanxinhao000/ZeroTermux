@@ -11,501 +11,441 @@
         android:id="@+id/scrollView_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- 方案 A：一行状态 + 次要摘要；详情折叠 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/main_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="2dp"
                 app:cardBackgroundColor="@color/color_55000000"
-                app:cardCornerRadius="6dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="0dp">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
-                    <LinearLayout
+                    <!-- 行 1：品牌 · 版本 · 服务状态 · NEW · 设置 -->
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:layout_height="wrap_content">
 
                         <LinearLayout
+                            android:id="@+id/menu_status_brand_row"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_toStartOf="@+id/menu_status_actions"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Z"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="25sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="ero"
+                                android:text="ZT"
                                 android:textColor="@color/color_ffffff"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="T"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="25sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="ermux"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-                                <TextView
-                                    android:id="@+id/zt_new"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/zt_new"
-                                    android:paddingLeft="5dp"
-                                    android:visibility="gone"
-                                    android:paddingRight="5dp"
-                                    android:paddingTop="3dp"
-                                    android:paddingBottom="3dp"
-                                    android:background="@drawable/bg_new_v"
-                                    android:layout_alignParentRight="true"
-                                    android:textColor="@color/color_ffffff"
-                                    android:textSize="10sp"/>
-                            </RelativeLayout>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/version"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/版本"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text=" / "
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:text="·"
+                                android:textColor="#66FFFFFF"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/service_status"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@string/正在连接"
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/menu_status_actions"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/zt_new"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/正在连接"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_new_v"
+                                android:paddingLeft="5dp"
+                                android:paddingTop="2dp"
+                                android:paddingRight="5dp"
+                                android:paddingBottom="2dp"
+                                android:text="@string/zt_new"
                                 android:textColor="@color/color_ffffff"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
+                                android:textSize="9sp"
+                                android:visibility="gone" />
 
+                            <ImageView
+                                android:id="@+id/open_settings"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:contentDescription="@string/action_open_settings"
+                                android:padding="1dp"
+                                android:rotation="270"
+                                android:src="@mipmap/up_down" />
                         </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- IP 常显：列出全部本机 IPv4，不折叠 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ip_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="2dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="IP"
+                        android:textColor="@color/color_ffffff"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/ip_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/正在连接"
+                        android:textColor="@color/color_48baf3"
+                        android:textIsSelectable="true"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 当前菜单包摘要 + 展开更多（引擎/社群/菜单包/数据包） -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/menu_header_more_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="2dp"
+                app:cardBackgroundColor="@color/color_55000000"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
+
+                <RelativeLayout
+                    android:id="@+id/menu_header_more_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/menu_package_current"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/open_image"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/open_image"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/up_down" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 折叠详情：引擎 / 社群 / 菜单包 / 数据包 -->
+            <LinearLayout
+                android:id="@+id/menu_header_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/info_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="@color/color_55000000"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/eg_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@+id/version"
                                 android:text="@string/版本"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="11sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text=" / "
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:text="·"
+                                android:textColor="#66FFFFFF"
+                                android:textSize="11sp" />
 
                             <TextView
                                 android:id="@+id/service_eg"
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:text="@string/正在连接"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="10sp"
-                                android:textStyle="bold" />
-
+                                android:textColor="#B3FFFFFF"
+                                android:textSize="11sp" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/qq_group_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/qq_group"
+                                android:textColor="@color/color_48baf3"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/telegram_group_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:gravity="center"
+                                android:text="@string/telegram_group"
+                                android:textColor="@color/color_48baf3"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/msg_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/会话窗口在右侧"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="11sp" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_package_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="2dp"
+                    app:cardBackgroundColor="@color/color_55000000"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginRight="10dp"
                         android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/open_settings"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:rotation="270"
-                            android:src="@mipmap/up_down" />
+                        <RelativeLayout
+                            android:id="@+id/menu_package_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/menu_package_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/menu_package_card_title"
+                                android:textColor="@color/color_ffffff"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/open_image_menu"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:src="@mipmap/up_down" />
+                        </RelativeLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/menu_package_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:nestedScrollingEnabled="false"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/data_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="2dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/color_55000000"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:padding="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="10dp" />
-                    </LinearLayout>
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="@string/zt_data_info_title"
+                            android:textColor="@color/color_ffffff"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/open_image_data"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:src="@mipmap/up_down" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
 
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/ip_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                app:cardBackgroundColor="@color/color_55000000"
-                app:cardCornerRadius="6dp"
-                app:cardElevation="0dp">
-
-                <RelativeLayout
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/data_info_card"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="2dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/color_55000000"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="10dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginTop="5dp"
-                            android:text="IP"
-                            android:textColor="@color/color_ffffff"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/ip_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginTop="5dp"
-                            android:text="@string/正在连接"
-                            android:textColor="@color/color_ffffff"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginRight="10dp"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/open_image"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:src="@mipmap/up_down" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="10dp" />
-                    </LinearLayout>
-                </RelativeLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/info_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:visibility="gone"
-                app:cardBackgroundColor="@color/color_55000000"
-                app:cardCornerRadius="6dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="5dp"
-                        android:text="INFO"
-                        android:textColor="@color/color_ffffff"
-                        android:textSize="25sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/qq_group_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/qq_group"
-                            android:textColor="@color/color_48baf3"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/telegram_group_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp"
-                            android:gravity="center"
-                            android:text="@string/telegram_group"
-                            android:textColor="@color/color_48baf3"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/msg_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/会话窗口在右侧"
-                        android:textColor="@color/color_ffffff"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/menu_package_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                app:cardBackgroundColor="@color/color_55000000"
-                app:cardCornerRadius="6dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <RelativeLayout
-                        android:id="@+id/menu_package_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp">
-
-                        <LinearLayout
+                            android:id="@+id/data_info_content"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/menu_package_card_title"
-                                android:textColor="@color/color_ffffff"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/menu_package_current"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:textColor="@color/color_48baf3"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentBottom="true"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:id="@+id/open_image_menu"
-                                android:layout_width="15dp"
-                                android:layout_height="15dp"
-                                android:src="@mipmap/up_down" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="10dp" />
-                        </LinearLayout>
-                    </RelativeLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/menu_package_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:nestedScrollingEnabled="false"
-                        android:visibility="gone" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/data_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:visibility="visible"
-                app:cardBackgroundColor="@color/color_55000000"
-                app:cardCornerRadius="6dp"
-                app:cardElevation="0dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="5dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:text="@string/zt_data_info_title"
+                            android:text="data package info."
                             android:textColor="@color/color_ffffff"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
+                            android:textIsSelectable="true"
+                            android:textSize="12sp" />
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="5dp"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/open_image_data"
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@mipmap/up_down" />
-
-                    </LinearLayout>
-                </RelativeLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/data_info_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:visibility="gone"
-                app:cardBackgroundColor="@color/color_55000000"
-                app:cardCornerRadius="6dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/data_info_content"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="5dp"
-                        android:textIsSelectable="true"
-                        android:text="data package info."
-                        android:textColor="@color/color_ffffff"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp">
+
                 <com.termux.zerocore.config.mainmenu.view.NonScrollRecyclerView
                     android:id="@+id/main_menu_list"
-                    android:background="@android:color/transparent"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:nestedScrollingEnabled="false" />
+
                 <TextView
-                    android:layout_width="wrap_content"
                     android:id="@+id/error_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:text=""
-                    android:visibility="gone"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
                     android:textSize="13sp"
-                    android:layout_margin="10dp"
-                    android:layout_height="wrap_content"/>
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <TextView
@@ -513,7 +453,6 @@
                 android:layout_height="50dp" />
 
         </LinearLayout>
-
     </ScrollView>
 
 </LinearLayout>
