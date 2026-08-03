@@ -82,7 +82,7 @@
     <string name="zt_ai_tool_param_max_wait">Max ms to wait for shell prompt after send; default 600000</string>
     <string name="zt_ai_tool_param_terminal_key">enter, tab, escape, backspace, up, down, left, right, ctrl_c, ctrl_d, ctrl_l, ctrl_z</string>
     <string name="zt_ai_tool_param_run_zt_cmd">zt command without `zt` prefix, e.g. help or openpage zt_settings</string>
-    <string name="zt_ai_tool_param_fs_path">Absolute path, or relative to ~/home; Termux files and external storage allowed</string>
+    <string name="zt_ai_tool_param_fs_path">Path: absolute, relative to home, ~/…, $HOME/…, or /tmp (maps to Termux $PREFIX/tmp)</string>
     <string name="zt_ai_tool_param_fs_content">Full text content to write</string>
     <string name="zt_ai_tool_param_fs_max_bytes">Max bytes to read; default 524288 (512KB), max 2MB</string>
 

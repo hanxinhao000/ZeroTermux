@@ -38,10 +38,11 @@ object ZtWorkstationFileHelper {
         if (relativeOrAbsolute.isNullOrBlank()) {
             return if (homeDir.isDirectory) homeDir else rootDir
         }
-        val target = if (relativeOrAbsolute.startsWith("/")) {
-            File(relativeOrAbsolute)
+        val expanded = expandUserPath(relativeOrAbsolute.trim())
+        val target = if (expanded.startsWith("/")) {
+            File(expanded)
         } else {
-            File(homeDir, relativeOrAbsolute)
+            File(homeDir, expanded)
         }
         val normalized = normalizePathParts(target.absolutePath)
         if (!isAllowedNormalizedPath(normalized)) return null
@@ -54,9 +55,32 @@ object ZtWorkstationFileHelper {
         }
     }
 
+    /**
+     * 把模型常用的 shell 路径习惯展开到 Termux 实际路径：
+     * `~` / `$HOME` → home；`/tmp` / `$TMPDIR` → $PREFIX/tmp。
+     */
+    fun expandUserPath(path: String): String {
+        val home = homeDir.absolutePath
+        val tmp = TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH
+        return when {
+            path == "~" || path == "\$HOME" -> home
+            path.startsWith("~/") -> home + path.substring(1)
+            path.startsWith("\$HOME/") -> home + path.removePrefix("\$HOME")
+            path == "/tmp" || path == "\$TMPDIR" -> tmp
+            path.startsWith("/tmp/") -> tmp + path.removePrefix("/tmp")
+            path.startsWith("\$TMPDIR/") -> tmp + path.removePrefix("\$TMPDIR")
+            else -> path
+        }
+    }
+
+    private const val INVALID_PATH_HINT =
+        "invalid path (allowed: Termux files / external storage; ~ and /tmp are expanded)"
+
     fun listDirectory(path: String?): String {
-        val dir = resolveSafePath(path) ?: return errorJson("invalid path")
-        if (!dir.exists() || !dir.isDirectory) return errorJson("not a directory")
+        val dir = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
+        if (!dir.exists() || !dir.isDirectory) {
+            return errorJson("not a directory", dir.absolutePath)
+        }
         val parent = resolveParentPath(dir)
         val items = dir.listFiles()?.sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
             ?.map { file ->
@@ -145,38 +169,38 @@ object ZtWorkstationFileHelper {
     }
 
     fun rename(path: String, newName: String): String {
-        val file = resolveSafePath(path) ?: return errorJson("invalid path")
+        val file = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
         if (file == rootDir || file == homeDir) return errorJson("cannot rename root")
         val trimmed = newName.trim()
         if (trimmed.isEmpty() || trimmed.contains("/") || trimmed.contains("\\")) {
             return errorJson("invalid name")
         }
         val dest = File(file.parentFile, trimmed)
-        resolveSafePath(dest.absolutePath) ?: return errorJson("invalid destination")
-        if (dest.exists()) return errorJson("target exists")
+        resolveSafePath(dest.absolutePath) ?: return errorJson("invalid destination", dest.absolutePath)
+        if (dest.exists()) return errorJson("target exists", dest.absolutePath)
         return if (file.renameTo(dest)) {
             gson.toJson(mapOf("ok" to true, "path" to dest.absolutePath))
         } else {
-            errorJson("rename failed")
+            errorJson("rename failed", file.absolutePath)
         }
     }
 
     fun createFile(path: String): String {
-        val file = resolveSafePath(path) ?: return errorJson("invalid path")
-        if (file.exists()) return errorJson("already exists")
-        if (file.isDirectory) return errorJson("target is directory")
+        val file = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
+        if (file.exists()) return errorJson("already exists", file.absolutePath)
+        if (file.isDirectory) return errorJson("target is directory", file.absolutePath)
         file.parentFile?.mkdirs()
         return if (file.createNewFile()) {
             gson.toJson(mapOf("ok" to true, "path" to file.absolutePath))
         } else {
-            errorJson("create failed")
+            errorJson("create failed", file.absolutePath)
         }
     }
 
     fun readText(path: String, maxBytes: Int = 512 * 1024): String {
-        val file = resolveSafePath(path) ?: return errorJson("invalid path")
-        if (!file.isFile) return errorJson("not a file")
-        if (file.length() > maxBytes) return errorJson("file too large")
+        val file = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
+        if (!file.isFile) return errorJson("not a file", file.absolutePath)
+        if (file.length() > maxBytes) return errorJson("file too large", file.absolutePath)
         return try {
             gson.toJson(
                 mapOf(
@@ -188,25 +212,25 @@ object ZtWorkstationFileHelper {
                 )
             )
         } catch (e: Exception) {
-            errorJson(e.message ?: "read failed")
+            errorJson(e.message ?: "read failed", file.absolutePath)
         }
     }
 
     fun writeText(path: String, content: String): String {
-        val file = resolveSafePath(path) ?: return errorJson("invalid path")
-        if (file.isDirectory) return errorJson("target is directory")
+        val file = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
+        if (file.isDirectory) return errorJson("target is directory", file.absolutePath)
         return try {
             file.parentFile?.mkdirs()
             file.writeText(content)
             gson.toJson(mapOf("ok" to true, "path" to file.absolutePath, "size" to file.length()))
         } catch (e: Exception) {
-            errorJson(e.message ?: "write failed")
+            errorJson(e.message ?: "write failed", file.absolutePath)
         }
     }
 
     fun stat(path: String): String {
-        val file = resolveSafePath(path) ?: return errorJson("invalid path")
-        if (!file.exists()) return errorJson("not found")
+        val file = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
+        if (!file.exists()) return errorJson("not found", file.absolutePath)
         return gson.toJson(
             mapOf(
                 "ok" to true,
@@ -226,24 +250,24 @@ object ZtWorkstationFileHelper {
     }
 
     fun mkdir(path: String): String {
-        val dir = resolveSafePath(path) ?: return errorJson("invalid path")
+        val dir = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
         return if (dir.exists() || dir.mkdirs()) {
             gson.toJson(mapOf("ok" to true, "path" to dir.absolutePath))
         } else {
-            errorJson("mkdir failed")
+            errorJson("mkdir failed", dir.absolutePath)
         }
     }
 
     fun delete(path: String): String {
-        val file = resolveSafePath(path) ?: return errorJson("invalid path")
+        val file = resolveSafePath(path) ?: return errorJson(INVALID_PATH_HINT, path)
         if (file == rootDir || file == homeDir) return errorJson("cannot delete root")
         val ok = if (file.isDirectory) file.deleteRecursively() else file.delete()
         return gson.toJson(mapOf("ok" to ok))
     }
 
     fun copy(from: String, to: String): String {
-        val src = resolveSafePath(from) ?: return errorJson("invalid source")
-        val dst = resolveSafePath(to) ?: return errorJson("invalid destination")
+        val src = resolveSafePath(from) ?: return errorJson("invalid source", from)
+        val dst = resolveSafePath(to) ?: return errorJson("invalid destination", to)
         return try {
             if (src.isDirectory) {
                 src.copyRecursively(dst, overwrite = true)
@@ -258,8 +282,8 @@ object ZtWorkstationFileHelper {
     }
 
     fun move(from: String, to: String): String {
-        val src = resolveSafePath(from) ?: return errorJson("invalid source")
-        val dst = resolveSafePath(to) ?: return errorJson("invalid destination")
+        val src = resolveSafePath(from) ?: return errorJson("invalid source", from)
+        val dst = resolveSafePath(to) ?: return errorJson("invalid destination", to)
         dst.parentFile?.mkdirs()
         val renamed = src.renameTo(dst)
         if (renamed) return gson.toJson(mapOf("ok" to true))
@@ -273,8 +297,8 @@ object ZtWorkstationFileHelper {
     }
 
     fun saveUploadedFile(targetPath: String, input: java.io.InputStream): String {
-        val file = resolveSafePath(targetPath) ?: return errorJson("invalid path")
-        if (file.isDirectory) return errorJson("target is directory")
+        val file = resolveSafePath(targetPath) ?: return errorJson(INVALID_PATH_HINT, targetPath)
+        if (file.isDirectory) return errorJson("target is directory", file.absolutePath)
         file.parentFile?.mkdirs()
         FileOutputStream(file).use { out -> input.copyTo(out) }
         return gson.toJson(mapOf("ok" to true, "path" to file.absolutePath))
@@ -286,8 +310,12 @@ object ZtWorkstationFileHelper {
         return file to FileInputStream(file)
     }
 
-    private fun errorJson(message: String): String {
-        return gson.toJson(mapOf("ok" to false, "error" to message))
+    private fun errorJson(message: String, path: String? = null): String {
+        return if (path.isNullOrBlank()) {
+            gson.toJson(mapOf("ok" to false, "error" to message))
+        } else {
+            gson.toJson(mapOf("ok" to false, "error" to message, "path" to path))
+        }
     }
 
     private fun guessMimeType(name: String): String {
