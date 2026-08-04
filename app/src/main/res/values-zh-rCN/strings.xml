@@ -822,6 +822,7 @@
     <string name="editor_toolbar_terminal">Shell 终端</string>
     <string name="editor_toolbar_format">格式化代码</string>
     <string name="editor_toolbar_duplicate_line">复制当前行</string>
+    <string name="editor_toolbar_keyboard">弹出软键盘</string>
     <string name="editor_toolbar_goto_def">转到定义模式</string>
     <string name="editor_toolbar_goto_def_on">点击类或符号即可进入定义，再点一次按钮退出</string>
     <string name="editor_toolbar_extra_toggle">终端 / GUI 栏</string>

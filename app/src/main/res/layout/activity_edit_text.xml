@@ -182,6 +182,18 @@
             android:visibility="gone">
 
             <ImageView
+                android:id="@+id/editor_action_keyboard"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/shape_editor_toolbar_button"
+                android:contentDescription="@string/editor_toolbar_keyboard"
+                android:padding="6dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_editor_keyboard"
+                android:tint="#F4F4F4" />
+
+            <ImageView
                 android:id="@+id/editor_action_duplicate_line"
                 android:layout_width="32dp"
                 android:layout_height="32dp"

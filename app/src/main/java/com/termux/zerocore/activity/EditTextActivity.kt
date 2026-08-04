@@ -232,6 +232,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
     private var mEditorFormatButton: ImageView? = null
     private var mEditorGotoDefButton: ImageView? = null
     private var mEditorDuplicateLineButton: ImageView? = null
+    private var mEditorKeyboardButton: ImageView? = null
     private var mEditorToolbarExtraButton: ImageView? = null
     private var mEditorToolbarSecondary: View? = null
     private var mEditorToolbarContainer: View? = null
@@ -478,6 +479,7 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         mEditorFormatButton = findViewById(R.id.editor_action_format)
         mEditorGotoDefButton = findViewById(R.id.editor_action_goto_def)
         mEditorDuplicateLineButton = findViewById(R.id.editor_action_duplicate_line)
+        mEditorKeyboardButton = findViewById(R.id.editor_action_keyboard)
         mEditorToolbarExtraButton = findViewById(R.id.editor_action_toolbar_extra)
         mEditorX11Button = findViewById(R.id.editor_action_x11)
         mEditorRunButton = findViewById(R.id.editor_action_run)
@@ -631,6 +633,9 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         }
         mEditorDuplicateLineButton?.setOnClickListener {
             duplicateCurrentLineOrSelection()
+        }
+        mEditorKeyboardButton?.setOnClickListener {
+            forceShowSoftKeyboard()
         }
         mEditorX11Button?.setOnClickListener {
             editorAiPanel?.dismissPanel()
@@ -1213,6 +1218,26 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
         updateToolbarButtonState(mEditorRedoButton, editable && isEditorActionAvailable("redo"))
         updateToolbarButtonState(mEditorDuplicateLineButton, editable)
         mEditorDuplicateLineButton?.visibility = View.VISIBLE
+        updateToolbarButtonState(mEditorKeyboardButton, true)
+        mEditorKeyboardButton?.visibility = View.VISIBLE
+    }
+
+    /** 强制弹出系统软键盘（外接键盘场景下也可唤起）。 */
+    private fun forceShowSoftKeyboard() {
+        val editor = code_editor ?: return
+        // 若底部 Dock 占着焦点，先清掉，避免软键盘仍挂在终端/GUI 上
+        findViewById<View>(R.id.editor_terminal_input)?.clearFocus()
+        KeyboardUtils.clearDisableSoftKeyboardFlags(this)
+        editor.setSoftKeyboardEnabled(true)
+        editor.setDisableSoftKbdIfHardKbdAvailable(false)
+        editor.isFocusable = true
+        editor.isFocusableInTouchMode = true
+        editor.requestFocus()
+        editor.post {
+            KeyboardUtils.showSoftKeyboard(this, editor)
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+            imm?.showSoftInput(editor, android.view.inputmethod.InputMethodManager.SHOW_FORCED)
+        }
     }
 
     /**

@@ -846,6 +846,7 @@ Reset successfully</string>
     <string name="editor_toolbar_terminal">Shell</string>
     <string name="editor_toolbar_format">Format code</string>
     <string name="editor_toolbar_duplicate_line">Duplicate line</string>
+    <string name="editor_toolbar_keyboard">Show keyboard</string>
     <string name="editor_toolbar_goto_def">Go to definition mode</string>
     <string name="editor_toolbar_goto_def_on">Tap a symbol to open its definition. Tap the button again to exit.</string>
     <string name="editor_toolbar_extra_toggle">Terminal / GUI bar</string>
