@@ -1096,7 +1096,7 @@ Reset successfully</string>
     <string name="bottom_keyboard_settings">Set keyboard rules</string>
     <string name="bottom_keyboard_settings_note">Enter personalized keyboard rules to improve input efficiency</string>
     <string name="log_output">Output LOG to memory card</string>
-    <string name="log_output_note">Output the LOG file to\n[/xinhao/ZeroTermuxLog/ZeroTermux.log]\nIt may affect performance, please enable it with caution!!!!</string>
+    <string name="log_output_note">Writes logs under xinhao/ZeroTermuxLog/\n• ZeroTermux.log — general\n• timer_diag.log — timer schedule/fire/skip (for missed runs)\nAlso ~/.timerdir/log/timer_diag.log\nMay affect performance; enable only when debugging.</string>
     <string name="zt_about">About ZeroTermux</string>
     <string name="zt_about_zerotermux">ZeroTermux GITHUB</string>
     <string name="zt_about_zerotermux_note">Jump to ZeroTermux GITHUB page</string>

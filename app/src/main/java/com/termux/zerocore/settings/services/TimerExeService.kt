@@ -11,6 +11,7 @@ import com.termux.R
 import com.termux.zerocore.ftp.utils.TimerSetManage
 import com.termux.zerocore.libsu.LibSuManage
 import com.termux.zerocore.settings.timer.TimerBean
+import com.termux.zerocore.settings.timer.TimerDiagLog
 import com.termux.zerocore.settings.timer.TimerNotificationHelper
 import com.termux.zerocore.settings.timer.TimerRuntimeState
 import com.termux.zerocore.settings.timer.TimerScheduleHelper
@@ -74,15 +75,21 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             TIMER_EXE_START -> {
-                LogUtils.e(TAG, "onStartCommand TIMER_EXE_START")
                 val resume = intent.getBooleanExtra(EXTRA_RESUME, false)
+                LogUtils.e(TAG, "onStartCommand TIMER_EXE_START resume=$resume")
+                TimerDiagLog.i(TAG, "onStartCommand START resume=$resume flags=$flags startId=$startId")
+                TimerDiagLog.logSnapshot(TAG, "before_startTimer")
                 startTimer(resume)
                 return START_STICKY
             }
             TIMER_EXE_END -> {
                 LogUtils.e(TAG, "onStartCommand TIMER_EXE_END")
+                TimerDiagLog.i(TAG, "onStartCommand END")
                 endTime(userInitiated = true)
                 return START_NOT_STICKY
+            }
+            else -> {
+                TimerDiagLog.w(TAG, "onStartCommand unknown action=${intent?.action} isActive=${isActive.get()}")
             }
         }
         return if (isActive.get()) START_STICKY else START_NOT_STICKY
@@ -90,17 +97,24 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         if (isActive.get()) {
+            TimerDiagLog.w(TAG, "onTaskRemoved -> saveForBackgroundResume")
+            TimerDiagLog.logSnapshot(TAG, "task_removed")
             TimerSessionPersist.saveForBackgroundResume()
             refreshForegroundNotification()
+        } else {
+            TimerDiagLog.i(TAG, "onTaskRemoved ignored (not active)")
         }
         super.onTaskRemoved(rootIntent)
     }
 
     private fun startTimer(resume: Boolean = false) {
         if (!isActive.compareAndSet(false, true)) {
+            TimerDiagLog.w(TAG, "startTimer ignored: already active resume=$resume")
+            TimerDiagLog.logSnapshot(TAG, "start_already_active")
             refreshForegroundNotification()
             return
         }
+        TimerDiagLog.i(TAG, "startTimer begin resume=$resume paths=${TimerDiagLog.logFilePaths()}")
         isLaunchingCommand.set(false)
         if (resume) {
             TimerRuntimeState.setExecutingScript(false)
@@ -120,6 +134,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             mLibSuManage?.cunt = TimerRuntimeState.getExecutionCount()
         }
         if (isScriptRunning()) {
+            TimerDiagLog.w(TAG, "startTimer: script already running, resumeActiveScriptState")
             resumeActiveScriptState()
             startStuckWatchdog()
             return
@@ -134,37 +149,47 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             scheduleNextExecution()
         }
         startStuckWatchdog()
+        TimerDiagLog.logSnapshot(TAG, "startTimer_done")
     }
 
     private fun resumeFromPersistedSchedule() {
         val remaining = TimerRuntimeState.remainingMillis()
+        TimerDiagLog.i(TAG, "resumeFromPersistedSchedule remaining=$remaining next=${TimerRuntimeState.getNextFireAtMillis()}")
         if (remaining > 0L) {
             TimerRuntimeState.statusMessage = buildWaitingMessage()
             mainHandler.removeCallbacks(scheduleRunnable)
             mainHandler.postDelayed(scheduleRunnable, remaining)
             refreshForegroundNotification()
+            TimerDiagLog.i(TAG, "resume: re-armed delay=${remaining}ms")
             return
         }
         val nextFire = TimerRuntimeState.getNextFireAtMillis()
         if (nextFire > 0L) {
             mTimerBean = TimerSetManage.get().getZTTimerBean()
             val bean = mTimerBean
-            // 每日定时若已过期较久，说明错过窗口；直接排到下一天，避免重复执行后卡在 00:00
+            val overdue = System.currentTimeMillis() - nextFire
             if (bean != null &&
                 bean.timerMode == TimerBean.MODE_DAILY_TIME &&
-                System.currentTimeMillis() - nextFire > DAILY_OVERDUE_SKIP_MS
+                overdue > DAILY_OVERDUE_SKIP_MS
             ) {
                 LogUtils.e(TAG, "resume: daily fire overdue, reschedule to next day")
+                TimerDiagLog.w(
+                    TAG,
+                    "resume SKIP overdue daily fire overdueMs=$overdue threshold=$DAILY_OVERDUE_SKIP_MS -> schedule next day"
+                )
                 scheduleNextExecution()
                 return
             }
+            TimerDiagLog.i(TAG, "resume: nextFire already due overdueMs=$overdue -> onIntervalElapsed NOW")
             onIntervalElapsed()
             return
         }
+        TimerDiagLog.w(TAG, "resume: no nextFire, scheduleNextExecution")
         scheduleNextExecution()
     }
 
     private fun resumeActiveScriptState() {
+        TimerDiagLog.logSnapshot(TAG, "resumeActiveScriptState")
         TimerRuntimeState.setExecutingScript(true)
         if (TimerRuntimeState.isWaitingForScript() || TimerRuntimeState.remainingMillis() <= 0L) {
             pendingRunAfterScript.set(true)
@@ -172,25 +197,34 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             TimerRuntimeState.statusMessage = UUtils.getString(R.string.zt_timer_waiting_script)
             mainHandler.removeCallbacks(waitForScriptRunnable)
             mainHandler.post(waitForScriptRunnable)
+            TimerDiagLog.i(TAG, "resumeActiveScript: wait for script then run pending")
         } else {
             TimerRuntimeState.setWaitingForScript(false)
             TimerRuntimeState.statusMessage = UUtils.getString(R.string.zt_timer_executing_current_script)
             val remaining = TimerRuntimeState.remainingMillis()
             mainHandler.removeCallbacks(scheduleRunnable)
             mainHandler.postDelayed(scheduleRunnable, remaining)
+            TimerDiagLog.i(TAG, "resumeActiveScript: keep countdown remaining=$remaining")
         }
         refreshForegroundNotification()
     }
 
     private fun scheduleNextExecution() {
-        if (!isActive.get()) return
+        if (!isActive.get()) {
+            TimerDiagLog.w(TAG, "scheduleNextExecution aborted: not active")
+            return
+        }
         mainHandler.removeCallbacks(scheduleRunnable)
         mainHandler.removeCallbacks(launchRetryRunnable)
         pendingRunAfterScript.set(false)
         TimerRuntimeState.setWaitingForScript(false)
         TimerRuntimeState.setExecutingScript(false)
         mTimerBean = TimerSetManage.get().getZTTimerBean()
-        val bean = mTimerBean ?: return
+        val bean = mTimerBean
+        if (bean == null) {
+            TimerDiagLog.e(TAG, "scheduleNextExecution aborted: TimerBean null")
+            return
+        }
         val nextAt = TimerScheduleHelper.computeNextFireAtMillis(bean)
         val now = System.currentTimeMillis()
         val rawDelay = nextAt - now
@@ -198,7 +232,12 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         TimerRuntimeState.setNextFireAtMillis(if (rawDelay <= 0L) now else nextAt)
         TimerRuntimeState.statusMessage = buildWaitingMessage()
         refreshForegroundNotification()
+        TimerDiagLog.i(
+            TAG,
+            "scheduleNextExecution mode=${bean.timerMode} rawDelay=$rawDelay delay=$delay nextAt=$nextAt label=${TimerScheduleHelper.formatScheduleLabel(bean)}"
+        )
         if (delay <= 0L) {
+            TimerDiagLog.i(TAG, "scheduleNextExecution: fire immediately (post)")
             mainHandler.post(scheduleRunnable)
         } else {
             mainHandler.postDelayed(scheduleRunnable, delay)
@@ -206,7 +245,11 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     }
 
     private fun onIntervalElapsed() {
-        if (!isActive.get()) return
+        if (!isActive.get()) {
+            TimerDiagLog.w(TAG, "onIntervalElapsed ignored: not active")
+            return
+        }
+        TimerDiagLog.logSnapshot(TAG, "onIntervalElapsed")
         if (isScriptRunning()) {
             pendingRunAfterScript.set(true)
             TimerRuntimeState.setWaitingForScript(true)
@@ -215,8 +258,10 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             refreshForegroundNotification()
             mainHandler.removeCallbacks(waitForScriptRunnable)
             mainHandler.post(waitForScriptRunnable)
+            TimerDiagLog.w(TAG, "onIntervalElapsed DEFER: script still running, wait then run")
             return
         }
+        TimerDiagLog.i(TAG, "onIntervalElapsed -> runScheduledCommand")
         runScheduledCommand()
     }
 
@@ -237,15 +282,16 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         TimerRuntimeState.setExecutingScript(false)
         if (pendingRunAfterScript.compareAndSet(true, false)) {
             TimerRuntimeState.setWaitingForScript(false)
+            TimerDiagLog.i(TAG, "waitForScript done -> run deferred scheduled command")
             runScheduledCommand()
             return
         }
         TimerRuntimeState.setWaitingForScript(false)
-        // 等待结束但无待执行任务：若倒计时已归零，推进到下一次，避免卡在 00:00
         if (TimerRuntimeState.getNextFireAtMillis() > 0L &&
             TimerRuntimeState.remainingMillis() <= 0L
         ) {
             LogUtils.e(TAG, "waitForScript: recovering stuck zero countdown")
+            TimerDiagLog.w(TAG, "waitForScript: stuck zero countdown -> scheduleNext")
             scheduleNextExecution()
         }
     }
@@ -255,15 +301,19 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     }
 
     private fun runScheduledCommand() {
-        if (!isActive.get()) return
+        if (!isActive.get()) {
+            TimerDiagLog.w(TAG, "runScheduledCommand ignored: not active")
+            return
+        }
         if (!isLaunchingCommand.compareAndSet(false, true)) {
-            // 正在启动中：稍后重试，避免静默丢弃导致永不 scheduleNext
+            TimerDiagLog.w(TAG, "runScheduledCommand busy launching, retry in ${LAUNCH_RETRY_MS}ms")
             mainHandler.removeCallbacks(launchRetryRunnable)
             mainHandler.postDelayed(launchRetryRunnable, LAUNCH_RETRY_MS)
             return
         }
         mainHandler.removeCallbacks(launchRetryRunnable)
         scriptExecStartedAtMillis = System.currentTimeMillis()
+        TimerDiagLog.i(TAG, "runScheduledCommand launch")
         execCommandInternal()
     }
 
@@ -273,14 +323,16 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             TimerRuntimeState.setExecutingScript(false)
             TimerRuntimeState.statusMessage = ""
             if (!isActive.get()) {
-                // Service 正在停止时仍尽量把下一次绝对时间写入持久化，避免恢复后卡在过期的 00:00
+                TimerDiagLog.w(TAG, "execCommand complete but service stopping -> persistNextFireIfAlwaysAllow")
                 persistNextFireIfAlwaysAllow()
                 return@execCommand
             }
             if (pendingRunAfterScript.get()) {
+                TimerDiagLog.i(TAG, "execCommand complete -> pending waitForScript")
                 mainHandler.post(waitForScriptRunnable)
                 return@execCommand
             }
+            TimerDiagLog.i(TAG, "execCommand complete -> scheduleNextExecution")
             scheduleNextExecution()
         }
     }
@@ -304,6 +356,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         val manage = mLibSuManage
         if (manage == null) {
             LogUtils.e(TAG, "execCommand: LibSuManage is null")
+            TimerDiagLog.e(TAG, "execCommand FAIL: LibSuManage null")
             onComplete?.run()
             return
         }
@@ -322,6 +375,12 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         scriptExecStartedAtMillis = System.currentTimeMillis()
 
         val finish: () -> Unit = {
+            val elapsed = if (scriptExecStartedAtMillis > 0L) {
+                System.currentTimeMillis() - scriptExecStartedAtMillis
+            } else {
+                0L
+            }
+            TimerDiagLog.i(TAG, "execCommand FINISH #$count elapsedMs=$elapsed zeroTermux=$useZeroTermux")
             scriptExecStartedAtMillis = 0L
             onComplete?.run()
             Unit
@@ -329,6 +388,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
 
         val command = if (useZeroTermux) "shell_ZeroTermux" else "shell_Android"
         LogUtils.e(TAG, "execCommand: LibSu $command #$count")
+        TimerDiagLog.i(TAG, "execCommand START #$count cmd=$command")
         manage.shellCommandExec(command, Runnable { finish() })
     }
 
@@ -339,6 +399,8 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
 
     private fun recoverFromStuckScript(reason: String) {
         LogUtils.e(TAG, "watchdog: recover - $reason")
+        TimerDiagLog.e(TAG, "watchdog RECOVER reason=$reason")
+        TimerDiagLog.logSnapshot(TAG, "watchdog_recover")
         mLibSuManage?.stop()
         TimerRuntimeState.setExecutingScript(false)
         TimerRuntimeState.setWaitingForScript(false)
@@ -352,6 +414,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     private fun checkStuckCountdown() {
         if (!isActive.get()) return
         try {
+            TimerDiagLog.maybeHeartbeat(TAG)
             val elapsed = if (scriptExecStartedAtMillis > 0L) {
                 System.currentTimeMillis() - scriptExecStartedAtMillis
             } else {
@@ -360,16 +423,16 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
             val shellRunning = mLibSuManage?.isShellCommandRunning == true
             if (TimerRuntimeState.isExecutingScript() && scriptExecStartedAtMillis > 0L) {
                 if (elapsed > SCRIPT_MAX_RUNTIME_MS) {
-                    recoverFromStuckScript("script exceeded max runtime")
+                    recoverFromStuckScript("script exceeded max runtime elapsed=$elapsed")
                     return
                 }
                 if (!shellRunning && elapsed > SCRIPT_STUCK_RESET_MS) {
-                    recoverFromStuckScript("executing flag set but LibSu not running")
+                    recoverFromStuckScript("executing flag set but LibSu not running elapsed=$elapsed")
                     return
                 }
             }
             if (isLaunchingCommand.get() && !shellRunning && elapsed > SCRIPT_STUCK_RESET_MS) {
-                recoverFromStuckScript("launch flag stuck")
+                recoverFromStuckScript("launch flag stuck elapsed=$elapsed")
                 return
             }
             if (!TimerRuntimeState.isExecutingScript() &&
@@ -382,6 +445,7 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
                     return
                 }
                 LogUtils.e(TAG, "watchdog: stuck at 00:00, rescheduling next run")
+                TimerDiagLog.w(TAG, "watchdog: stuck at 00:00 -> scheduleNext")
                 scheduleNextExecution()
             }
         } finally {
@@ -393,9 +457,12 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
 
     private fun endTime(userInitiated: Boolean = false) {
         if (!isActive.getAndSet(false)) {
+            TimerDiagLog.w(TAG, "endTime ignored: already inactive userInitiated=$userInitiated")
             stopSelf()
             return
         }
+        TimerDiagLog.i(TAG, "endTime begin userInitiated=$userInitiated")
+        TimerDiagLog.logSnapshot(TAG, "endTime")
         mainHandler.removeCallbacks(scheduleRunnable)
         mainHandler.removeCallbacks(waitForScriptRunnable)
         mainHandler.removeCallbacks(stuckWatchdogRunnable)
@@ -411,11 +478,14 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
         TimerRuntimeState.statusMessage = ""
         if (userInitiated) {
             TimerRuntimeState.resetForUserStop()
+            TimerDiagLog.i(TAG, "endTime: user stop, cleared persist")
         } else if (TimerSetManage.get().getZTTimerBean().isAlwaysAllowTimer) {
             TimerSessionPersist.saveForBackgroundResume()
             TimerRuntimeState.clearSchedule()
+            TimerDiagLog.w(TAG, "endTime: non-user stop, saved persist for resume")
         } else {
             TimerRuntimeState.resetForUserStop()
+            TimerDiagLog.i(TAG, "endTime: cleared (alwaysAllow=false)")
         }
         stopForeground(STOP_FOREGROUND_REMOVE)
         NotificationUtils.cancelNotification(applicationContext, NOTIFICATION_ID)
@@ -462,7 +532,10 @@ class TimerExeService : Service(), LibSuManage.TimerListener {
     override fun onDestroy() {
         if (isActive.get()) {
             val alwaysAllow = TimerSetManage.get().getZTTimerBean().isAlwaysAllowTimer
+            TimerDiagLog.w(TAG, "onDestroy while active alwaysAllow=$alwaysAllow")
             endTime(userInitiated = !alwaysAllow)
+        } else {
+            TimerDiagLog.i(TAG, "onDestroy")
         }
         super.onDestroy()
     }

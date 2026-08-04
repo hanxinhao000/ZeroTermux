@@ -49,6 +49,10 @@ object TimerSessionPersist {
             executionCount = executionCount
         )
         SaveData.saveStringOther(STORAGE_KEY, gson.toJson(snapshot))
+        TimerDiagLog.i(
+            "TimerSessionPersist",
+            "save next=$nextFireAtMillis count=$executionCount"
+        )
     }
 
     fun load(): Snapshot? {
@@ -56,7 +60,8 @@ object TimerSessionPersist {
         if (json.isBlank() || json == "def") return null
         return try {
             gson.fromJson(json, Snapshot::class.java)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            TimerDiagLog.e("TimerSessionPersist", "load FAIL: ${e.message}")
             null
         }
     }
@@ -64,5 +69,6 @@ object TimerSessionPersist {
     /** 仅用户主动停止定时任务时调用。 */
     fun clear() {
         SaveData.saveStringOther(STORAGE_KEY, "")
+        TimerDiagLog.i("TimerSessionPersist", "clear")
     }
 }

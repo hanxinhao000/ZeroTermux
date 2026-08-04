@@ -1159,7 +1159,7 @@
     <string name="bottom_keyboard_settings">设置键盘规则</string>
     <string name="bottom_keyboard_settings_note">输入个性化的键盘规则,提高输入效率</string>
     <string name="log_output">输出LOG到存储卡</string>
-    <string name="log_output_note">输出LOG文件到\n【/xinhao/ZeroTermuxLog/ZeroTermux.log】\n可能影响性能请谨慎开启!!!!</string>
+    <string name="log_output_note">日志目录 xinhao/ZeroTermuxLog/\n• ZeroTermux.log — 通用日志\n• timer_diag.log — 定时任务调度/触发/跳过（排查偶尔未执行）\n另有 ~/.timerdir/log/timer_diag.log\n可能影响性能，仅排查时开启</string>
     <string name="zt_about">关于ZeroTermux</string>
     <string name="zt_about_zerotermux">ZeroTermux GITHUB</string>
     <string name="zt_about_zerotermux_note">跳转到ZeroTermux GITHUB页面</string>

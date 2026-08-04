@@ -134,6 +134,7 @@ object TimerTermuxSessionHelper : ServiceConnection {
         waitForShellReady { ready ->
             if (!ready) {
                 LogUtils.e(TAG, "shell not ready, abort session run")
+                TimerDiagLog.e(TAG, "runTimerScript abort: shell not ready")
                 finishScriptRun(false, onComplete)
                 return@waitForShellReady
             }
@@ -142,10 +143,12 @@ object TimerTermuxSessionHelper : ServiceConnection {
                 "echo '$START_MARKER'; bash \"$scriptPath\" 2>&1 | tee -a \"$logPath\"; echo $marker\n"
             if (!writeToTerminal(command)) {
                 LogUtils.e(TAG, "writeToTerminal failed, abort session run")
+                TimerDiagLog.e(TAG, "runTimerScript abort: writeToTerminal failed")
                 finishScriptRun(false, onComplete)
                 return@waitForShellReady
             }
             LogUtils.e(TAG, "timer script dispatched to terminal")
+            TimerDiagLog.i(TAG, "runTimerScript dispatched path=$scriptPath")
             pollScriptDone(marker, baseline, 0L, onComplete)
         }
         return true
