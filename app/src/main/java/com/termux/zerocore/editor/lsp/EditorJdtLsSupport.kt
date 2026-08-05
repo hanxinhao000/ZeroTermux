@@ -19,8 +19,8 @@ object EditorJdtLsSupport {
     private const val CONFIG_RUNTIME_DIR_NAME = "jdtls-config"
     private const val DATA_DIR_NAME = "jdtls-data"
     const val INIT_TIMEOUT_MILLIS = 120_000L
-    /** 补全请求超时：过长会导致编辑器补全面板进度条一直转。 */
-    const val COMPLETION_TIMEOUT_MILLIS = 8_000L
+    /** 补全请求超时：过长会导致编辑器补全面板进度条一直转；过短则开启复杂补全时易空白。 */
+    const val COMPLETION_TIMEOUT_MILLIS = 12_000L
     /** 转到定义 / 引用 / class 源码拉取：JDK 类型首次解析较慢。 */
     const val NAVIGATION_TIMEOUT_MILLIS = 25_000L
 

@@ -341,8 +341,8 @@ class EditorLspClient(
                     .put(
                         "completionItem",
                         JSONObject()
-                            // 保持 false：snippet 会改变 jdt-ls 补全格式，当前客户端未完整支持，
-                            // 开启后普通方法/类补全易异常。Postfix 循环由客户端模板提供。
+                            // 保持 false：snippetSupport=true 时 jdt-ls 补全易变慢/异常，面板常空白。
+                            // new HashMap 的 ()/; 由 EditorJavaCompletionEnrichment 本地补齐。
                             .put("snippetSupport", false)
                             .put("documentationFormat", org.json.JSONArray().put("markdown").put("plaintext"))
                             // jdt-ls 把 import 等放在 resolve 的 additionalTextEdits

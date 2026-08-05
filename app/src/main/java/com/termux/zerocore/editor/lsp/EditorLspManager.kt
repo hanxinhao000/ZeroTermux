@@ -225,12 +225,27 @@ class EditorLspManager(private val context: Context) {
                 triggerKind,
                 triggerCharacter
             )
+        }.onFailure { err ->
+            EditorLspDebugStore.recordEvent(
+                "completion_error",
+                "${err.javaClass.simpleName}: ${err.message?.take(120)}"
+            )
         }.getOrNull()
+        if (result == null) {
+            EditorLspDebugStore.recordEvent(
+                "completion_empty",
+                "no result lang=$languageId trigger=$triggerKind ch=$triggerCharacter"
+            )
+        }
         val lspItems = if (result != null) {
             parseCompletionResult(result, content, position, languageId)
         } else {
             emptyList()
         }
+        EditorLspDebugStore.recordEvent(
+            "completion",
+            "lang=$languageId lsp=${lspItems.size} postfix=${postfix.size} create=${createMethod.size}"
+        )
         val merged = mergeCompletionItems(postfix, lspItems, preferLspFirst = triggerCharacter == ".")
         // 快捷创建方法始终置顶
         return (createMethod + merged).take(MAX_COMPLETION_ITEMS)
@@ -1298,14 +1313,17 @@ class EditorLspManager(private val context: Context) {
         result = result.replace(Regex("\\$\\{\\d+\\|([^|}]+)\\|?}")) { match ->
             match.groupValues[1].substringBefore(',')
         }
-        // ${1:default} / nested-ish simple form
+        // ${1:default} / nested-ish simple form（多轮以处理浅层嵌套）
         var previous: String
         do {
             previous = result
             result = result.replace(Regex("\\$\\{\\d+:([^{}]*)}"), "$1")
         } while (result != previous)
+        // ${1} / $1 / $0 → 空（光标位）
         result = result.replace(Regex("\\$\\{\\d+}"), "")
         result = result.replace(Regex("\\$\\d+"), "")
+        // 常见残留：HashMap< > → HashMap<> 
+        result = result.replace(Regex("<\\s+>"), "<>")
         return result
     }
 
