@@ -412,11 +412,11 @@ task downloadBootstraps() {
         }
     }*/
     doLast {
-        def version = "2026.06.28-r1+apt.android-7"
-        downloadBootstrap("aarch64", "4fa66c681eefb16b71d2fa5118609f5bb5ce449fc815edee2762e22b1a9b7a26", version)
-        downloadBootstrap("arm", "ed2c65a5de88f536c4f59bad3682a112cf4293430b07ce6f2009bf26005f7aaa", version)
-        downloadBootstrap("i686", "f29ded5b47eff6519b5427f78b9599407ca0a1c51fb295df5352d671126f4c81", version)
-        downloadBootstrap("x86_64", "f73fd8ea465b5065d94e5af27bce893f3968d3ec901f02f42ef3b71e4a231e2c", version)
+        def version = "2026.08.02-r1+apt.android-7"
+        downloadBootstrap("aarch64", "90a352db1c79aa5b6773003553d52c71da68cbe3eca2d277d0c5683d5163e658", version)
+        downloadBootstrap("arm", "f6bc4a8583166bcb38e0e74d42d6e56fd2f7401a039aa7344f0cd03701dea0bd", version)
+        downloadBootstrap("i686", "f571d8899253ee6893d349921dcef98a618c50dc0a6b503ca5994c88a23b7f44", version)
+        downloadBootstrap("x86_64", "c2d9892ff6284ada4943c0234296008098d70a73df3a419987ddd03e58af0424", version)
     }
     // @}
 }
