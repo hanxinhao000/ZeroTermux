@@ -45,7 +45,7 @@ class EditorLspCompletionItem(
             } else {
                 lineText.substring(safeCol)
             }
-            val enriched = EditorJavaCompletionEnrichment.enrichNewExpression(
+            val enriched = EditorJavaCompletionEnrichment.enrichInsert(
                 insertText = insertText,
                 linePrefix = linePrefix,
                 lineSuffix = lineSuffix,
@@ -55,7 +55,7 @@ class EditorLspCompletionItem(
             parenCursorOffset = enriched.second
             EditorLspDebugStore.recordEvent(
                 "completion_apply",
-                "java new-enrich insert=${insertText.take(120)} kind=${resolved.lspKind}"
+                "java enrich insert=${insertText.take(120)} kind=${resolved.lspKind}"
             )
         }
         val mainEdit = EditorLspManager.LspTextEdit(

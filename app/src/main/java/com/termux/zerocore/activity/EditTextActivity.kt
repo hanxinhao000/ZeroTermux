@@ -102,6 +102,7 @@ import io.github.rosemoe.sora.widget.SymbolInputView
 import com.termux.shared.view.KeyboardUtils
 import com.termux.view.TerminalView
 import com.termux.zerocore.editor.EditorIdeaCompletionItemAdapter
+import com.termux.zerocore.editor.EditorLoadingAwareAutoCompletion
 import com.termux.zerocore.editor.SafeEditorDiagnosticTooltipWindow
 import io.github.rosemoe.sora.widget.component.EditorAutoCompletion
 import io.github.rosemoe.sora.widget.component.EditorDiagnosticTooltipWindow
@@ -531,6 +532,11 @@ class EditTextActivity : AppCompatActivity(), ZtEditorAiHost {
             setSoftKeyboardEnabled(true)
             setDisableSoftKbdIfHardKbdAvailable(false)
             isFocusableInTouchMode = true
+            // 慢 LSP（如 JDT 首次补全）先弹出悬浮窗转圈，再填结果
+            replaceComponent(
+                EditorAutoCompletion::class.java,
+                EditorLoadingAwareAutoCompletion(this)
+            )
             getComponent(EditorAutoCompletion::class.java)?.let { autoComplete ->
                 autoComplete.isEnabled = true
                 // IDEA / Android Studio 风格补全列表

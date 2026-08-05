@@ -34,6 +34,7 @@ public class ZTGitHubVersion {
 
     public void initZtVersionVisible(TextView textView) {
         hide(textView);
+        System.out.println();
         if (textView == null) {
             return;
         }
