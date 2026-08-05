@@ -26,7 +26,7 @@ class EditorProgramRunner(
 
     fun isRuntimeInstalled(language: EditorRunLanguage): Boolean {
         return when (language) {
-            EditorRunLanguage.JAVA -> commandExists("javac") && commandExists("java")
+            EditorRunLanguage.JAVA -> EditorJavaRuntime.isJdk21Ready()
             EditorRunLanguage.C -> commandExists("gcc") || commandExists("clang") || commandExists("cc")
             EditorRunLanguage.PYTHON -> commandExists("python3") || commandExists("python")
             EditorRunLanguage.PHP -> commandExists("php")
@@ -37,8 +37,8 @@ class EditorProgramRunner(
     fun installRuntimeViaTerminal(language: EditorRunLanguage, onFinished: () -> Unit) {
         when (language) {
             EditorRunLanguage.JAVA -> {
-                sendToTerminal("echo '[ZeroTermux Editor] Installing OpenJDK...'\n")
-                sendToTerminal("pkg install -y openjdk-17 || pkg install -y openjdk-21 || pkg install -y openjdk\n")
+                sendToTerminal("echo '[ZeroTermux Editor] Installing OpenJDK 21...'\n")
+                sendToTerminal(EditorJavaRuntime.installPackageCommand() + "\n")
             }
             EditorRunLanguage.C -> {
                 sendToTerminal("echo '[ZeroTermux Editor] Installing C compiler (clang)...'\n")
@@ -66,8 +66,12 @@ class EditorProgramRunner(
         when (language) {
             EditorRunLanguage.JAVA -> {
                 val className = shellQuote(EditorRunDetector.inferJavaClassName(source, file.name))
-                sendToTerminal("echo '[ZeroTermux Editor] Build & run ${file.name}'\n")
-                sendToTerminal("cd $directory && javac $sourceName && java $className\n")
+                sendToTerminal("echo '[ZeroTermux Editor] Build & run ${file.name} (OpenJDK 21)'\n")
+                sendToTerminal(
+                    "cd $directory && " +
+                        EditorJavaRuntime.withJavaEnv("javac $sourceName && java $className") +
+                        "\n"
+                )
             }
             EditorRunLanguage.C -> {
                 val binary = EditorRunDetector.inferCBinaryName(file.name)

@@ -81,7 +81,7 @@ python --version
 | Git | git | `pkg install -y git` |
 | Node | nodejs | `pkg install -y nodejs` |
 | Clang | clang | `pkg install -y clang` |
-| Java | openjdk-17 | `pkg install -y openjdk-17` |
+| Java | openjdk-21 | `pkg install -y openjdk-21` |
 | vim | vim | `pkg install -y vim` |
 | unzip | unzip | `pkg install -y unzip` |
 

@@ -16,12 +16,13 @@ class EditorAndroidRunner(private val context: Context) {
     }
 
     fun isGradleEnvInstalled(): Boolean {
-        return commandExists("java") && File(TermuxConstants.TERMUX_HOME_DIR_PATH, "android-sdk/platforms").isDirectory
+        return EditorJavaRuntime.isJdk21Ready() &&
+            File(TermuxConstants.TERMUX_HOME_DIR_PATH, "android-sdk/platforms").isDirectory
     }
 
     fun installGradleEnvViaTerminal(onFinished: () -> Unit) {
-        sendToTerminal("echo '[ZeroTermux Editor] Installing Android build environment...'\n")
-        sendToTerminal("pkg install -y openjdk-17 || pkg install -y openjdk-21 || pkg install -y openjdk\n")
+        sendToTerminal("echo '[ZeroTermux Editor] Installing Android build environment (OpenJDK 21)...'\n")
+        sendToTerminal(EditorJavaRuntime.installPackageCommand() + "\n")
         sendToTerminal("pkg install -y gradle aapt aapt2 wget git unzip\n")
         sendToTerminal(
             "if [ ! -d \"\$HOME/android-sdk/platforms\" ]; then\n" +
@@ -50,9 +51,11 @@ class EditorAndroidRunner(private val context: Context) {
         val directory = shellQuote(projectRoot.absolutePath)
         val home = shellQuote(TermuxConstants.TERMUX_HOME_DIR_PATH)
         val prefix = shellQuote(TermuxConstants.TERMUX_PREFIX_DIR_PATH)
-        sendToTerminal("echo '[ZeroTermux Editor] Gradle build ${projectRoot.name}'\n")
+        val jdkEnv = EditorJavaRuntime.selectJavaHomeShell().lines().joinToString(" ") { it.trim() }
+        sendToTerminal("echo '[ZeroTermux Editor] Gradle build ${projectRoot.name} (OpenJDK 21)'\n")
         sendToTerminal(
-            "mkdir -p \"\$HOME/.gradle\" && " +
+            "$jdkEnv && " +
+                "mkdir -p \"\$HOME/.gradle\" && " +
                 "if ! grep -q 'android.aapt2FromMavenOverride' \"\$HOME/.gradle/gradle.properties\" 2>/dev/null; then\n" +
                 "  echo 'android.aapt2FromMavenOverride=\$PREFIX/bin/aapt2' >> \"\$HOME/.gradle/gradle.properties\"\n" +
                 "fi && " +

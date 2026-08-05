@@ -873,8 +873,8 @@
     <string name="editor_build_script_add_commands">请在 build.sh 中添加编译/运行命令</string>
     <string name="editor_build_script_edit_for_file">请编辑 build.sh 以构建/运行 %1$s</string>
     <string name="editor_build_script_current_file">当前文件: %1$s</string>
-    <string name="editor_build_script_install_java">[ZeroTermux Editor] 正在安装 OpenJDK…</string>
-    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] OpenJDK 安装失败</string>
+    <string name="editor_build_script_install_java">[ZeroTermux Editor] 正在安装 OpenJDK 21…</string>
+    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] OpenJDK 21 安装失败</string>
     <string name="editor_build_script_install_c">[ZeroTermux Editor] 正在安装 C 编译器 (clang)…</string>
     <string name="editor_build_script_install_c_failed">[ZeroTermux Editor] C 编译器安装失败</string>
     <string name="editor_build_script_install_python">[ZeroTermux Editor] 正在安装 Python…</string>

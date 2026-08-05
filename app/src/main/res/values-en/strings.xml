@@ -1934,8 +1934,8 @@ cd ~ &amp;&amp; pkg update -y \n
     <string name="editor_build_script_add_commands">Add build/run commands in build.sh</string>
     <string name="editor_build_script_edit_for_file">Edit build.sh to build/run %1$s</string>
     <string name="editor_build_script_current_file">Current file: %1$s</string>
-    <string name="editor_build_script_install_java">[ZeroTermux Editor] Installing OpenJDK…</string>
-    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] Failed to install OpenJDK</string>
+    <string name="editor_build_script_install_java">[ZeroTermux Editor] Installing OpenJDK 21…</string>
+    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] Failed to install OpenJDK 21</string>
     <string name="editor_build_script_install_c">[ZeroTermux Editor] Installing C compiler (clang)…</string>
     <string name="editor_build_script_install_c_failed">[ZeroTermux Editor] Failed to install C compiler</string>
     <string name="editor_build_script_install_python">[ZeroTermux Editor] Installing Python…</string>

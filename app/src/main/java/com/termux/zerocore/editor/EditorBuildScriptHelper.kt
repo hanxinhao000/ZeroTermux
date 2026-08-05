@@ -92,17 +92,7 @@ object EditorBuildScriptHelper {
 
         fun ensureFunctionsBlock(): String {
             return """
-                ensure_java() {
-                  if command -v javac >/dev/null 2>&1 && command -v java >/dev/null 2>&1; then
-                    return 0
-                  fi
-                  echo $installJava
-                  pkg install -y openjdk-17 || pkg install -y openjdk-21 || pkg install -y openjdk
-                  if ! command -v javac >/dev/null 2>&1 || ! command -v java >/dev/null 2>&1; then
-                    echo $installJavaFailed
-                    exit 1
-                  fi
-                }
+                ${EditorJavaRuntime.ensureJavaFunctionShell(installJava, installJavaFailed)}
 
                 ensure_cc() {
                   if command -v gcc >/dev/null 2>&1 || command -v clang >/dev/null 2>&1 || command -v cc >/dev/null 2>&1; then
