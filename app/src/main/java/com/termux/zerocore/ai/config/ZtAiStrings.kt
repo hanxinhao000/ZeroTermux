@@ -15,10 +15,8 @@ object ZtAiStrings {
 
     fun aiMenuCreateLabel(): String = str(R.string.menu_package_ai_created_label)
 
-    fun menuAssetSubdir(): String {
-        val lang = ZtLocaleStrings.context().resources.configuration.locales[0].language
-        return if (lang.equals("en", ignoreCase = true)) "en" else "cn"
-    }
+    fun menuAssetSubdir(): String =
+        com.termux.zerocore.utils.ZtMenuLocale.assetSubdir(ZtLocaleStrings.context())
 
     fun menuAssetPath(): String = "mainmenu/${menuAssetSubdir()}/zt_menu_config.xml"
 

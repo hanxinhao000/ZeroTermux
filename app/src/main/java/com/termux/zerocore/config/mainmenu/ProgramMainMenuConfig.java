@@ -12,7 +12,6 @@ import com.termux.zerocore.config.mainmenu.data.MainMenuCategoryData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * 程序内置菜单：按 assets/mainmenu 的分组与顺序，仅加载 java: 开头的 Config 类。
@@ -161,9 +160,7 @@ public class ProgramMainMenuConfig {
     }
 
     private static List<XMLMainMenuConfig.GroupItem> parseAssetsMenuGroups(Context context) {
-        Locale locale = context.getResources().getConfiguration().locale;
-        String lang = (!TextUtils.isEmpty(locale.getLanguage()) && locale.getLanguage().equals("en"))
-            ? "en" : "cn";
+        String lang = com.termux.zerocore.utils.ZtMenuLocale.assetSubdir(context);
         File tempFile = new File(context.getCacheDir(), "program_menu_template.xml");
         UUtils.writerFile("mainmenu/" + lang + "/zt_menu_config.xml", tempFile);
         return XMLMainMenuConfig.parseXMLFile(tempFile.getAbsolutePath());

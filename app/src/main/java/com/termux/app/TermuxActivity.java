@@ -183,8 +183,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-
 import io.noties.markwon.Markwon;
 
 /**
@@ -2264,17 +2262,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     }
     private void writerMainMenuConfig(boolean cover) {
         File mainMenuXmlPathFile = FileIOUtils.INSTANCE.getMainMenuXmlPathFile();
-        Locale systemLocale = getResources().getConfiguration().locale;
-        String language = systemLocale.getLanguage();
-        String targetLang = (!TextUtils.isEmpty(language) && language.equals("en")) ? "en" : "cn";
+        String targetLang = com.termux.zerocore.utils.ZtMenuLocale.assetSubdir(this);
 
         if (!mainMenuXmlPathFile.exists() || cover) {
             Log.i(TAG, "writerMainMenuConfig create new file for language: " + targetLang);
-            if ("en".equals(targetLang)) {
-                UUtils.writerFile("mainmenu/en/zt_menu_config.xml", mainMenuXmlPathFile);
-            } else {
-                UUtils.writerFile("mainmenu/cn/zt_menu_config.xml", mainMenuXmlPathFile);
-            }
+            UUtils.writerFile(com.termux.zerocore.utils.ZtMenuLocale.menuAssetPath(targetLang), mainMenuXmlPathFile);
         } else {
             Log.i(TAG, "writerMainMenuConfig keep existing menu file");
         }

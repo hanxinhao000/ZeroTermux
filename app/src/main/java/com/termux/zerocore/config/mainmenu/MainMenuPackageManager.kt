@@ -541,8 +541,7 @@ object MainMenuPackageManager {
 
     @JvmStatic
     fun applyDefaultFromAssets(context: Context): Boolean {
-        val locale = context.resources.configuration.locale
-        val lang = if (locale.language == "en") "en" else "cn"
+        val lang = com.termux.zerocore.utils.ZtMenuLocale.assetSubdir(context)
         val assetPath = "mainmenu/$lang/$MENU_XML_FILE"
         val activeXml = FileIOUtils.getMainMenuXmlPathFile()
         activeXml.parentFile?.mkdirs()

@@ -27,12 +27,12 @@ public class XMLMergeUtils {
         String targetAssetPath;
         String sourceAssetPath;
 
-        if ("en".equalsIgnoreCase(targetLang)) {
-            targetAssetPath = "mainmenu/en/zt_menu_config.xml";
-            sourceAssetPath = "mainmenu/cn/zt_menu_config.xml";
+        String dir = ZtMenuLocale.assetSubdir(targetLang);
+        targetAssetPath = ZtMenuLocale.menuAssetPath(dir);
+        if (ZtMenuLocale.EN.equals(dir)) {
+            sourceAssetPath = ZtMenuLocale.menuAssetPath(ZtMenuLocale.CN);
         } else {
-            targetAssetPath = "mainmenu/cn/zt_menu_config.xml";
-            sourceAssetPath = "mainmenu/en/zt_menu_config.xml";
+            sourceAssetPath = ZtMenuLocale.menuAssetPath(ZtMenuLocale.EN);
         }
 
         File userFile = FileIOUtils.INSTANCE.getMainMenuXmlPathFile();

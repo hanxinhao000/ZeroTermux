@@ -45,6 +45,8 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
         yuyan_list.add(msg_zh);
         MenuLeftPopuListWindow.MenuLeftPopuListData msg_en = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.yingwen_ico, context.getString(R.string.English), 31);
         yuyan_list.add(msg_en);
+        MenuLeftPopuListWindow.MenuLeftPopuListData msg_in = new MenuLeftPopuListWindow.MenuLeftPopuListData(R.mipmap.yuyan_ico, context.getString(R.string.Indonesian), 32);
+        yuyan_list.add(msg_in);
         showMenuDialog(yuyan_list, view);
     }
 
@@ -68,6 +70,11 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
                 LocaleHelper.Companion.getInstance()
                     .language(getLocale("1")).apply(mContext);
                 break;
+            // 印尼语
+            case 32:
+                LocaleHelper.Companion.getInstance()
+                    .language(getLocale("3")).apply(mContext);
+                break;
         }
 
         if (MainMenuPackageManager.isDefaultMenuActive(mContext)) {
@@ -87,6 +94,8 @@ public class LanguageClickConfig extends BaseMenuClickConfig implements MenuLeft
                 return Locale.ROOT;
             case "1":
                 return Locale.ENGLISH;
+            case "3":
+                return new Locale("in");
             case "2":
             default:
                 return Locale.SIMPLIFIED_CHINESE;

@@ -1,0 +1,2043 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE resources [
+    <!ENTITY TERMUX_PACKAGE_NAME "com.termux">
+    <!ENTITY TERMUX_APP_NAME "Termux">
+    <!ENTITY TERMUX_API_APP_NAME "Termux:API">
+    <!ENTITY TERMUX_BOOT_APP_NAME "Termux:Boot">
+    <!ENTITY TERMUX_FLOAT_APP_NAME "Termux:Float">
+    <!ENTITY TERMUX_STYLING_APP_NAME "Termux:Styling">
+    <!ENTITY TERMUX_TASKER_APP_NAME "Termux:Tasker">
+    <!ENTITY TERMUX_WIDGET_APP_NAME "Termux:Widget">
+    <!ENTITY TERMUX_PROPERTIES_PRIMARY_PATH_SHORT "~/.termux/termux.properties">
+    ]>
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="application_name">&TERMUX_APP_NAME;</string>
+    <string name="shared_user_label">Pengguna ZeroTermux</string>
+
+    <string name="app_name">ZeroTermux</string>
+
+    <!-- Termux RUN_COMMAND permission -->
+    <string name="permission_run_command_label">Run commands in &TERMUX_APP_NAME; environment</string>
+    <string name="permission_run_command_description">execute arbitrary commands within &TERMUX_APP_NAME;
+        environment</string>
+
+
+
+    <!-- Termux Bootstrap Packages Installation -->
+    <string name="bootstrap_installer_body">Menginstal paket bootstrap…</string>
+    <string name="bootstrap_error_title">Tidak dapat menginstal bootstrap</string>
+    <string name="bootstrap_error_body">&TERMUX_APP_NAME; tidak dapat menginstal paket bootstrap.</string>
+    <string name="bootstrap_error_abort">Batalkan</string>
+    <string name="bootstrap_error_try_again">Coba lagi</string>
+    <string name="bootstrap_error_not_primary_user_message">&TERMUX_APP_NAME; can only be run as the primary user.\nBootstrap binaries compiled for &TERMUX_APP_NAME; have hardcoded $PREFIX path and cannot be installed under any path other than %1$s.</string>
+
+
+
+    <!-- Terminal Sidebar and Shortcuts -->
+    <string name="action_new_session">Sesi baru</string>
+    <string name="action_new_session_failsafe">Failsafe</string>
+    <string name="action_repair_mode">Mode Perbaikan</string>
+    <string name="title_max_terminals_reached">Batas terminal tercapai</string>
+    <string name="msg_max_terminals_reached">Tutup sesi yang ada sebelum membuat yang baru.</string>
+
+    <string name="title_rename_session">Nama sesi</string>
+    <string name="action_rename_session_confirm">Atur</string>
+    <string name="title_create_named_session">Sesi bernama baru</string>
+    <string name="action_create_named_session_confirm">Buat</string>
+
+    <string name="action_toggle_soft_keyboard">Keyboard</string>
+
+    <string name="msg_enabling_terminal_toolbar">Mengaktifkan bilah alat terminal</string>
+    <string name="msg_disabling_terminal_toolbar">Menonaktifkan bilah alat terminal</string>
+
+
+
+    <!-- Terminal Popup -->
+    <string name="action_select_url">Pilih URL</string>
+    <string name="title_select_url_dialog">Ketuk URL untuk salin, atau tekan lama untuk buka</string>
+    <string name="title_select_url_none_found">Tidak ada URL di terminal.</string>
+    <string name="msg_select_url_copied_to_clipboard">URL disalin ke papan klip</string>
+
+    <string name="action_share_transcript">Bagikan transkrip</string>
+    <string name="title_share_transcript">Transkrip terminal</string>
+    <string name="title_share_transcript_with">Kirim transkrip ke:</string>
+
+    <string name="action_autofill_password">Isi otomatis kata sandi</string>
+
+    <string name="action_reset_terminal">Reset</string>
+    <string name="msg_terminal_reset">Terminal direset</string>
+
+    <string name="action_kill_process">Hentikan proses (%d)</string>
+    <string name="title_confirm_kill_process">Hentikan sesi ini?</string>
+
+    <string name="action_style_terminal">Gaya</string>
+    <string name="action_toggle_keep_screen_on">Jaga layar menyala</string>
+    <string name="action_open_help">Bantuan</string>
+    <string name="action_open_settings">Pengaturan</string>
+
+    <string name="action_report_issue">Laporkan masalah</string>
+    <string name="msg_generating_report">Membuat laporan</string>
+
+    <string name="error_styling_not_installed">The &TERMUX_STYLING_APP_NAME; Plugin App is not installed.</string>
+    <string name="action_styling_install">Instal</string>
+
+
+
+    <!-- Termux Notifications -->
+    <string name="notification_action_exit">Keluar</string>
+    <string name="notification_action_wake_lock">Acquire wakelock</string>
+    <string name="notification_action_wake_unlock">Release wakelock</string>
+
+
+
+    <!-- TermuxService -->
+    <string name="error_display_over_other_apps_permission_not_granted">&TERMUX_APP_NAME; requires \"Display over other apps\" permission to start terminal sessions from background on Android >= 10. Grants it from Settings -> Apps -> &TERMUX_APP_NAME; -> Advanced</string>
+
+
+
+    <!-- Termux RunCommandService -->
+    <string name="error_run_command_service_invalid_intent_action">Invalid intent action to RunCommandService: `%1$s`</string>
+    <string name="error_run_command_service_mandatory_extra_missing">Mandatory extra missing to RunCommandService: \"%1$s\"</string>
+    <string name="error_run_command_service_allow_external_apps_ungranted">RunCommandService requires `allow-external-apps` property to be set to `true` in `&TERMUX_PROPERTIES_PRIMARY_PATH_SHORT;` file.</string>
+    <string name="error_run_command_service_api_help">Visit %1$s for more info on RUN_COMMAND Intent usage.</string>
+
+
+
+    <!-- Termux Execution Commands -->
+    <string name="msg_executable_absolute_path">Executable Absolute Path: \"%1$s\"</string>
+    <string name="msg_working_directory_absolute_path">Working Directory Absolute Path: \"%1$s\"</string>
+
+
+
+    <!-- Termux File Receiver -->
+    <string name="title_file_received">Simpan file di ~/downloads/</string>
+    <string name="action_file_received_edit">Edit</string>
+    <string name="action_file_received_open_directory">Buka direktori</string>
+
+
+
+    <!-- Termux Settings -->
+    <string name="title_activity_termux_settings">Pengaturan &TERMUX_APP_NAME;</string>
+
+    <!-- Termux App Preferences -->
+    <string name="termux_preferences_title">&TERMUX_APP_NAME;</string>
+    <string name="termux_preferences_summary">Preferensi aplikasi &TERMUX_APP_NAME;</string>
+
+    <!-- Debugging Preferences -->
+    <string name="termux_debugging_preferences_title">Debug</string>
+    <string name="termux_debugging_preferences_summary">Preferences for debugging</string>
+
+    <!-- Logging Category -->
+    <string name="termux_logging_header">Logging</string>
+
+    <!-- Log Level -->
+    <string name="termux_log_level_title">Log Level</string>
+
+    <!-- Terminal View Key Logging -->
+    <string name="termux_terminal_view_key_logging_enabled_title">Terminal View Key Logging</string>
+    <string name="termux_terminal_view_key_logging_enabled_off">Logs will not have entries for terminal view keys. (Default)</string>
+    <string name="termux_terminal_view_key_logging_enabled_on">Logcat logs will have entries for terminal view keys. These are very verbose and should be disabled under normal circumstances or will cause performance issues.</string>
+
+    <!-- Plugin Error Notifications -->
+    <string name="termux_plugin_error_notifications_enabled_title">Plugin Error Notifications</string>
+    <string name="termux_plugin_error_notifications_enabled_off">Disable flashes and notifications for plugin errors.</string>
+    <string name="termux_plugin_error_notifications_enabled_on">Show flashes and notifications for plugin errors. (Default)</string>
+
+    <!-- Crash Report Notifications -->
+    <string name="termux_crash_report_notifications_enabled_title">Crash Report Notifications</string>
+    <string name="termux_crash_report_notifications_enabled_off">Disable notifications for crash reports.</string>
+    <string name="termux_crash_report_notifications_enabled_on">Show notifications for crash reports. (Default)</string>
+
+
+    <!-- Terminal IO Preferences -->
+    <string name="termux_terminal_io_preferences_title">Terminal I/O</string>
+    <string name="termux_terminal_io_preferences_summary">Preferences for terminal I/O</string>
+
+    <!-- Keyboard Category -->
+    <string name="termux_keyboard_header">Keyboard</string>
+
+    <!-- Soft Keyboard -->
+    <string name="termux_soft_keyboard_enabled_title">Soft Keyboard Enabled</string>
+    <string name="termux_soft_keyboard_enabled_off">Soft keyboard will be disabled.</string>
+    <string name="termux_soft_keyboard_enabled_on">Soft keyboard will be enabled. (Default)</string>
+
+    <!-- Soft Keyboard Only If No Hardware-->
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">Soft Keyboard Only If No Hardware</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">Soft keyboard will be enabled even if hardware keyboard is connected. (Default)</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">Soft keyboard will be enabled only if no hardware keyboard is connected.</string>
+
+
+    <!-- Termux Tasker App Preferences -->
+    <string name="termux_tasker_preferences_title">&TERMUX_TASKER_APP_NAME;</string>
+    <string name="termux_tasker_preferences_summary">Preferences for &TERMUX_TASKER_APP_NAME; app</string>
+
+    <string name="action_autofill_username">Autofill username</string>
+    <string name="error_termux_service_start_failed_general">Failed to start TermuxService. Check logcat for exception message.</string>
+    <string name="error_termux_service_start_failed_bg">Failed to start TermuxService while app is in background due to android bg restrictions.</string>
+
+
+    <!-- About Preference -->
+    <string name="about_preference_title">Tentang</string>
+
+    <!-- Donate Preference -->
+    <string name="donate_preference_title">Donasi</string>
+
+
+
+
+    <string name="切换源">Sumber</string>
+    <string name="容器切换">Kontainer</string>
+    <string name="备份恢复">Cadangan</string>
+    <string name="发行版本">Distro</string>
+    <string name="QEMU">QEMU</string>
+    <string name="命令定义">Perintah</string>
+    <string name="短信通话">SMS/Panggilan</string>
+    <string name="打开目录">File</string>
+    <string name="开机启动">Boot Off</string>
+    <string name="开机启动开">Boot On</string>
+    <string name="MOE">MOE</string>
+    <string name="MOE全能">MOE</string>
+    <string name="清华源">QingHuaSource</string>
+    <string name="北京源">BeiJinSource</string>
+    <string name="官方源">OfficialSource</string>
+    <string name="警告">Peringatan</string>
+    <string name="该操作会覆盖您的文件记录">This operation will overwrite your file records, do you want to continue?</string>
+    <string name="确定">OK</string>
+    <string name="无名称系统">UnnamedContainer</string>
+    <string name="删除">Hapus</string>
+    <string name="切换">Ganti</string>
+    <string name="删除完成_需要重进才能刷新">Please select menu function</string>
+    <string name="备份">Cadangan</string>
+    <string name="恢复">Pulihkan</string>
+    <string name="设置">Pengaturan</string>
+    <string name="有任务正在进行">There is a task in progress</string>
+    <string name="有任务进行中">There is a task in progress</string>
+    <string name="按钮一开始启动您的备份">Start your backup</string>
+    <string name="开始备份">Start backup</string>
+    <string name="你没有SD卡权限">"You don't have SD card permission"</string>
+    <string name="选择您的备份方式">Choose your backup method</string>
+    <string name="默认备份">Default backup</string>
+    <string name="强制备份">Mandatory backup</string>
+    <string name="没有找到目录">No directory found</string>
+    <string name="这块直接输入回车即可">echo "InPut Enter" \n</string>
+    <string name="开始">Mulai</string>
+    <string name="不要说备份着闪退之类的">Don’t talk about backing up and crashing</string>
+    <string name="备份完成">Backup complete</string>
+    <string name="已成功备份已成功备份">Successfully backed up </string>
+    <string name="我知道了">Mengerti</string>
+    <string name="开始检测备份环境">Start testing the backup environment</string>
+    <string name="备份环境监测完成">Backup environment monitoring completed</string>
+    <string name="开始检测是否有sd卡软链接">Start to detect whether there is a soft link to the sd card</string>
+    <string name="没有找到storage目录">The storage directory was not found</string>
+    <string name="已检测到软连接">Soft connection detected</string>
+    <string name="秒后开始备份">Start backup in seconds 3</string>
+    <string name="没有SD卡权限">No recoverable files!</string>
+    <string name="恢复方式">Recovery method</string>
+    <string name="默认恢复">Default recovery</string>
+    <string name="强制恢复">Forced recovery</string>
+    <string name="请输入系统名称">Please enter the system name</string>
+    <string name="请稍等此过程禁止切屏">Please wait for this process to prohibit screen cutting</string>
+    <string name="正在搜索多系统">Searching for multiple systems</string>
+    <string name="危险">Bahaya</string>
+    <string name="恢复设备数据会擦除掉之前所有的数据">Restoring device data will erase all previous data</string>
+    <string name="我清楚我在做什么">"I know what i'm doing"</string>
+    <string name="我在考虑考虑">"I'm considering"</string>
+    <string name="开始清除数据">Start to clear data</string>
+    <string name="恢复完成会自定退出">It will exit automatically after recovery is complete</string>
+    <string name="恢复完成会自定退出擦除">After the recovery is complete, it will exit the erasing automatically</string>
+    <string name="恢复完成会自定退出写入">After the recovery is complete, it will exit writing automatically</string>
+    <string name="恢复完成会自定退出写展开">After the recovery is complete, it will automatically exit the write and expand</string>
+    <string name="恢复完成会自定退出写恢复">After the recovery is complete, it will automatically exit the write recovery</string>
+    <string name="恢复完成请重启APP">Please restart the app after the recovery is complete</string>
+    <string name="恢复成功如果很短">If the recovery is short</string>
+    <string name="你必须重启APP才能使用新的恢复系统">You must restart the app to use the new recovery system</string>
+    <string name="出现了一个错误">Terjadi kesalahan</string>
+    <string name="确定开始">
+Make sure to start backing up your current system?</string>
+    <string name="提示">Info</string>
+    <string name="确定要恢复">Restore and create a new container?</string>
+    <string name="海的QEMU">QEMU of the sea</string>
+    <string name="当前为自动">Currently automatic</string>
+    <string name="键盘">keyboard</string>
+    <string name="文件名不能为空">
+File name cannot be empty</string>
+    <string name="出错了">Terjadi kesalahan</string>
+    <string name="添加一个命令">Add a command</string>
+    <string name="添加一个命令解释">Add a command explanation</string>
+    <string name="请选择运行的架构">Please select the running architecture</string>
+    <string name="删除当前命令">Delete current command</string>
+    <string name="修改当前命令">Modify the current command</string>
+    <string name="名称不能为空">Name is required</string>
+    <string name="命令不能为空">Command cannot be empty</string>
+    <string name="添加成功">Berhasil ditambah</string>
+    <string name="请输入命令名称">Please enter the command name</string>
+    <string name="请输入您要添加的命令">Please enter the command you want to add</string>
+    <string name="自动回车">Automatic carriage return</string>
+    <string name="保存当前配置">Save the current configuration</string>
+    <string name="好的">OK</string>
+    <string name="镜像运行结束">End of mirroring operation</string>
+    <string name="您的命令出错了">There was an error in your command</string>
+    <string name="清空">Kosongkan</string>
+    <string name="已完成清空">Completed empty</string>
+    <string name="修改">Ubah</string>
+    <string name="已完成修改">Modified</string>
+    <string name="修改成功">Berhasil diubah</string>
+    <string name="请再试一次">Silakan coba lagi</string>
+    <string name="删除成功">Berhasil dihapus</string>
+    <string name="切换成功">Berhasil diganti</string>
+    <string name="没有找到命令">Perintah tidak ditemukan</string>
+    <string name="命令出错">Perintah error</string>
+    <string name="加载中">Memuat</string>
+    <string name="回到主目录">Back to main list</string>
+    <string name="返回上层">Return to the upper level</string>
+    <string name="查看文件">check the file</string>
+    <string name="打开">Buka</string>
+    <string name="运行">Jalankan</string>
+    <string name="自动出错">Automatic error</string>
+    <string name="当前目录不在">The current directory is not</string>
+    <string name="会话">Sesi</string>
+    <string name="自动命令">help</string>
+    <string name="搜索文件">Search file</string>
+    <string name="再次输入您要搜索的文件">Enter the file you want to search again</string>
+    <string name="请输入您要查找的命令">Please enter the command you are looking for</string>
+    <string name="恢复默认命令">Restore default command</string>
+    <string name="自定义方案">Custom scheme</string>
+    <string name="导入导出命令">Import and export commands</string>
+    <string name="配置文件出错">Configuration file error</string>
+    <string name="导入">Impor</string>
+    <string name="导出">Ekspor</string>
+    <string name="已导入配置文件">Configuration file imported</string>
+    <string name="当前没有数据">Tidak ada data</string>
+    <string name="保存成功">Berhasil disimpan</string>
+    <string name="请选择一个配置文件">Please select a profile</string>
+    <string name="当前目录下没有镜像文件">There is no mirror file in the current directory</string>
+    <string name="使用默认命令">Use default commands</string>
+    <string name="当前目录下没有配置文件">There is no configuration file in the current directory</string>
+    <string name="目录下有一个相同文件">There is a same file in the directory</string>
+    <string name="保存文件">save document</string>
+    <string name="请输入保存的文件名">Please enter the saved file name</string>
+    <string name="安装短信读取工具">SMS/Address Book Tool</string>
+    <string name="该操作有风险">This operation is risky. Your mobile phone may be attacked to leak your SMS and address book. Do you want to continue the installation? (You can turn off the SMS sensitive permission when you are not using it)</string>
+    <string name="您已安装工具">You have already installed the tool, so there is no need to install it again. Use the command(SMS: smsread, address book: readcontacts)</string>
+    <string name="您当前未安装">You are not currently installed</string>
+    <string name="是否安装">Whether to install?</string>
+    <string name="安装完成">The installation is complete, please enter (SMS: smsread, address book: readcontacts) to use</string>
+    <string name="您已安装工具1">You have installed tools</string>
+    <string name="您未安装该插件">The plug-in installation is about to start, do you want to continue?</string>
+    <string name="需要在您的手机">
+       Need your internal storage permissions!\n
+        The following directory needs to be created on your phone:\n
+        [Internal storage/xinhao/data/] backup package \n
+        [Internal Storage/xinhao/apk/] Temporary APK \n
+        [Internal storage/xinhao/windows/]qemu directory \n
+        [Internal storage/xinhao/command/] command directory \n
+        [Internal storage/xinhao/font/] font directory \n
+        [Internal storage/xinhao/iso/] Mirror directory \n
+        [Internal storage/xinhao/mysql/] MySQL temporary files \n
+        [Internal storage/xinhao/online_system/] offline termux package \n
+        [Internal storage/xinhao/qemu/]qemu directory \n
+        [Internal storage/xinhao/server/]server directory \n
+        [Internal storage/xinhao/share/] share directory \n
+        [Internal storage/xinhao/web_config/] web temporary directory \n
+
+    </string>
+    <string name="版本">Versi</string>
+    <string name="会话窗口在右侧">Tip: Sessions are on the right.\nDouble-tap the terminal for shortcuts.\nFor learning only.</string>
+    <string name="开源地址">GitHub</string>
+    <string name="已打开开机启动命令">The boot command has been opened, restart the APP to take effect</string>
+    <string name="已关闭开机启动命令">The boot command has been turned off and will take effect after restart</string>
+    <string name="悬浮窗口">Mengambang</string>
+    <string name="draw_overlay_permission_explanation">This app needs permission to draw overlay。</string>
+    <string name="grant_permission">Obtain</string>
+    <string name="initial_instruction_toast">Long press to move on the window\n\nLong press to zoom on the window, zoom the window size</string>
+    <string name="notification_title">Termux:Suspension</string>
+    <string name="notification_message_visible">Touch to hide window。</string>
+    <string name="notification_message_hidden">Touch to hide window。</string>
+    <string name="正在载入中">Memuat, harap tunggu.</string>
+    <string name="字体选择">Pilihan font</string>
+    <string name="您一切选择的字体来源于互联网">All the fonts you choose come from the Internet</string>
+    <string name="没有在内部存储">No font files were found in [internal storage/xinhao/font]</string>
+    <string name="Utermux默认字体">ZeroTermux Default font</string>
+    <string name="Utermux中文字体">ZeroTermux English Fonts</string>
+    <string name="创建文件错误">Error creating file</string>
+    <string name="字体设置成功">Font berhasil diatur</string>
+    <string name="如果进入终端没有任何显示">If you enter the terminal without any display, it means that your font file is damaged, please reset the font</string>
+    <string name="字体设置">Font</string>
+    <string name="局域服务器">Server version</string>
+    <string name="未连接">Tidak terhubung</string>
+    <string name="公共仓库">Repositori</string>
+    <string name="正在连接到自定义服务器">Menghubungkan ke server kustom</string>
+    <string name="请输入自定义服务器IP">Masukkan IP server kustom</string>
+    <string name="默认地址">http://10.242.164.19</string>
+    <string name="无法连接到自定义服务器">Tidak dapat terhubung ke server kustom!</string>
+    <string name="连接">Hubungkan</string>
+    <string name="如何创建服务器">How to create a server</string>
+    <string name="服务器数据格式不正确">Format data server tidak benar</string>
+    <string name="服务器">server</string>
+    <string name="地址">alamat</string>
+    <string name="大小">ukuran</string>
+    <string name="简介">Ringkasan</string>
+    <string name="剩余">Sisa</string>
+    <string name="第三方服务器上的可执行文件">File pihak ketiga mungkin tidak aman. Tetap instal?</string>
+    <string name="下载站">Unduhan</string>
+    <string name="正在连接到下载站服务器">Menghubungkan ke stasiun unduhan</string>
+    <string name="无法连接到下载站服务器">Tidak dapat terhubung ke stasiun unduhan</string>
+    <string name="正在连接">Menghubungkan…</string>
+    <string name="VNC">VNC</string>
+    <string name="快速VNC">Fast VNC</string>
+    <string name="自定VNC">Custom VNC</string>
+    <string name="高级VNC">Advanced VNC</string>
+    <string name="请下载插件">Please download the plugin</string>
+    <string name="请输入地址">Masukkan alamat</string>
+    <string name="请输入端口">Masukkan port</string>
+    <string name="请输入密码">Masukkan kata sandi</string>
+    <string name="连接到自定VNC">Connect to custom VNC</string>
+    <string name="协议">protocol</string>
+
+
+    <string name="许可证">Legal Notices:\n
+
+
+
+
+       " ZeroTermux is a non-profit software developed based on Termux\n\nPart of the copyright belongs to ZeroTermux\n\nNo responsibility for any legal issues and risks, and no commercial purpose\n\n\n
+        Do not use for illegal purposes! \n
+        \n
+        Please abide by the law and be a good citizen,\n
+        \n
+        The original intention of ZeroTermux is to let you enter the linux world faster, contribute a spirit to the construction of society in the future, and make a contribution\n
+        \n
+
+        After a certain level of use, it is strongly recommended that you transition to the official termux [start using after getting started] (recommended),\n
+        \n
+
+        After all, ZT can help you for a while, but it can't help you for the rest of your life!\n
+        \n
+
+
+       Note: [Delete function may empty your SD card] in the [Switch system] function\n
+        \n
+        Please turn off the sd card authorization to execute the [Delete] function\n
+        \n
+        If your operation (not limited to the [Delete Function] of [Switch System], here is all the functions of ZeroTermux), your SD card includes:\n
+        \n
+        Photo\n
+        Video\n
+        Audio\n
+        As well as all other data, you (the personal user of ZeroTermux (ZT)) are responsible for yourself\n
+        \n
+
+
+       The download source of the public warehouse is uncontrollable and is not under the control of ZeroTermux. It all comes from a third-party warehouse. ZeroTermux and the author will not be responsible for everything from the third-party warehouse!\n
+\n
+        \n
+        If the third-party warehouse has all illegal activities/documents, the author who provides the third-party warehouse bears any legal responsibility! ZeroTermux and the author do not bear any legal/other responsibilities!
+
+        \n
+        \n
+        License:\n
+        \n
+
+        All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!\n
+        \n
+        All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!\n\n
+        All functions of ZeroTermux can only be used for personal learning and communication, not for commercial use! and illegal use!\n\n
+
+        1. This software (ZeroTermux) is open source software, you can freely distribute, copy, and change, but please follow the GPL agreement!\n\n
+        2. The software follows the GPL agreement (http://www.opensource.org/licenses/gpl-2.0.php)\n\n
+        3. All the functions of this software (ZeroTermux) are for learning and communication use, do not use commercially, such as accidental operations, intentional operations, unintentional operations, etc. of the user (users who use ZeroTermux) are borne by the user!\n
+        4. This software (ZeroTermux) is used for free learning and communication as in the first regulation. The icons and fonts involved in the software are all from the Internet. \n
+         4.1. The font is the Android default font. If you use other fonts, please users (users using ZeroTermux) bear all risks and legal responsibilities. \n
+         4.2. The icon is used as the public library of Alibaba ICO. The principle of using the icon is for learning and communication, not for commercial use. If there is any infringement, it will be deleted immediately. \n
+        5. The recovery packages, data packages, zip packages, etc. used in this software (ZeroTermux) are all at risk. All of them are from the Internet. Please use it at your discretion. If any irreparable loss is caused, the user shall bear the risk. . \n
+        6. All recovery packages, data packages,module packages, and zip packages ZeroTermux cannot control their content. If there is any infringement in the package, the author of this software does not bear any responsibility, and the creator of the recovery package, data package, and zip package shall bear the responsibility (tar.gz backup function law statement). \n
+        7. Thanks to all the authors of the functions applied to this project. \n
+        8.Using ZeroTermux will directly or indirectly damage your equipment. If there is any irreparable loss, the user shall bear the responsibility of the software and the author.\n"
+
+
+    </string>
+    <string name="不同意">Tidak setuju</string>
+    <string name="同意">Setuju</string>
+    <string name="请认真阅读许可协议">Harap baca perjanjian lisensi dan pembagian tanggung jawab dengan saksama</string>
+    <string name="无法创建">Unable to create the (internal storage/xinhao/data) folder, please create it manually!</string>
+    <string name="无法创建1">Unable to create (internal storage/xinhao/apk) folder, please create it manually!</string>
+    <string name="已开始打印APP实时delog">Started to print APP real-time log</string>
+    <string name="暂未开放下载">Not yet available for download</string>
+    <string name="雪花关">Salju mati</string>
+    <string name="雪花开">Salju nyala</string>
+    <string name="官方插件">Official plugin</string>
+    <string name="TermuxApi">T…x:Api</string>
+    <string name="TermuxTasker">T…x:Tasker</string>
+    <string name="TermuxBoot">T…x:Boot</string>
+    <string name="TermuxStyling">T…x:Styling</string>
+    <string name="全屏模式">Layar penuh</string>
+
+    <string name="语言切换">Bahasa</string>
+    <string name="中文">Tionghoa</string>
+    <string name="English">English</string>
+    <string name="Indonesian">Bahasa Indonesia</string>
+    <string name="取消">Batal</string>
+    <string name="termux_x11">termux-x11</string>
+
+    <string name="本机IP">IP lokal</string>
+
+    <string name="Zero功能">Zero</string>
+    <string name="ZeroTermux内置功能">ZeroTermux command area (long press to open author address)</string>
+    <string name="内置nginx">Nginx (built-in)</string>
+    <string name="Nginx开关">Nginx switch</string>
+    <string name="访问linux目录">Access linux directory</string>
+    <string name="访问目录">Access directory (/)</string>
+    <string name="访问目录sd">Access Directory (SD)</string>
+    <string name="WebStart开关">WebStart switch</string>
+    <string name="端口">port</string>
+    <string name="路径">path</string>
+    <string name="访问地址">address</string>
+    <string name="原作者地址">Original author address</string>
+    <string name="项目地址">project address</string>
+    <string name="所选的端口号范围超出65535最大值">The selected port number range exceeds the maximum value of 65535, and the default is changed to port 7766</string>
+    <string name="开启成功">Service opened successfully!</string>
+
+
+    <string name="软件开发">SoftwareDevelopment</string>
+    <string name="MyServer">MyServer</string>
+    <string name="Termux_ADB">Termux-ADB</string>
+    <string name="实验功能">Labs</string>
+    <string name="ZeroTermux实验功能">ZeroTermux ExperimentalFunction</string>
+    <string name="网络ADB">Net ADB</string>
+    <string name="网络ADBNo">Network ADB (no ROOT)</string>
+    <string name="没有找到本机的ROOT权限">The ROOT permission of the machine is not found. Do you want to force it to continue?</string>
+    <string name="运行完成">The command execution is complete, please make sure to execute it under Root\nPlease use:\n \n adb.exe connect</string>
+    <string name="网络ADBClose">Stop ADB</string>
+    <string name="关闭成功">ADB command closed successfully</string>
+
+
+
+    <string name="欢迎来到windows模拟器页面">Welcome to the windows simulator page</string>
+    <string name="环境">surroundings</string>
+    <string name="qamu环境">qemu environment</string>
+    <string name="qamu环境开">[installed]</string>
+    <string name="qamu环境关">[NotInstalled]</string>
+    <string name="点击安装">Click install</string>
+    <string name="显示环境">Display environment</string>
+    <string name="显示环境开">[installed]</string>
+    <string name="显示环境关">[NotInstalled]</string>
+    <string name="ROOT运行">ROOT Run</string>
+    <string name="ROOT运行1">Please enter tsu in Termux</string>
+    <string name="帮我安装">Help me install</string>
+    <string name="快捷运行">Quick run</string>
+    <string name="警告测dsfsdf">Warning: If [system call bad] appears, please execute [termux-chroot] in the terminal and then enter!</string>
+    <string name="win10系统">win10 system</string>
+    <string name="win7系统">win7 system</string>
+    <string name="winXP系统">winXP system</string>
+    <string name="替换官方版本">Replace the official version</string>
+    <string name="用官版的请点击">For the official version, please click</string>
+    <string name="MAC系统">MAC system</string>
+    <string name="我自己的系统">My own system</string>
+    <string name="打开当前VNC任务">Open the current VNC task</string>
+    <string name="Windows注意">Note: The image will be copied to the working area of UTermux[/Home/UTWindow/]</string>
+    <string name="当前操作镜像">Current operation mirror:</string>
+    <string name="无">Empty</string>
+    <string name="打开操作镜像">Open operation mirror</string>
+    <string name="清空操作镜像">Clear operation mirror</string>
+    <string name="请显示QEMU命令">Please show QEMU commands</string>
+    <string name="请输入QEMU命令">Please enter the QEMU command</string>
+    <string name="清空命令行">Clear the command line</string>
+    <string name="QEMU执行并打开显示器">QEMU executes and turns on the display</string>
+    <string name="QEMU执行">QEMU execution</string>
+    <string name="填充默认命令">Fill default commands</string>
+    <string name="提示dsfsdfmmm">
+       "It may affect performance, or cannot enter the system!!\n
+        It may affect performance, or can't enter the system!\n
+        If it is slow, please delete it\n
+        -drive file=fat:rw:/home/storage/shared/xinhao/share\n
+        Place the interactive files with the virtual machine under the [internal storage/xinhao/share] directory\n
+        To copy new files, you must restart the virtual machine to see the files!!\n
+        To copy new files, you must restart the virtual machine to see the files!!\n
+        Tip: If you need to share files (virtual machine interactive files), it has been added by default\n
+        Please add before -vnc:\n
+        -drive file=fat:rw:/sdcard/xinhao/share\n
+        Command, long press to copy the command"
+    </string>
+    <string name="正在疏通所需要的环境">Is dredging the required environment</string>
+    <string name="请输入回车键继续">Please enter the enter key to continue</string>
+    <string name="请选择一个镜像">Please select a mirror</string>
+    <string name="请选择模拟器配置文件">Please select an emulator profile</string>
+    <string name="成功">success</string>
+    <string name="qemu_x86_win">Win/linux/(x64_x86)</string>
+    <string name="qemu_i386_win">Win/linux/(i386)</string>
+    <string name="qemu_ppc_win">MAC(ppc)</string>
+    <string name="请在下载站下载VNC插件">Please download the VNC plug-in at [download site]</string>
+    <string name="环境不达要求">The environment is not up to the requirements</string>
+    <string name="你没有安装tyu65t6y5u">"You have not installed wget or proot \nDo you want to install it now"</string>
+    <string name="给我安装">Install</string>
+    <string name="不安装">Cancel</string>
+    <string name="错误">error</string>
+    <string name="你没有安装相关环境qemuppp5555p">"You have not installed the relevant environment, please click to install"</string>
+    <string name="在线安装">Online installation</string>
+    <string name="请等待安装完成在进入">Please wait for the installation to complete before entering</string>
+    <string name="稍后">Later</string>
+    <string name="系统初始化失败">System initialization failed</string>
+    <string name="请输入回车键继续55">Please enter the enter key to continue</string>
+    <string name="获取镜像">Extraction code: 6b7w</string>
+    <string name="是否前往下载系统">Whether to go to the download system</string>
+    <string name="前往">Go to</string>
+    <string name="Zero">Zero/UTermux simulation</string>
+    <string name="一键启动">one-button start</string>
+
+    <string name="确定重置所有任务">
+Are you sure to reset and delete all tasks?\nIf your download status is messy/incorrect, please apply this setting\nNote: The downloaded ones will not be deleted\nThe downloading ones will be deleted</string>
+    <string name="重置成功">
+Reset successfully</string>
+
+    <!-- Terminal View Preferences -->
+    <string name="termux_terminal_view_preferences_title">Terminal View</string>
+    <string name="termux_terminal_view_preferences_summary">Preferences for terminal view</string>
+
+    <!-- View Category -->
+    <string name="termux_terminal_view_view_header">View</string>
+
+    <!-- Terminal View Margin Adjustment -->
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">Terminal Margin Adjustment</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_off">Terminal margin adjustment will be disabled.</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">Terminal margin adjustment will be enabled. It should be enabled to try to fix the issue where soft keyboard covers part of extra keys/terminal view. If it causes screen flickering on your devices, then disable it. (Default)</string>
+
+    <string name="VSCODE">VSCODE</string>
+    <string name="X86_Alpine">X86_Alpine</string>
+    <string name="请在下载站下载Alpine插件">Please download the Alpine plugin at the download site</string>
+    <string name="没有权限">Without memory permissions, the download station cannot be opened!</string>
+
+
+    <string name="可能检测到OTG设备">The OTG device may be detected, but the reading fails, please unplug the device and try again, or give permission to read OTG!</string>
+    <string name="检测到OTG设备">The OTG device is detected, and the OTG mapping directory will be created\n~/home/xinhaoLink/</string>
+    <string name="下次提示">Remind later</string>
+    <string name="如果下次想继续使用OTG设备">Next time prompt</string>
+    <string name="OTG设备异常">
+       OTG device abnormal\n
+        Unable to read the USB (OTG) usable directory\n
+        The directory structure is empty!
+    </string>
+    <string name="无联系人">No contacts or no permissions</string>
+    <string name="姓名">Name</string>
+    <string name="电话">phone</string>
+    <string name="备注">Remarks</string>
+    <string name="序号">Serial number</string>
+
+    <string name="无权限读取">No permission to read</string>
+    <string name="请等待">Please wait</string>
+    <string name="远程控制下请先安装vim">Please install vim first under remote control, otherwise the program will not create sms.txt and phone.txt</string>
+    <string name="网络访问linux目录">Net Files</string>
+    <string name="filebrowser已运行">filebrowser is running, port 19951, account: admin password: admin</string>
+    <string name="WinXp">Windows Xp</string>
+
+    <string name="msg_add_termux_debug_info">Add termux debug info to report?</string>
+    <!-- Termux API App Preferences -->
+    <string name="termux_api_preferences_title">&TERMUX_API_APP_NAME;</string>
+    <string name="termux_api_preferences_summary">Preferences for &TERMUX_API_APP_NAME; app</string>
+    <!-- TermuxService -->
+
+    <string name="Win7模拟">Win7 simulation</string>
+
+    <string name="选择方式">options</string>
+    <string name="要获取最新版本">To get the latest version, you need to download it online, the old version can choose a local script</string>
+    <string name="获取线上">Get online</string>
+    <string name="线上脚本">Online script</string>
+    <string name="本地脚本">Local script</string>
+    <string name="请双击命令窗口试试">ZeroTermux\nDouble-click the command window to open the shortcut bar\nDouble-click the far left (volume + button)\nRight (volume-button) to open the menu/session bar\nTwo-finger click to open the toolbox\nThe right menu opens the built-in file browser device</string>
+    <string name="Zero论坛">Forum</string>
+    <string name="ZeroTermux论坛">ZeroTermux bbs</string>
+
+    <string name="在线脚本">Scripts</string>
+    <string name="在线脚本服务器名称">Server Name</string>
+    <string name="数据载入中">Data loading</string>
+    <string name="服务器已离线">Server is offline</string>
+    <string name="服务器在线但数据格式出错">The server is online, but the data format is wrong</string>
+    <string name="当前文件下载已被禁止">The current file download has been forbidden</string>
+    <string name="此脚本数据错误">The script data is wrong, please try to contact the administrator</string>
+
+    <string name="美化设置">Theme</string>
+    <string name="字体颜色">Font Color</string>
+    <string name="背景颜色">Back Color</string>
+    <string name="字体颜色透明度">Font Color transparency</string>
+    <string name="背景颜色透明度">Back Color transparency</string>
+    <string name="背景颜色半透明">Font Color transparency up pic</string>
+    <string name="背景图片">Back PIC</string>
+    <string name="显示背景字体">Show Back Font</string>
+    <string name="重置">Reset</string>
+    <string name="如果看到该页面">If you see this page, press the back key to exit</string>
+    <string name="nju">NJU</string>
+    <string name="ustc">USTC</string>
+    <string name="hit">HIT</string>
+
+    <string name="启动器新">Launcher[new]</string>
+    <string name="启动器旧">Launcher[old]</string>
+    <string name="系统切换成功">The launcher is switched successfully, and it will take effect after restarting</string>
+
+    <!-- TermuxService -->
+
+    <string name="error_termux_service_invalid_execution_command_runner">Invalid execution command runner to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_runner">Unsupported execution command runner to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_session_create_mode">Unsupported execution command session create mode to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_execution_command_session_name_unset">Session name not set but `%1$s` session create mode passed</string>
+
+
+    <!-- Termux RunCommandService -->
+    <string name="error_run_command_service_invalid_execution_command_runner">Invalid execution command runner to RunCommandService: `%1$s`</string>
+
+    <string name="error_termux_service_unsupported_execution_command_shell_create_mode">Unsupported execution command shell create mode to TermuxService: `%1$s`</string>
+    <string name="error_termux_service_execution_command_shell_name_unset">Shell name not set but `%1$s` shell create mode passed</string>
+    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">&TERMUX_APP_NAME; requires
+        \"Display over other apps\" permission to start terminal sessions from background on Android >= 10.
+        Grants it from Settings -> Apps -> &TERMUX_APP_NAME; -> Advanced</string>
+    <string name="bootstrap_error_installed_on_portable_sd">&TERMUX_APP_NAME; cannot be installed on
+        portable/external/removable sd card on your device.
+        \nBootstrap binaries compiled for &TERMUX_APP_NAME; have hardcoded $PREFIX path and cannot be installed
+        under any path other than:\n%1$s.</string>
+
+    <string name="title_share_selected_text">Terminal Text</string>
+    <string name="title_share_selected_text_with">Send selected text to:</string>
+    <string name="add_commend_msg_fail">"Can't add empty commands"</string>
+    <string name="add_commend_msg_ok">"The addition is successful. For details, please set the \"Command Definition\" function"</string>
+    <string name="tool_cent">Toolbox</string>
+    <string name="linux_commend">commend</string>
+    <string name="linux_clipboard">clipboard</string>
+    <string name="font_name">fontName:</string>
+    <string name="font_instance">fontInstance:</string>
+    <string name="font_path">fontPath:</string>
+    <string name="instance_zero">ZeroTermux|ABCD</string>
+
+    <string name="clipboard_text">Note: This clipboard will only record the content within the APP</string>
+    <string name="clipboard_title">Clipboard Title:</string>
+    <string name="clipboard_msg">Clipboard Msg:</string>
+    <string name="clipboard_note">delete</string>
+    <string name="clipboard_empty">no data</string>
+    <string name="clipboard_empty_copy">no data copy</string>
+    <string name="tool_other">other</string>
+    <string name="vedio_select_name">Video BG</string>
+    <string name="keyboard_select_name">Keyboard</string>
+
+    <string name="image_size_error">file too large</string>
+
+    <string name="zero_eg_not_install">No engine detected, redirecting to the GitHub page…</string>
+
+    <string name="install_environment">Install the required environment?</string>
+
+    <string name="x86_alpine_run">X86 Alpine</string>
+
+    <string name="clear_style_dialog">Clear Style</string>
+
+    <string name="engine_vision">Engine</string>
+
+    <string name="engine_not_install">Not Install</string>
+
+    <string name="web_linux">Web Term</string>
+
+    <string name="ttyd_install_complete">IP:0.0.0.0\nport:7681</string>
+
+    <string name="qq_group">QQ Group</string>
+
+    <string name="telegram_group">Telegram</string>
+
+    <string name="opne_in_zerotermux">Opne In Zerotermux</string>
+
+    <string name="move_file_to_zt">Copy File To ZeroTermux</string>
+
+    <string name="file_name_copy">FileMessage:{file}\n\nSize:{size}\n\nPath:{path}\n\nSuffix:{suffix}\n\ncopyPath:~</string>
+
+    <string name="copy_file_to_zt">copy is complete, the copy is in the path:"~"</string>
+
+    <string name="not_file_msg">File error, cannot be copied into ZeroTermux application!</string>
+
+    <string name="ttyd_install_msg">The current environment is not currently installed, please wait for the installation to complete [click this entry again]!</string>
+
+    <string name="ftp">FTP</string>
+
+    <string name="storage_warning">Aviso: Almacenamiento no disponible. Puede que quieras desmontarlo.</string>
+
+    <string name="ftp_title">explanation</string>
+
+    <string name="ftp_msg">The core is improved according to apache, and the default directory is the Linux directory\nThis version is 2.0, which fixes the abnormal problem of FTP connection and replaces the core to ensure the stability of this function!</string>
+
+    <string name="ftp_error">The file has not been loaded or failed to read, please open it after loading or try again</string>
+
+    <string name="ftp_start_window">Jump to FTP</string>
+
+    <string name="ftp_prot_error">The currently selected port is occupied</string>
+
+    <string name="container_management">Container Management</string>
+
+    <string name="back_message">Please choose the following backup format, generally recommend "tar.gz" format</string>
+
+    <string name="storage_error">The "~/storage" directory is lost during the operation, please manually create termux-setup-storage or reopen "Container Management" to let the program create it automatically</string>
+
+    <string name="backup_success">The backup is complete, and the backup file is in ->internal storage/xinhao/data/|directory</string>
+
+    <string name="backup_msg_dialog">To start backing up the current container, the system needs to create a new session to perform the backup operation, click OK to continue</string>
+    <string name="delete_restore_data">delete</string>
+
+    <string name="ftp_port_msg">port out of range!</string>
+
+    <string name="data_file_name">Data Name:</string>
+    <string name="data_file_size">Data Size:</string>
+    <string name="data_file_path">Data Path:</string>
+    <string name="file_delete_msg">Are you sure you want to permanently delete this data file? There is no way to restore it after deletion.</string>
+    <string name="file_delete_fail">Unable to delete this file, please delete it manually in internal storage!</string>
+    <string name="file_sd_msg">The current program needs to create a memory card soft link, and needs to apply for SD card permission. If you refuse, you will not be able to use all the content in the container management!</string>
+    <string name="file_sd_fail">memory card permission is denied, this module cannot work, exit. . .</string>
+    <string name="file_sd_success">Permissions obtained successfully</string>
+    <string name="system_create_container">Create a recovered system container</string>
+    <string name="system_create_container_empty">System container name cannot be empty</string>
+    <string name="system_create_container_fail">System creation failed! Please try again</string>
+    <string name="system_restore_success">The system recovery is complete, please switch the system, switch your system</string>
+    <string name="unrecognized_compression_format">unrecognized packet!</string>
+    <string name="create_xinhao_path_fail">Failed to create ~/xinhaoLink folder, please create it manually!</string>
+    <string name="commonly_used_soft_links">Shortcuts</string>
+    <string name="create_soft_links">The following shortcuts will be created:\nInternal storage WeChat, QQ, download directory\nInternal links: ~/xinhaoLink, due to Android 11+ restrictions /internal storage/Android/data/ directory access will not be created /internal storage/Android/data / Table of contents,But the program will still force the creation of</string>
+    <string name="create_soft_links_fail">Creation failed, please try again or manually create ~/xinhaoLink</string>
+    <string name="my_commonly_used_soft_links">My Shortcuts</string>
+    <string name="my_commonly_used_soft_links_path">Enter the directory to link</string>
+    <string name="my_commonly_used_soft_links_repeat"> entered directory does not exist!</string>
+    <string name="action_share_selected_text">Share selected text</string>
+    <string name="data_message">Data Message:</string>
+    <string name="create_data_message">Data Info</string>
+    <string name="data_message_hint">Create your package information, provide instructions for using the package. After setting it up, the relevant package information will be displayed in the left sidebar. You can use Markdown syntax.</string>
+    <string name="data_message_empty">Data Msg Not Empty</string>
+    <string name="zero_uninstall">Uninstall</string>
+    <string name="install_module">Modules</string>
+    <string name="install_module_download">Install Module(DownLoad Module)</string>
+    <string name="install_module_message">Note: It cannot be uninstalled after installation, and it only takes effect for the current container (if the path has been put into the module package but it is not displayed, please check the SD card permission)</string>
+    <string name="install_empty">sdcard/xinhao/module,no data</string>
+    <string name="install_message">Console:\nStart installing modules</string>
+    <string name="delete_module_data">remove this modpack</string>
+    <string name="data_module_name">module name:</string>
+    <string name="data_module_size">module size:</string>
+    <string name="data_module_path">module path:</string>
+    <string name="file_module_msg">Are you sure you want to permanently delete this modpack? There is no way to restore it after deletion.</string>
+    <string name="install_module_msg1">Preparing to install the module</string>
+    <string name="install_module_msg2">Expanding install module</string>
+    <string name="install_module_msg3">Expand module error!</string>
+    <string name="install_module_msg4">The module deployment is complete and the installation starts</string>
+    <string name="install_module_msg5">Invalid module installation package, the installation file [INSTALL.txt] cannot be found</string>
+    <string name="install_module_msg6">Installation script error, cannot find [target file] [target location] [permission] 3 parameters</string>
+    <string name="install_module_msg7">Object file exists! Choose to overwrite this file</string>
+    <string name="install_module_msg8">Object file exists! Choose to overwrite this file error</string>
+    <string name="install_module_msg9">Permission setting error, set default 0700</string>
+    <string name="install_module_msg10">The module installation is complete! Some functions need to be restarted to take effect</string>
+    <string name="install_module_msg11">If the permission is detected to be empty, setting the file permission will be skipped</string>
+    <string name="install_def_bash">Def. Startup</string>
+    <string name="install_def_bash_msg_ok">The default startup file was restored successfully</string>
+    <string name="install_def_bash_msg_error">default boot file restore error!!</string>
+    <string name="install_def_bash_is_writer">Are you sure you want to revert to the default system startup script (bash.bashrc)? The action cannot be changed!</string>
+    <string name="install_module_switch">Are you sure you want to install this module pack?</string>
+    <string name="install_module_clear_tempmodule">An exception occurred when emptying the temporary folder, please manually delete the ~/tempmodule folder!</string>
+    <string name="edit_save">Save</string>
+    <string name="edit_cancel">Cancel</string>
+    <string name="edit_find">Find</string>
+    <string name="edit_replace">Replace</string>
+    <string name="edit_search_hint">Search</string>
+    <string name="edit_replace_hint">Replace with</string>
+    <string name="edit_replace_all">Replace all</string>
+    <string name="editor_toolbar_menu">Sidebar menu</string>
+    <string name="editor_toolbar_files">Save</string>
+    <string name="editor_toolbar_undo">Undo</string>
+    <string name="editor_toolbar_redo">Redo</string>
+    <string name="editor_toolbar_more">More actions</string>
+    <string name="editor_toolbar_terminal">Shell</string>
+    <string name="editor_toolbar_format">Format code</string>
+    <string name="editor_toolbar_duplicate_line">Duplicate line</string>
+    <string name="editor_toolbar_keyboard">Show keyboard</string>
+    <string name="editor_toolbar_goto_def">Go to definition mode</string>
+    <string name="editor_toolbar_goto_def_on">Tap a symbol to open its definition. Tap the button again to exit.</string>
+    <string name="editor_toolbar_extra_toggle">Terminal / GUI bar</string>
+    <string name="editor_toolbar_extra_show">Show Terminal / GUI bar</string>
+    <string name="editor_toolbar_extra_hide">Hide Terminal / GUI bar</string>
+    <string name="editor_terminal_title">Terminal</string>
+    <string name="editor_terminal_hide">Hide terminal</string>
+    <string name="editor_toolbar_run">Run</string>
+    <string name="editor_java_install_jdk_title">Install JDK</string>
+    <string name="editor_java_install_jdk_message">Java development kit (JDK) was not found. Install OpenJDK in Termux?</string>
+    <string name="editor_java_install_jdk_confirm">Install</string>
+    <string name="editor_run_install_c_title">Install C compiler</string>
+    <string name="editor_run_install_c_message">C compiler (gcc/clang) was not found. Install it in Termux?</string>
+    <string name="editor_run_install_python_title">Install Python</string>
+    <string name="editor_run_install_python_message">Python was not found. Install it in Termux?</string>
+    <string name="editor_run_install_php_title">Install PHP</string>
+    <string name="editor_run_install_php_message">PHP/Composer was not found. Install them in Termux?</string>
+    <string name="editor_run_install_node_title">Install Node.js</string>
+    <string name="editor_run_install_node_message">Node.js/npm was not found. Install them in Termux?</string>
+    <string name="editor_java_terminal_unavailable">Cannot reach the Termux terminal. Open the main terminal first.</string>
+    <string name="editor_java_save_failed">Failed to save the file. Run aborted.</string>
+    <string name="editor_sidebar_files">Files</string>
+    <string name="editor_sidebar_page_browser">Browse</string>
+    <string name="editor_sidebar_page_project">New project</string>
+    <string name="editor_sidebar_project_path_label">Creates project_java / project_c / project_python / project_php / project_node folders under:</string>
+    <string name="editor_sidebar_create_java">Create Java project</string>
+    <string name="editor_sidebar_create_c">Create C project</string>
+    <string name="editor_sidebar_create_python">Create Python project</string>
+    <string name="editor_sidebar_create_php">Create PHP (Composer) project</string>
+    <string name="editor_sidebar_create_node">Create Node.js (npm) project</string>
+    <string name="editor_sidebar_create_android">Create Android project</string>
+    <string name="editor_sidebar_android_project_created">Android project created: %1$s</string>
+    <string name="editor_sidebar_android_project_failed">Failed to create Android project</string>
+    <string name="editor_toolbar_android_build">Build Android project</string>
+    <string name="editor_android_install_gradle_title">Install Android build environment</string>
+    <string name="editor_android_install_gradle_message">Android build tools (OpenJDK, Android SDK, aapt2) were not found. Install them in Termux? The first SDK setup may take a while.</string>
+    <string name="editor_android_install_gradle_confirm">Install</string>
+    <string name="editor_sidebar_project_created">Created project folder %1$s</string>
+    <string name="editor_sidebar_project_exists">File already exists: %1$s</string>
+    <string name="editor_sidebar_project_dir_invalid">Current directory unavailable</string>
+    <string name="editor_sidebar_search">Search</string>
+    <string name="editor_sidebar_search_hint">Search current file</string>
+    <string name="editor_sidebar_search_empty">Enter keywords to search current file</string>
+    <string name="editor_sidebar_no_result">No results</string>
+    <string name="editor_sidebar_result_count">%1$d results</string>
+    <string name="editor_sidebar_result_count_limited">Showing first %1$d results</string>
+    <string name="editor_sidebar_invalid_regex">Regex error: %1$s</string>
+    <string name="editor_sidebar_regex">Regex</string>
+    <string name="editor_sidebar_match_case">Match case</string>
+    <string name="editor_sidebar_file_empty">No files</string>
+    <string name="editor_sidebar_go_up">.. Parent directory</string>
+    <string name="editor_sidebar_new_menu">New</string>
+    <string name="editor_sidebar_create_folder">Create folder</string>
+    <string name="editor_sidebar_create_file">Create file</string>
+    <string name="editor_sidebar_create_name_hint">Name</string>
+    <string name="editor_sidebar_create_exists">Already exists: %1$s</string>
+    <string name="editor_sidebar_create_failed">Create failed</string>
+    <!-- %1$s = date (yyyy-MM-dd), %2$s = class name -->
+    <string name="editor_sidebar_java_file_template">"/**\nManually created Java file\nCreated: %1$s\n**/\nclass %2$s {\n}\n"</string>
+    <string name="editor_sidebar_copy">Copy</string>
+    <string name="editor_sidebar_cut">Cut</string>
+    <string name="editor_sidebar_paste">Paste</string>
+    <string name="editor_sidebar_delete">Delete</string>
+    <string name="editor_sidebar_delete_confirm_file">Delete file \"%1$s\"? This cannot be undone.</string>
+    <string name="editor_sidebar_delete_confirm_folder">Delete folder \"%1$s\" and all contents? This cannot be undone.</string>
+    <string name="editor_sidebar_clipboard_copied">Copied: %1$s</string>
+    <string name="editor_sidebar_clipboard_cut">Cut: %1$s</string>
+    <string name="editor_sidebar_paste_success">Pasted: %1$s</string>
+    <string name="editor_sidebar_paste_failed">Paste failed</string>
+    <string name="editor_sidebar_delete_success">Deleted: %1$s</string>
+    <string name="editor_sidebar_delete_failed">Delete failed</string>
+    <string name="editor_file_not_text">Non-text files cannot be opened</string>
+    <string name="editor_image_preview">Image preview</string>
+    <string name="editor_svg_preview_mode">Preview SVG</string>
+    <string name="editor_svg_edit_mode">Edit SVG</string>
+    <string name="editor_markdown_preview_mode">Preview Markdown</string>
+    <string name="editor_markdown_edit_mode">Edit Markdown</string>
+    <string name="editor_symbol_customize">Customize extra keys</string>
+    <string name="editor_symbol_customize_title">Customize extra keys</string>
+    <string name="editor_symbol_customize_hint">Enter a JSON array, for example ["{", {"display":"Tab","insert":"\\t"}]</string>
+    <string name="editor_symbol_customize_summary">Customize extra keys with a JSON array. Strings insert themselves; objects support display/insert fields.</string>
+    <string name="editor_symbol_customize_save">Save</string>
+    <string name="editor_symbol_customize_reset">Reset</string>
+    <string name="editor_symbol_customize_invalid">No valid extra keys</string>
+    <string name="editor_settings">Editor settings</string>
+    <string name="editor_settings_tab_size">Tab size</string>
+    <string name="editor_settings_theme">Editor theme</string>
+    <string name="editor_settings_font">Custom font file</string>
+    <string name="editor_settings_font_hint">Leave empty for default, or enter a font file path</string>
+    <string name="editor_settings_font_select">Select font file</string>
+    <string name="editor_settings_font_invalid">Font file is invalid or unreadable</string>
+    <string name="editor_settings_font_picker_error">Unable to open font file picker</string>
+    <string name="editor_settings_symbols">Extra keys</string>
+    <string name="editor_settings_symbols_edit">Configure editor extra keys</string>
+    <string name="editor_settings_lsp">LSP code completion</string>
+    <string name="editor_settings_lsp_enable">Enable LSP code completion</string>
+    <string name="editor_settings_lsp_timeout">LSP request timeout</string>
+    <string name="editor_settings_lsp_timeout_hint">Milliseconds, for example 3000</string>
+    <string name="editor_settings_lsp_download_desc">Smart completion for JSON, JS/TS, Python, YAML, Shell, and more. Shell basic LSP installs automatically on first use; download others below.</string>
+    <string name="editor_settings_lsp_download">Download / manage LSP servers</string>
+    <string name="editor_settings_lsp_download_title">LSP servers</string>
+    <string name="editor_settings_lsp_installed">Installed</string>
+    <string name="editor_settings_lsp_installing">Downloading</string>
+    <string name="editor_settings_lsp_not_installed">Not installed, tap to download</string>
+    <string name="editor_settings_lsp_dialog_hint">Tap an item to install. If npm is missing, pkg install is sent to the Termux terminal automatically; LSP packages install via npm install -g. Keep Termux available until commands finish.</string>
+    <string name="editor_settings_lsp_dialog_close">Close</string>
+    <string name="editor_settings_lsp_supported_languages">Supports: %1$s</string>
+    <string name="editor_settings_lsp_status_not_installed">Not installed</string>
+    <string name="editor_settings_lsp_action_install">Tap to install</string>
+    <string name="editor_settings_lsp_action_retry">Tap to retry</string>
+    <string name="editor_settings_lsp_action_installed">Ready</string>
+    <string name="editor_settings_lsp_required_badge">Recommended</string>
+    <string name="editor_lsp_install_prompt_title">Language assist</string>
+    <string name="editor_lsp_install_prompt_message">Detected that this language supports hints and error checking. An environment needs to be installed. Install now?</string>
+    <string name="editor_lsp_install_prompt_install">Install</string>
+    <string name="editor_lsp_hover">Hover info</string>
+    <string name="editor_lsp_popup_tip">Tap outside to dismiss · Tap an item to navigate</string>
+    <string name="editor_java_create_method">Create method</string>
+    <string name="editor_lsp_goto_definition">Go to definition</string>
+    <string name="editor_lsp_go_back">Go back</string>
+    <string name="editor_lsp_find_references">Find references</string>
+    <string name="editor_lsp_organize_imports">Organize imports</string>
+    <string name="editor_lsp_code_actions">Code actions</string>
+    <string name="editor_lsp_quick_fix">Quick fix</string>
+    <string name="editor_lsp_no_hover">No hover info</string>
+    <string name="editor_lsp_no_definition">No definition found</string>
+    <string name="editor_lsp_loading_class_source">Loading class source…</string>
+    <string name="editor_lsp_class_source_failed">Could not load Java source for class file</string>
+    <string name="editor_lsp_no_references">No references found</string>
+    <string name="editor_lsp_no_code_action">No code action available</string>
+    <string name="editor_lsp_organize_imports_done">Imports organized</string>
+    <string name="editor_lsp_organize_imports_failed">Organize imports failed</string>
+    <string name="editor_lsp_references_title">References (%1$d)</string>
+    <string name="editor_lsp_references_for">References: %1$s</string>
+    <string name="editor_lsp_hover_for">Info: %1$s</string>
+    <string name="editor_lsp_format_done">Code formatted</string>
+    <string name="editor_lsp_format_failed">Format failed</string>
+    <string name="editor_lsp_working">Working…</string>
+    <string name="editor_lsp_goto_loading">Going to definition, please wait…</string>
+    <string name="editor_lsp_goto_loading_close">Close</string>
+    <string name="editor_lsp_install_prompt_cancel">Cancel</string>
+    <string name="editor_lsp_install_prompt_never">Don\'t ask again</string>
+    <string name="editor_unsaved_title">Unsaved file</string>
+    <string name="editor_unsaved_exit_message">%1$d files have unsaved changes. Exit anyway?</string>
+    <string name="editor_unsaved_close_message">%1$s has unsaved changes. Close anyway?</string>
+    <string name="editor_unsaved_discard">Discard</string>
+    <string name="changed_bash">Startup File</string>
+    <string name="save_error_">save failed</string>
+    <string name="save_ok_">Saved successfully, some files need to restart APP to take effect</string>
+    <string name="start_msg">Greeting</string>
+    <string name="create_folder">create folder</string>
+    <string name="rohibit_toolbox_msg">When you adjust the font size or take a three-finger screenshot, you can choose to disable toolbox\nEnable toolbox: [long press the terminal -> enable toolbox]</string>
+    <string name="rohibit_toolbox_select">disable display</string>
+    <string name="rohibit_toolbox_ok_">The display is disabled, if you want to open it please: [long press the terminal -> enable toolbox]</string>
+    <string name="module_un7z_">Module Expanding...</string>
+    <string name="module_install_pro">processing command:</string>
+    <string name="file_manager">File Manager</string>
+    <string name="select_session">Select Session</string>
+    <string name="http_folder">folder</string>
+    <string name="http_file">file</string>
+    <string name="no_http_msg">It seems that there is no connection to the network? Please manually open the local IP: 19956 in the browser</string>
+    <string name="buffer_size_key">buffer_size</string>
+    <string name="auto_shell_key">auto_shell</string>
+    <string name="startup_command_key">startup_command</string>
+    <string name="open_ttyd_http">NetworkTerminal(ttyd)</string>
+    <string name="open_file_http">NetworkFiles</string>
+
+    <string name="adb_command">Enter pairing code</string>
+    <string name="adb_tool">Enter port number</string>
+    <string name="input_content_cannot_be_empty">input content cannot be empty</string>
+
+
+    <string name="notification_channel_foreground_service">Reception</string>
+    <string name="notification_channel_attention">hint</string>
+    <string name="notification_ftp_start_error_title">FTP service failed to start</string>
+    <string name="notification_ftp_start_errer_message">The FTP service cannot be started, please check the network, permissions, and operating mode</string>
+    <string name="item_charset_gbk">GBK(Simplified Chinese)</string>
+    <string name="item_charset_utf">UTF-8 (default)</string>
+    <string name="permission_write_external">Please authorize storage read and write permissions</string>
+    <string name="snackbar_action_goto">go to settings</string>
+    <string name="attention_ftp_is_running">You need to close the FTP service before you can modify the settings</string>
+    <string name="attention_no_user_account">Please add an account or use anonymous mode to open the FTP service</string>
+    <string name="ftp_status_not_running">FTP service is not running</string>
+    <string name="ftp_status_running_head">The FTP service runs on </string>
+    <string name="attention_opening_ftp">Opening FTP service&#8230;</string>
+    <string name="attention_closing_ftp">Shutting down the FTP service&#8230;</string>
+    <string name="word_stop">stop</string>
+    <string name="ftp_title_no">ZeroTermux:FTP</string>
+    <string name="docker_check">Docker</string>
+    <string name="termux_copy_ll">copy</string>
+    <string name="termux_moudle_ll">install module</string>
+    <string name="termux_targz_ll">install data</string>
+    <string name="termux_install_module_switch">Make sure you want to install this module?</string>
+
+    <string name="label_server_ip">Remote Device IP address</string>
+    <string name="label_video_resolution">Resolution</string>
+    <string name="label_video_bitrate">Bitrate</string>
+    <string name="label_x">x</string>
+    <string name="action_start">Start</string>
+    <string name="appswitch_button">=</string>
+    <string name="home_button">o</string>
+    <string name="back_button">v</string>
+    <string name="switch0">No Control  (check this if remote device control is not required)</string>
+    <string name="switch1">Nav Bar  (check this if remote device does not have on-screen nav bar)</string>
+    <string name="press_again">Press again to exit</string>
+    <string name="label_server_title">Label Server (Beta)</string>
+    <string name="ip_connect">0.0.0.0</string>
+    <string name="remote_connection">ADB Remote</string>
+    <string name="adb_title_msg">Connecting...Do not click \'Start\' more than once!</string>
+
+    <string name="developer_activity">Please enter in DEBUG mode</string>
+
+    <string name="common_functions">Common</string>
+    <string name="menu_create_project">Projects</string>
+    <string name="menu_create_project_c">C</string>
+    <string name="menu_create_project_java">JAVA</string>
+    <string name="menu_create_project_python">PYTHON</string>
+    <string name="menu_create_project_php">PHP</string>
+    <string name="menu_create_project_npm">NPM</string>
+    <string name="menu_create_project_vscode">VS Code</string>
+    <string name="menu_vscode_install_title">Installing environment</string>
+    <string name="menu_vscode_install_message">Installing VS Code Server (code-server) in the terminal. This may take a while.\n\nWhen finished, tap VS Code again to open it.\n\nYou can also open it externally:\n%1$s</string>
+    <string name="menu_vscode_open_message">Starting VS Code Server, entering soon…\nExternal address: %1$s</string>
+    <string name="menu_vscode_open_builtin">Built-in browser</string>
+    <string name="menu_vscode_open_external">External browser</string>
+    <string name="menu_vscode_opening_browser">Opening VS Code in the built-in browser…</string>
+    <string name="menu_vscode_loading_enter">Starting VS Code, entering soon…\nPlease wait, do not close</string>
+    <string name="menu_open_project">Open</string>
+    <string name="beautification_function">UI</string>
+    <string name="online_features">Fitur online</string>
+    <string name="zt_features">Fitur ZT</string>
+    <string name="zt_settings">ZeroTermux settings</string>
+    <string name="zt_settings1">Settings</string>
+    <string name="zt_settings_note">ZeroTermux Related settings options</string>
+<string name="zt_editor_word_wrap">Editor word wrap</string>
+    <string name="zt_editor_word_wrap_summary">Enable automatic line wrapping in the built-in text editor</string>
+    <string name="container_settings">Container settings</string>
+    <string name="container_settings_note">Applications within the application container are only set for the current container.</string>
+    <string name="about_zerotermux">About ZeroTermux</string>
+    <string name="about_zerotermux_note">Version information, acknowledgments, GITHUB</string>
+    <string name="termux_settings">Termux native settings</string>
+    <string name="termux_settings_note">Enter the Termux native settings content</string>
+    <string name="install_termux_software">Install/restore Termux official software</string>
+    <string name="install_termux_software_note">Use native Termux, API, X11, etc. with the same signature as ZT installed</string>
+    <string name="zt_download_service">ZT download server</string>
+    <string name="zt_download_service_note">The default port is:19956</string>
+    <string name="zt_download_service_note1">Please note! This function is not protected by account password and can be downloaded by default. Please be careful about personal privacy being leaked after opening it!</string>
+    <string name="zt_sidebar_closes_automatically">Sidebar closes automatically</string>
+    <string name="zt_sidebar_closes_automatically_note">Calling up the input method will automatically close the sidebar (left, right)</string>
+    <string name="zt_landscaping_settings">Click "Beautification Settings" to close the left column</string>
+    <string name="zt_landscaping_settings_note">Open or close the sidebar according to your personal settings.</string>
+    <string name="toolbox_display_settings">Disable toolbox display</string>
+    <string name="toolbox_display_settings_note">Enlarging or reducing the font with two fingers causes gesture conflict, which can be temporarily closed here\n</string>
+    <string name="user_bottom_keyboard_settings">Turn on keyboard rules mode</string>
+    <string name="user_bottom_keyboard_settings_note">Force the use of ZT to set keyboard rules, other keyboard settings\nrules will be invalid</string>
+    <string name="bottom_keyboard_settings">Set keyboard rules</string>
+    <string name="bottom_keyboard_settings_note">Enter personalized keyboard rules to improve input efficiency</string>
+    <string name="log_output">Output LOG to memory card</string>
+    <string name="log_output_note">Writes logs under xinhao/ZeroTermuxLog/\n• ZeroTermux.log — general\n• timer_diag.log — timer schedule/fire/skip (for missed runs)\nAlso ~/.timerdir/log/timer_diag.log\nMay affect performance; enable only when debugging.</string>
+    <string name="zt_about">About ZeroTermux</string>
+    <string name="zt_about_zerotermux">ZeroTermux GITHUB</string>
+    <string name="zt_about_zerotermux_note">Jump to ZeroTermux GITHUB page</string>
+    <string name="zt_about_zerotermux_core_manage">ZeroCoreManage GITHUB (extension engine)</string>
+    <string name="zt_about_zerotermux_core_manage_note">Jump to ZeroTermux GITHUB page\nAdditional extension engine package for ZeroTermux</string>
+    <string name="zt_about_card_title">ZeroTermux</string>
+    <string name="zt_about_card_title_note">ZeroTermux is a secondary development based on Termux, adding\nauxiliary functions that are not available in Termux, making it easy to get started quickly\nThis software can be equivalent to a mini-linux system and can be additionally installed\nOther distributions such as: Ubuntu, CentOs, etc.</string>
+    <string name="zeroCore_about_card_title">ZeroCoreManage</string>
+    <string name="zeroCore_about_card_title_note">ZeroCoreManage is an expansion pack based on ZeroTermux. The purpose of extending the ZeroTermux function is to reduce the size of the ZeroTermux software package. ZeroTermux can still run normally without installing this expansion pack. Extra engine content:\n\n1. Built-in Keyboard\n2. WEB access memory card\n3. X86 Alpine</string>
+    <string name="zt_developer">Development/Contribution</string>
+    <string name="zt_developer_note">hotianbexuanto、Kevin Williams、狂吃不胖没办法、SharpIce 锐冰龙、WINLOG \n小潼(XiaoTong6666)、XINHAO_HAN、Xieansecn etc (in no particular order)</string>
+    <string name="zt_install">Restore/expand official version</string>
+    <string name="zt_install_float">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> Termux Float] to install the plug-in</string>
+    <string name="zt_install_file">This plugin is not installed! Please go to [Settings -> Install/Restore Termux official software -> (Zero)Utermux File Plug] to install the plug-in</string>
+    <string name="zt_volume_function_title">Restore volume +- keys</string>
+    <string name="zt_volume_function_summary">Disable the current use of volume +- keys to pop up the left/right panel</string>
+
+    <string name="zt_nav_page_opened">Opened: %1$s</string>
+    <string name="zt_nav_page_termux">Main terminal</string>
+    <string name="zt_nav_page_zt_settings">ZeroTermux settings</string>
+    <string name="zt_nav_page_zero_termux_settings">ZeroTermux feature settings</string>
+    <string name="zt_nav_page_left_menu_settings">Left menu settings</string>
+    <string name="zt_nav_page_menu_settings">Menu settings</string>
+    <string name="zt_nav_page_zt_developer_options">Developer options</string>
+    <string name="zt_nav_page_menu_update_source">Menu update source</string>
+    <string name="zt_nav_page_ai_settings">AI settings</string>
+    <string name="zt_nav_page_agent_ai_settings">Agent AI settings</string>
+    <string name="zt_nav_page_agent_skills">Skills</string>
+    <string name="zt_nav_page_deepseek_settings">DeepSeek settings</string>
+    <string name="zt_nav_page_deepseek_key">DeepSeek Key</string>
+    <string name="zt_nav_page_llm_settings">Custom LLM settings</string>
+    <string name="zt_nav_page_termux_settings">Termux native settings</string>
+    <string name="zt_nav_page_zt_about">About ZeroTermux</string>
+    <string name="zt_nav_page_zt_install">Install Termux packages</string>
+    <string name="zt_nav_page_zt_online_server">Online server</string>
+    <string name="zt_nav_page_timer">Scheduled tasks</string>
+    <string name="zt_nav_page_container_settings">Container settings</string>
+    <string name="zt_nav_page_workstation_settings">ZT workstation</string>
+    <string name="zt_nav_page_developer">Developer options</string>
+    <string name="zt_nav_page_guide">Boot wizard (agreement)</string>
+    <string name="zt_nav_page_guide_usage">Boot wizard (usage habits)</string>
+    <string name="zt_nav_page_save_path">Boot wizard (create folder)</string>
+    <string name="zt_nav_page_backup">Backup &amp; restore</string>
+    <string name="zt_nav_page_font">Font settings</string>
+    <string name="zt_nav_page_switch_system">Switch system</string>
+    <string name="zt_nav_page_scrcpy">Scrcpy mirroring</string>
+    <string name="zt_nav_page_qemu_run">QEMU run window</string>
+    <string name="zt_nav_page_webview">Built-in browser</string>
+    <string name="zt_nav_page_help">Help</string>
+    <string name="zt_nav_page_zt_command_socket">ZT command debug</string>
+    <string name="zt_nav_page_editor">Text editor</string>
+    <string name="zt_agent_ai_locale_reply_prompt">PENTING: Selalu balas dalam bahasa yang sama dengan pengguna. JSON alat hanya untuk status—ringkas hasil dalam bahasa pengguna; jangan menyalin teks UI secara harfiah jika pengguna berbahasa Indonesia atau Inggris.</string>
+
+    <string name="zt_ai_agent_panel_title">Enable new agent panel</string>
+    <string name="zt_ai_agent_panel_summary">Wake the right panel as an AI agent; can read/control the terminal and send commands</string>
+    <string name="zt_ai_agent_panel_title_bar">AI Agent</string>
+    <string name="zt_ai_agent_running_banner">AI agent is running…</string>
+    <string name="zt_ai_agent_tool_rounds_progress">Tool rounds %1$d/%2$d</string>
+    <string name="zt_ai_agent_stop">Stop</string>
+    <string name="zt_ai_agent_stopped">(Stopped)</string>
+    <string name="zt_ai_agent_panel_hint">Chat with AI here…</string>
+    <string name="zt_ai_agent_panel_send">Send</string>
+    <string name="zt_ai_agent_panel_context_label">From terminal selection:</string>
+    <string name="zt_ai_agent_panel_empty">Welcome to the ZeroTermux Agent\n
+        Note: You need to configure an API key.\n
+        You can say: "Install Ubuntu for me"\n"Fix the error in the current terminal"\n
+        You can also say: "Change the font color to red"\n"Change the background to white"\n"Switch to another container"\n</string>
+    <string name="zt_ai_agent_not_configured">Configure API Key and model first in ZeroTermux Settings → Agent AI.</string>
+    <string name="zt_ai_agent_thinking">Thinking…</string>
+    <string name="zt_ai_agent_panel_open_menu">Open right menu</string>
+    <string name="zt_moe_remove">MOE is no longer maintained by the author, and unpredictable errors may occur in ZeroTermux.</string>
+
+    <string-array name="options_resolution_keys">
+        <item>1920x1080</item>
+        <item>1280x720</item>
+        <item>800x448</item>
+        <item>640x360</item>
+    </string-array>
+
+    <string-array name="options_resolution_values">
+        <item>1920,1080</item>
+        <item>1280,720</item>
+        <item>800,448</item>
+        <item>640,360</item>
+    </string-array>
+
+    <string-array name="options_bitrate_keys">
+        <item>6 Mbps</item>
+        <item>4 Mbps</item>
+        <item>2 Mbps</item>
+        <item>1 Mbps</item>
+    </string-array>
+
+    <integer-array name="options_bitrate_values">
+        <item>6144000</item>
+        <item>4096000</item>
+        <item>2048000</item>
+        <item>1024000</item>
+    </integer-array>
+
+    <string name="copy_uri_error">URI duplication error, please wait for the developer to fix it...</string>
+
+    <string name="zt_timer">Timer</string>
+    <string name="zt_timer_settings">Scheduled task settings(BATE)</string>
+
+    <string name="zt_timer_start">Start a scheduled task</string>
+    <string name="zt_timer_start_sum">The command code will be executed once when the scheduled task is started.</string>
+    <string name="zt_timer_this_check">Current selection</string>
+    <string name="zt_timer_30_second">30 seconds</string>
+    <string name="zt_timer_1_minute">1 minute</string>
+    <string name="zt_timer_10_minute">10 minute</string>
+    <string name="zt_timer_30_minute">30 minute</string>
+    <string name="zt_timer_minute">minute</string>
+    <string name="zt_timer_1_hour">1 hour</string>
+    <string name="zt_timer_customize">customize</string>
+    <string name="zt_timer_message">The custom unit is seconds\n1 minute = 60 seconds\n1 hour = 60 minutes * 60 seconds = 3600 seconds \n1 day = 24 hours * 60 minutes * 60 seconds = 86400 seconds</string>
+
+    <string name="zt_timer_log">Log directory</string>
+    <string name="zt_timer_log_sum">The LOG directory is:\n~/.timerdir/log/, please check the LOG operation status here.</string>
+    <string name="zt_timer_edit">script directory</string>
+    <string name="zt_timer_edit_sum">Please manually modify the Termux directory:\nZT environment: ~/.timerdir/termux_timer.sh\nSHELL environment: ~/.timerdir/shell_timer.sh\nAttention! Notice! Note\nPlease do not grant ROOT permission to APP in ZeroTermux environment, otherwise it will not run!</string>
+
+    <string name="zt_timer_environment">Current operating environment</string>
+    <string name="zt_timer_environment_sum">The current operating environment is:</string>
+    <string name="zt_timer_other_title_dialog">Custom time (seconds)</string>
+    <string name="zt_timer_other_input_numer_dialog">Please enter a number or enter a number greater than the maximum value of long (unit is seconds)</string>
+    <string name="zt_timer_notification_timer_title">(ZT) The scheduled task is currently running</string>
+    <string name="zt_timer_notification_timer_sum">Current scheduled interval:</string>
+    <string name="zt_timer_notification_timer_cunt">Current execution count:</string>
+    <string name="zt_timer_notification_timer_kill">Forcefully closing the current task！</string>
+    <string name="zt_timer_countdown_label">Countdown to next run</string>
+    <string name="zt_timer_execute_count_label">Execution count</string>
+    <string name="zt_timer_edit_script">Edit script</string>
+    <string name="zt_timer_edit_script_sum">Open and edit the timer script for the current environment</string>
+    <string name="zt_timer_view_log">View log</string>
+    <string name="zt_timer_view_log_sum">Open the execution log under ~/.timerdir/log/</string>
+    <string name="zt_timer_execution_log_label">Execution log</string>
+    <string name="zt_timer_execution_log_sum">Shows the latest 100 lines, newest on top</string>
+    <string name="zt_timer_log_empty">No execution log yet</string>
+    <string name="zt_timer_second_unit">seconds</string>
+    <string name="zt_timer_status_executing">Running scheduled script…</string>
+    <string name="zt_timer_waiting_script">Waiting for script to finish</string>
+    <string name="zt_timer_executing_current_script">Running current script</string>
+    <string name="zt_timer_notification_permission_required">Notification permission is required for scheduled tasks</string>
+    <string name="zt_timer_notification_open_settings">Please enable Notifications for ZeroTermux in system settings, then return to this page</string>
+    <string name="zt_timer_main_program_missing">Main terminal is unavailable. Open ZeroTermux first.</string>
+    <string name="zt_timer_script_missing">Script file not found. Please try again.</string>
+    <string name="zt_timer_mode_interval">Repeat interval</string>
+    <string name="zt_timer_mode_daily">Daily at time</string>
+    <string name="zt_timer_daily_at">Daily at %1$s</string>
+    <string name="zt_timer_daily_pick">Pick daily run time</string>
+    <string name="zt_timer_daily_pick_with_time">Daily run time: %1$s (tap to change)</string>
+    <string name="zt_timer_always_allow">Always allow this timer task</string>
+    <string name="zt_timer_always_allow_sum">When enabled, reopening the app resumes an unfinished timer and countdown</string>
+    <string name="zt_timer_countdown_target">Target time %1$s</string>
+    <string name="zt_timer_cannot_change_while_running">Stop the timer before changing settings</string>
+    <string name="zt_env_shell_title">ADB Shell runs Termux</string>
+    <string name="zt_env_shell_sum">Turn this option on to output the sh script to the specified directory\nClose it to cancel this script output</string>
+    <string name="zt_env_shell_sum_msg">Open adb shell and run the following command:\n1.adb shell\n2.</string>
+    <string name="zt_particle_animation">Particles</string>
+
+    <!-- X11 Features Module -->
+    <string name="x11_features">X11</string>
+    <string name="x11_features_settings">X11 Settings</string>
+    <string name="x11_features_settings_internal">Internal Channel X11 Settings</string>
+    <string name="x11_features_settings_summary">Advanced (Native) Settings: Resolution, Bottom Keyboard Display, etc.</string>
+
+    <!-- Terminal Display Control -->
+    <string name="x11_display_terminal">Show Term</string>
+    <string name="x11_hide_terminal">Hide Term</string>
+
+    <!-- Environment Configuration -->
+    <string name="x11_environment">X11 Env</string>
+    <string name="x11_not_connect">No X11 connection detected. Please establish a session and try again.</string>
+    <string name="x11_msg_error">Terminal display anomaly detected. Automatic recovery completed.</string>
+
+    <!-- Channel Selection -->
+    <string name="x11_internal_passage">Internal Channel</string>
+    <string name="x11_external_channels">External Channel</string>
+    <string name="x11_external_summary">
+Requires app restart to take effect\n\n
+• Internal Channel: X11 output displays directly on terminal background\n
+• External Channel: X11 output displays via Termux:X11 APK\n
+⚠️ Internal Channel may impact performance\n\n
+Known Issue: Rapid consecutive back operations may cause black screen in Internal Channel. Press back again and re-enter to recover.\n\n
+⚠️ Key Conflict: When Internal Channel is enabled, volume keys will be remapped to open left/right panels. To use native Termux volume key functions, disable Internal Channel.
+    \n ⚠️ Background conflict: The internal channel will affect the background video/background image display, switch to the external channel to restore
+    </string>
+
+    <!-- Error Messages -->
+    <string name="x11_internal_passage_install_error">Internal channel file installation failed. Please manually set permissions (path: /usr/libexec/termux-x11/loader.apk) to 444\nor reinstall component.</string>
+    <string name="x11_error">Base environment not detected. Please configure via \"X11 Environment\" in left navigation panel.</string>
+    <string name="x11_error_set_env">Environment configuration failed. Forced to enable Internal Channel! If this error persists, contact developer.</string>
+
+    <!-- Installation Logs -->
+    <string name="x11_environment_msg">Installation Log:</string>
+    <string name="x11_environment_error">Failed to delete loader.apk. Please manually delete: /usr/libexec/termux-x11/loader.apk</string>
+    <string name="x11_environment_error_x11">Failed to delete termux-x11. Please manually delete: /usr/bin/termux-x11</string>
+
+    <!-- Operation Confirmation -->
+    <string name="x11_dialog_reset">Switch successful. Requires restart to take effect. Restart now?</string>
+
+    <!-- Environment Repair -->
+    <string name="x11_so_install">Fix Env</string>
+    <string name="x11_so_install_ok">Repair successful. Please relaunch termux-x11.</string>
+    <string name="x11_so_install_not">Environment status normal. No repair needed.</string>
+    <string name="x11_so_install_error">Repair failed. View detailed logs via \"Left Navigation → X11 Settings → Switch Channel\"</string>
+
+    <string name="x11_install_apk">Install X11</string>
+    <string name="x11_install_apk_not">X11 is not installed, please install X11 APK first</string>
+
+    <string name="x11_boom_keyboard_gone">Hide Keys</string>
+    <string name="x11_boom_keyboard_visible">Show Keys</string>
+    <string name="update_online_sh">Online Script Server</string>
+    <string name="update_online_sh_summary">Modify online script server</string>
+    <string name="content_ssh_list">Switch SSH</string>
+    <string name="content_command_list">Switch Command</string>
+    <string name="content_ssh_list_summary">No SSH devices, tap above to add</string>
+    <string name="content_ssh_list_toast_hint">Initializing, please wait...</string>
+    <string name="content_ssh_list_toast_ssh_hint">First-time setup, initializing SSH environment...</string>
+    <string name="content_ssh_list_toast_ssh_wait">Environment not ready yet, please wait...</string>
+    <string name="content_ssh_remove_device">Delete Device</string>
+    <string name="content_ssh_remove_device_dialog">Are you sure you want to delete \'%1$s\'?\n(IP: \'%2$s\')</string>
+    <string name="content_ssh_remove_ok">Deleted</string>
+    <string name="content_ssh_add_device">Add SSH Device</string>
+    <string name="content_ssh_alias">Alias</string>
+    <string name="content_ssh_host_name">Hostname (IP/Domain)</string>
+    <string name="content_ssh_host_post_def">Port (Default 22)</string>
+    <string name="content_ssh_host_username_def">Username (Default root)</string>
+    <string name="content_ssh_host_key_def">Use Key Authentication (~/.ssh/alias.key)</string>
+    <string name="content_ssh_password">Password</string>
+    <string name="content_ssh_generate">Generate</string>
+    <string name="content_ssh_import">Import</string>
+    <string name="content_ssh_copy_public_key">Copy Public Key</string>
+    <string name="content_ssh_alias_summary">Please fill in an alias first. The key file will be named after the alias.</string>
+    <string name="content_ssh_generate_key">Generate Key Pair</string>
+    <string name="content_ssh_rsa">"A new RSA key pair will be generated:\n~/.ssh/%s.key\n\nIf the file already exists, it will be overwritten."</string>
+    <string name="content_ssh_generate_keying">Generating key in background...</string>
+    <string name="content_ssh_please_fill_alias_first">Please fill in an alias first</string>
+    <string name="content_ssh_key_not_exets">"Public key file does not exist. Please generate a key pair first."</string>
+    <string name="content_ssh_key_copy_clipboard">"Public key copied to clipboard"</string>
+    <string name="content_ssh_key_read_failed">"Read failed"</string>
+    <string name="content_ssh_enter_alias">Fill in an alias first. The key file will be saved based on the alias.</string>
+    <string name="content_ssh_alias_exist">Alias already exists. Cannot import. Please modify the alias.</string>
+    <string name="content_ssh_equipment_alias">Please enter device alias</string>
+    <string name="content_ssh_host_address">Please enter host address</string>
+    <string name="content_ssh_alias_exist_replace">"Alias %s already exists. Please choose a different one."</string>
+    <string name="content_ssh_host_format_error">Host address format error</string>
+    <string name="content_ssh_port_invalid">Invalid port (1-65535)</string>
+    <string name="content_ssh_port_is_number">Port must be a number</string>
+    <string name="content_ssh_edit_ssh_device">Edit SSH Device</string>
+    <string name="content_ssh_username">Username</string>
+    <string name="content_ssh_alias_ip_not_empty">Alias and IP cannot be empty</string>
+    <string name="content_ssh_add_new_ssh_device">+ Add new SSH device</string>
+
+    <string name="zt_command_version">ZeroTermux Command Version: 0.2 (2025 ~ 2026)</string>
+    <string name="zt_command_error">Unsupported or unrecognized due to low ZT version: \"</string>
+    <string name="zt_command_help" tools:ignore="TypographyDashes"> Available Commands:\n
+        ZeroTermux Terminal Command Explanation \n
+        Version 0.1 \n
+        \n
+        \n --------Version 0.1 Update--------\n
+        \n Basic Category:
+        \n
+        \n
+        help - Show help \n
+        openleft(ol) - Open left panel \n
+        openright(or) - Open right panel \n
+        reboot(rb) - Reboot termux \n
+        toast - Show a bottom toast message with custom content \n
+        toast[ \n
+        Example: zt toast hello \n
+        ] \n
+        version(v) - View current version information \n
+        \n
+        \n
+        Graphics Connection Related:\n
+        \n
+        vnc - Connect to vnc (zt vnc address_port_username_password) \n
+        vnc[ \n
+        Example: zt vnc 127.0.0.1_5900_admin_admin \n
+        Enter \'none\' if username or password is empty \n
+        Example (empty password): zt vnc 127.0.0.1_5900_admin_none \n
+        Example (empty username): zt vnc 127.0.0.1_5900_none_admin \n
+        Example (both empty): zt vnc 127.0.0.1_5900_none_none \n
+        Note: Address and port cannot be empty!\n ] \n
+        x11commandshow(x11xs) - Show terminal (x11 must be running) \n
+        x11commandhide(x11xh) - Hide terminal (x11 must be running) \n
+        x11keyboardshow(x11kbs) - Show x11 keyboard \n
+        x11keyboardhide(x11kbh) - Hide x11 keyboard \n
+        \n
+        \n
+        Create Symbolic Link \n
+        ln - Create symbolic link \n
+        ln[ \n
+        Description: current directory internal storage path \n
+        Note: Both paths must be absolute paths \n
+        Example: ln /data/data/com.termux/files/home/custom_name /sdcard/ \n
+        Example (or specify a directory): ln /data/data/com.termux/files/home/custom_name /sdcard/custom_directory/ \n
+        ] \n
+        --------Version 0.2 Update--------\n
+        zt dialog \n
+        dialog[\n
+        Usage Help:\n
+        -c Confirmation/cancel dialog (OK or Cancel), Example: zt dialog -c -t title -m message content \n
+        -s Show dialog (only OK button), Example: zt dialog -s -m message content \n
+        -e Show edit dialog, Example: zt dialog -e -t title \n
+        ]\n
+        \n
+        \n
+        zt x11status Query current x11 connection status (useful for internal channel)\n
+        zt backgroundimage(bgi) Image path (set as current terminal background)\n
+        backgroundimage(bgi)[\n
+        Usage Help (full path required):\n
+        zt backgroundimage /data/data/com.termux/files/home/.img/back.jpg \n
+        zt bgi /data/data/com.termux/files/home/.img/back.jpg \n
+        ]\n
+        \n
+        zt qr Open Scan (scan QR code or barcode)\n
+        \n
+        \n</string>
+
+    <string name="zt_command_timeout">Connection Timeout</string>
+    <string name="zt_command_dialog_windows_finish">Window Closed Unexpectedly</string>
+    <string name="zt_command_dialog_finish">Dialog Closed</string>
+    <string name="zt_command_dialog_help">
+    Usage Help:\n
+    -c Confirmation/cancel dialog (OK or Cancel), Example: zt dialog -c -t title -m message content \n
+    -s Show dialog (only OK button), Example: zt dialog -s -m message content \n
+    -e Show edit dialog, Example: zt dialog -e -t title \n
+</string>
+    <string name="zt_command_image_backgroup">The input background image path is invalid</string>
+    <string name="no_permission">No permission</string>
+
+    <string name="deepseek_zs">You are a ZeroTermux assistant, helping users of ZeroTermux and Termux answer basic Linux knowledge. It is best to use one line for all commands; if there are multiple lines, try to concatenate them into one line using &amp;&amp;.</string>
+    <string name="deepseek_zs_command">Current session text:</string>
+    <string name="deepseek_input_key_error_info">Possible issues:\n\nReturned 401, DeepSeek Key is not set or an incorrect key was entered.</string>
+    <string name="deepseek_input_key_error_info_1">Possible issues:\n\nRequest header error, the entered API KEY may contain special characters (Chinese punctuation). Please recheck the API KEY.</string>
+    <string name="deepseek_input_key_error_start_info">Error message:\n</string>
+    <string name="deepseek_empty">No current session. Please tap the top-right corner to create a new session.</string>
+    <string name="deepseek_send_command">Send to Terminal</string>
+    <string name="deepseek_settings_seepseek">Configure DeepSeek</string>
+    <string name="deepseek_settings_seepseek_summary">Configure DeepSeek-related options, e.g., key.</string>
+    <string name="deepseek_settings_recognition">Input Code Recognition Keywords</string>
+    <string name="deepseek_settings_recognition_edit">Enter code recognition keywords here; they will be saved automatically.</string>
+    <string name="deepseek_settings_recognition_edit_summary">Enter code recognition keywords here; they will be saved automatically.</string>
+    <string name="deepseek_settings_recognition_edit_info">Note!! After setting, please refresh the session in the right sidebar (tap the back button in the top-left corner of the right sidebar and re-enter the session).\n
+Enter code recognition parameters separated by commas. These will appear as blue text in the DeepSeek session and can be tapped directly for terminal execution instead of long-pressing to copy. Tap here to restore defaults.</string>
+    <string name="deepseek_settings_recognition_edit_keyword">Tap here to restore defaults</string>
+    <string name="deepseek_settings_recognition_error_toast">Failed to format command. Please reconfigure the "Code Recognition Keywords".</string>
+    <string name="deepseek_settings_url">Enter DeepSeek API URL</string>
+    <string name="deepseek_settings_url_edit">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_url_edit_summary">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_url_edit_info">Currently defaults to the DeepSeek API interface. Do not modify this unless you are certain, as changes may make the interface inaccessible.</string>
+    <string name="deepseek_settings_key">Enter DeepSeek Key</string>
+    <string name="deepseek_settings_key_edit">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_key_edit_summary">Enter the official key here; it will be saved automatically.</string>
+    <string name="deepseek_settings_key_edit_info">Please enter the DeepSeek key obtained from the official website here. If unsure how to obtain the key, tap: How to Obtain the Key.</string>
+    <string name="deepseek_settings_key_edit_info_keyword">How to Obtain the Key</string>
+    <string name="deepseek_settings_send_command">Directly execute blue commands on tap</string>
+    <string name="deepseek_settings_send_command_summary">After tapping a blue-highlighted command, execute it directly in the terminal instead of displaying it in the terminal.</string>
+    <string name="deepseek_settings_send_close">Close sidebar after sending to terminal</string>
+    <string name="deepseek_settings_send_close_summary">When long-pressing a session to show the menu, selecting "Send to Terminal" will close the right sidebar.</string>
+    <string name="deepseek_settings_ai_see">Let AI see your terminal</string>
+    <string name="deepseek_settings_ai_see_summary">No need to input terminal errors in the session; simply say: terminal error. AI will automatically read your terminal content (AI can only read up to the last 600 characters recorded).</string>
+    <string name="deepseek_settings_ai_session_name">Edit Session Name</string>
+    <string name="deepseek_settings_ai_get_deepseek_key">Obtain DeepSeek Key</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1">To obtain DeepSeek, first open the DeepSeek official website: Tap here to open, then follow the steps below.</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1_keyword">Tap here to open</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_1_url">https://platform.deepseek.com/</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_2">After logging in, tap API Keys in the left sidebar.</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_3">Then tap "Create API keys".</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_4">Enter any name you like.</string>
+    <string name="deepseek_settings_ai_get_deepseek_key_5">Copy the key here and paste it into the DeepSeek settings input field in ZT.</string>
+
+    <string name="zt_ssh_improt_fail">Import failed: alias missing</string>
+    <string name="zt_ssh_improt_fail_error">Import failed</string>
+    <string name="zt_ssh_improt_success">Key import successful\nSaved as:</string>
+
+    <string name="zt_root_fun">ROOT</string>
+    <string name="zt_engine">Plugins</string>
+    <string name="zt_data_info_title">Info</string>
+    <string name="zt_data_info_content">
+            # Information written here \n
+            ## Will be backed up to the integrated package \n
+            ### and will be directly \n
+            #### displayed in the left sidebar upon next restore \n
+            \nShown in the left sidebar\n\n
+             [linktext](https://www.baidu.com)
+</string>
+
+    <string name="zt_new">What\'s New</string>
+    <string name="zt_command_key">Extra Keys</string>
+    <string name="zt_command_edit_h">Enter your terminal bottom code…</string>
+    <string name="zt_command_def">Default</string>
+    <string name="zt_command_key_error">Format Error!</string>
+    <string name="zt_command_path_error">File Operation Failed!</string>
+    <string name="zt_command_path_ok">Save successful, restart APP to take effect</string>
+    <string name="zt_recreate">Please wait, restarting application…</string>
+
+    <string name="zt_adb_shell_run_debug">This feature is only available on debug builds. Would you like to download the debug APP to continue using this feature?</string>
+    <string name="zt_fold_menu_close">Disable folding feature</string>
+    <string name="zt_fold_menu_close_summary">(Requires restarting the APP) Enabling this option will keep the menu section on the left always expanded.</string>
+    <string name="zt_app_crash">An error occurred in the application. Please forward the following information to the developer [screenshot]\nDeveloper Group 1 (QQ):</string>
+
+    <string name="zt_menu_title_config">Konfigurasi</string>
+    <string name="zt_adb_shell_run">Shell</string>
+    <string name="zt_adb_shell_run_summary">
+Run the termux command terminal in the adb shell.
+The file has been successfully written to:\n
+home/termux-adb-shell.sh \n
+Please follow these steps:\n
+\n
+adb shell \n
+run-as com.termux \n
+cd files/home/ \n
+sh termux-adb-shell.sh \n
+cd ~ &amp;&amp; pkg update -y \n
+</string>
+
+    <string name="zt_xml_menu">No click event configured in XML. After configuring the event, use `zt menu update` to retry or restart the APP.</string>
+    <string name="zt_xml_menu_error">XML format is incorrect. Please modify and retry using the command:\nzt menu update\nOr use the command:\nzt menu update\nto reset.\n\n-Click this error message to directly open the editor-\n\nError details:\n\n</string>
+    <string name="zt_xml_settings_title">Disable Using Configuration File for Left Menu Settings</string>
+    <string name="zt_xml_settings_summary">(Requires APP restart) Enabling this option will prevent loading the XML configuration file as the data source for the left menu.</string>
+
+    <string name="menu_package_card_title">Paket</string>
+    <string name="menu_package_current_menu">Menu saat ini: %1$s</string>
+    <string name="menu_package_network_update">Menu default</string>
+    <string name="menu_package_update">Perbarui</string>
+    <string name="menu_package_install">Instal paket menu</string>
+    <string name="menu_package_install_time_prefix">Terinstal: </string>
+    <string name="menu_package_backup">Cadangan</string>
+    <string name="menu_package_delete">Hapus</string>
+    <string name="menu_package_delete_confirm">Hapus paket menu "%1$s"?</string>
+    <string name="menu_package_delete_confirm_active">Hapus menu saat ini "%1$s"? Menu program akan diterapkan setelahnya.</string>
+    <string name="menu_package_delete_success">Paket menu dihapus</string>
+    <string name="menu_package_delete_fail">Gagal menghapus paket menu</string>
+    <string name="menu_package_network_update_confirm">Pembaruan akan menimpa opsi menu saat ini. Lanjutkan?</string>
+    <string name="menu_package_backup_name_title">Cadangkan menu</string>
+    <string name="menu_package_backup_name_hint">Masukkan nama cadangan</string>
+    <string name="menu_package_backup_name_empty">Nama cadangan tidak boleh kosong</string>
+    <string name="menu_package_install_pick_title">Pilih paket menu</string>
+    <string name="menu_package_install_path_hint">Direktori zip: %1$s</string>
+    <string name="menu_package_install_empty">No zip menu packages in %1$s\n(Installed menus are extracted to app internal menu)</string>
+    <string name="menu_package_default_label">Menu default</string>
+    <string name="menu_package_program_label">Menu program</string>
+    <string name="menu_package_ai_created_label">Buatan AI</string>
+    <string name="menu_package_network_label">Menu jaringan</string>
+    <string name="menu_package_local_label">Menu lokal</string>
+    <string name="menu_settings_title">Menu</string>
+    <string name="menu_settings_summary">Fold menu and left-menu options</string>
+    <string name="zt_developer_options_title">Developer options</string>
+    <string name="zt_developer_options_summary">Download service, workstation, AI debug, and logging</string>
+    <string name="left_menu_settings_title">Left Menu</string>
+    <string name="left_menu_settings_summary">Update sources for the left menu</string>
+    <string name="menu_update_source_settings_title">Menu update source</string>
+    <string name="menu_update_source_settings_summary">Select or add menu zip download URL</string>
+    <string name="menu_update_source_default">Default source</string>
+    <string name="menu_update_source_custom">Custom source</string>
+    <string name="menu_update_source_add">Add source</string>
+    <string name="menu_update_source_input_title">Enter menu URL</string>
+    <string name="menu_update_source_input_hint">https://example.com/menu.zip</string>
+    <string name="menu_update_source_input_empty">Menu URL cannot be empty</string>
+    <string name="menu_update_source_input_duplicate">This URL already exists</string>
+    <string name="menu_package_network_success">Menu diperbarui dari jaringan</string>
+    <string name="menu_package_network_update_fail">Pembaruan menu gagal, menu saat ini dipertahankan</string>
+    <string name="menu_package_network_fallback">Jaringan gagal, memakai menu default bawaan</string>
+    <string name="menu_package_apply_success">Menu diganti</string>
+    <string name="menu_package_apply_fail">Gagal mengganti menu</string>
+    <string name="menu_package_install_success">Paket menu terinstal</string>
+    <string name="menu_package_install_fail">Gagal menginstal paket menu</string>
+    <string name="menu_package_backup_success">Dicadangkan ke %1$s</string>
+    <string name="menu_package_backup_fail">Cadangan gagal</string>
+    <string name="menu_package_install_pick">Pilih paket zip menu</string>
+
+    <!-- Agent AI (English) -->
+    <string name="zt_agent_ai_settings_title">Pengaturan AI Agen</string>
+    <string name="zt_agent_ai_settings_summary">Model interaksi baru: kendalikan/baca terminal dan semua pengaturan ZeroTermux</string>
+    <string name="zt_agent_ai_provider_title">Penyedia AI</string>
+    <string name="zt_agent_ai_provider_deepseek">DeepSeek</string>
+    <string name="zt_agent_ai_provider_openai">ChatGPT</string>
+    <string name="zt_agent_ai_provider_google">Google AI</string>
+    <string name="zt_agent_ai_provider_custom">Kustom</string>
+    <string name="zt_agent_ai_api_url">URL API</string>
+    <string name="zt_agent_ai_api_url_hint">URL API kompatibel OpenAI</string>
+    <string name="zt_agent_ai_api_url_summary">Default URL is filled when switching provider; you may edit it</string>
+    <string name="zt_agent_ai_api_key">Kunci API</string>
+    <string name="zt_agent_ai_api_key_hint">Masukkan kunci API</string>
+    <string name="zt_agent_ai_api_key_toggle">Tampilkan atau sembunyikan kunci API</string>
+    <string name="zt_agent_ai_api_key_summary">Key is stored locally only, for agent chat and tools</string>
+    <string name="zt_agent_ai_model">Nama model</string>
+    <string name="zt_agent_ai_model_hint">e.g. deepseek-chat / gpt-4o-mini / gemini-2.0-flash</string>
+    <string name="zt_agent_ai_system_prompt">Prompt sistem (opsional)</string>
+    <string name="zt_agent_ai_system_prompt_hint">Leave empty to use default ZeroTermux agent prompt</string>
+    <string name="zt_agent_ai_skills_title">Skills</string>
+    <string name="zt_agent_ai_skills_summary">Stored under ~/.skill/&lt;name&gt;/SKILL.md. Create, edit, and enable skills from the list.</string>
+    <string name="zt_agent_ai_skills_entry_summary">Manage local Skills: enable, edit, delete, or create skill packs</string>
+    <string name="zt_agent_ai_skills_create_entry_summary">Create a new SKILL.md under ~/.skill</string>
+    <string name="zt_agent_ai_skills_path_format">Path: %1$s/&lt;skill-id&gt;/SKILL.md</string>
+    <string name="zt_agent_ai_skills_empty">No other skills yet. Built-in \"%1$s\" is available for reference, or tap below to create one.</string>
+    <string name="zt_agent_ai_skills_create_new">Buat skill baru</string>
+    <string name="zt_agent_ai_skills_create_dialog_title">Create new skill</string>
+    <string name="zt_agent_ai_skills_create_dialog_message">Enter a skill name (directory id: lowercase letters, digits, hyphens)</string>
+    <string name="zt_agent_ai_skills_create_name_hint">e.g. my-workflow</string>
+    <string name="zt_agent_ai_skills_create_name_required">Please enter a skill name</string>
+    <string name="zt_agent_ai_skills_created">Skill created: %1$s</string>
+    <string name="zt_agent_ai_skills_new_template"># %1$s\n\n## Overview\nDescribe when this skill should be used and what it does.\n\n## Steps\n1. </string>
+    <string name="zt_agent_ai_skills_invalid_id">Invalid name. Use lowercase letters, digits, and hyphens.</string>
+    <string name="zt_agent_ai_skills_already_exists">This skill already exists</string>
+    <string name="zt_agent_ai_skills_create_failed">Failed to create skill</string>
+    <string name="zt_agent_ai_skills_edit">Edit</string>
+    <string name="zt_agent_ai_skills_delete">Hapus</string>
+    <string name="zt_agent_ai_skills_delete_dialog_title">Delete skill</string>
+    <string name="zt_agent_ai_skills_delete_dialog_message">Delete \"%1$s\"? Files under ~/.skill will be removed and cannot be recovered.</string>
+    <string name="zt_agent_ai_skills_deleted">Skill deleted: %1$s</string>
+    <string name="zt_agent_ai_skills_delete_failed">Failed to delete skill</string>
+    <string name="zt_agent_ai_skills_delete_not_found">Skill not found</string>
+    <string name="zt_agent_ai_skills_delete_bundled">Built-in reference skill cannot be deleted</string>
+    <string name="zt_agent_ai_skills_prompt_header">[Enabled Skills — MUST EXECUTE] These are runnable workflows, not tips. When triggers match, call terminal/config tools per the skill steps. Prefer skill steps over generic system text. Do not reply with text-only steps unless the user says not to run commands.</string>
+    <string name="zt_agent_ai_skills_capability_prompt">[Local Skills] Directory: ~/.skill/&lt;skill-id&gt;/SKILL.md. Enabled skills are injected into the system prompt and must be executed with tools (e.g. send_terminal_command). Use list_agent_skills to list and save_agent_skill to save workflows. When the user asks to save/remember as a skill: use their name as skill_id (lowercase+hyphens) if given; otherwise invent skill_id and name. Enable by default after save and tell the user the path. Do not re-save the built-in termux-pkg-guide.</string>
+    <string name="zt_agent_ai_save_skill_desc">Simpan sebagai skill</string>
+    <string name="zt_agent_ai_save_skill_dialog_title">Save as skill</string>
+    <string name="zt_agent_ai_save_skill_dialog_message">Enter a custom skill id, or leave empty for AI to name and save under ~/.skill/</string>
+    <string name="zt_agent_ai_save_skill_name_hint">e.g. install-vim (optional)</string>
+    <string name="zt_agent_ai_save_skill_prompt_auto_name">Please summarize our recent conversation into a reusable local Skill under ~/.skill/. I did not specify a name — invent a short skill_id (lowercase+hyphens) and display name, then call save_agent_skill to save and enable it.</string>
+    <string name="zt_agent_ai_save_skill_prompt_with_name">Please summarize our recent conversation into a local Skill under ~/.skill/ with skill_id: %1$s. Call save_agent_skill to write SKILL.md and enable it.</string>
+    <string name="zt_agent_ai_tool_list_skills">List local skills</string>
+    <string name="zt_agent_ai_tool_save_skill">Save skill</string>
+    <string name="zt_agent_ai_skill_saved">Skill \"%1$s\" saved to %2$s (%3$s)</string>
+    <string name="zt_agent_ai_skill_saved_enabled">auto-enabled</string>
+    <string name="zt_agent_ai_skill_saved_disabled">not auto-enabled</string>
+    <string name="zt_agent_ai_status_configured">Configured: %1$s / %2$s</string>
+    <string name="zt_agent_ai_status_incomplete">Konfigurasi penyedia belum lengkap; isi URL API, kunci, dan model</string>
+    <string name="zt_agent_ai_terminal_enabled">Izinkan kendali terminal</string>
+    <string name="zt_agent_ai_terminal_enabled_summary">Agen dapat membaca terminal dan mengirim perintah lewat alat</string>
+    <string name="zt_agent_ai_zt_control_enabled">Izinkan kendali ZeroTermux</string>
+    <string name="zt_agent_ai_zt_control_enabled_summary">Kendalikan aplikasi lewat perintah zt (halaman, laci, toast, dll.); memerlukan kendali terminal</string>
+    <string name="zt_agent_ai_filesystem_enabled">Izinkan akses file langsung</string>
+    <string name="zt_agent_ai_filesystem_enabled_summary">Agen dapat melihat/membaca/menulis/membuat file dan folder tanpa terminal</string>
+    <string name="zt_agent_ai_tool_rounds_title">Batas putaran pemanggilan alat</string>
+    <string name="zt_agent_ai_tool_rounds_definition">1 round = AI reads terminal → decides → sends next command</string>
+    <string name="zt_agent_ai_tool_rounds_summary">Max auto loops per conversation to save tokens; default 40</string>
+    <string name="zt_agent_ai_tool_rounds_warning">Unattended tasks may keep running; higher limits waste more tokens—pick a lower value when needed</string>
+    <string name="zt_agent_ai_zt_control_system_prompt">You can fully control the app via ZeroTermux config tools (no per-item permission prompts; confirm risky actions first):\n1. list_zerotermux_capabilities — list settings, beautify keys, openpage ids, zt commands; call first when unsure.\n2. get_zerotermux_config / set_zerotermux_config — read/write settings and beautify (isInternalPassage, workstation, AI toggles, etc.).\n3. open_zerotermux_page — open settings pages (zt_settings, zero_termux_settings, agent_ai_settings, …).\n4. run_zerotermux_zt — preferred zt via socket (no terminal): help, toast, openleft, openpage, reboot, x11status, …\n5. run_zt_command — fallback via terminal.\n6. get_zerotermux_left_menu / update_zerotermux_left_menu — read xml_rules + catalog before creating menus; click must use java:/ztShell:/jumpUrl: prefixes.\n7. list_zerotermux_pkg_sources / switch_zerotermux_pkg_source — same as Switch Source menu; default tsinghua; list options, user picks, then switch with user_confirmed=true.\nBeautify: blurry text → text_shadow_enabled=false; background blur → blur_enabled/blur_radius.\nEffects: snowflake/snow → isSnowflakeShow; particle/rain → isRainShow (mutually exclusive). Use set_zerotermux_config, not menu XML.\nInternal channel isInternalPassage usually needs reboot; reboot only with explicit user approval. Trust tool JSON; do not invent results.</string>
+    <string name="zt_agent_ai_zt_requires_terminal">ZeroTermux control via terminal zt requires「Allow terminal control」(ZeroTermux Settings → Configure Agent AI)</string>
+    <string name="zt_agent_ai_tool_run_command">Running ZT command…</string>
+    <string name="zt_agent_ai_tool_disabled">Tool disabled; enable the permission in Agent AI settings</string>
+    <string name="zt_agent_ai_perm_enabled">NYALA</string>
+    <string name="zt_agent_ai_perm_disabled">MATI</string>
+    <string name="zt_agent_ai_permissions_status_header">[Current permissions] (toggles in ZeroTermux Settings → Configure Agent AI)</string>
+    <string name="zt_agent_ai_permission_guard_prompt">[Permission guard — mandatory]\n1. Only claim a capability when its status above is ON; when OFF, never pretend you executed it.\n2. If the user asks for an OFF capability: do not invent terminal output, file contents, install state, or opened pages. Reply in the user\'s language, name the exact toggle to enable, and point to ZeroTermux Settings → Configure Agent AI.\n3. When a tool returns a permission error, relay it and remind the user to enable the toggle — never ignore the error or claim success.\n4. General Q&amp;A is fine; for「run/read/edit/open for me」, check permission status first.</string>
+    <string name="zt_agent_ai_all_tools_disabled_prompt">[All tool permissions OFF] You have no tools (no terminal, no ZeroTermux control, no filesystem) — chat only. If the user asks to run commands, read/write files, or open pages: say all three toggles are off and tell them to enable「Allow terminal control」,「Allow ZeroTermux control」, and「Allow direct filesystem access」in Configure Agent AI. Never invent execution results.</string>
+    <string name="zt_agent_ai_terminal_tool_disabled">Permission denied:「Allow terminal control」is OFF. Enable it in ZeroTermux Settings → Configure Agent AI.</string>
+    <string name="zt_agent_ai_zt_control_tool_disabled">Permission denied:「Allow ZeroTermux control」is OFF. Enable it in ZeroTermux Settings → Configure Agent AI.</string>
+    <string name="zt_agent_ai_filesystem_tool_disabled">Permission denied:「Allow direct filesystem access」is OFF. Enable it in Configure Agent AI; if terminal is ON, the user may use shell commands instead.</string>
+    <string name="zt_agent_ai_filesystem_tool_disabled_no_terminal">Permission denied: both「Allow direct filesystem access」and「Allow terminal control」are OFF. Enable at least one in Configure Agent AI.</string>
+    <string name="zt_agent_ai_reset_dialog_title">Pemberitahuan</string>
+    <string name="zt_agent_ai_reset_dialog_message">This clears all agent AI data. Use when data is corrupted (agent behaves abnormally).</string>
+    <string name="zt_agent_ai_reset_title">Reset semua data AI agen</string>
+    <string name="zt_agent_ai_reset_summary">Use when the agent hallucinates or data is polluted</string>
+    <string name="zt_agent_ai_reset_done">Data AI agen direset</string>
+    <string name="zt_agent_ai_reset_panel_desc">Reset agent AI data</string>
+    <string name="zt_agent_ai_tool_usage_prompt">For general Q&amp;A and chat, reply in the user\'s language without calling tools. Call tools only when the user explicitly asks to open pages, read/control terminal, read/write files, or run zt commands. After tools, summarize briefly in the user\'s language.</string>
+    <string name="zt_agent_ai_default_system_prompt">You are the built-in ZeroTermux AI agent. Reply concisely in the user\'s language with Markdown when helpful.\n\nImportant: Do not invent terminal output, install state, files, executed commands, or opened pages. Without tool results, or when the matching permission is OFF, say you cannot execute/confirm and tell the user which toggle to enable in Configure Agent AI.</string>
+    <string name="zt_agent_ai_terminal_system_prompt">You may use read_terminal, send_terminal_command, send_terminal_key. Each turn includes a terminal snapshot — describe the terminal ONLY from the snapshot, especially the visible screen section:\n1. Welcome to Termux / ~ $ → main Termux shell; do not claim Ubuntu/SSH/root@localhost unless shown.\n2. Shell prompt on last line → command finished; do not say「still installing/wait」.\n3. Status awaiting confirmation or [Y/n], Do you want to continue → explain to the user in their language and wait before sending y/n/Enter; never auto-confirm.\n4. Old terminal descriptions in history may be stale; use latest snapshot.\n5. When asked what the terminal shows, summarize visible text only.\n6. send_terminal_command waits up to ~10 min by default; use max_wait_ms=1800000 for slow pkg/apt. On timeout, read_terminal again.\nConfirm dangerous commands with the user first.</string>
+    <string name="zt_agent_ai_terminal_history_notice">[Important] Terminal descriptions in history below may be outdated. Use the terminal snapshot attached to the latest user message; ignore conflicting history.</string>
+    <string name="zt_agent_ai_terminal_disabled_prompt">[Terminal permission OFF] You cannot read/control the terminal. For run command / check install / read terminal requests: never claim you ran anything or describe output; tell the user to enable「Allow terminal control」in Configure Agent AI, or paste command output themselves.</string>
+    <string name="zt_agent_ai_zt_control_disabled_prompt">[ZeroTermux control OFF] You cannot open pages, change settings, or run zt. For open page / drawer / mirror / beautify requests: never claim done; tell the user to enable「Allow ZeroTermux control」in Configure Agent AI. run_zt_command also needs terminal control ON.</string>
+    <string name="zt_agent_ai_filesystem_system_prompt">You may use filesystem tools to operate disk directly (no terminal; prefer over cat/echo/mkdir/ls):\n1. list_directory — list a directory; path optional (defaults to home).\n2. read_file — read a text file; set max_bytes for large files.\n3. write_file — write/overwrite a text file (creates parent dirs).\n4. create_file — create an empty file; mkdir — create directories (nested OK).\n5. stat_path — check existence, type, size.\n6. delete_path — delete file/dir; requires explicit user consent and user_confirmed=true.\nPaths: absolute, relative to home, ~/…, or /tmp (→ Termux $PREFIX/tmp). Only Termux files and external storage are allowed. If a tool returns not found, list_directory on home or parent — do not keep guessing similar paths. Describe file contents ONLY from tool results. Keep using terminal tools for installs and interactive commands.</string>
+    <string name="zt_agent_ai_filesystem_disabled_prompt">[Filesystem permission OFF] You cannot read/write files directly. For file create/edit/list requests: never claim done; tell the user to enable「Allow direct filesystem access」in Configure Agent AI. If terminal is ON, suggest shell commands, but prefer enabling filesystem access.</string>
+    <string name="zt_agent_ai_filesystem_disabled_no_terminal">[Filesystem OFF] Direct file access and terminal are both OFF. For file requests: never claim done; tell the user to enable「Allow direct filesystem access」or「Allow terminal control」in Configure Agent AI.</string>
+    <string name="zt_agent_ai_tool_read_terminal">Membaca terminal…</string>
+    <string name="zt_agent_ai_tool_send_command">Mengirim perintah…</string>
+    <string name="zt_agent_ai_tool_send_key">Mengirim tombol…</string>
+    <string name="zt_agent_ai_tool_read_after_send">Command sent, reading terminal…</string>
+    <string name="zt_agent_ai_tool_list_directory">Listing directory…</string>
+    <string name="zt_agent_ai_tool_read_file">Reading file…</string>
+    <string name="zt_agent_ai_tool_write_file">Writing file…</string>
+    <string name="zt_agent_ai_tool_create_file">Creating file…</string>
+    <string name="zt_agent_ai_tool_mkdir">Creating directory…</string>
+    <string name="zt_agent_ai_tool_delete_path">Deleting path…</string>
+    <string name="zt_agent_ai_tool_stat_path">Statting path…</string>
+    <string name="zt_agent_ai_tool_running">Memanggil alat…</string>
+    <string name="zt_agent_ai_tool_limit">Agent tool rounds reached the limit (%1$d); this is not a timeout. Send \"continue\" to resume, or split the task and retry</string>
+    <string name="zt_agent_ai_terminal_unavailable">Terminal tidak tersedia; buka sesi di layar utama dulu</string>
+
+    <string name="zt_editor_ai_button">AI Editor</string>
+    <string name="zt_editor_ai_empty">Jelaskan kode atau perubahan yang diinginkan; AI akan mengedit file di atas.</string>
+    <string name="zt_editor_ai_hint">Minta AI menulis kode…</string>
+    <string name="zt_editor_ai_unavailable">Editor unavailable (preview mode or no text file open)</string>
+    <string name="zt_editor_ai_terminal_unavailable">Editor terminal unavailable; open a Termux session on the main screen first</string>
+    <string name="zt_editor_ai_system_prompt">You are the built-in AI for the ZeroTermux code editor. You can create/open multiple files and edit the active file; you can also read/write the embedded editor terminal for build, run, and debugging.\n\nRules:\n1. For multiple files: for each file use create_file (or open_file) → read_editor → write content; do not put all code in one file.\n2. Before switching files, save_current_file then open_file the target.\n3. read_editor before edits; list_open_files for open tabs.\n4. Small edits: insert_at_cursor / replace_range; whole file: replace_all.\n5. path may be absolute or relative to the current file directory.\n6. Run button executes build.sh in the current directory (creates if missing); long-press Run opens build.sh. Put build/run logic in build.sh.\n7. Build/run: prefer run_build_script (same as Run button); or send_terminal_command for ./build.sh; waits for shell prompt or confirmation (default ~10 min). If snapshot shows awaiting confirmation or [Y/n], tell the user in their language and wait before y/n; never auto-confirm.\n8. On build failure: read_terminal for errors, fix code, retry; ctrl_c to interrupt stuck commands.\n9. Explain briefly in the user\'s language; write code to the editor, do not repeat large blocks in replies.\n10. Trust tool snapshots only; do not invent file content or terminal output.\n11. This editor has a built-in GUI panel (bottom dock \"GUI\" tab, embedded VNC to local Xvfb DISPLAY=:99). For windowed programs here, do NOT tell the user to install sway or use the main-screen X11 environment.\n12. For GUI programs (e.g. Java Swing/AWT): build.sh auto-runs ensure_java_gui; use run_build_script, not sway or external X11.\n13. After a GUI app starts (terminal shows GUI app started), call switch_editor_dock_tab tab=gui so the user sees the window.\n14. CLI-only builds: run_build_script or send_terminal_command ./build.sh; read_editor snapshot includes dock/GUI status.</string>
+    <string name="zt_agent_ai_gui_compile_prompt">[GUI/windowed program builds — apply only for this kind of request]\nWhen the user wants to compile or run programs with a graphical window (Java Swing/AWT, apps needing DISPLAY, etc.):\n1. Do NOT suggest installing sway, the main sidebar X11 environment, or running in an external X11 window.\n2. Use open_zerotermux_page with page_id=\"editor\" and extras {\"edit_path\":\"absolute path to project dir or source file\"} to open the code editor.\n3. Tell the user: the editor has a built-in GUI panel (embedded VNC + Xvfb DISPLAY=:99), used with Run / editor AI run_build_script to build and show the window.\n4. After opening the editor, briefly say they can tap Run or use editor AI to continue build/debug.\n5. If ZeroTermux control is disabled, say they must enable it, or open the project in the editor manually.\nFor normal terminal/config tasks, keep the existing workflow; do not redirect to the editor by mistake.</string>
+    <string name="zt_editor_ai_tool_run_build">Running build.sh…</string>
+    <string name="zt_editor_ai_tool_switch_dock">Switching dock tab…</string>
+    <string name="zt_editor_ai_build_in_progress">Error: build already in progress</string>
+    <string name="zt_editor_ai_build_unavailable">Error: program runner unavailable</string>
+    <string name="zt_editor_ai_build_no_directory">Error: cannot resolve project directory</string>
+    <string name="zt_editor_ai_build_started">run_build_script started: executing ./build.sh; use read_terminal for progress.</string>
+    <string name="zt_editor_ai_build_started_gui">run_build_script started (GUI mode): booting embedded VNC and running ./build.sh; after GUI starts use switch_editor_dock_tab tab=gui and read_terminal for progress.</string>
+    <string name="zt_editor_ai_dock_unavailable">Error: bottom dock unavailable</string>
+    <string name="zt_editor_ai_dock_switched_gui">Switched to GUI panel (embedded VNC)</string>
+    <string name="zt_editor_ai_dock_switched_terminal">Switched to terminal panel</string>
+    <string name="zt_editor_ai_dock_invalid_tab">Error: tab must be gui or terminal</string>
+    <string name="zt_editor_ai_tool_read">Reading editor…</string>
+    <string name="zt_editor_ai_tool_insert">Inserting text…</string>
+    <string name="zt_editor_ai_tool_replace">Replacing selection…</string>
+    <string name="zt_editor_ai_tool_replace_all">Replacing all content…</string>
+    <string name="zt_editor_ai_tool_create">Creating file…</string>
+    <string name="zt_editor_ai_tool_open">Opening file…</string>
+    <string name="zt_editor_ai_tool_save">Saving file…</string>
+    <string name="zt_editor_ai_tool_list">Listing open files…</string>
+    <string name="zt_editor_ai_reset_dialog_title">Pemberitahuan</string>
+    <string name="zt_editor_ai_reset_dialog_message">This clears only the code editor AI chat history. Main-screen agent AI settings and chat are not affected.</string>
+    <string name="zt_editor_ai_reset_title">Reset obrolan AI editor</string>
+    <string name="zt_editor_ai_reset_summary">Clear code editor AI history only; API settings unchanged</string>
+    <string name="zt_editor_ai_reset_done">Obrolan AI editor direset</string>
+    <string name="zt_editor_ai_reset_panel_desc">Reset editor AI chat</string>
+    <string name="zt_editor_ai_running_bubble">AI\nrunning</string>
+    <string name="zt_editor_ai_edit_confirm_title">Confirm edit: %1$s</string>
+    <string name="zt_editor_ai_edit_confirm_file">Target file: %1$s</string>
+    <string name="zt_editor_ai_edit_preview_insert">Insert the following:\n\n%1$s</string>
+    <string name="zt_editor_ai_edit_preview_range">Replace characters %1$d..%2$d with:\n\n%3$s</string>
+    <string name="zt_editor_ai_edit_preview_replace_all">Replace entire file (~%1$d lines):\n\n%2$s</string>
+    <string name="zt_editor_ai_edit_preview_insert_diff">Will insert +%1$d line(s). Green = added:</string>
+    <string name="zt_editor_ai_edit_preview_range_diff">Replace chars %1$d..%2$d (+%3$d / −%4$d lines). Red = removed, green = added:</string>
+    <string name="zt_editor_ai_edit_preview_replace_all_diff">Replace entire file (~%1$d lines, +%2$d / −%3$d). Red = removed, green = added:</string>
+    <string name="zt_editor_ai_edit_diff_hint">Scroll to review the full diff before confirming.</string>
+    <string name="zt_editor_ai_edit_rejected">User rejected this code change</string>
+    <string name="zt_editor_ai_edit_no_file">Error: no editable open file; open a text file in the editor first</string>
+    <string name="zt_editor_ai_build_finished">Build/run finished. AI session ended automatically.</string>
+    <string name="zt_editor_ai_build_finished_no_terminal">Build started but terminal unavailable; cannot wait for completion.</string>
+    <string name="zt_editor_ai_system_prompt_edit_rules">13. Code edits apply only to the currently open file; do not open_file then write elsewhere. Use create_file for new files.\n14. insert_at_cursor / replace_range / replace_all show a confirmation dialog; if rejected, do not repeat the same edit.\n15. After run_build_script finishes waiting for build, the conversation ends automatically.</string>
+
+    <string name="zt_usage_habits_title">Kebiasaan penggunaan</string>
+    <string name="zt_usage_habits_content">Note (Usage habit related options can be re-customized in ZT settings)\n
+        Choose a usage habit\n
+        termux (Buttons follow the native layout completely)\n
+        ZeroTermux (Buttons follow the ZT layout completely)\n
+        Please select a usage habit</string>
+    <string name="zt_usage_habits_termux">Termux usage habit set successfully. Please go to settings to change the configuration.</string>
+    <string name="zt_usage_habits_ztermux">ZeroTermux usage habit set successfully. Please go to settings to change the configuration.</string>
+    <string name="zt_guide">Ketuk dua kali tepi layar untuk membuka menu kiri/kanan\nJika kebiasaan ZT dipilih, gunakan Volume +/−\nJika bilah samping tidak bisa menutup jendela ini\nTekan lama di sini untuk menutup paksa</string>
+    <string name="zt_core_date_error">There is an error in the upper and lower data of the core terminal. Please return to the desktop and try again.</string>
+    <string name="zt_terminal_unavailable_command_not_sent">Terminal is not ready. Command was not sent.</string>
+    <string name="zt_terminal_unavailable_key_not_sent">Terminal is not ready. Key was not sent.</string>
+    <string name="zt_terminal_unavailable_text_not_read">Terminal is not ready. Unable to read terminal content.</string>
+
+    <string name="deepseek_input_key_error_info_400">Possible issues: \n\nReturns 400 with no DeepSeek Key set or entered the wrong key</string>
+    <string name="deepseek_input_key_error_info_401">Possible issues: 401 is returned, API key is wrong, authentication failed, Solution: Please check if your API key is correct</string>
+    <string name="deepseek_input_key_error_info_402">Possible problems: \n\nReturn 402, account balance is insufficient, solution: Please check the account balance and go to the Deepseek page to recharge</string>
+    <string name="deepseek_input_key_error_info_422">Possible problems: \n\nReturn 422, parameter error, solution: In general, this error is unlikely to occur, is the key not filled in correctly?</string>
+    <string name="deepseek_input_key_error_info_429">Possible problem: 429 is returned, and the request rate (TPM or RPM) reaches the upper limit.</string>
+    <string name="deepseek_input_key_error_info_500">Possible issues: 500 is returned, DeepSeek server is faulty, workaround: please wait and try again. If the problem persists, please contact DeepSeek to resolve it.</string>
+    <string name="deepseek_input_key_error_info_503">Possible issues: 503 is returned, server load is too high, workaround: Please retry your request later.</string>
+    <string name="deepseek_input_key_error_info_other">Possible problem: \n\nReturning code that is not recognized, the server may have broken this request? , Workaround: Please retry your request later.</string>
+
+    <string name="ai_settings">Pengaturan AI</string>
+    <string name="ai_settings_summary">Configure the specific AI interface, DeepSeek, or other custom AI paths</string>
+
+    <string name="ai_settings_main_deepseek">DeepSeek</string>
+    <string name="ai_settings_main_other">Custom</string>
+    <string name="ai_settings_main_summary">DeepSeek is selected by default. You can choose Custom to redefine your AI address.\nNote: If you switch between different main AI providers, chat history will only be displayed under the corresponding main AI.\nAfter switching, you need to configure your specific AI content in the bottom options.</string>
+
+    <string name="ai_settings_custom">Custom AI Interface</string>
+    <string name="ai_settings_custom_summary">Customize your AI interface link</string>
+
+    <string name="ai_custom_prompt">You are a ZeroTermux assistant, helping users of ZeroTermux and Termux answer basic Linux knowledge. All commands should preferably be written in a single line. If multi-line is necessary, try to concatenate them into one line using &amp;&amp;</string>
+
+    <string name="ai_custom_command">Current session/terminal text:</string>
+
+    <!-- AI Provider System -->
+    <string name="ai_settings_title">Pengaturan AI</string>
+    <string name="ai_provider_section">Penyedia AI</string>
+    <string name="ai_provider_add">Tambah penyedia</string>
+    <string name="ai_provider_edit">Edit penyedia</string>
+    <string name="ai_provider_delete_confirm">Are you sure you want to delete provider \"%s\"?</string>
+    <string name="ai_provider_delete_last">Cannot delete the last provider</string>
+    <string name="ai_provider_name">Nama</string>
+    <string name="ai_provider_name_hint">e.g., DeepSeek, OpenAI</string>
+    <string name="ai_provider_format">API Format</string>
+    <string name="ai_provider_url">URL API</string>
+    <string name="ai_provider_url_hint">https://api.example.com/v1/chat/completions</string>
+    <string name="ai_provider_key">Kunci API</string>
+    <string name="ai_provider_key_hint">Enter your API key</string>
+    <string name="ai_provider_model">Nama model</string>
+    <string name="ai_provider_model_hint">e.g., deepseek-chat, gpt-4o</string>
+    <string name="ai_provider_name_required">Please enter a provider name</string>
+    <string name="ai_provider_url_required">Please enter the API URL</string>
+    <string name="ai_provider_model_required">Please enter the model name</string>
+    <string name="ai_provider_saved">Penyedia disimpan</string>
+    <string name="ai_provider_deleted">Penyedia dihapus</string>
+    <string name="ai_provider_default_badge">Default</string>
+    <string name="ai_provider_set_default">Jadikan default</string>
+    <string name="ai_provider_set_default_done">Set as default</string>
+    <string name="ai_format_openai">OpenAI Compatible</string>
+    <string name="ai_format_claude">Anthropic Claude</string>
+    <string name="ai_format_gemini">Google Gemini</string>
+    <string name="ai_system_prompt_section">System Prompt</string>
+    <string name="ai_system_prompt_hint">Enter custom system prompt...</string>
+    <string name="ai_chat_title">AI Assistant</string>
+    <string name="ai_confirm">Confirm</string>
+    <string name="ai_cancel">Cancel</string>
+    <string name="ai_delete">Delete</string>
+
+    <string name="ai_dialog_reset">Switch successful. Restart required for changes to take effect</string>
+    <string name="ai_settings_other">Configure Other AI</string>
+    <string name="ai_settings_other_summary">Configure other API_KEY and interface models</string>
+
+    <string name="back_menu_visible">Left/Right panel displays background image</string>
+    <string name="back_menu_visible_summary">You must ensure that the following path:\n~Ztinfo/menuBack/\ncontains left.png and right.png</string>
+    <string name="text_shadow_enable">Enable text contrast</string>
+
+    <string name="guide_zerotermux_settings_agreement">ZeroTermux Terms of Use</string>
+    <string name="guide_zerotermux_previous">Back</string>
+    <string name="guide_zerotermux_next">Continue</string>
+    <string name="guide_zerotermux_usage_habits">Usage Habits</string>
+    <string name="guide_zerotermux_usage_habits_summary">Select your usage habits:\n
+         \n
+        Termux:\n
+        1. Double-tap and swipe to hide the toolbox\n
+        2. Volume up/down keys do not bring up the left/right menu bar\n
+        \n
+        ZeroTermux: \n
+        1. Double-tap and swipe to bring up the toolbox (may conflict with text zoom in/out)\n
+        2. Volume up/down keys bring up the left/right menu bar\n
+        \n
+        \n
+        If you need to change your usage habits later, you can adjust them by entering the settings from the left sidebar on the main screen.
+    </string>
+    <string name="guide_zerotermux_create_folder">Create Folder</string>
+    <string name="guide_zerotermux_create_folder_summary"> "ZeroTermux needs to create the following folders in your internal storage\n\n
+        If you don't understand, simply tap "Continue"\n\n
+        Note:\n
+        Currently unsupported data pages:\n
+        1. Windows Emulation\n
+        1.1 If you want to use Windows emulation features, you can only create the internal storage/xinhao/windows folder on the SD card\n
+        1.2 If you do not want to create the relevant folders in internal storage, you can choose not to use this module feature (Left main menu → QEMU → Zero/UTermux Emulation)\n
+        2. Module Installation\n
+        2.1 If you want to use module-related features, you can only create the internal storage/xinhao/module folder on the SD card\n
+        2.2 If you do not want to create the relevant folders in internal storage, you can choose not to use this module feature (Left main menu → Module Installation)\n
+        \n\n
+        Suggestion: Under normal circumstances, please place it in internal storage. If placed in the Android/data directory, all saved data packages and all data under the xinhao folder will be cleared after uninstalling the app. Please choose carefully.\n\n
+        Note: Placing files in internal storage/Android/data may cause unknown issues. If you encounter any, please provide feedback on GitHub.\n
+        Android standard (/internal storage/Android/data/com.termux/files/xinhao/)\n
+        Simple and easy (/internal storage/xinhao)\n\n
+        Directory descriptions: data (backup packages), apk (temporary APKs), windows (QEMU directory),
+        command (command directory), font (font directory), iso (image directory), mysql (MySQL temporary files),
+        online_system (offline Termux packages), qemu (QEMU directory), server (server directory), share (share directory), web_config (web temporary directory)\n\n
+        If you need to change the directory later, you can modify it in ZeroTermux settings. Please note: the data in the two directories are displayed separately."
+    </string>
+    <string name="guide_zerotermux_create_sdcard">Internal Storage</string>
+    <string name="guide_zerotermux_create_android">Internal Storage/Android/data</string>
+    <string name="guide_zerotermux_create_toast_ok">Successfully created</string>
+    <string name="guide_zerotermux_create_toast_no">Creation failed, please check your permissions</string>
+    <string name="install_zerotermux_os_title">Install OS</string>
+    <string name="install_zerotermux_os_summary">ZeroTermux is installing the basic environment, please wait…</string>
+    <string name="loading_zerotermux">Loading ZeroTermux, please wait…</string>
+    <string name="guide_zerotermux_create_toast_created">The current feature is not available in this version, so wait for the next version to be tested online</string>
+
+    <string name="settings_keyword">Set double-tap function</string>
+    <string name="zt_ai_debug_title">Enable external AI debug API</string>
+    <string name="zt_ai_debug_summary">External AI debug (CRITICAL) terminal/logs/screenshot/automation/system; Root = full control</string>
+    <string name="zt_ai_debug_summary_with_endpoint">External AI debug (CRITICAL)\nEndpoint: %1$s (give IP:port + match code to AI)</string>
+    <string name="zt_ai_debug_disclaimer_title">External AI debug — CRITICAL risk</string>
+    <string name="zt_ai_debug_disclaimer_message">When enabled, LAN AI can fully control this device via port 19998:\n\n• Read/run Termux terminal commands\n• logcat / system logs\n• Screenshot, UI tap/swipe automation\n• SMS, contacts, phone/SIM info\n• Read/write files, system status\n\n【With or without Root】A leaked match code lets AI access all data the app can reach.\n\n【Root full debug extra risk】If Root mode is also enabled, AI can run su, modify system partitions, brick the device, cause black screen, permanent data loss — irreversible.\n\nDisable when done. Continuing means you accept ALL consequences including a bricked device.</string>
+    <string name="zt_ai_debug_notification_title">External AI debug</string>
+    <string name="zt_ai_debug_notification_text">AI debug API running on port 19998</string>
+    <string name="zt_ai_debug_match_code_label">Match code</string>
+    <string name="zt_ai_debug_match_code_hidden">•••••••</string>
+    <string name="zt_ai_debug_match_code_warning">【CRITICAL】Match code grants AI full control of accessible data. With Root mode, AI may brick the device or cause black screen. Never share with untrusted parties.</string>
+    <string name="zt_ai_debug_match_code_reveal">Show match code</string>
+    <string name="zt_ai_debug_match_code_dialog_title">CRITICAL — match code</string>
+    <string name="zt_ai_debug_match_code_dialog_message">CRITICAL: With or without Root, the match code lets LAN AI fully control all data this app can access.\n\nIf Root full debug is enabled, AI can run su, modify the system, brick the phone, or cause unrecoverable black screen.\n\nDo not share unless you fully understand this.\n\nShow the match code now?</string>
+    <string name="zt_ai_debug_port_note">Default port: 19998 (LAN only; append ?code= to every request)</string>
+    <string name="zt_ai_debug_root_title">Root full debug</string>
+    <string name="zt_ai_debug_root_summary">su/ADB/system control/UI automation (rooted devices only, CRITICAL)</string>
+    <string name="zt_ai_debug_root_disclaimer_title">Root full debug — fatal risk</string>
+    <string name="zt_ai_debug_root_disclaimer_message">When enabled, AI gets Root-equivalent access via su:\n\n• Arbitrary system commands (rm, dd, etc.)\n• Modify /system, /data, any partition\n• UI automation (tap/swipe/type)\n• Network ADB, read/write any path\n• dumpsys, dmesg, processes, packages\n\nMay cause: permanent brick, black screen, total data loss, account compromise.\n\nIrreversible. Use only on dedicated root test devices. Disable when done.\n\nAccept ALL consequences including brick?</string>
+    <string name="zt_ai_debug_root_warning">【Root warning】AI gets Root-level control; may brick device or cause permanent black screen. The match code above is already CRITICAL with or without Root.</string>
+    <string name="settings_keyword_summary">Set double-tap terminal function, choose Custom command, Keyboard, Disable</string>
+    <string name="settings_keyword_summary1">Current selection</string>
+    <string name="settings_keyword_item1">Keyboard</string>
+    <string name="settings_keyword_item2">Disable</string>
+    <string name="settings_keyword_item3">Custom command</string>
+
+    <string name="save_path">Set Storage Path (BETA)</string>
+    <string name="save_path_summary">
+        Set the current storage path directory\n
+        Internal storage/xinhao\n
+        Internal storage/Android/data/com.termux/files/xinhao\n
+        Please note that copying files to the Android data directory requires some relevant knowledge</string>
+    <string name="backup_success_android">Backup complete. Backup files are in -> Internal storage/Android/data/com.termux/files/xinhao/data/| directory</string>
+    <string name="add_containers">Add Container</string>
+    <string name="item_containers_path">Path:</string>
+    <string name="item_containers_toast_create_system_error">System creation failed! Please try again</string>
+    <string name="item_containers_dialog_input_linux_name">"Please enter a new Linux name"</string>
+    <string name="item_containers_toast_def_system">"Default system"</string>
+    <string name="item_containers_error_system">"Corrupted system"</string>
+    <string name="item_containers_toast_not_config">"Your current default system has no configuration file"</string>
+    <string name="item_containers_toast_config_error">"The configuration file is corrupted. Please re-enter creation and tap a few more times until you get in"</string>
+    <string name="item_containers_toast_settings_ok_reboot">"Settings applied! Please restart the app"</string>
+    <string name="item_containers_dialog_no_need">"No need"</string>
+    <string name="item_containers_dialog_need">"Need"</string>
+    <string name="item_containers_dialog_manual_exit">"Please manually exit the app"</string>
+    <string name="item_containers_dialog_msg">"Switch successful!\nRestart the app for changes to take effect\nNeed to restart?\nActually tapping \"Need\" is useless\nManually restart yourself\nGo to Task Manager, usually tap the '□' button, then swipe away the app"</string>
+    <string name="item_containers_dialog_read_failed">"Read failed!"</string>
+    <string name="item_containers_toast_ignoring_operations">"Operation ignored"</string>
+    <string name="item_containers_dialog_don_t_delete_it">"Don\'t delete"</string>
+    <string name="item_containers_dialog_i_don_t_delete_it">I won\'t delete</string>
+    <string name="item_containers_dialog_deleted_successfully">"Deleted successfully!"</string>
+    <string name="item_containers_toast_clearing_system_residues">"Clearing system residue files"</string>
+    <string name="item_containers_dialog_delete_system_loading_msg">"The time required depends on the size of your system"</string>
+    <string name="item_containers_dialog_delete_system_loading_title">Deleting, please wait patiently...</string>
+    <string name="item_containers_toast_not_delete_main_system">You cannot delete the main system</string>
+    <string name="item_containers_dialog_i_m_sure">"I\'m sure"</string>
+    <string name="item_containers_dialog_delete_system_msg">"Please ensure your SD card permissions have NOT been granted!\nOtherwise, it may erase all contents on your SD card (internal storage)!\nOtherwise, it may erase all contents on your SD card (internal storage)!\nOtherwise, it may erase all contents on your SD card (internal storage)!\nAre you sure you want to delete your system?\nPlease be careful. After deletion, your data cannot be recovered!!!!!!"</string>
+    <string name="item_containers_dialog_delete_system_title">Are you sure you want to delete?</string>
+    <string name="item_containers_main_name">Main Container</string>
+    <string name="item_containers_time">Creation time:</string>
+    <string name="install_empty_android">Android/data/files/xinhao/module, no module package</string>
+    <string name="code_editor_loading">Loading...(If the directory is open, ignore this loading screen...You can start operating immediately; no waiting is required.)</string>
+
+    <!-- synced from values/strings.xml -->
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="cancel">Cancel</string>
+    <string name="command_gone">Hide</string>
+    <string name="confirm">Confirm</string>
+    <string name="content_ssh_name">SSH</string>
+    <string name="deepseek_input_key_error_info_403">Possible issue:\n\nHTTP 403, unknown error</string>
+    <string name="editor_build_script_long_press">Long-press the Run button to edit build.sh</string>
+    <string name="editor_build_script_header_note">Editable manually or by AI</string>
+    <string name="editor_build_script_add_commands">Add build/run commands in build.sh</string>
+    <string name="editor_build_script_edit_for_file">Edit build.sh to build/run %1$s</string>
+    <string name="editor_build_script_current_file">Current file: %1$s</string>
+    <string name="editor_build_script_install_java">[ZeroTermux Editor] Installing OpenJDK 21…</string>
+    <string name="editor_build_script_install_java_failed">[ZeroTermux Editor] Failed to install OpenJDK 21</string>
+    <string name="editor_build_script_install_c">[ZeroTermux Editor] Installing C compiler (clang)…</string>
+    <string name="editor_build_script_install_c_failed">[ZeroTermux Editor] Failed to install C compiler</string>
+    <string name="editor_build_script_install_python">[ZeroTermux Editor] Installing Python…</string>
+    <string name="editor_build_script_install_python_failed">[ZeroTermux Editor] Failed to install Python</string>
+    <string name="editor_build_script_install_php">[ZeroTermux Editor] Installing PHP &amp; Composer…</string>
+    <string name="editor_build_script_install_php_failed">[ZeroTermux Editor] Failed to install PHP</string>
+    <string name="editor_build_script_install_node">[ZeroTermux Editor] Installing Node.js &amp; npm…</string>
+    <string name="editor_build_script_install_node_failed">[ZeroTermux Editor] Failed to install Node.js</string>
+    <string name="editor_build_script_running">[ZeroTermux Editor] Running %1$s</string>
+    <string name="editor_build_script_install_gui_fonts">[ZeroTermux Editor] Installing GUI fonts…</string>
+    <string name="editor_build_script_display_not_ready">[ZeroTermux Editor] DISPLAY not ready — tap Run or open the GUI panel first</string>
+    <string name="editor_build_script_gui_started">[ZeroTermux Editor] GUI app started</string>
+    <string name="editor_build_script_gui_view_hint">[ZeroTermux Editor] Hint: For windowed programs, tap the GUI button in the top-right corner to view</string>
+    <string name="editor_build_script_gui_set_visible_hint">[ZeroTermux Editor] Hint: call new Hello().setVisible(true) in main() to show the window</string>
+    <string name="editor_sidebar_open_terminal">Open terminal</string>
+    <string name="editor_terminal_ctrl_c">Send Ctrl+C to interrupt</string>
+    <string name="editor_x11_button">GUI</string>
+    <string name="editor_dock_hide">Hide panel</string>
+    <string name="editor_x11_connect">Connect</string>
+    <string name="editor_x11_display_env">DISPLAY</string>
+    <string name="editor_x11_display_set">DISPLAY=:99 set</string>
+    <string name="editor_x11_env_missing">GUI environment not ready — tap Retry to install</string>
+    <string name="editor_x11_hide">Hide X11</string>
+    <string name="editor_x11_init_failed">GUI window init failed</string>
+    <string name="editor_x11_installing_env">Installing GUI environment (Xvfb, ImageMagick, xdotool)…</string>
+    <string name="editor_x11_starting_env">Starting built-in GUI server…</string>
+    <string name="editor_x11_start_failed">GUI start failed — tap Retry</string>
+    <string name="editor_x11_retry">Retry</string>
+    <string name="editor_x11_install_repo">[ZeroTermux Editor] Installing x11-repo…</string>
+    <string name="editor_x11_install_packages">[ZeroTermux Editor] Installing xorg-server-xvfb scrot xdotool…</string>
+    <string name="editor_x11_status_starting">GUI starting</string>
+    <string name="editor_x11_status_installing">GUI installing</string>
+    <string name="editor_x11_status_connecting">GUI connecting</string>
+    <string name="editor_vnc_install_repo">Installing x11-repo…</string>
+    <string name="editor_vnc_install_packages">Installing Xvfb and x11vnc…</string>
+    <string name="editor_vnc_installing_env">Installing GUI/VNC environment (x11-repo, Xvfb, x11vnc)…</string>
+    <string name="editor_vnc_starting_env">Starting VNC server…</string>
+    <string name="editor_vnc_env_missing">X11/VNC packages are missing. Opening the GUI tab installs them automatically; tap Retry if needed.</string>
+    <string name="editor_vnc_start_failed">Failed to start the VNC debug environment. Ensure the terminal can run pkg install, then tap Retry.</string>
+    <string name="editor_vnc_retry">Retry</string>
+    <string name="editor_vnc_init_failed">VNC viewer init failed</string>
+    <string name="editor_vnc_status_connected">VNC connected</string>
+    <string name="editor_vnc_status_connecting">Connecting VNC…</string>
+    <string name="editor_vnc_status_installing">Installing environment…</string>
+    <string name="editor_vnc_status_starting">Starting VNC…</string>
+    <string name="editor_vnc_status_disconnected">VNC disconnected</string>
+    <string name="editor_x11_internal_required">Preparing GUI environment…</string>
+    <string name="editor_x11_setup_open_settings">Retry</string>
+    <string name="editor_x11_maximize">Maximize X11</string>
+    <string name="editor_x11_restore">Restore X11</string>
+    <string name="editor_x11_status_connected">GUI connected</string>
+    <string name="editor_x11_status_disconnected">GUI disconnected</string>
+    <string name="error_allow_external_apps_ungranted">%1$s requires `allow-external-apps`
+        property to be set to `true` in `%2$s` file.</string>
+    <string name="title_report_text">Report text</string>
+    <string name="title_share_with">Share with</string>
+    <string name="zt_workstation">ZT Workstation</string>
+    <string name="zt_workstation_auto_start">Auto-start with app</string>
+    <string name="zt_workstation_auto_start_risk">High risk: automatically runs enabled sub-features when the app starts</string>
+    <string name="zt_workstation_camera">Allow camera</string>
+    <string name="zt_workstation_camera_risk">High risk: the camera may be accessed without notice. You are responsible for any privacy exposure</string>
+    <string name="zt_workstation_confirm_enable">Confirm enable</string>
+    <string name="zt_workstation_disclaimer_message">This page contains high-risk options. Read the disclaimer carefully.\n\nTap Confirm to agree, Cancel to decline.\n\nOnly proceed if you understand every switch. If unsure, leave this page.\n\nThe app and authors are not liable for privacy leaks, file deletion, copying, forwarding, or similar outcomes. You must fully understand what you are doing before continuing.</string>
+    <string name="zt_workstation_disclaimer_title">High-risk disclaimer</string>
+    <string name="zt_workstation_enter">Open settings</string>
+    <string name="zt_workstation_files">Allow file access</string>
+    <string name="zt_workstation_files_risk">High risk: full control over your files, including delete and copy to other devices</string>
+    <string name="zt_workstation_master">Workstation master switch</string>
+    <string name="zt_workstation_master_note">When off, the web workstation stops; sub-feature switches are presets only</string>
+    <string name="zt_workstation_note">Open the workstation in a browser to control this app from a PC or remotely (port 19999). Each sub-feature requests permissions when enabled</string>
+    <string name="zt_workstation_notification_text">Web workstation running on port 19999</string>
+    <string name="zt_workstation_notification_title">ZT Workstation</string>
+    <string name="zt_workstation_permission_denied">Required permission is needed to enable this feature</string>
+    <string name="zt_workstation_permission_denied_camera">Camera permission is required for the camera feature</string>
+    <string name="zt_workstation_permission_denied_files">Storage permission is required for file access</string>
+    <string name="zt_workstation_permission_denied_phone_sms">SMS, phone, and contacts permissions are required for SMS/phone features</string>
+    <string name="zt_workstation_phone_sms">Allow SMS/phone</string>
+    <string name="zt_workstation_phone_sms_risk">High risk: may expose contacts and SMS</string>
+    <string name="zt_workstation_settings_title">ZT Workstation</string>
+    <string name="zt_workstation_status_off">Off</string>
+    <string name="zt_workstation_status_on">On</string>
+    <string name="zt_workstation_terminal">Allow terminal</string>
+    <string name="zt_workstation_terminal_risk">High risk: the web UI can control your terminal and fully manage files, including delete and copy to other devices</string>
+    <string name="zt_workstation_web_blocked">This feature is disabled on the phone. Enable the matching switch in ZeroTermux Settings → ZT Workstation.</string>
+
+    <string name="zt_crash_history_title">Crash History</string>
+    <string name="zt_crash_history_settings_summary">Auto-saved crash logs: view details, delete one, or clear all. Also available on AI debug port 19998</string>
+    <string name="zt_crash_history_hint">Crashes are recorded automatically. Up to 100 entries are kept.</string>
+    <string name="zt_crash_history_empty">No crash history yet</string>
+    <string name="zt_crash_history_clear_all">Clear all</string>
+    <string name="zt_crash_history_clear_all_confirm">Clear all crash history? This cannot be undone.</string>
+    <string name="zt_crash_history_delete_confirm">Delete this crash record?</string>
+    <string name="zt_crash_history_detail_title">Crash detail</string>
+    <string name="zt_crash_history_not_found">Record not found or already deleted</string>
+    <string name="zt_crash_history_thread">Thread: %1$s · Version: %2$s</string>
+    <string name="zt_crash_history_detail_meta">Time: %1$s\nThread: %2$s\nVersion: %3$s\nException: %4$s\nMessage: %5$s</string>
+</resources>

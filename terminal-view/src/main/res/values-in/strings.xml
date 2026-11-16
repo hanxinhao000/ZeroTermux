@@ -1,0 +1,9 @@
+<resources>
+  <string name="paste_text">Tempel</string>
+  <string name="copy_text">Salin</string>
+  <string name="ask_ai_text">Tanya AI</string>
+  <string name="add_text">Tambah perintah</string>
+  <string name="enable_toolbox">Aktifkan kotak alat</string>
+  <string name="text_selection_more">Lainnya…</string>
+    <string name="enable_toolbox_msg">Kotak alat sudah diaktifkan. Buka dengan ketuk dua jari</string>
+</resources>

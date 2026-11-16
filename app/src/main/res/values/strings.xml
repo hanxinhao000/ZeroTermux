@@ -478,6 +478,7 @@ error</string>
     <string name="语言切换">Language</string>
     <string name="中文">Chinese</string>
     <string name="English">English</string>
+    <string name="Indonesian">Bahasa Indonesia</string>
     <string name="取消">Cancel</string>
     <string name="termux_x11">termux-x11</string>
 
