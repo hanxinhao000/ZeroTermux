@@ -112,10 +112,10 @@ class ZtAgentAiAgentRunner(
     }
 
     private fun appendFreshTerminalSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
-        messages.removeAll { it.role == ROLE_SYSTEM && it.content?.startsWith(SNAPSHOT_PREFIX) == true }
+        messages.removeAll { ZtAgentAiChatClient.isEphemeralTerminalSnapshotMessage(it) }
         messages.add(
             ZtAgentAiChatClient.ChatMessage(
-                role = ROLE_SYSTEM,
+                role = ROLE_USER,
                 content = ZtAgentAiTerminalExecutor.captureSnapshot(3000)
             )
         )
@@ -283,16 +283,11 @@ class ZtAgentAiAgentRunner(
     ): MutableList<ZtAgentAiChatClient.ChatMessage> {
         val config = ZtAgentAiConfigHelper.loadActiveConfig()
         val list = mutableListOf<ZtAgentAiChatClient.ChatMessage>()
-        list.add(
-            ZtAgentAiChatClient.ChatMessage(
-                role = ROLE_SYSTEM,
-                content = ZtAgentAiConfigHelper.resolveSystemPrompt(
-                    config.systemPrompt,
-                    terminalEnabled,
-                    ztControlEnabled,
-                    filesystemEnabled
-                )
-            )
+        val systemPrompt = ZtAgentAiConfigHelper.resolveSystemPrompt(
+            config.systemPrompt,
+            terminalEnabled,
+            ztControlEnabled,
+            filesystemEnabled
         )
 
         val historyMessages = history.filter { it.role == ROLE_USER || it.role == ROLE_ASSISTANT }
@@ -306,7 +301,11 @@ class ZtAgentAiAgentRunner(
             list.add(
                 ZtAgentAiChatClient.ChatMessage(
                     role = ROLE_SYSTEM,
-                    content = ZtAiStrings.terminalHistoryNotice()
+                    content = buildString {
+                        append(systemPrompt)
+                        append("\n\n")
+                        append(ZtAiStrings.terminalHistoryNotice())
+                    }
                 )
             )
             val lastUserIndex = limited.indexOfLast { it.role == ROLE_USER }
@@ -331,6 +330,12 @@ class ZtAgentAiAgentRunner(
                 }
             }
         } else {
+            list.add(
+                ZtAgentAiChatClient.ChatMessage(
+                    role = ROLE_SYSTEM,
+                    content = systemPrompt
+                )
+            )
             list.addAll(limited)
         }
 
@@ -344,8 +349,6 @@ class ZtAgentAiAgentRunner(
     companion object {
         private const val TAG = "ZtAgentAiAgentRunner"
         private const val TERMINAL_HISTORY_LIMIT = 6
-        private val SNAPSHOT_PREFIX: String
-            get() = ZtAiStrings.terminalSnapshotPrefix()
         private const val ROLE_SYSTEM = "system"
         private const val ROLE_USER = "user"
         private const val ROLE_ASSISTANT = "assistant"

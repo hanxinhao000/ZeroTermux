@@ -2,6 +2,7 @@ package com.termux.zerocore.ai.agent
 
 import com.example.xh_lib.utils.LogUtils
 import com.example.xh_lib.utils.UUtils
+import com.termux.zerocore.ai.config.ZtAiStrings
 import com.termux.zerocore.utils.ZtLocaleStrings
 import okhttp3.Call
 import okhttp3.Callback
@@ -184,7 +185,7 @@ class ZtAgentAiChatClient(
         tools: JSONArray?
     ): String {
         val arr = JSONArray()
-        messages.forEach { msg -> arr.put(messageToJson(msg)) }
+        normalizeMessagesForApi(messages).forEach { msg -> arr.put(messageToJson(msg)) }
         val body = JSONObject()
             .put("model", config.model.trim())
             .put("messages", arr)
@@ -294,8 +295,69 @@ class ZtAgentAiChatClient(
     companion object {
         private const val TAG = "ZtAgentAiChatClient"
         private const val STREAM_DONE = "[DONE]"
+        private const val ROLE_SYSTEM = "system"
+        private const val ROLE_USER = "user"
         private const val ROLE_ASSISTANT = "assistant"
         private const val ROLE_TOOL = "tool"
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
+
+        /** 轮询前插入的独立终端快照（非历史里 user+--- 合并格式）。 */
+        @JvmStatic
+        fun isEphemeralTerminalSnapshotMessage(msg: ChatMessage): Boolean {
+            if (msg.role != ROLE_USER) return false
+            val content = msg.content?.trim().orEmpty()
+            if (content.isEmpty()) return false
+            if (content.contains("\n---\n")) return false
+            val header = ZtAiStrings.terminalSnapshotHeader()
+            val prefix = ZtAiStrings.terminalSnapshotPrefix()
+            return content.startsWith(header) || content.startsWith(prefix)
+        }
+
+        /** 编辑器 Agent 轮询前插入的编辑器快照。 */
+        @JvmStatic
+        fun isEphemeralEditorSnapshotMessage(msg: ChatMessage): Boolean {
+            if (msg.role != ROLE_USER) return false
+            val content = msg.content?.trim().orEmpty()
+            return content.startsWith(EDITOR_SNAPSHOT_HEADER_PREFIX)
+        }
+
+        private const val EDITOR_SNAPSHOT_HEADER_PREFIX = "=== 编辑器快照"
+
+        /**
+         * vLLM/Qwen 等要求 system 仅在开头且连续；中间的 system 转为 user。
+         * 开头多条 system 合并为一条。
+         */
+        @JvmStatic
+        fun normalizeMessagesForApi(messages: List<ChatMessage>): List<ChatMessage> {
+            if (messages.isEmpty()) return messages
+            val out = mutableListOf<ChatMessage>()
+            val leadingSystem = mutableListOf<String>()
+            var index = 0
+            while (index < messages.size && messages[index].role == ROLE_SYSTEM) {
+                messages[index].content?.trim()?.takeIf { it.isNotEmpty() }?.let { leadingSystem.add(it) }
+                index++
+            }
+            if (leadingSystem.isNotEmpty()) {
+                out.add(ChatMessage(role = ROLE_SYSTEM, content = leadingSystem.joinToString("\n\n")))
+            }
+            while (index < messages.size) {
+                val msg = messages[index]
+                if (msg.role == ROLE_SYSTEM) {
+                    out.add(
+                        ChatMessage(
+                            role = ROLE_USER,
+                            content = msg.content.orEmpty(),
+                            toolCalls = msg.toolCalls,
+                            toolCallId = msg.toolCallId,
+                            terminalSnapshot = msg.terminalSnapshot
+                        )
+                    )
+                } else {
+                    out.add(msg)
+                }
+                index++
+            }
+            return out
+        }
     }
 }

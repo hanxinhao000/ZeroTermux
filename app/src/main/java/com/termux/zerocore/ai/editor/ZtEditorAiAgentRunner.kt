@@ -94,10 +94,10 @@ class ZtEditorAiAgentRunner(
     }
 
     private fun appendFreshEditorSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
-        messages.removeAll { it.role == ROLE_SYSTEM && it.content?.startsWith(EDITOR_SNAPSHOT_PREFIX) == true }
+        messages.removeAll { ZtAgentAiChatClient.isEphemeralEditorSnapshotMessage(it) }
         messages.add(
             ZtAgentAiChatClient.ChatMessage(
-                role = ROLE_SYSTEM,
+                role = ROLE_USER,
                 content = host.captureSnapshot(8000)
             )
         )
@@ -105,10 +105,10 @@ class ZtEditorAiAgentRunner(
 
     private fun appendFreshTerminalSnapshot(messages: MutableList<ZtAgentAiChatClient.ChatMessage>) {
         if (!host.isTerminalAvailable()) return
-        messages.removeAll { it.role == ROLE_SYSTEM && it.content?.startsWith(TERMINAL_SNAPSHOT_PREFIX) == true }
+        messages.removeAll { ZtAgentAiChatClient.isEphemeralTerminalSnapshotMessage(it) }
         messages.add(
             ZtAgentAiChatClient.ChatMessage(
-                role = ROLE_SYSTEM,
+                role = ROLE_USER,
                 content = host.captureTerminalSnapshot(3000)
             )
         )
@@ -260,8 +260,6 @@ class ZtEditorAiAgentRunner(
         private const val TAG = "ZtEditorAiAgentRunner"
         private const val MAX_TOOL_ROUNDS = 30
         private const val HISTORY_LIMIT = 12
-        private const val EDITOR_SNAPSHOT_PREFIX = "=== 编辑器快照"
-        private const val TERMINAL_SNAPSHOT_PREFIX = "=== 终端快照"
         private const val ROLE_SYSTEM = "system"
         private const val ROLE_USER = "user"
         private const val ROLE_ASSISTANT = "assistant"
